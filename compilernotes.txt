@@ -1,0 +1,97 @@
+example parser tree:
+		E
+	E	=	E
+	|		|
+	id		id
+The parser will take the tokens and create a parse tree from it
+the parser tree only need to be read from left to right
+at the leaf nodes
+production: the rhs of a rule for example S -> aSb /e, aSb and e
+are 2 productions
+context free grammar if the lhs only have one non terminal
+(not a token received from the lexer (expression etc.))
+
+Left most derivation (LMD):
+S -> aS|Sa|a -> S can be replaced with 3 different things
+and in LMD the parser will choose the leftmost production
+(here it's aS)
+In Right Most Derivation (RMD) the parser will choose the
+rightmost production(here it's a)
+
+If each rule only have at most one non terminal(S in the example)
+or the grammar is unambiogous then LMD = RMD
+
+A grammar is ambiogous if more than one parse tree can be
+constructed from the same input
+
+Recursive Grammar:
+If at least one rule has the same non terminal in both LHS
+and RHS (i.e. S -> aSb | S)
+Recursive grammar will always generate infinite strings
+(ab,aabb,aaabbb, ...)
+
+Non-Recursive Grammar:
+If no rule has the same non terminal in both LHS and RHS
+(i.e. S -> a | b)
+It will always generate finite number of strins
+
+
+Left Recursive Grammar (LRG):
+If the LHS exists in the first part of a RHS production
+(i.e. S -> Sb | b) (S -> bS | b is not left recursive)
+
+Right Recursive Grammar (RRG):
+If the LHS exists in the last part of a RHS production
+(i.e. S -> bS | b) (S -> Sb | b is not right recursive)
+
+General Recursive Grammar (GRG):
+If the LHS exists in a RHS production but not in the first or
+last position
+(i.e. S -> aSb | c)
+
+There are 2 types of recursion:
+
+Direct Recursion: LRG, RRG, GRG
+Indirect Recursion: LRG, RRG, GRG
+
+Direct example: S -> Sa | b
+Indirect example: S -> Aa, A -> Sb
+(S wont derive to itself directly but through A)
+
+Convert Left Recursion Grammars to Right Recursion Grammar:
+Introduce a temporary variables
+A -> Aa | B	(Left Recursion)
+
+A -> BA'
+A' -> aA' | €	(Right Recursion)
+
+--------------------------------
+
+A -> Aab|c|d	(Left Recursion)
+
+A -> cA' | dA'
+A'-> abA' | €	(Right Recursion)
+
+--------------------------------
+
+S -> SaS | SbS | c	(Left Recursion)
+
+S -> cS'
+S'-> aSS' | bSS' | €	(Right Recursion)
+
+--------------------------------
+
+E -> E + E | E * E  | (E) | id	(Left Recursion)
+
+E -> (E)E' | id E'
+E' -> +EE' | *EE' | € 
+
+Ambiguous Grammar:
+If a grammar both have left an dright recursion (S -> SaS | B)
+(they don't have to be in the same production)
+
+S -> AB
+A -> SA | a	(Right Recursion)
+				-> Ambiguous
+B -> BS | b	(Left Recursion)
+
