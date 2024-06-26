@@ -95,3 +95,61 @@ A -> SA | a	(Right Recursion)
 				-> Ambiguous
 B -> BS | b	(Left Recursion)
 
+Grammar with Common Prefixes:
+If the RHS of more than one produtio nstarts with the
+same squence of symbols (i.e. S -> ab | abc | ad)
+
+Left Factoring:
+The process of removing common prefixes from the grammar
+
+S -> ab | abc | ad	(We take the longest common one so ab)
+
+S -> abS' | ad
+S'-> € | c |		(We introduced a new one, but now a is common)
+
+S -> a S''
+S'' -> bS' | d
+S' -> € | c		(Now there are no common prefixes)
+
+First:
+The set of all terminals that may begin in RHS
+For example: 	S-> € | a | b First(S): {€,a,b}
+		S -> aS | bS | € First(S): {a,b,€}	
+
+If the first part of the production is non-terminal then
+it will inherit the first of that non terminal (If it has more
+non terminals after it it will inherit all of them).
+(S->ABC would inherit First(A,B,C))
+For example:
+E->TE'	First(E) = {T} -> non terminal so we have to check First(T)
+T->FT'	First(T) = {F} -> -"- have to check First(F)
+F->(E)|id First(F) = {(,id} -> The First of E,T,F are all {(,id}
+
+Follow:
+Follow(A) is the set of all terminals that follow the right of A
+(If the LHS is in one of the RHS then the right symbol of the RHS)
+
+S -> a | b | €	Follow(S)= {$} (Dollar is the default)	
+
+S -> Sa | Sb | € Follow(S)= {$,a,b}
+
+LL(1) grammar:
+A grammar is LL(1) if the parse table for it doesn't have
+multiple entries
+
+Bottom-up parser (shift/reduce parser):
+The process of cunstructing the parse tree starting with
+the input string and getting the start symbol of the grammar
+
+Top-down parser:
+You start with the start symbol then work you way up
+to the string
+
+Handle:
+Sequence of grammar symbols that match the RHS of any production
+
+Handle pruning:
+The process of finding and reducing the handle
+
+Reduce:
+Substituting the LHS for one of the production
