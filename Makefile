@@ -1,7 +1,7 @@
 objects:= ./build/main.o ./build/lex.yy.o ./build/parser.tab.o
 
-all: $(objects)
-	g++ $^ -o $@ -o main.exe
+main.exe: $(objects)
+	g++ $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
 	g++ -c $< -o $@

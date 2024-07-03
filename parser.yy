@@ -17,8 +17,9 @@
 %code requires {
     #include <string>
     #include "AtmoLexer.hh"
+    
 }
-%define api.value.type {std::string}
+%define api.value.type {test}
 
 %parse-param {AtmoLexer &lexer}
 
@@ -30,12 +31,64 @@
     #define yylex lexer.yylex
 }
 
-%token HELLO
-%token WORLD
+%token CREATE
+%token FUNCTION
+%token VARIABLE
+%token INT
+%token STRING
+%token IF
+%token CALL
+%token ELSE
+%token COMMA
+%token LESS_THAN
+%token GREATER_THAN
+%token TABULATOR
+%token NEW_LINE
+%token PLUS
+%token MINUS
+%token DIVIDE
+%token MULTIPLY
+%token EQUALS
+%token NOT
+%token AND
+%token OR
+%token RETURN
+%token WITH
+%token PARAMS
+%token STRING_LITERAL
+%token IDENTIFIER
+%token FLOAT
+%token MATCHES
+%token UNTIL
+%token CHAR_LITERAL
+%token CHAR
+%token CLASS
+%token PUBLIC
+%token PRIVATE
+%token ARRAY_OF
+%token NUMBER
+%token NUMBER_FLOAT
+%token INSIDE
+%token OPEN_BRACKET
+%token CLOSE_BRACKET
+%token OPEN_SQUARE_BRACKET
+%token CLOSE_SQUARE_BRACKET
+%token POINTER
+%token VALUE_AT
+%token ADDRESS_OF
+%token TRUE
+%token FALSE
+%token BOOLEAN
+%token AS
+
+%left MINUS PLUS
+%left MULTIPLY DIVIDE
+%nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
+
 
 %%
 
-hello_world: HELLO WORLD '!' {std::cout << "Goodbye" << $WORLD << "!" << std::endl;}
+expression: IDENTIFIER {std::cout << $1.sval << std::endl;}
 %%
 
 void yy::parser::error(const std::string &message)
