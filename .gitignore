@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+parser.tab.cc
+parser.tab.hh
+lex.yy.cc

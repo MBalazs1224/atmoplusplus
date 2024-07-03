@@ -1,6 +1,6 @@
 %{
-    #include "TestLexer.hh"
-    #include "testParser.tab.hh"
+    #include "AtmoLexer.hh"
+    #include "parser.tab.hh"
     /*
 
     #undef  YY_DECL - C++ Flex still makes heavy use of macros. YY_DECL stores the declaration of function yylval that it will generate. We remove the default value, which is int FooLexer::yylex().
@@ -8,8 +8,8 @@
 
     */
 
-    #undef YYDECL
-    #define YY_DECL int TestLexer::yylex(std::string *const yylval)
+    #undef YY_DECL
+    #define YY_DECL int AtmoLexer::yylex(std::string *const yylval)
 %}
 /*
 
@@ -19,7 +19,7 @@
 
 */
 %option noyywrap c++
-%option yyclass="TestLexer"
+%option yyclass="AtmoLexer"
 
 %x STRING_LITERAL_TOKEN
 %x COMMENT_TOKEN

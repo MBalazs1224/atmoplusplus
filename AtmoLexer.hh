@@ -11,10 +11,10 @@ int yylex(std::string *const yylval); - We do declare the function but the defin
 */
 
 #if ! defined(yyFlexLexerOnce)
-#include <FlexLexer.h>
+#include "FlexLexer.h"
 #endif
 
-class TestLexer : public yyFlexLexer
+class AtmoLexer : public yyFlexLexer
 {
     public:
     // Flex will provide the definition of this function, we just need to declare it

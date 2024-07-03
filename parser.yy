@@ -16,11 +16,11 @@
 
 %code requires {
     #include <string>
-    #include "TestLexer.hh"
+    #include "AtmoLexer.hh"
 }
 %define api.value.type {std::string}
 
-%parse-param {TestLexer &lexer}
+%parse-param {AtmoLexer &lexer}
 
 
 %header
