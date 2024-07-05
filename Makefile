@@ -1,5 +1,8 @@
 objects:= ./build/main.o ./build/lex.yy.o ./build/parser.tab.o
 
+
+
+
 main.exe: $(objects)
 	g++ $^ -o $@
 	
@@ -10,16 +13,31 @@ main.exe: $(objects)
 	g++ -c $< -o $@
 
 ./build/parser.tab.o: parser.tab.cc AtmoLexer.hh
+ifdef DEBUG
+	g++ -DYYDEBUG=1 -c $< -o $@
+endif
+ifndef DEBUG
 	g++ -c $< -o $@
+endif
 
 lex.yy.cc: lexer.ll
+ifdef DEBUG
+	win_flex -d -+ $<
+endif
+ifndef DEBUG
 	win_flex -+ $<
+endif
+	
 	
 parser.tab.cc: parser.yy
-	win_bison $<
+	win_bison $(DEBUG) $<
 
 parser.tab.hh: parser.yy
-	win_bison -d $<
+	win_bison -t $(DEBUG) $<
+
+debug:
+	make clean
+	make DEBUG="--debug"
 	
 	
 .PHONY: rebuild

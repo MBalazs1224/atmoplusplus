@@ -17,18 +17,21 @@
 %code requires {
     #include <string>
     #include "AtmoLexer.hh"
-    
+    #define YYDEBUG 1
+    extern int yydebug;
+
+
 }
 %define api.value.type {test}
 
 %parse-param {AtmoLexer &lexer}
-
 
 %header
 
 %code {
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
+    
 }
 
 %token CREATE
@@ -80,15 +83,29 @@
 %token FALSE
 %token BOOLEAN
 %token AS
-
+%define parse.trace
 %left MINUS PLUS
 %left MULTIPLY DIVIDE
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
-
-
 %%
 
-expression: IDENTIFIER {std::cout << $1.sval << std::endl;}
+statement_list: statement
+                | statement_list statement
+
+
+statement: expression {std::cout << "expression was found" << std::endl;}
+
+expression:  expression PLUS expression
+            | expression MINUS expression
+            | expression MULTIPLY expression
+            | expression DIVIDE expression
+            | IDENTIFIER
+            | NUMBER
+            | NUMBER_FLOAT
+            | CHAR_LITERAL
+            | STRING_LITERAL
+            | TRUE
+            | FALSE
 %%
 
 void yy::parser::error(const std::string &message)

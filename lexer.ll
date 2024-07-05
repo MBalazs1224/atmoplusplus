@@ -12,7 +12,6 @@
     #undef YY_DECL
     #define YY_DECL int AtmoLexer::yylex(test* yylval)
 
-    
 %}
 /*
 
@@ -23,7 +22,7 @@
 */
 %option noyywrap c++
 %option yyclass="AtmoLexer"
-
+%option debug
 
 %x STRING_LITERAL_TOKEN
 %x COMMENT_TOKEN
@@ -127,10 +126,10 @@ false|FALSE {return yy::parser::token::FALSE;}
 {letter}({letter}|{digit})* {yylval->sval = std::string(YYText());
 return yy::parser::token::IDENTIFIER;}
 
-{digit}+	 { yylval->ival = atoi(yytext); return yy::parser::token::NUMBER;}
+{digit}+	 { yylval->ival = atoi(YYText()); return yy::parser::token::NUMBER;}
 
 \.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{
-    yylval->dval = atof(yytext);				
+    yylval->dval = atof(YYText());				
     return yy::parser::token::NUMBER_FLOAT;
 }
 
