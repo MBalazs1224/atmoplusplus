@@ -99,8 +99,12 @@ statement_list: statement
 
 statement: expression {std::cout << "expression was found" << std::endl;}
         | function_create
+        | variable_definition 
        
+variable_definition:CREATE DATATYPE IDENTIFIER equals_holder
 
+equals_holder: %empty
+                |EQUALS expression
             
 function_create: CREATE FUNCTION IDENTIFIER argument_list INDENT statement_list DEDENT
 

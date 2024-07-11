@@ -1,4 +1,4 @@
 create function asd with integer a, string b
-			3 + 3
+			create integer asd equals 3 + 3
 			1
 	

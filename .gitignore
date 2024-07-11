@@ -31,7 +31,8 @@
 *.out
 *.app
 
+lex.yy.cc
 parser.tab.cc
 parser.tab.hh
-lex.yy.cc
+
 .*
