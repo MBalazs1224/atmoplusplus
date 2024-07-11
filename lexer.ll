@@ -12,6 +12,15 @@
     #undef YY_DECL
     #define YY_DECL int AtmoLexer::yylex(test* yylval)
 
+    // The stack used to keep track of the identation levels
+    std::stack<int> ident_stack;
+
+    // The current identation level
+    int current_indent = 0;
+
+    // The stringstream to temporarily store the state of string literals
+    std::stringstream str_buffer;
+
 %}
 /*
 
@@ -23,7 +32,8 @@
 %option noyywrap c++
 %option yyclass="AtmoLexer"
 %option debug
-
+%x IDENTATION
+%x NORMAL
 %x STRING_LITERAL_TOKEN
 %x COMMENT_TOKEN
 %x CHAR_LITERAL_TOKEN
@@ -41,13 +51,61 @@ value_at (value[ ]at)|(VALUE[ ]AT)|@
 address_of (address[ ]of)|(ADDRESS[ ]OF)
 
 %%
-\t		{return yy::parser::token::TABULATOR;}
-\n		{ return yy::parser::token::NEW_LINE;}
-[ ]+ {/* skip whitespace */ }
+    // This code will be put into the top of yylex
+    // to checkif there are remeaning dedents
+    static int dedents_remaining = 0;
+    if(dedents_remaining > 0)
+    {
+        dedents_remaining--;
+        std::cout << "Identation level popped!" << std::endl;
+        return yy::parser::token::DEDENT; 
+    }
+
+    // Normal state is needed so the identation scanning can be started on the first line
 
 
-\" {;BEGIN STRING_LITERAL_TOKEN;}
-<STRING_LITERAL_TOKEN>\" {  BEGIN INITIAL; yylval->sval = str_buffer.str();
+<NORMAL>\n		{ BEGIN IDENTATION;}
+<NORMAL>[ ]+ {/* skip whitespace */ }
+
+<IDENTATION>\t {current_indent++; /*std::cout << "identation incremented: " << current_indent << std::endl;*/}
+<IDENTATION>\n { current_indent = 0;}
+<IDENTATION>. {
+    int previous_ident = ident_stack.empty() ? 0 : ident_stack.top();
+    //std::cout << "Previous ident: " << previous_ident << std::endl;
+    //std::cout << "Current ident: " << current_indent << std::endl;
+    if(current_indent > previous_ident)
+    {
+        ident_stack.push(current_indent);
+        std::cout << "New identation level pushed to stack: " << current_indent << std::endl;
+        BEGIN NORMAL;
+        current_indent = 0;
+        return yy::parser::token::INDENT;
+    }
+    else if(current_indent < previous_ident)
+    {
+        while(!ident_stack.empty() && current_indent < ident_stack.top())
+        {
+            ident_stack.pop();
+            dedents_remaining++;
+        }
+        return yy::parser::token::DEDENT;
+        BEGIN NORMAL;
+    }
+    else
+    {
+        BEGIN NORMAL;
+    }
+    current_indent = 0;
+}
+
+<NORMAL>"//" { BEGIN COMMENT_TOKEN;}
+<COMMENT_TOKEN>(\n) {BEGIN NORMAL;}
+<COMMENT_TOKEN>[^'"]"\\\\" {BEGIN NORMAL;}
+<COMMENT_TOKEN>[^\n] { /* Skip the chars */}
+
+
+<NORMAL>\" {;BEGIN STRING_LITERAL_TOKEN;}
+<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; yylval->sval = str_buffer.str();
 str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
@@ -62,30 +120,30 @@ return yy::parser::token::STRING_LITERAL;}
 
 
 
-' {BEGIN CHAR_LITERAL_TOKEN;}
+<NORMAL>' {BEGIN CHAR_LITERAL_TOKEN;}
 <CHAR_LITERAL_TOKEN>\t {std::cout << "Invalid tabulator inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\n {std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
-<CHAR_LITERAL_TOKEN>\\t' {yylval->cval = '\t';BEGIN INITIAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>\\n' {yylval->cval = '\n';BEGIN INITIAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>.' {yylval->cval = yytext[0];BEGIN INITIAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\t' {yylval->cval = '\t';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\n' {yylval->cval = '\n';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>.' {yylval->cval = yytext[0];BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
 <CHAR_LITERAL_TOKEN><<EOF>> {std::cout << "Unclosed character literal" << std::endl ; exit(1);}
 
 
 
-create|CREATE {return yy::parser::token::CREATE;}
-function|FUNCTION { return yy::parser::token::FUNCTION; }
-variable|VARIABLE  {return yy::parser::token::VARIABLE; }
-((integer)s*)|((INTEGER)S*) { return yy::parser::token::INT;}
-((string)s*)|((STRING)S*)  {return yy::parser::token::STRING;}
-((float)s*)|((FLOAT)S*)   {  return yy::parser::token::FLOAT;}
-if|ELSE		{ return yy::parser::token::IF;}
-else|ELSE 	{ return yy::parser::token::ELSE;}
-call|CALL { return yy::parser::token::CALL;}
-not|NOT	{ return yy::parser::token::NOT;}
-and|AND	{ return yy::parser::token::AND;}
-or|OR	{ return yy::parser::token::OR;}
-as|AS { return yy::parser::token::AS;}
+<NORMAL>create|CREATE {return yy::parser::token::CREATE;}
+<NORMAL>function|FUNCTION { return yy::parser::token::FUNCTION; }
+<NORMAL>variable|VARIABLE  {return yy::parser::token::VARIABLE; }
+<NORMAL>((integer)s*)|((INTEGER)S*) { return yy::parser::token::INT;}
+<NORMAL>((string)s*)|((STRING)S*)  {return yy::parser::token::STRING;}
+<NORMAL>((float)s*)|((FLOAT)S*)   {  return yy::parser::token::FLOAT;}
+<NORMAL>if|ELSE		{ return yy::parser::token::IF;}
+<NORMAL>else|ELSE 	{ return yy::parser::token::ELSE;}
+<NORMAL>call|CALL { return yy::parser::token::CALL;}
+<NORMAL>not|NOT	{ return yy::parser::token::NOT;}
+<NORMAL>and|AND	{ return yy::parser::token::AND;}
+<NORMAL>or|OR	{ return yy::parser::token::OR;}
+<NORMAL>as|AS { return yy::parser::token::AS;}
 
 
 ","		{ return yy::parser::token::COMMA;}
@@ -95,48 +153,48 @@ as|AS { return yy::parser::token::AS;}
 "]"		{ return yy::parser::token::CLOSE_SQUARE_BRACKET;}
 
 
-{less_than}		{ return yy::parser::token::LESS_THAN;}
-{greater_than}		{ return yy::parser::token::GREATER_THAN;}
-{plus}		{return yy::parser::token::PLUS;}
-{minus}  {return yy::parser::token::MINUS;}
-{equals} 	{return yy::parser::token::EQUALS;}
-{times} 	{ return yy::parser::token::MULTIPLY;}
-{divide} 	{ return yy::parser::token::DIVIDE;}
-{value_at} {return yy::parser::token::VALUE_AT;}
+<NORMAL>{less_than}		{ return yy::parser::token::LESS_THAN;}
+<NORMAL>{greater_than}		{ return yy::parser::token::GREATER_THAN;}
+<NORMAL>{plus}		{return yy::parser::token::PLUS;}
+<NORMAL>{minus}  {return yy::parser::token::MINUS;}
+<NORMAL>{equals} 	{return yy::parser::token::EQUALS;}
+<NORMAL>{times} 	{ return yy::parser::token::MULTIPLY;}
+<NORMAL>{divide} 	{ return yy::parser::token::DIVIDE;}
+<NORMAL>{value_at} {return yy::parser::token::VALUE_AT;}
+
+<NORMAL>{address_of} {return yy::parser::token::ADDRESS_OF;}
+<NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
+<NORMAL>with|WITH	{return yy::parser::token::WITH;}
+<NORMAL>params|PARAMS	{  return yy::parser::token::PARAMS;}
+<NORMAL>matches|MATCHES		{ return yy::parser::token::MATCHES;}
+<NORMAL>until|UNTIL {return yy::parser::token::UNTIL;}
+<NORMAL>(char)s*|(CHAR)S* { return yy::parser::token::CHAR;}
+<NORMAL>class|CLASS {return yy::parser::token::CLASS;}
+<NORMAL>public|PUBLIC {return yy::parser::token::PUBLIC;}
+<NORMAL>private|PRIVATE {return yy::parser::token::PRIVATE;}
+<NORMAL>pointer|POINTER { return yy::parser::token::POINTER;}
+<NORMAL>inside|INSIDE {return yy::parser::token::INSIDE;}
+<NORMAL>true|TRUE {return yy::parser::token::TRUE;}
+<NORMAL>false|FALSE {return yy::parser::token::FALSE;}
+<NORMAL>(boolean)s*|(BOOLEAN)S* { return yy::parser::token::BOOLEAN;}
+<NORMAL>{array_of} {return yy::parser::token::ARRAY_OF;}
 
 
-{address_of} {return yy::parser::token::ADDRESS_OF;}
-return|RETURN	{return yy::parser::token::RETURN;}
-with|WITH	{return yy::parser::token::WITH;}
-params|PARAMS	{  return yy::parser::token::PARAMS;}
-matches|MATCHES		{ return yy::parser::token::MATCHES;}
-until|UNTIL {return yy::parser::token::UNTIL;}
-(char)s*|(CHAR)S* { return yy::parser::token::CHAR;}
-class|CLASS {return yy::parser::token::CLASS;}
-public|PUBLIC {return yy::parser::token::PUBLIC;}
-private|PRIVATE {return yy::parser::token::PRIVATE;}
-pointer|POINTER { return yy::parser::token::POINTER;}
-inside|INSIDE {return yy::parser::token::INSIDE;}
-true|TRUE {return yy::parser::token::TRUE;}
-false|FALSE {return yy::parser::token::FALSE;}
-(boolean)s*|(BOOLEAN)S* { return yy::parser::token::BOOLEAN;}
-{array_of} {return yy::parser::token::ARRAY_OF;}
-
-
-{letter}({letter}|{digit})* {yylval->sval = std::string(YYText());
+<NORMAL>{letter}({letter}|{digit})* {yylval->sval = std::string(YYText());
 return yy::parser::token::IDENTIFIER;}
 
-{digit}+	 { yylval->ival = atoi(YYText()); return yy::parser::token::NUMBER;}
+<NORMAL>{digit}+	 { yylval->ival = atoi(YYText()); return yy::parser::token::NUMBER;}
 
-\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{
+<NORMAL>\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{
     yylval->dval = atof(YYText());				
     return yy::parser::token::NUMBER_FLOAT;
 }
 
-{digit}+{letter}+  { std::cerr << "Invalid token: " << YYText();exit(1) ;}
+<NORMAL>{digit}+{letter}+  { std::cerr << "Invalid token: " << YYText();exit(1) ;}
 
 
-. {std::cerr << "Invalid token: " << YYText();exit(1);}
+<NORMAL>. {std::cerr << "Invalid token: " << YYText();exit(1);}
 
+. {BEGIN IDENTATION;}
 %%
 

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <sstream>
+#include <stack>
 /*
 
 #if ! defined(yyFlexLexerOnce) & #endif - We use the Flex mechanism of ensuring that the header <lexLexer.h> is added only once. (This is a little non-standard solution but allows us to include it multiple times if there is a need for that.)
@@ -25,8 +26,9 @@ class test
 
 class AtmoLexer : public yyFlexLexer
 {
-    // The stringstream to temporarily store the state of string literals
-    std::stringstream str_buffer;
+    
+    
+
     public:
     // Flex will provide the definition of this function, we just need to declare it
     int yylex(test* yylval);

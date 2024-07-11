@@ -14,4 +14,6 @@ int main(int argc, char** argv)
     }
     yy::parser parser(lexer);
     return parser();
+
+    return 0;
 }

@@ -1,23 +1,23 @@
-objects:= ./build/main.o ./build/lex.yy.o ./build/parser.tab.o
+objects:= ./build/main.o ./build/parser.tab.o ./build/lex.yy.o 
 
-
+CXXFLAGS = -g
 
 
 main.exe: $(objects)
-	g++ $^ -o $@
+	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
-	g++ -c $< -o $@
+	g++ $(CXXFLAGS) -c $< -o $@
 	
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
-	g++ -c $< -o $@
+	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/parser.tab.o: parser.tab.cc AtmoLexer.hh
 ifdef DEBUG
-	g++ -DYYDEBUG=1 -c $< -o $@
+	g++ $(CXXFLAGS) -DYYDEBUG=1 -c $< -o $@
 endif
 ifndef DEBUG
-	g++ -c $< -o $@
+	g++ $(CXXFLAGS) -c $< -o $@
 endif
 
 lex.yy.cc: lexer.ll
@@ -52,5 +52,4 @@ clean:
 	del /Q parser.tab.cc
 	del /Q parser.tab.hh
 	del /Q main.exe
-	
 # https://makefiletutorial.com00

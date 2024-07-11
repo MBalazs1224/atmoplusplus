@@ -83,6 +83,10 @@
 %token FALSE
 %token BOOLEAN
 %token AS
+%token INDENT
+%token DEDENT
+
+
 %define parse.trace
 %left MINUS PLUS
 %left MULTIPLY DIVIDE
@@ -91,9 +95,12 @@
 
 statement_list: statement
                 | statement_list statement
+                
 
 
 statement: expression {std::cout << "expression was found" << std::endl;}
+            | INDENT
+            | DEDENT
 
 expression:  expression PLUS expression
             | expression MINUS expression
