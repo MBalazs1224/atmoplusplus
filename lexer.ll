@@ -69,7 +69,7 @@ address_of (address[ ]of)|(ADDRESS[ ]OF)
 
 <IDENTATION>\t {current_indent++; /*std::cout << "identation incremented: " << current_indent << std::endl;*/}
 <IDENTATION>\n { current_indent = 0;}
-<IDENTATION>. {
+<IDENTATION>[^\t\n] {
     int previous_ident = ident_stack.empty() ? 0 : ident_stack.top();
     //std::cout << "Previous ident: " << previous_ident << std::endl;
     //std::cout << "Current ident: " << current_indent << std::endl;
@@ -79,6 +79,7 @@ address_of (address[ ]of)|(ADDRESS[ ]OF)
         std::cout << "New identation level pushed to stack: " << current_indent << std::endl;
         BEGIN NORMAL;
         current_indent = 0;
+        yyless(0);
         return yy::parser::token::INDENT;
     }
     else if(current_indent < previous_ident)
@@ -88,14 +89,52 @@ address_of (address[ ]of)|(ADDRESS[ ]OF)
             ident_stack.pop();
             dedents_remaining++;
         }
-        return yy::parser::token::DEDENT;
+        yyless(0);
         BEGIN NORMAL;
+        return yy::parser::token::DEDENT;
+        
     }
     else
     {
+        yyless(0);
         BEGIN NORMAL;
     }
+    yyless(0);
     current_indent = 0;
+}
+<IDENTATION><<EOF>> {
+    if(dedents_remaining > 0)
+    {
+        dedents_remaining--;
+        std::cout << "Identation level popped!" << std::endl;
+        return yy::parser::token::DEDENT; 
+    }
+    else if(!ident_stack.empty())
+    {
+        ident_stack.pop();
+        return yy::parser::token::DEDENT;
+    }
+    else
+    {
+        yyterminate();
+    }
+    }
+<NORMAL><<EOF>> {
+    if(dedents_remaining > 0)
+    {
+        dedents_remaining--;
+        std::cout << "Identation level popped!" << std::endl;
+        return yy::parser::token::DEDENT; 
+    }
+    else if(!ident_stack.empty())
+    {
+        ident_stack.pop();
+        return yy::parser::token::DEDENT;
+    }
+    else
+    {
+        yyterminate();
+    }
 }
 
 <NORMAL>"//" { BEGIN COMMENT_TOKEN;}
@@ -146,11 +185,11 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>as|AS { return yy::parser::token::AS;}
 
 
-","		{ return yy::parser::token::COMMA;}
-"("		{ return yy::parser::token::OPEN_BRACKET;}
-")"		{ return yy::parser::token::CLOSE_BRACKET;}
-"["		{ return yy::parser::token::OPEN_SQUARE_BRACKET;}
-"]"		{ return yy::parser::token::CLOSE_SQUARE_BRACKET;}
+<NORMAL>","		{ return yy::parser::token::COMMA;}
+<NORMAL>"("		{ return yy::parser::token::OPEN_BRACKET;}
+<NORMAL>")"		{ return yy::parser::token::CLOSE_BRACKET;}
+<NORMAL>"["		{ return yy::parser::token::OPEN_SQUARE_BRACKET;}
+<NORMAL>"]"		{ return yy::parser::token::CLOSE_SQUARE_BRACKET;}
 
 
 <NORMAL>{less_than}		{ return yy::parser::token::LESS_THAN;}
@@ -195,6 +234,7 @@ return yy::parser::token::IDENTIFIER;}
 
 <NORMAL>. {std::cerr << "Invalid token: " << YYText();exit(1);}
 
-. {BEGIN IDENTATION;}
+. { yyless(0);BEGIN IDENTATION;}
+\n { yyless(0);BEGIN IDENTATION;}
 %%
 

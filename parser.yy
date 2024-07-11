@@ -13,14 +13,9 @@
 
 %require "3.2"
 %language "c++"
-
 %code requires {
     #include <string>
     #include "AtmoLexer.hh"
-    #define YYDEBUG 1
-    extern int yydebug;
-
-
 }
 %define api.value.type {test}
 
@@ -31,6 +26,7 @@
 %code {
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
+    #define YYDEBUG 1
     
 }
 
@@ -86,21 +82,39 @@
 %token INDENT
 %token DEDENT
 
-
-%define parse.trace
 %left MINUS PLUS
 %left MULTIPLY DIVIDE
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 %%
 
+program: %empty
+        | statement_list
+        | program INDENT
+        | program DEDENT
+
 statement_list: statement
                 | statement_list statement
-                
+                 
 
 
 statement: expression {std::cout << "expression was found" << std::endl;}
-            | INDENT
-            | DEDENT
+        | function_create
+       
+
+            
+function_create: CREATE FUNCTION IDENTIFIER argument_list INDENT statement_list DEDENT
+
+argument_list: %empty
+            | WITH argument
+            | argument_list COMMA argument
+
+argument: DATATYPE IDENTIFIER
+
+
+DATATYPE: INT
+          | BOOLEAN
+          | STRING
+          | FLOAT 
 
 expression:  expression PLUS expression
             | expression MINUS expression
@@ -113,6 +127,7 @@ expression:  expression PLUS expression
             | STRING_LITERAL
             | TRUE
             | FALSE
+            
 %%
 
 void yy::parser::error(const std::string &message)

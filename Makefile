@@ -30,10 +30,10 @@ endif
 	
 	
 parser.tab.cc: parser.yy
-	win_bison $(DEBUG) $<
+	win_bison -d $(DEBUG) $<
 
 parser.tab.hh: parser.yy
-	win_bison -t $(DEBUG) $<
+	win_bison -d -t $(DEBUG) $<
 
 debug:
 	make clean

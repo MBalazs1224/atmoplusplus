@@ -8,12 +8,13 @@ int main(int argc, char** argv)
     AtmoLexer lexer;
     std::ifstream input("test.txt");
     lexer.switch_streams(&input);
+    yy::parser parser(lexer);
     if (argc > 1)
     {
-         lexer.set_debug(1);
+         //lexer.set_debug(1);
+         parser.set_debug_level(1);
     }
-    yy::parser parser(lexer);
+    
+    
     return parser();
-
-    return 0;
 }
