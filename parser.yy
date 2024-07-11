@@ -100,7 +100,10 @@ statement_list: statement
 statement: expression {std::cout << "expression was found" << std::endl;}
         | function_create
         | variable_definition 
-       
+        | variable_assignment
+
+variable_assignment: IDENTIFIER EQUALS expression
+
 variable_definition:CREATE DATATYPE IDENTIFIER equals_holder
 
 equals_holder: %empty

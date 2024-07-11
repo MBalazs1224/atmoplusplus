@@ -1,4 +1,5 @@
 create function asd with integer a, string b
 			create integer asd equals 3 + 3
+			asd equals 5
 			1
 	
