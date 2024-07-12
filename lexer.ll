@@ -52,6 +52,8 @@ array_of array[ ]of|ARRAY[ ]OF
 value_at (value[ ]at)|(VALUE[ ]AT)|@
 address_of (address[ ]of)|(ADDRESS[ ]OF)
 pointer_of (pointer[ ]of)|(POINTER[ ]OF)
+do (do)|DO
+not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 
 %%
     // This code will be put into the top of yylex
@@ -206,7 +208,8 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>{value_at} {return yy::parser::token::VALUE_AT;}
 <NORMAL>{address_of} {return yy::parser::token::ADDRESS_OF;}
 <NORMAL>{pointer_of} { return yy::parser::token::POINTER_OF;}
-
+<NORMAL>{do} {return yy::parser::token::DO;}
+<NORMAL>{not_matches} {return yy::parser::token::NOT_MATCHES;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}

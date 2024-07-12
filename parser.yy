@@ -48,7 +48,6 @@
 %token DIVIDE
 %token MULTIPLY
 %token EQUALS
-%token NOT
 %token AND
 %token OR
 %token RETURN
@@ -58,6 +57,7 @@
 %token IDENTIFIER
 %token FLOAT
 %token MATCHES
+%token NOT_MATCHES
 %token UNTIL
 %token CHAR_LITERAL
 %token CHAR
@@ -81,9 +81,10 @@
 %token AS
 %token INDENT
 %token DEDENT
+%token DO
 
 %left MINUS PLUS
-%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT
+%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT_MATCHES NOT
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 %%
 
@@ -99,6 +100,7 @@ statement: expression
         | variable_assignment
         | if_statement
         | until_statement
+        | do_until_statement
 
 variable_assignment: IDENTIFIER EQUALS expression
 
@@ -114,7 +116,7 @@ equals_holder: %empty
 
 body: INDENT statement_list DEDENT
 
-
+do_until_statement: DO body UNTIL expression
 until_statement: UNTIL expression body
 
 if_statement: IF expression body else_statement
@@ -146,6 +148,7 @@ expression:  expression PLUS expression
             | expression GREATER_THAN expression
             | expression LESS_THAN expression
             | expression MATCHES expression
+            | expression NOT_MATCHES expression
             | NOT expression
             | IDENTIFIER
             | NUMBER

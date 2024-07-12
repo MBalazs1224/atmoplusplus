@@ -6,3 +6,6 @@ create function asd with integer b
 		create integer i
 	until i less than 3
 		create float loop
+	do
+		create string z equals "harom"
+	until z not matches 10
