@@ -151,6 +151,7 @@ expression:  expression PLUS expression
             | expression NOT_MATCHES expression
             | NOT expression
             | IDENTIFIER
+            | ADDRESS_OF IDENTIFIER
             | NUMBER
             | NUMBER_FLOAT
             | CHAR_LITERAL

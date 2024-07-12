@@ -65,6 +65,8 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         std::cout << "Identation level popped! Remaning dedents: " << dedents_remeaning << std::endl;
         return yy::parser::token::DEDENT; 
     }
+    // TODO: This probably could be improved so we don't have to to it after every token
+    current_indent = 0;
 
     // Normal state is needed so the identation scanning can be started on the first line
 
@@ -97,6 +99,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         yyless(0);
         BEGIN NORMAL;
         dedents_remeaning--;
+        std::cout << "Identation popped: Remeaning dedents: " << dedents_remeaning << std::endl;
         return yy::parser::token::DEDENT;
         
     }

@@ -9,3 +9,4 @@ create function asd with integer b
 	do
 		create string z equals "harom"
 	until z not matches 10
+	create pointer of integer p equals address of i
