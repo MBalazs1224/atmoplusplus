@@ -101,6 +101,7 @@ statement: expression
         | if_statement
         | until_statement
         | do_until_statement
+        | function_call
 
 variable_assignment: IDENTIFIER EQUALS expression
 
@@ -124,7 +125,13 @@ if_statement: IF expression body else_statement
 else_statement: %empty
                 | ELSE body
 
-            
+
+function_call: CALL IDENTIFIER function_call_arguments
+
+function_call_arguments: %empty
+                        | WITH expression
+                        | function_call_arguments COMMA expression
+
 function_create: CREATE FUNCTION IDENTIFIER argument_list body
 
 argument_list: %empty

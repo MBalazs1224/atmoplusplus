@@ -57,15 +57,16 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 
 %%
     // This code will be put into the top of yylex
-    // to checkif there are remeaning dedents
-    static int dedents_remeaning = 0;
-    if(dedents_remeaning > 0)
+    // to check if there are remeaning dedents
+    static int dedents_remaining = 0;
+    if(dedents_remaining > 0)
     {
-        dedents_remeaning--;
-        std::cout << "Identation level popped! Remaning dedents: " << dedents_remeaning << std::endl;
+        dedents_remaining--;
+        std::cout << "Identation level popped! Remaning dedents: " << dedents_remaining << std::endl;
         return yy::parser::token::DEDENT; 
     }
-    // TODO: This probably could be improved so we don't have to to it after every token
+
+    // FIXME: This probably could be improved so we don't have to reset the current identation level after every token
     current_indent = 0;
 
     // Normal state is needed so the identation scanning can be started on the first line
@@ -94,12 +95,12 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         while(!ident_stack.empty() && current_indent < ident_stack.top())
         {
             ident_stack.pop();
-            dedents_remeaning++;
+            dedents_remaining++;
         }
         yyless(0);
         BEGIN NORMAL;
-        dedents_remeaning--;
-        std::cout << "Identation popped: Remeaning dedents: " << dedents_remeaning << std::endl;
+        dedents_remaining--;
+        std::cout << "Identation popped: Remeaning dedents: " << dedents_remaining << std::endl;
         return yy::parser::token::DEDENT;
         
     }
@@ -112,9 +113,9 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     current_indent = 0;
 }
 <IDENTATION><<EOF>> {
-    if(dedents_remeaning > 0)
+    if(dedents_remaining > 0)
     {
-        dedents_remeaning--;
+        dedents_remaining--;
         std::cout << "Identation level popped!" << std::endl;
         return yy::parser::token::DEDENT; 
     }
@@ -129,9 +130,9 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     }
     }
 <NORMAL><<EOF>> {
-    if(dedents_remeaning > 0)
+    if(dedents_remaining > 0)
     {
-        dedents_remeaning--;
+        dedents_remaining--;
         std::cout << "Identation level popped!" << std::endl;
         return yy::parser::token::DEDENT; 
     }
@@ -174,6 +175,7 @@ return yy::parser::token::STRING_LITERAL;}
 <CHAR_LITERAL_TOKEN>\\t' {yylval->cval = '\t';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>\\n' {yylval->cval = '\n';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' {yylval->cval = yytext[0];BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+//BUG: 'c' throws too many characters error
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
 <CHAR_LITERAL_TOKEN><<EOF>> {std::cout << "Unclosed character literal" << std::endl ; exit(1);}
 

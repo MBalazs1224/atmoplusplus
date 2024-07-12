@@ -1,6 +1,8 @@
 if 5 greater than 4
 	create string a
 
+call asd with 4, "asd", lofasz
+
 create function asd with integer b
 	if 3 matches 3
 		create integer i
