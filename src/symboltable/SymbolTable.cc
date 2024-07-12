@@ -2,6 +2,7 @@
 
 #include "symboltable.hh"
 #include <iostream>
+#include <cassert>
 
 // Initialize the private members inside the class
 std::unordered_map<std::string, std::shared_ptr<SymbolTableElement>> SymbolTable::map;
@@ -9,11 +10,16 @@ int SymbolTable::current_scope = 0;
 
 void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> element)
 {
+    assert(!id.empty());
+    assert(element != nullptr);
+
     map.insert(std::make_pair(id,element));
 }
 
 std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(std::string id)
 {
+    assert(!id.empty());
+    
     auto iterator = map.find(id);
     if (iterator != map.end())
     {
@@ -39,4 +45,11 @@ void SymbolTable::Dump()
         std::cout << "------------------" << std::endl;
     }
     
+}
+
+void SymbolTable::Insert(std::string id)
+{
+    assert(!id.empty());
+
+    map.insert(std::make_pair(id,nullptr));
 }

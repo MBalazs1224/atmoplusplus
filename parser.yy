@@ -98,12 +98,15 @@ statement: expression
         | variable_definition 
         | variable_assignment
         | if_statement
+        | until_statement
 
 variable_assignment: IDENTIFIER EQUALS expression
 
-variable_definition:CREATE variable_types IDENTIFIER equals_holder
+variable_definition:CREATE variable_type IDENTIFIER equals_holder
 
-variable_types: DATATYPE
+
+
+variable_type: DATATYPE
                 | ARRAY_OF DATATYPE
                 | POINTER_OF DATATYPE
 equals_holder: %empty
@@ -111,6 +114,8 @@ equals_holder: %empty
 
 body: INDENT statement_list DEDENT
 
+
+until_statement: UNTIL expression body
 
 if_statement: IF expression body else_statement
 
