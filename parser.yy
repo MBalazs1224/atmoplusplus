@@ -72,7 +72,7 @@
 %token CLOSE_BRACKET
 %token OPEN_SQUARE_BRACKET
 %token CLOSE_SQUARE_BRACKET
-%token POINTER
+%token POINTER_OF
 %token VALUE_AT
 %token ADDRESS_OF
 %token TRUE
@@ -83,33 +83,42 @@
 %token DEDENT
 
 %left MINUS PLUS
-%left MULTIPLY DIVIDE
+%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 %%
 
-program: %empty
-        | statement_list
-        | program INDENT
-        | program DEDENT
 
 statement_list: statement
                 | statement_list statement
                  
 
 
-statement: expression {std::cout << "expression was found" << std::endl;}
+statement: expression
         | function_create
         | variable_definition 
         | variable_assignment
+        | if_statement
 
 variable_assignment: IDENTIFIER EQUALS expression
 
-variable_definition:CREATE DATATYPE IDENTIFIER equals_holder
+variable_definition:CREATE variable_types IDENTIFIER equals_holder
 
+variable_types: DATATYPE
+                | ARRAY_OF DATATYPE
+                | POINTER_OF DATATYPE
 equals_holder: %empty
                 |EQUALS expression
+
+body: INDENT statement_list DEDENT
+
+
+if_statement: IF expression body else_statement
+
+else_statement: %empty
+                | ELSE body
+
             
-function_create: CREATE FUNCTION IDENTIFIER argument_list INDENT statement_list DEDENT
+function_create: CREATE FUNCTION IDENTIFIER argument_list body
 
 argument_list: %empty
             | WITH argument
@@ -127,6 +136,12 @@ expression:  expression PLUS expression
             | expression MINUS expression
             | expression MULTIPLY expression
             | expression DIVIDE expression
+            | expression AND expression
+            | expression OR expression
+            | expression GREATER_THAN expression
+            | expression LESS_THAN expression
+            | expression MATCHES expression
+            | NOT expression
             | IDENTIFIER
             | NUMBER
             | NUMBER_FLOAT

@@ -1,4 +1,4 @@
-objects:= ./build/main.o ./build/parser.tab.o ./build/lex.yy.o 
+objects:= ./build/main.o ./build/parser.tab.o ./build/lex.yy.o ./build/symboltable.o
 
 CXXFLAGS = -g
 
@@ -10,6 +10,9 @@ main.exe: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 	
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/symboltable.o: ./src/symboltable/SymbolTable.cc ./src/symboltable/SymbolTable.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/parser.tab.o: parser.tab.cc AtmoLexer.hh

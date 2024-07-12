@@ -1,7 +1,9 @@
 %{
     #include "AtmoLexer.hh"
     #include "parser.tab.hh"
-
+    #include "src/symboltable/SymbolTable.hh"
+    #include "src/symboltable/Symbols.hh"
+    #include <memory>
     /*
 
     #undef  YY_DECL - C++ Flex still makes heavy use of macros. YY_DECL stores the declaration of function yylval that it will generate. We remove the default value, which is int FooLexer::yylex().
@@ -39,25 +41,26 @@
 %x CHAR_LITERAL_TOKEN
 letter [A-Za-z_]
 digit [0-9]
-less_than less[ ]than|<
-greater_than greater[ ]than|>
-equals equals|=
-plus plus|\+
-minus minus|\-
-times times|\*
-divide divide(d)*[ ]by|\/
+less_than (less[ ]than)|(LESS[ ]THAN)<
+greater_than greater[ ]than|(GREATER[ ]THAN)|>
+equals equals|EQUALS|=
+plus plus|PLUS|\+
+minus minus|MINUS|\-
+times times|TIMES|\*
+divide divide(d)*[ ]by|(DIVIDE(D)*[ ]BY)|\/
 array_of array[ ]of|ARRAY[ ]OF
 value_at (value[ ]at)|(VALUE[ ]AT)|@
 address_of (address[ ]of)|(ADDRESS[ ]OF)
+pointer_of (pointer[ ]of)|(POINTER[ ]OF)
 
 %%
     // This code will be put into the top of yylex
     // to checkif there are remeaning dedents
-    static int dedents_remaining = 0;
-    if(dedents_remaining > 0)
+    static int dedents_remeaning = 0;
+    if(dedents_remeaning > 0)
     {
-        dedents_remaining--;
-        std::cout << "Identation level popped!" << std::endl;
+        dedents_remeaning--;
+        std::cout << "Identation level popped! Remaning dedents: " << dedents_remeaning << std::endl;
         return yy::parser::token::DEDENT; 
     }
 
@@ -87,10 +90,11 @@ address_of (address[ ]of)|(ADDRESS[ ]OF)
         while(!ident_stack.empty() && current_indent < ident_stack.top())
         {
             ident_stack.pop();
-            dedents_remaining++;
+            dedents_remeaning++;
         }
         yyless(0);
         BEGIN NORMAL;
+        dedents_remeaning--;
         return yy::parser::token::DEDENT;
         
     }
@@ -103,9 +107,9 @@ address_of (address[ ]of)|(ADDRESS[ ]OF)
     current_indent = 0;
 }
 <IDENTATION><<EOF>> {
-    if(dedents_remaining > 0)
+    if(dedents_remeaning > 0)
     {
-        dedents_remaining--;
+        dedents_remeaning--;
         std::cout << "Identation level popped!" << std::endl;
         return yy::parser::token::DEDENT; 
     }
@@ -120,9 +124,9 @@ address_of (address[ ]of)|(ADDRESS[ ]OF)
     }
     }
 <NORMAL><<EOF>> {
-    if(dedents_remaining > 0)
+    if(dedents_remeaning > 0)
     {
-        dedents_remaining--;
+        dedents_remeaning--;
         std::cout << "Identation level popped!" << std::endl;
         return yy::parser::token::DEDENT; 
     }
@@ -200,8 +204,10 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>{times} 	{ return yy::parser::token::MULTIPLY;}
 <NORMAL>{divide} 	{ return yy::parser::token::DIVIDE;}
 <NORMAL>{value_at} {return yy::parser::token::VALUE_AT;}
-
 <NORMAL>{address_of} {return yy::parser::token::ADDRESS_OF;}
+<NORMAL>{pointer_of} { return yy::parser::token::POINTER_OF;}
+
+
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}
 <NORMAL>params|PARAMS	{  return yy::parser::token::PARAMS;}
@@ -211,7 +217,6 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>class|CLASS {return yy::parser::token::CLASS;}
 <NORMAL>public|PUBLIC {return yy::parser::token::PUBLIC;}
 <NORMAL>private|PRIVATE {return yy::parser::token::PRIVATE;}
-<NORMAL>pointer|POINTER { return yy::parser::token::POINTER;}
 <NORMAL>inside|INSIDE {return yy::parser::token::INSIDE;}
 <NORMAL>true|TRUE {return yy::parser::token::TRUE;}
 <NORMAL>false|FALSE {return yy::parser::token::FALSE;}
@@ -219,8 +224,12 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>{array_of} {return yy::parser::token::ARRAY_OF;}
 
 
-<NORMAL>{letter}({letter}|{digit})* {yylval->sval = std::string(YYText());
-return yy::parser::token::IDENTIFIER;}
+<NORMAL>{letter}({letter}|{digit})* {
+    yylval->sval = std::string(YYText());
+    std::shared_ptr<VariableSymbol> ptr(new VariableSymbol(0,YYLeng(),0));
+    SymbolTable::Insert(YYText(), ptr);
+    return yy::parser::token::IDENTIFIER;
+}
 
 <NORMAL>{digit}+	 { yylval->ival = atoi(YYText()); return yy::parser::token::NUMBER;}
 

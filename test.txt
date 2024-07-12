@@ -1,5 +1,6 @@
-create function asd with integer a, string b
-			create integer asd equals 3 + 3
-			asd equals 5
-			1
-	
+if 5 greater than 4
+	create string a
+
+create function asd with integer b
+	if 3 matches 3
+		create integer i
