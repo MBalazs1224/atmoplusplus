@@ -41,6 +41,8 @@
 %token COMMA
 %token LESS_THAN
 %token GREATER_THAN
+%token LESS_THAN_OR_EQUAL
+%token GREATER_THAN_OR_EQUAL
 %token TABULATOR
 %token NEW_LINE
 %token PLUS
@@ -83,8 +85,20 @@
 %token DEDENT
 %token DO
 
-%left MINUS PLUS
-%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT_MATCHES NOT
+ //%left MINUS PLUS
+ //%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT_MATCHES NOT
+
+%left OPEN_BRACKET CLOSE_BRACKET
+%right NOT ADDRESS_OF
+%left MULTIPLY DIVIDE
+%left PLUS MINUS
+%left GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL
+%left MATCHES NOT_MATCHES
+%left OR
+%left AND
+%right EQUALS
+%left COMMA
+
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 %%
 
@@ -153,18 +167,25 @@ expression:  expression PLUS expression
             | expression OR expression
             | expression GREATER_THAN expression
             | expression LESS_THAN expression
+            | expression GREATER_THAN_OR_EQUAL expression
+            | expression LESS_THAN_OR_EQUAL expression
             | expression MATCHES expression
             | expression NOT_MATCHES expression
             | OPEN_BRACKET expression CLOSE_BRACKET
             | NOT expression
+            | dereference
             | IDENTIFIER
             | ADDRESS_OF IDENTIFIER
+            | VALUE_AT 
             | NUMBER
             | NUMBER_FLOAT
             | CHAR_LITERAL
             | STRING_LITERAL
             | TRUE
             | FALSE
+            | function_call
+dereference: VALUE_AT IDENTIFIER
+
 %%
 
 void yy::parser::error(const std::string &message)

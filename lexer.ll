@@ -42,7 +42,9 @@
 letter [A-Za-z_]
 digit [0-9]
 less_than (less[ ]than)|(LESS[ ]THAN)<
+less_than_or_equal (less[ ]than[ ]or[ ]equal)|(LESS[ ]THAN[ ]OR[ ]EQUAL)<=
 greater_than greater[ ]than|(GREATER[ ]THAN)|>
+greater_than_or_equal greater[ ]than[ ]or[ ]equal|(GREATER[ ]THAN[ ]OR[ ]EQUAL)|>=
 equals equals|EQUALS|=
 plus plus|PLUS|\+
 minus minus|MINUS|\-
@@ -204,7 +206,9 @@ return yy::parser::token::STRING_LITERAL;}
 
 
 <NORMAL>{less_than}		{ return yy::parser::token::LESS_THAN;}
+<NORMAL>{less_than_or_equal}		{ return yy::parser::token::LESS_THAN_OR_EQUAL;}
 <NORMAL>{greater_than}		{ return yy::parser::token::GREATER_THAN;}
+<NORMAL>{greater_than_or_equal}		{ return yy::parser::token::GREATER_THAN_OR_EQUAL;}
 <NORMAL>{plus}		{return yy::parser::token::PLUS;}
 <NORMAL>{minus}  {return yy::parser::token::MINUS;}
 <NORMAL>{equals} 	{return yy::parser::token::EQUALS;}
