@@ -101,7 +101,6 @@ statement: expression
         | if_statement
         | until_statement
         | do_until_statement
-        | function_call
 
 variable_assignment: IDENTIFIER EQUALS expression
 
@@ -156,6 +155,7 @@ expression:  expression PLUS expression
             | expression LESS_THAN expression
             | expression MATCHES expression
             | expression NOT_MATCHES expression
+            | OPEN_BRACKET expression CLOSE_BRACKET
             | NOT expression
             | IDENTIFIER
             | ADDRESS_OF IDENTIFIER
@@ -165,7 +165,6 @@ expression:  expression PLUS expression
             | STRING_LITERAL
             | TRUE
             | FALSE
-            
 %%
 
 void yy::parser::error(const std::string &message)

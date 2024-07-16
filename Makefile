@@ -1,6 +1,6 @@
 objects:= ./build/main.o ./build/parser.tab.o ./build/lex.yy.o ./build/symboltable.o
 
-CXXFLAGS = -g
+CXXFLAGS = -g -Wpedantic -Wextra -Wall
 
 
 main.exe: $(objects)
