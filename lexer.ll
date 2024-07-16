@@ -175,7 +175,7 @@ return yy::parser::token::STRING_LITERAL;}
 <CHAR_LITERAL_TOKEN>\\t' {yylval->cval = '\t';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>\\n' {yylval->cval = '\n';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' {yylval->cval = yytext[0];BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-//BUG: 'c' throws too many characters error
+    /*BUG: 'c' gets recongized as invalid character literal*/
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
 <CHAR_LITERAL_TOKEN><<EOF>> {std::cout << "Unclosed character literal" << std::endl ; exit(1);}
 
@@ -187,7 +187,7 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>((integer)s*)|((INTEGER)S*) { return yy::parser::token::INT;}
 <NORMAL>((string)s*)|((STRING)S*)  {return yy::parser::token::STRING;}
 <NORMAL>((float)s*)|((FLOAT)S*)   {  return yy::parser::token::FLOAT;}
-<NORMAL>if|ELSE		{ return yy::parser::token::IF;}
+<NORMAL>if|IF		{ return yy::parser::token::IF;}
 <NORMAL>else|ELSE 	{ return yy::parser::token::ELSE;}
 <NORMAL>call|CALL { return yy::parser::token::CALL;}
 <NORMAL>not|NOT	{ return yy::parser::token::NOT;}
@@ -234,7 +234,7 @@ return yy::parser::token::STRING_LITERAL;}
 
 <NORMAL>{letter}({letter}|{digit})* {
     yylval->sval = std::string(YYText());
-    std::shared_ptr<VariableSymbol> ptr(new VariableSymbol(0,YYLeng(),0));
+    std::shared_ptr<VariableSymbol> ptr(new VariableSymbol(0,YYLeng()));
     SymbolTable::Insert(YYText(), ptr);
     return yy::parser::token::IDENTIFIER;
 }

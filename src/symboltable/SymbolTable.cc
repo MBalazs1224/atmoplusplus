@@ -12,7 +12,8 @@ void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> ele
 {
     assert(!id.empty());
     assert(element != nullptr);
-
+    
+    element->AddScope(current_scope);
     map.insert(std::make_pair(id,element));
 }
 

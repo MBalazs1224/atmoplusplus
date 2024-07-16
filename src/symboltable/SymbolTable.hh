@@ -13,7 +13,7 @@ class SymbolTable
         SymbolTable(){};
 
     public:
-        // Will insert the SymbolTableElement into the hashmap.
+        // Will insert the SymbolTableElement into the hashmap and add te current scope.
         static void Insert(std::string,std::shared_ptr<SymbolTableElement>);
         // Will isnert a dummy element into the hasmap (for when the lexer doesn't know if the symbol is a function or a variable)
         static void Insert(std::string);

@@ -3,7 +3,7 @@
 class VariableSymbol : public SymbolTableElement
 {
     public:
-    VariableSymbol(int lineno, int length, int scope) : SymbolTableElement(lineno,length,scope)
+    VariableSymbol(int lineno, int length) : SymbolTableElement(lineno,length)
     {
         
     }
