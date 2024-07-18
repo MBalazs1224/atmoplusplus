@@ -16,6 +16,8 @@
 %code requires {
     #include <string>
     #include "AtmoLexer.hh"
+    #include "src/symboltable/SymbolTable.hh"
+    #include "src/symboltable/Symbols.hh"
 }
 %define api.value.type {test}
 
@@ -27,6 +29,11 @@
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
     #define YYDEBUG 1
+
+    bool SymbolAlreadyDeclared(std::shared_ptr<SymbolTableElement>& element)
+    {
+        return element.get() != nullptr;
+    }
     
 }
 
@@ -115,10 +122,31 @@ statement: expression
         | if_statement
         | until_statement
         | do_until_statement
+        | function_call
 
 variable_assignment: IDENTIFIER EQUALS expression
 
-variable_definition:CREATE variable_type IDENTIFIER equals_holder
+variable_definition:CREATE variable_type IDENTIFIER equals_holder {
+    std::string id = $3.sval;
+    if(!SymbolTable::SymbolIsValid(id))
+    {
+        std::cerr << "Error: " << id << " is not inside the symbol table!" << std::endl;
+        
+    }
+    else
+    {
+        if(SymbolTable::SymbolAlreadyDeclared(id))
+        {
+            std::cerr << "Error: multiple definiton of variable " << id << " !" << std::endl;
+        }
+        else
+        {
+            auto variableSymbol = std::make_shared<VariableSymbol>(0,0);
+            SymbolTable::Switch(id,variableSymbol);
+        }
+    }
+   
+}
 
 
 
@@ -183,7 +211,7 @@ expression:  expression PLUS expression
             | STRING_LITERAL
             | TRUE
             | FALSE
-            | function_call
+
 dereference: VALUE_AT IDENTIFIER
 
 %%

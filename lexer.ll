@@ -238,8 +238,7 @@ return yy::parser::token::STRING_LITERAL;}
 
 <NORMAL>{letter}({letter}|{digit})* {
     yylval->sval = std::string(YYText());
-    std::shared_ptr<VariableSymbol> ptr(new VariableSymbol(0,YYLeng()));
-    SymbolTable::Insert(YYText(), ptr);
+    SymbolTable::Insert(YYText());
     return yy::parser::token::IDENTIFIER;
 }
 

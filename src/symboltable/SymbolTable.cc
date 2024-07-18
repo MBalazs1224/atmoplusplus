@@ -17,16 +17,12 @@ void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> ele
     map.insert(std::make_pair(id,element));
 }
 
-std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(std::string id)
+std::shared_ptr<SymbolTableElement>& SymbolTable::LookUp(std::string id)
 {
     assert(!id.empty());
     
-    auto iterator = map.find(id);
-    if (iterator != map.end())
-    {
-        return iterator->second;
-    }
-    return nullptr;
+    return map[id];
+    
 }
 void SymbolTable::IncreaseScope()
 {
@@ -60,4 +56,14 @@ bool SymbolTable::SymbolIsValid(std::string id)
     assert(!id.empty());
     auto iterator = map.find(id);
     return iterator != map.end();
+}
+
+bool SymbolTable::SymbolAlreadyDeclared(std::string id)
+{
+    return map[id] != nullptr;
+}
+
+void SymbolTable::Switch(std::string id, std::shared_ptr<SymbolTableElement> element)
+{
+    map[id] = element;
 }
