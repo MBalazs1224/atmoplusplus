@@ -23,4 +23,5 @@ class SymbolTable
         static void IncreaseScope();
         // Debug function to dump all the contents inside the hashmap on the screen.
         static void Dump();
+        static bool SymbolIsValid(std::string);
 };

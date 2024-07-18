@@ -52,5 +52,12 @@ void SymbolTable::Insert(std::string id)
 {
     assert(!id.empty());
 
-    map.insert(std::make_pair(id,nullptr));
+    map.insert(std::make_pair(id,std::shared_ptr<SymbolTableElement>(nullptr)));
+}
+
+bool SymbolTable::SymbolIsValid(std::string id)
+{
+    assert(!id.empty());
+    auto iterator = map.find(id);
+    return iterator != map.end();
 }
