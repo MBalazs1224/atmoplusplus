@@ -1,7 +1,7 @@
 
 #include "AtmoLexer.hh"
 #include "parser.tab.hh"
-#include "src/symboltable/SymbolTable.hh"
+#include "src/symboltable/symboltable.hh"
 #include <fstream>
 // https://stackoverflow.com/questions/76509844/how-do-you-interface-c-flex-with-c-bison
 

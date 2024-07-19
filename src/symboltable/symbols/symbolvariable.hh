@@ -1,5 +1,5 @@
 #pragma once
-#include "../SymbolTableElement.hh"
+#include "../symboltableelement.hh"
 class VariableSymbol : public SymbolTableElement
 {
     public:

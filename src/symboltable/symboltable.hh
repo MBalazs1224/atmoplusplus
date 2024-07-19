@@ -1,5 +1,5 @@
 #pragma once
-#include "SymbolTableElement.hh"
+#include "symboltableelement.hh"
 #include <unordered_map>
 #include <string>
 #include <memory>

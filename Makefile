@@ -3,7 +3,7 @@ objects:= ./build/main.o ./build/parser.tab.o ./build/lex.yy.o ./build/symboltab
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
 
 
-main.exe: $(objects)
+main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
@@ -12,7 +12,7 @@ main.exe: $(objects)
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/symboltable.o: ./src/symboltable/SymbolTable.cc ./src/symboltable/SymbolTable.hh 
+./build/symboltable.o: ./src/symboltable/symboltable.cc ./src/symboltable/symboltable.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/parser.tab.o: parser.tab.cc AtmoLexer.hh
@@ -25,18 +25,18 @@ endif
 
 lex.yy.cc: lexer.ll
 ifdef DEBUG
-	win_flex -d -+ $<
+	flex -d -+ $<
 endif
 ifndef DEBUG
-	win_flex -+ $<
+	flex -+ $<
 endif
 	
 	
 parser.tab.cc: parser.yy
-	win_bison -d $(DEBUG) $<
+	bison -d $(DEBUG) $<
 
 parser.tab.hh: parser.yy
-	win_bison -d -t $(DEBUG) $<
+	bison -d -t $(DEBUG) $<
 
 debug:
 	make clean
@@ -50,9 +50,10 @@ rebuild:
 	
 .PHONY: clean
 clean:
-	del /Q /S build
-	del /Q lex.yy.cc
-	del /Q parser.tab.cc
-	del /Q parser.tab.hh
-	del /Q main.exe
+	rm -rf $(objects)
+	rm -f lex.yy.cc
+	rm -f parser.tab.cc
+	rm -f parser.tab.hh
+	rm -f main
+
 # https://makefiletutorial.com00

@@ -16,8 +16,8 @@
 %code requires {
     #include <string>
     #include "AtmoLexer.hh"
-    #include "src/symboltable/SymbolTable.hh"
-    #include "src/symboltable/Symbols.hh"
+    #include "src/symboltable/symboltable.hh"
+    #include "src/symboltable/symbols.hh"
 }
 %define api.value.type {test}
 

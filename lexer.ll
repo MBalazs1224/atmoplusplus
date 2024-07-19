@@ -1,8 +1,8 @@
 %{
     #include "AtmoLexer.hh"
     #include "parser.tab.hh"
-    #include "src/symboltable/SymbolTable.hh"
-    #include "src/symboltable/Symbols.hh"
+    #include "src/symboltable/symboltable.hh"
+    #include "src/symboltable/symbols.hh"
     #include <memory>
     /*
 
