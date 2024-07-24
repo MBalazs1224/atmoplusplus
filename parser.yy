@@ -15,20 +15,30 @@
 %language "c++"
 %code requires {
     #include <string>
-    #include "AtmoLexer.hh"
     #include "src/symboltable/symboltable.hh"
     #include "src/symboltable/symbols.hh"
+
+
+    class AtmoDriver;
+        class AtmoLexer;
 }
-%define api.value.type {test}
+%define api.value.type variant
+
+%locations
 
 %parse-param {AtmoLexer &lexer}
+%parse-param {AtmoDriver &driver}
 
 %header
 
 %code {
+
+    #include "atmo_driver.hh"
+
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
     #define YYDEBUG 1
+
 
     bool SymbolAlreadyDeclared(std::shared_ptr<SymbolTableElement>& element)
     {
@@ -36,7 +46,7 @@
     }
     
 }
-
+%define parse.error verbose
 %token CREATE
 %token FUNCTION
 %token VARIABLE
@@ -127,24 +137,24 @@ statement: expression
 variable_assignment: IDENTIFIER EQUALS expression
 
 variable_definition:CREATE variable_type IDENTIFIER equals_holder {
-    std::string id = $3.sval;
-    if(!SymbolTable::SymbolIsValid(id))
-    {
-        std::cerr << "Error: " << id << " is not inside the symbol table!" << std::endl;
+    // std::string id = $3.sval;
+    // if(!SymbolTable::SymbolIsValid(id))
+    // {
+    //     std::cerr << "Error: " << id << " is not inside the symbol table!" << std::endl;
         
-    }
-    else
-    {
-        if(SymbolTable::SymbolAlreadyDeclared(id))
-        {
-            std::cerr << "Error: multiple definiton of variable " << id << " !" << std::endl;
-        }
-        else
-        {
-            auto variableSymbol = std::make_shared<VariableSymbol>(0,0);
-            SymbolTable::Switch(id,variableSymbol);
-        }
-    }
+    // }
+    // else
+    // {
+    //     if(SymbolTable::SymbolAlreadyDeclared(id))
+    //     {
+    //         std::cerr << "Error: multiple definiton of variable " << id << " !" << std::endl;
+    //     }
+    //     else
+    //     {
+    //         auto variableSymbol = std::make_shared<VariableSymbol>(0,0);
+    //         SymbolTable::Switch(id,variableSymbol);
+    //     }
+    // }
    
 }
 
@@ -216,7 +226,7 @@ dereference: VALUE_AT IDENTIFIER
 
 %%
 
-void yy::parser::error(const std::string &message)
+void yy::parser::error(const location_type &l, const std::string &message)
 {
-    std::cerr << "Error: " << message << std::endl;
+    std::cerr << "Error at " << l << ":" << message << std::endl;
 }

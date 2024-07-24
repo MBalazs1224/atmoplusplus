@@ -12,7 +12,7 @@
     */
 
     #undef YY_DECL
-    #define YY_DECL int AtmoLexer::yylex(test* yylval)
+    #define YY_DECL int AtmoLexer::yylex(yy::parser::semantic_type* const lval, yy::parser::location_type* location)
 
     // The stack used to keep track of the identation levels
     std::stack<int> ident_stack;
@@ -22,7 +22,8 @@
 
     // The stringstream to temporarily store the state of string literals
     std::stringstream str_buffer;
-
+    // Update location on every token match
+    #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
 %}
 /*
 
@@ -74,11 +75,11 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     // Normal state is needed so the identation scanning can be started on the first line
 
 
-<NORMAL>\n		{ BEGIN IDENTATION;}
+<NORMAL>\n		{ loc->lines();BEGIN IDENTATION;}
 <NORMAL>[ ]+ {/* skip whitespace */ }
 
 <IDENTATION>\t {current_indent++; /*std::cout << "identation incremented: " << current_indent << std::endl;*/}
-<IDENTATION>\n { current_indent = 0;}
+<IDENTATION>\n { loc->lines(); current_indent = 0;}
 <IDENTATION>[^\t\n] {
     int previous_ident = ident_stack.empty() ? 0 : ident_stack.top();
     //std::cout << "Previous ident: " << previous_ident << std::endl;
@@ -150,18 +151,18 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 }
 
 <NORMAL>"//" { BEGIN COMMENT_TOKEN;}
-<COMMENT_TOKEN>(\n) {BEGIN NORMAL;}
+<COMMENT_TOKEN>(\n) { loc->lines();BEGIN NORMAL;}
 <COMMENT_TOKEN>[^'"]"\\\\" {BEGIN NORMAL;}
 <COMMENT_TOKEN>[^\n] { /* Skip the chars */}
 
 
 <NORMAL>\" {;BEGIN STRING_LITERAL_TOKEN;}
-<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; yylval->sval = str_buffer.str();
+<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; //yylval->sval = str_buffer.str();
 str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
 <STRING_LITERAL_TOKEN><<EOF>>  {std::cout << "Unclosed string literal"; exit(1);}
-<STRING_LITERAL_TOKEN>\\n {str_buffer << "\n";}
+<STRING_LITERAL_TOKEN>\\n {loc->lines();str_buffer << "\n";}
 <STRING_LITERAL_TOKEN>\\t {str_buffer << "\t";}
 <STRING_LITERAL_TOKEN>\\\" {str_buffer << "\"";}
 <STRING_LITERAL_TOKEN>\\\\ {str_buffer << "\\";}
@@ -174,9 +175,11 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>' {BEGIN CHAR_LITERAL_TOKEN;}
 <CHAR_LITERAL_TOKEN>\t {std::cout << "Invalid tabulator inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\n {std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
-<CHAR_LITERAL_TOKEN>\\t' {yylval->cval = '\t';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>\\n' {yylval->cval = '\n';BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>.' {yylval->cval = yytext[0];BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\t' {// yylval->cval = '\t';
+BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\n' {loc->lines(); /* yylval->cval = '\n' */;BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>.' { // /*yylval->cval = yytext[0] */;
+BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
     /*BUG: 'c' gets recongized as invalid character literal*/
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
 <CHAR_LITERAL_TOKEN><<EOF>> {std::cout << "Unclosed character literal" << std::endl ; exit(1);}
@@ -237,15 +240,15 @@ return yy::parser::token::STRING_LITERAL;}
 
 
 <NORMAL>{letter}({letter}|{digit})* {
-    yylval->sval = std::string(YYText());
+    //yylval->sval = std::string(YYText());
     SymbolTable::Insert(YYText());
     return yy::parser::token::IDENTIFIER;
 }
 
-<NORMAL>{digit}+	 { yylval->ival = atoi(YYText()); return yy::parser::token::NUMBER;}
+<NORMAL>{digit}+	 { /*yylval->ival = atoi(YYText()); */ return yy::parser::token::NUMBER;}
 
 <NORMAL>\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{
-    yylval->dval = atof(YYText());				
+    //yylval->dval = atof(YYText());				
     return yy::parser::token::NUMBER_FLOAT;
 }
 

@@ -1,4 +1,4 @@
-objects:= ./build/main.o ./build/parser.tab.o ./build/lex.yy.o ./build/symboltable.o
+objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o ./build/parser.tab.o
 
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
 
@@ -7,6 +7,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/atmo_driver.o: atmo_driver.cc atmo_driver.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 	
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
