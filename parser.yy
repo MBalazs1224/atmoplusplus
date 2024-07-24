@@ -17,10 +17,12 @@
     #include <string>
     #include "src/symboltable/symboltable.hh"
     #include "src/symboltable/symbols.hh"
+    #include "src/ast/nodes/all_nodes.hh"
+    #include "src/ast/expressions/all_expressions.hh"
 
 
     class AtmoDriver;
-        class AtmoLexer;
+    class AtmoLexer;
 }
 %define api.value.type variant
 
@@ -34,19 +36,14 @@
 %code {
 
     #include "atmo_driver.hh"
-
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
     #define YYDEBUG 1
-
-
-    bool SymbolAlreadyDeclared(std::shared_ptr<SymbolTableElement>& element)
-    {
-        return element.get() != nullptr;
-    }
     
 }
-%define parse.error verbose
+%define parse.error detailed
+%define parse.lac full
+
 %token CREATE
 %token FUNCTION
 %token VARIABLE
@@ -117,10 +114,11 @@
 %left COMMA
 
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
+
 %%
 
 
-statement_list: statement
+statement_list: statement 
                 | statement_list statement
                  
 
@@ -132,7 +130,7 @@ statement: expression
         | if_statement
         | until_statement
         | do_until_statement
-        | function_call
+        | function_call 
 
 variable_assignment: IDENTIFIER EQUALS expression
 

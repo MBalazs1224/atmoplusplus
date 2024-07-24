@@ -1,4 +1,6 @@
-objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o ./build/parser.tab.o
+objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o $(nodes) ./build/parser.tab.o 
+
+nodes = ./build/statement_list_node.o ./build/until_statement_node.o
 
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
 
@@ -13,6 +15,12 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 	
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+	
+./build/statement_list_node.o: ./src/ast/nodes/statement_list_node.cc ./src/ast/nodes/statement_list_node.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/until_statement_node.o: ./src/ast/nodes/until_statement_node.cc ./src/ast/nodes/until_statement_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/symboltable.o: ./src/symboltable/symboltable.cc ./src/symboltable/symboltable.hh 

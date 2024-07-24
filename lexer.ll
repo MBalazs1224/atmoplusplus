@@ -75,11 +75,11 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     // Normal state is needed so the identation scanning can be started on the first line
 
 
-<NORMAL>\n		{ loc->lines();BEGIN IDENTATION;}
+<NORMAL>\n		{  ;BEGIN IDENTATION;}
 <NORMAL>[ ]+ {/* skip whitespace */ }
 
 <IDENTATION>\t {current_indent++; /*std::cout << "identation incremented: " << current_indent << std::endl;*/}
-<IDENTATION>\n { loc->lines(); current_indent = 0;}
+<IDENTATION>\n {  ; current_indent = 0;}
 <IDENTATION>[^\t\n] {
     int previous_ident = ident_stack.empty() ? 0 : ident_stack.top();
     //std::cout << "Previous ident: " << previous_ident << std::endl;
@@ -151,7 +151,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 }
 
 <NORMAL>"//" { BEGIN COMMENT_TOKEN;}
-<COMMENT_TOKEN>(\n) { loc->lines();BEGIN NORMAL;}
+<COMMENT_TOKEN>(\n) {  ;BEGIN NORMAL;}
 <COMMENT_TOKEN>[^'"]"\\\\" {BEGIN NORMAL;}
 <COMMENT_TOKEN>[^\n] { /* Skip the chars */}
 
@@ -162,7 +162,7 @@ str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
 <STRING_LITERAL_TOKEN><<EOF>>  {std::cout << "Unclosed string literal"; exit(1);}
-<STRING_LITERAL_TOKEN>\\n {loc->lines();str_buffer << "\n";}
+<STRING_LITERAL_TOKEN>\\n { ;str_buffer << "\n";}
 <STRING_LITERAL_TOKEN>\\t {str_buffer << "\t";}
 <STRING_LITERAL_TOKEN>\\\" {str_buffer << "\"";}
 <STRING_LITERAL_TOKEN>\\\\ {str_buffer << "\\";}
@@ -177,7 +177,7 @@ return yy::parser::token::STRING_LITERAL;}
 <CHAR_LITERAL_TOKEN>\n {std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\\t' {// yylval->cval = '\t';
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>\\n' {loc->lines(); /* yylval->cval = '\n' */;BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\n' { ; /* yylval->cval = '\n' */;BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' { // /*yylval->cval = yytext[0] */;
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
     /*BUG: 'c' gets recongized as invalid character literal*/
