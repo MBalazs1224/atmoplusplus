@@ -19,7 +19,7 @@
     #include "src/symboltable/symbols.hh"
     #include "src/ast/nodes/all_nodes.hh"
     #include "src/ast/expressions/all_expressions.hh"
-
+    #include <memory>
 
     class AtmoDriver;
     class AtmoLexer;
@@ -115,11 +115,16 @@
 
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 
+%nterm<std::unique_ptr<StatementListNode>> statement_list
+%nterm<std::unique_ptr<StatementNode>> statement
 %%
 
 
-statement_list: statement 
-                | statement_list statement
+statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
+                | statement_list statement {
+                    $1->Add(std::move($2));
+                    $$ = std::move($1);
+                }
                  
 
 

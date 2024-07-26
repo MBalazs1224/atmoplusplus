@@ -8,4 +8,6 @@ class BodyNode : public Node
 
     public:
     BodyNode();
+
+    BodyNode(BodyNode&& other);
 };

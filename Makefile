@@ -1,6 +1,6 @@
-objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o $(nodes) ./build/parser.tab.o 
-
-nodes = ./build/statement_list_node.o ./build/until_statement_node.o
+objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o ./build/parser.tab.o 
+nodes := ./build/statement_list_node.o ./build/until_statement_node.o
+objects += $(nodes)
 
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
 
