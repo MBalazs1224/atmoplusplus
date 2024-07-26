@@ -1,15 +1,4 @@
-if 5 greater than 4
-	create string a
-	create integer a
-
-call asd with 4, "asd"
-
-create function asd with integer b
-	if 3 matches 3
-		create integer i
-	until i less than 3
-		create float loop
-	do
-		create string z equals "harom"
-	until z not matches 10
-	create pointer of integer p equals address of i
+until 3 less than 5
+	create integer a equals 5
+	until a
+		create string b

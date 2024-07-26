@@ -11,7 +11,7 @@ class UntilStatementNode : public StatementNode
     std::unique_ptr<Expression> expression;
 
     public:
-        UntilStatementNode(std::unique_ptr<BodyNode> body, std::unique_ptr<Expression> expression)
+        UntilStatementNode(std::unique_ptr<Expression> expression,std::unique_ptr<BodyNode> body)
         : body(std::move(body)), expression(std::move(expression))
         {
         }

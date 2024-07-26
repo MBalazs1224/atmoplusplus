@@ -119,6 +119,8 @@
 %nterm<std::unique_ptr<StatementListNode>> statement_list
 %nterm<std::unique_ptr<StatementNode>> statement
 %nterm<std::unique_ptr<BodyNode>> body
+%nterm<std::unique_ptr<UntilStatementNode>> until_statement
+%nterm<std::unique_ptr<Expression>> expression
 %%
 
 
@@ -171,10 +173,11 @@ variable_type: DATATYPE
 equals_holder: %empty
                 |EQUALS expression
 
-body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); test = $$.get();}
+body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); }
 
 do_until_statement: DO body UNTIL expression
-until_statement: UNTIL expression body
+ //BUG: Until statement and body node sometimes get set to null
+until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3)); test = $$.get();}
 
 if_statement: IF expression body else_statement
 
@@ -202,30 +205,30 @@ DATATYPE: INT
           | STRING
           | FLOAT 
 
-expression:  expression PLUS expression
-            | expression MINUS expression
-            | expression MULTIPLY expression
-            | expression DIVIDE expression
-            | expression AND expression
-            | expression OR expression
-            | expression GREATER_THAN expression
-            | expression LESS_THAN expression
-            | expression GREATER_THAN_OR_EQUAL expression
-            | expression LESS_THAN_OR_EQUAL expression
-            | expression MATCHES expression
-            | expression NOT_MATCHES expression
-            | OPEN_BRACKET expression CLOSE_BRACKET
-            | NOT expression
-            | dereference
-            | IDENTIFIER
-            | ADDRESS_OF IDENTIFIER
-            | VALUE_AT 
-            | NUMBER
-            | NUMBER_FLOAT
-            | CHAR_LITERAL
-            | STRING_LITERAL
-            | TRUE
-            | FALSE
+expression:  expression PLUS expression {$$ = nullptr;}
+            | expression MINUS expression {$$ = nullptr;}
+            | expression MULTIPLY expression {$$ = nullptr;}
+            | expression DIVIDE expression {$$ = nullptr;}
+            | expression AND expression {$$ = nullptr;}
+            | expression OR expression {$$ = nullptr;}
+            | expression GREATER_THAN expression {$$ = nullptr;}
+            | expression LESS_THAN expression {$$ = nullptr;}
+            | expression GREATER_THAN_OR_EQUAL expression {$$ = nullptr;}
+            | expression LESS_THAN_OR_EQUAL expression {$$ = nullptr;}
+            | expression MATCHES expression {$$ = nullptr;}
+            | expression NOT_MATCHES expression {$$ = nullptr;}
+            | OPEN_BRACKET expression CLOSE_BRACKET {$$ = nullptr;}
+            | NOT expression {$$ = nullptr;}
+            | dereference {$$ = nullptr;}
+            | IDENTIFIER {$$ = nullptr;}
+            | ADDRESS_OF IDENTIFIER {$$ = nullptr;}
+            | VALUE_AT  {$$ = nullptr;}
+            | NUMBER {$$ = nullptr;}
+            | NUMBER_FLOAT {$$ = nullptr;}
+            | CHAR_LITERAL {$$ = nullptr;}
+            | STRING_LITERAL {$$ = nullptr;}
+            | TRUE {$$ = nullptr;}
+            | FALSE {$$ = nullptr;}
 
 dereference: VALUE_AT IDENTIFIER
 
