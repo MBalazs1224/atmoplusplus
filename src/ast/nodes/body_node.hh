@@ -1,13 +1,15 @@
 #pragma once
 #include "node.hh"
 #include "statement_node.hh"
+#include "statement_list_node.hh"
 #include <vector>
+#include <memory>
 class BodyNode : public Node
 {
-    std::vector<StatementNode> statements;
+    std::unique_ptr<StatementListNode> statementList;
 
     public:
-    BodyNode();
+    BodyNode(std::unique_ptr<StatementListNode>);
 
     BodyNode(BodyNode&& other);
 };

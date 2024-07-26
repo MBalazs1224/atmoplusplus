@@ -39,6 +39,7 @@
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
     #define YYDEBUG 1
+    void* test = nullptr;
     
 }
 %define parse.error detailed
@@ -117,6 +118,7 @@
 
 %nterm<std::unique_ptr<StatementListNode>> statement_list
 %nterm<std::unique_ptr<StatementNode>> statement
+%nterm<std::unique_ptr<BodyNode>> body
 %%
 
 
@@ -169,7 +171,7 @@ variable_type: DATATYPE
 equals_holder: %empty
                 |EQUALS expression
 
-body: INDENT statement_list DEDENT
+body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); test = $$.get();}
 
 do_until_statement: DO body UNTIL expression
 until_statement: UNTIL expression body
