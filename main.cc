@@ -4,24 +4,24 @@
 #include <fstream>
 // https://stackoverflow.com/questions/76509844/how-do-you-interface-c-flex-with-c-bison
 
-// void Process_Args( std::vector<std::string>& params, AtmoLexer& lexer, yy::parser& parser)
-// {
-//     for(auto param : params)
-//     {
-//         if (param == "df")
-//         {
-//             lexer.set_debug(1);
-//         }
-//         else if(param == "db")
-//         {
-//             parser.set_debug_level(1);
-//         }
+void Process_Args( std::vector<std::string>& params, AtmoDriver& driver)
+{
+    for(auto param : params)
+    {
+        if (param == "df")
+        {
+            driver.set_lexer_debug_level(1);
+        }
+        else if(param == "db")
+        {
+            driver.set_parser_debug_level(1);
+        }
         
         
-//     }
+    }
     
 
-// }
+}
 
 int main(int argc, char** argv)
 {
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     std::ifstream input("test.txt");
     // + 1 because first arg is app name
     std::vector<std::string> params(argv + 1, argv+argc);
-    //Process_Args(params,lexer,parser);
+    Process_Args(params,driver);
     driver.parse(input);
     SymbolTable::Dump();
     return 0;

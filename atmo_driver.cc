@@ -10,6 +10,7 @@ void AtmoDriver::parse(std::istream &stream)
     try
     {
         lexer = std::make_unique<AtmoLexer>(&stream);
+        lexer->set_debug(lexer_debug_level);
     }
     catch(const std::bad_alloc& ba)
     {
@@ -21,6 +22,7 @@ void AtmoDriver::parse(std::istream &stream)
     try
     { 
         parser = std::make_unique<yy::parser>(*lexer, *this);
+        parser->set_debug_level(parser_debug_level);
     }
     catch(const std::bad_alloc& ba)
     {
@@ -35,7 +37,15 @@ void AtmoDriver::parse(std::istream &stream)
     {
         std::cerr << "Parse failed!" << std::endl;
     }
-    
-    
-    
+
+}
+
+void AtmoDriver::set_parser_debug_level(int level)
+{
+    parser_debug_level = level;
+}
+
+void AtmoDriver::set_lexer_debug_level(int level)
+{
+    lexer_debug_level = level;
 }
