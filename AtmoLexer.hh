@@ -17,6 +17,7 @@ int yylex(yylval_type yylval); - We do declare the function but the definition i
 
 #include "parser.tab.hh"
 #include "location.hh"
+#include <memory>
 
 class test
     {
@@ -30,14 +31,14 @@ class test
 class AtmoLexer : public yyFlexLexer
 {
     private:
-        yy::parser::semantic_type* yylval = nullptr;
-        yy::parser::location_type* loc = nullptr;
+        std::unique_ptr<yy::parser::semantic_type> yylval = nullptr;
+        std::unique_ptr<yy::parser::location_type> loc = nullptr;
     
 
     public:
     AtmoLexer(std::istream* in) : yyFlexLexer(in)
     {
-        loc = new yy::parser::location_type();
+        loc = std::make_unique<yy::parser::location_type>();
     }
     // Flex will provide the definition of this function, we just need to declare it
     int yylex(yy::parser::semantic_type* lval, yy::parser::location_type* location);

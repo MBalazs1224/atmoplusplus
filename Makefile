@@ -2,11 +2,13 @@ objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_dr
 nodes := ./build/statement_list_node.o ./build/until_statement_node.o ./build/body_node.o
 objects += $(nodes)
 
+#CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
+LDFLAGS = -static-libasan
 
 
 main: $(objects)
-	g++ $(CXXFLAGS) $^ -o $@
+	g++ $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
 	g++ $(CXXFLAGS) -c $< -o $@
