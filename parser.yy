@@ -20,6 +20,7 @@
     #include "src/ast/nodes/all_nodes.hh"
     #include "src/ast/expressions/all_expressions.hh"
     #include <memory>
+    #include <vector>
 
     class AtmoDriver;
     class AtmoLexer;
@@ -120,6 +121,7 @@
 %nterm<std::unique_ptr<StatementNode>> statement
 %nterm<std::unique_ptr<BodyNode>> body
 %nterm<std::unique_ptr<UntilStatementNode>> until_statement
+%nterm<std::unique_ptr<DoUntilStatementNode>> do_until_statement
 %nterm<std::unique_ptr<Expression>> expression
 %%
 
@@ -175,7 +177,7 @@ equals_holder: %empty
 
 body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); }
 
-do_until_statement: DO body UNTIL expression
+do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilStatementNode>(std::move($4),std::move($2));}
  //BUG: Until statement and body node sometimes get set to null
 until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3)); test = $$.get();}
 

@@ -5,13 +5,13 @@
 #include <memory>
 #include <iostream>
 
-class UntilStatementNode : public StatementNode
+class DoUntilStatementNode
 {
     std::unique_ptr<BodyNode> body;
     std::unique_ptr<Expression> expression;
 
     public:
-        UntilStatementNode(std::unique_ptr<Expression> expression_in,std::unique_ptr<BodyNode> body_in)
+        DoUntilStatementNode(std::unique_ptr<Expression> expression_in,std::unique_ptr<BodyNode> body_in)
         : body(std::move(body_in)), expression(std::move(expression_in))
         {
         }
