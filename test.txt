@@ -1,4 +1,4 @@
-until 3 less than 5
+until 3 and 5 or 3
 	create integer a equals 5
 	until a
 		create string b

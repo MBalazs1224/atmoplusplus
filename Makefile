@@ -1,14 +1,14 @@
 objects:= ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o ./build/parser.tab.o 
-nodes := ./build/statement_list_node.o ./build/until_statement_node.o ./build/body_node.o
+nodes := ./build/statement_list_node.o ./build/until_statement_node.o ./build/body_node.o ./build/expression.o
 objects += $(nodes)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
-LDFLAGS = -static-libasan
+#LDFLAGS = -static-libasan
 
 
 main: $(objects)
-	g++ $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
 	g++ $(CXXFLAGS) -c $< -o $@
@@ -18,7 +18,10 @@ main: $(objects)
 	
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
 	g++ $(CXXFLAGS) -c $< -o $@
-	
+
+./build/expression.o: ./src/ast/expressions/expression.cc ./src/ast/expressions/expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
 ./build/statement_list_node.o: ./src/ast/nodes/statement_list_node.cc ./src/ast/nodes/statement_list_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
