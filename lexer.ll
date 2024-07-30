@@ -157,7 +157,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 
 
 <NORMAL>\" {;BEGIN STRING_LITERAL_TOKEN;}
-<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; //yylval->sval = str_buffer.str();
+<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; yylval->emplace<std::string>(str_buffer.str()); //yylval->sval = str_buffer.str();
 str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
@@ -179,6 +179,7 @@ return yy::parser::token::STRING_LITERAL;}
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>\\n' { ; /* yylval->cval = '\n' */;BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' { // /*yylval->cval = yytext[0] */;
+yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
     /*BUG: 'c' gets recongized as invalid character literal*/
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
@@ -233,8 +234,8 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>public|PUBLIC {return yy::parser::token::PUBLIC;}
 <NORMAL>private|PRIVATE {return yy::parser::token::PRIVATE;}
 <NORMAL>inside|INSIDE {return yy::parser::token::INSIDE;}
-<NORMAL>true|TRUE {return yy::parser::token::TRUE;}
-<NORMAL>false|FALSE {return yy::parser::token::FALSE;}
+<NORMAL>true|TRUE { yylval->emplace<bool>(true); return yy::parser::token::TRUE;}
+<NORMAL>false|FALSE {yylval->emplace<bool>(false); return yy::parser::token::FALSE;}
 <NORMAL>(boolean)s*|(BOOLEAN)S* { return yy::parser::token::BOOLEAN;}
 <NORMAL>{array_of} {return yy::parser::token::ARRAY_OF;}
 
@@ -245,10 +246,11 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
     return yy::parser::token::IDENTIFIER;
 }
 
-<NORMAL>{digit}+	 { /*yylval->ival = atoi(YYText()); */ return yy::parser::token::NUMBER;}
+<NORMAL>{digit}+	 { /*yylval->ival = atoi(YYText()); */ yylval->emplace<int>(atoi(YYText())); return yy::parser::token::NUMBER;}
 
 <NORMAL>\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{
-    //yylval->dval = atof(YYText());				
+    //yylval->dval = atof(YYText());	
+    yylval->emplace<double>(atof(YYText()));			
     return yy::parser::token::NUMBER_FLOAT;
 }
 

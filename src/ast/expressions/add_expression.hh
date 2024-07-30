@@ -4,7 +4,7 @@ class AddExpression : public Expression
 {
     
     public:
-    AddExpression(std::unique_ptr<Expression> left_in, std::unique_ptr<Expression> right_in) : Expression(std::move(left_in),std::move(right_in))
+    AddExpression(std::unique_ptr<IExpressionable> left_in, std::unique_ptr<IExpressionable> right_in) : Expression(std::move(left_in),std::move(right_in))
     {
 
     }

@@ -21,12 +21,14 @@
     #include "src/ast/expressions/all_expressions.hh"
     #include <memory>
     #include <vector>
-
+    #include <variant>
+    #include "src/ast/literals/all_literals.hh"
+    typedef std::variant<int, double, std::string,char> semantic_type;
     class AtmoDriver;
     class AtmoLexer;
 }
 %define api.value.type variant
-
+%define         parse.trace
 %locations
 
 %parse-param {AtmoLexer &lexer}
@@ -71,20 +73,20 @@
 %token RETURN
 %token WITH
 %token PARAMS
-%token STRING_LITERAL
+%token<std::string> STRING_LITERAL
 %token IDENTIFIER
 %token FLOAT
 %token MATCHES
 %token NOT_MATCHES
 %token UNTIL
-%token CHAR_LITERAL
+%token<char> CHAR_LITERAL
 %token CHAR
 %token CLASS
 %token PUBLIC
 %token PRIVATE
 %token ARRAY_OF
-%token NUMBER
-%token NUMBER_FLOAT
+%token<int> NUMBER
+%token<double> NUMBER_FLOAT
 %token INSIDE
 %token OPEN_BRACKET
 %token CLOSE_BRACKET
@@ -93,8 +95,8 @@
 %token POINTER_OF
 %token VALUE_AT
 %token ADDRESS_OF
-%token TRUE
-%token FALSE
+%token<bool> TRUE
+%token<bool> FALSE
 %token BOOLEAN
 %token AS
 %token INDENT
@@ -122,15 +124,13 @@
 %nterm<std::unique_ptr<BodyNode>> body
 %nterm<std::unique_ptr<UntilStatementNode>> until_statement
 %nterm<std::unique_ptr<DoUntilStatementNode>> do_until_statement
-%nterm<std::unique_ptr<Expression>> expression
+%nterm<std::unique_ptr<IExpressionable>> expression
 %%
 
 
 statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
                 | statement_list statement {
-                    test = $2.get();
                     $1->Add(std::move($2));
-                    test = $1.get();
                     $$ = std::move($1);
                 }
                  
@@ -231,12 +231,12 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(st
             | IDENTIFIER {$$ = nullptr;}
             | ADDRESS_OF IDENTIFIER {$$ = nullptr;}
             | VALUE_AT  {$$ = nullptr;}
-            | NUMBER {$$ = nullptr;}
-            | NUMBER_FLOAT {$$ = nullptr;}
-            | CHAR_LITERAL {$$ = nullptr;}
-            | STRING_LITERAL {$$ = nullptr;}
-            | TRUE {$$ = nullptr;}
-            | FALSE {$$ = nullptr;}
+            | NUMBER {$$ = std::make_unique<IntegerLiteral>($1);}
+            | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1);}
+            | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1);}
+            | STRING_LITERAL {$$ = std::make_unique<StringLiteral>($1);}
+            | TRUE {$$ = std::make_unique<BooleanLiteral>($1);}
+            | FALSE {$$ = std::make_unique<BooleanLiteral>($1);}
 
 dereference: VALUE_AT IDENTIFIER
 

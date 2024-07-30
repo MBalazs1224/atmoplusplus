@@ -1,13 +1,14 @@
 #pragma once
+#include "expressionable.hh"
 #include <string>
 #include <memory>
-class Expression
+class Expression : public IExpressionable
 {
     protected:
-        std::unique_ptr<Expression> left;
-        std::unique_ptr<Expression> right;
+        std::unique_ptr<IExpressionable> left;
+        std::unique_ptr<IExpressionable> right;
         
-        Expression(std::unique_ptr<Expression> left_in, std::unique_ptr<Expression> right_in) : left(std::move(left_in)), right(std::move(right_in))
+        Expression(std::unique_ptr<IExpressionable> left_in, std::unique_ptr<IExpressionable> right_in) : left(std::move(left_in)), right(std::move(right_in))
         {
 
         }
