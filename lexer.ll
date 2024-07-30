@@ -12,7 +12,7 @@
     */
 
     #undef YY_DECL
-    #define YY_DECL int AtmoLexer::yylex(yy::parser::semantic_type* const lval, yy::parser::location_type* location)
+    #define YY_DECL int AtmoLexer::yylex(yy::parser::semantic_type* const yylval, yy::parser::location_type* location)
 
     // The stack used to keep track of the identation levels
     std::stack<int> ident_stack;

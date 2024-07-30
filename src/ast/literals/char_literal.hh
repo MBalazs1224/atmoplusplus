@@ -10,4 +10,5 @@ class CharLiteral : public Literal
         {
 
         }
+        ~CharLiteral() = default;
 };

@@ -10,4 +10,5 @@ class BooleanLiteral : public Literal
         {
 
         }
+        ~BooleanLiteral() = default;
 };

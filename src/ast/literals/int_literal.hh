@@ -10,4 +10,5 @@ class IntegerLiteral : public Literal
         {
 
         }
+        ~IntegerLiteral() = default;
 };

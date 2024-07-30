@@ -10,4 +10,5 @@ class FloatLiteral : public Literal
         {
 
         }
+        ~FloatLiteral() = default;
 };

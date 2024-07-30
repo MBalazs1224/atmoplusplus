@@ -10,4 +10,5 @@ class StringLiteral : public Literal
         {
 
         }
+        ~StringLiteral() = default;
 };

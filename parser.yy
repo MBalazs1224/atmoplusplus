@@ -21,14 +21,17 @@
     #include "src/ast/expressions/all_expressions.hh"
     #include <memory>
     #include <vector>
-    #include <variant>
     #include "src/ast/literals/all_literals.hh"
-    typedef std::variant<int, double, std::string,char> semantic_type;
     class AtmoDriver;
     class AtmoLexer;
 }
 %define api.value.type variant
 %define         parse.trace
+%define         parse.lac           full
+
+/* "unexpected" is unhelpful. "unexpected IDENTIFIER, expected NUMBER or STRING_LITERAL" is better. */
+%define         parse.error         detailed
+
 %locations
 
 %parse-param {AtmoLexer &lexer}
