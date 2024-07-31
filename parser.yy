@@ -126,6 +126,8 @@
 %nterm<std::unique_ptr<UntilStatementNode>> until_statement
 %nterm<std::unique_ptr<DoUntilStatementNode>> do_until_statement
 %nterm<std::unique_ptr<ReturnStatementNode>> return_statement
+%nterm<std::unique_ptr<IfStatementNode>> if_statement
+%nterm<std::unique_ptr<ElseStatementNode>> else_statement
 %nterm<std::unique_ptr<IExpressionable>> expression
 %%
 
@@ -143,7 +145,7 @@ statement:function_create
         | variable_assignment 
         | if_statement 
         | until_statement 
-        | do_until_statement
+        | do_until_statement 
         | function_call
         | return_statement
 
@@ -186,10 +188,10 @@ until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode
     // p ((UntilStatementNode*)test)->body->statementList->statements[1]
     }
 
-if_statement: IF expression body else_statement
+if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4)); test = $$.get();}
 
 else_statement: %empty
-                | ELSE body
+                | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2));}
 
 return_statement: RETURN expression
 

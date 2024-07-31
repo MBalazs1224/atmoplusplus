@@ -2,6 +2,11 @@ until 3 and 5 or 3
 	create integer a equals 5
 	until a
 		create string b
+if 3 less than "2"
+	create integer a
+else
+	create string b
+	b equals "asd"
 
 create void function asd
 	create string a

@@ -5,10 +5,8 @@
 class Expression : public IExpressionable
 {
     protected:
-        std::unique_ptr<IExpressionable> left;
-        std::unique_ptr<IExpressionable> right;
         
-        Expression(std::unique_ptr<IExpressionable> left_in, std::unique_ptr<IExpressionable> right_in) : left(std::move(left_in)), right(std::move(right_in))
+        Expression(std::unique_ptr<IExpressionable> left_in, std::unique_ptr<IExpressionable> right_in) : IExpressionable(std::move(left_in),(std::move(right_in)))
         {
 
         }
