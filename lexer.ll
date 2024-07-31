@@ -53,6 +53,7 @@ times times|TIMES|\*
 divide divide(d)*[ ]by|(DIVIDE(D)*[ ]BY)|\/
 array_of array[ ]of|ARRAY[ ]OF
 do (do)|DO
+void (void)|VOID
 not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 
 %%
@@ -217,6 +218,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{divide} 	{ return yy::parser::token::DIVIDE;}
 <NORMAL>{do} {return yy::parser::token::DO;}
 <NORMAL>{not_matches} {return yy::parser::token::NOT_MATCHES;}
+<NORMAL>{void} {return yy::parser::token::VOID;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}

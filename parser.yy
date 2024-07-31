@@ -102,6 +102,7 @@
 %token INDENT
 %token DEDENT
 %token DO
+%token VOID
 
  //%left MINUS PLUS
  //%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT_MATCHES NOT
@@ -195,7 +196,10 @@ function_call_arguments: %empty
                         | WITH expression
                         | function_call_arguments COMMA expression
 
-function_create: CREATE FUNCTION IDENTIFIER argument_list body
+function_create: CREATE function_return_type FUNCTION IDENTIFIER argument_list body
+
+function_return_type: DATATYPE
+                    | VOID
 
 argument_list: %empty
             | WITH argument
@@ -208,6 +212,7 @@ DATATYPE: INT
           | BOOLEAN
           | STRING
           | FLOAT 
+          | CHAR
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
 
