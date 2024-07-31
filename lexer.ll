@@ -66,7 +66,6 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         std::cout << "Identation level popped! Remaning dedents: " << dedents_remaining << std::endl;
         return yy::parser::token::DEDENT; 
     }
-
     // FIXME: This probably could be improved so we don't have to reset the current identation level after every token
     current_indent = 0;
 
@@ -174,8 +173,9 @@ return yy::parser::token::STRING_LITERAL;}
 <CHAR_LITERAL_TOKEN>\t {std::cout << "Invalid tabulator inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\n {std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\\t' {// yylval->cval = '\t';
-BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>\\n' { ; /* yylval->cval = '\n' */;BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+    yylval->emplace<char>('\t');
+    BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\n' { ; /* yylval->cval = '\n' */;yylval->emplace<char>('\n');BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' { // /*yylval->cval = yytext[0] */;
 yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
