@@ -125,6 +125,7 @@
 %nterm<std::unique_ptr<BodyNode>> body
 %nterm<std::unique_ptr<UntilStatementNode>> until_statement
 %nterm<std::unique_ptr<DoUntilStatementNode>> do_until_statement
+%nterm<std::unique_ptr<ReturnStatementNode>> return_statement
 %nterm<std::unique_ptr<IExpressionable>> expression
 %%
 
@@ -144,6 +145,7 @@ statement:function_create
         | until_statement 
         | do_until_statement
         | function_call
+        | return_statement
 
 variable_assignment: IDENTIFIER EQUALS expression
 
@@ -188,6 +190,8 @@ if_statement: IF expression body else_statement
 
 else_statement: %empty
                 | ELSE body
+
+return_statement: RETURN expression
 
 
 function_call: CALL IDENTIFIER function_call_arguments

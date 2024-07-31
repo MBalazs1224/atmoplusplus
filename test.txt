@@ -5,6 +5,7 @@ until 3 and 5 or 3
 
 create void function asd
 	create string a
+	return a
 
 create integer function valami with string a, char b
 	if a
