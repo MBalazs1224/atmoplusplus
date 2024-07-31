@@ -52,9 +52,6 @@ minus minus|MINUS|\-
 times times|TIMES|\*
 divide divide(d)*[ ]by|(DIVIDE(D)*[ ]BY)|\/
 array_of array[ ]of|ARRAY[ ]OF
-value_at (value[ ]at)|(VALUE[ ]AT)|@
-address_of (address[ ]of)|(ADDRESS[ ]OF)
-pointer_of (pointer[ ]of)|(POINTER[ ]OF)
 do (do)|DO
 not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 
@@ -218,9 +215,6 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{equals} 	{return yy::parser::token::EQUALS;}
 <NORMAL>{times} 	{ return yy::parser::token::MULTIPLY;}
 <NORMAL>{divide} 	{ return yy::parser::token::DIVIDE;}
-<NORMAL>{value_at} {return yy::parser::token::VALUE_AT;}
-<NORMAL>{address_of} {return yy::parser::token::ADDRESS_OF;}
-<NORMAL>{pointer_of} { return yy::parser::token::POINTER_OF;}
 <NORMAL>{do} {return yy::parser::token::DO;}
 <NORMAL>{not_matches} {return yy::parser::token::NOT_MATCHES;}
 

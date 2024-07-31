@@ -95,9 +95,6 @@
 %token CLOSE_BRACKET
 %token OPEN_SQUARE_BRACKET
 %token CLOSE_SQUARE_BRACKET
-%token POINTER_OF
-%token VALUE_AT
-%token ADDRESS_OF
 %token<bool> TRUE
 %token<bool> FALSE
 %token BOOLEAN
@@ -175,7 +172,6 @@ variable_definition:CREATE variable_type IDENTIFIER equals_holder {
 
 variable_type: DATATYPE
                 | ARRAY_OF DATATYPE
-                | POINTER_OF DATATYPE
 equals_holder: %empty
                 |EQUALS expression
 
@@ -230,18 +226,13 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(st
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ = std::move($2);}
             // TODO: Make NotExpression take only one parameter instead of the null pointer
             | NOT expression {$$ = std::make_unique<NotExpression>(std::move($2), nullptr);}
-            | dereference {$$ = nullptr;}
             | IDENTIFIER {$$ = nullptr;}
-            | ADDRESS_OF IDENTIFIER {$$ = nullptr;}
-            | VALUE_AT  {$$ = nullptr;}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1);}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1);}
             | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1);}
             | STRING_LITERAL {$$ = std::make_unique<StringLiteral>($1);}
             | TRUE {$$ = std::make_unique<BooleanLiteral>($1);}
             | FALSE {$$ = std::make_unique<BooleanLiteral>($1);}
-
-dereference: VALUE_AT IDENTIFIER
 
 %%
 
