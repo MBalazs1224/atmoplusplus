@@ -77,7 +77,7 @@
 %token WITH
 %token PARAMS
 %token<std::string> STRING_LITERAL
-%token IDENTIFIER
+%token<std::string> IDENTIFIER
 %token FLOAT
 %token MATCHES
 %token NOT_MATCHES
@@ -152,25 +152,7 @@ statement:function_create
 variable_assignment: IDENTIFIER EQUALS expression
 
 variable_definition:CREATE variable_type IDENTIFIER equals_holder {
-    // std::string id = $3.sval;
-    // if(!SymbolTable::SymbolIsValid(id))
-    // {
-    //     std::cerr << "Error: " << id << " is not inside the symbol table!" << std::endl;
-        
-    // }
-    // else
-    // {
-    //     if(SymbolTable::SymbolAlreadyDeclared(id))
-    //     {
-    //         std::cerr << "Error: multiple definiton of variable " << id << " !" << std::endl;
-    //     }
-    //     else
-    //     {
-    //         auto variableSymbol = std::make_shared<VariableSymbol>(0,0);
-    //         SymbolTable::Switch(id,variableSymbol);
-    //     }
-    // }
-   
+   SymbolTable::Insert($3,nullptr);
 }
 
 
@@ -183,9 +165,8 @@ equals_holder: %empty
 body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); }
 
 do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilStatementNode>(std::move($4),std::move($2));}
- //BUG: Until statement and body node sometimes get set to null
+
 until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3)); test = $$.get();
-    // p ((UntilStatementNode*)test)->body->statementList->statements[1]
     }
 
 if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4)); test = $$.get();}
@@ -196,7 +177,7 @@ else_statement: %empty
 return_statement: RETURN expression
 
 
-function_call: CALL IDENTIFIER function_call_arguments
+function_call: CALL IDENTIFIER function_call_arguments //TODO: Add params to the SymbolTable
 
 function_call_arguments: %empty
                         | WITH expression

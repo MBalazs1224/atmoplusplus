@@ -244,7 +244,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 
 <NORMAL>{letter}({letter}|{digit})* {
     //yylval->sval = std::string(YYText());
-    SymbolTable::Insert(YYText());
+    yylval->emplace<std::string>(std::string(YYText()));
     return yy::parser::token::IDENTIFIER;
 }
 

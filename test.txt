@@ -1,17 +1,5 @@
-until 3 and 5 or 3
-	create char a equals 'c'
-	until a
-		create string b
-if 3 less than "2"
-	create integer a
-else
-	create string b
-	b equals "asd"
-
-create void function asd
+if asd
 	create string a
-	return a
-
-create integer function valami with string a, char b
-	if a
-		create integer l
+	until a
+		create integer b
+	create char c

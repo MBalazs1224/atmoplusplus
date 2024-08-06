@@ -11,9 +11,9 @@ std::shared_ptr<Scope> SymbolTable::current;
 void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> element)
 {
     assert(!id.empty());
-    assert(element != nullptr);
+    //assert(element != nullptr);
     
-    //TODO: Implement SymbolTable Insert
+    current->AddElement(id,element);
 }
 
 std::shared_ptr<SymbolTableElement>& SymbolTable::LookUp(std::string id)
@@ -31,10 +31,9 @@ void SymbolTable::Initialize()
 
 void SymbolTable::IncreaseScope()
 {
-    auto new_scope = std::make_shared<Scope>();
+    auto new_scope = std::make_shared<Scope>(current);
 
     current->AddChild(new_scope);
-    new_scope->parent = current;
     current = new_scope;
     
 }
@@ -48,13 +47,21 @@ void SymbolTable::DecreaseScope()
 }
 void SymbolTable::Dump()
 {
-    //TODO: Implement SymbolTable Dump
-    
+    DumpScope(current, 0);
 }
 
-void SymbolTable::Insert(std::string id)
+void SymbolTable::DumpScope(std::shared_ptr<Scope> scope, int level)
 {
-    assert(!id.empty());
-    //TODO: Implement SymbolTable Insert
-    //map.insert(std::make_pair(id,std::shared_ptr<SymbolTableElement>(nullptr)));
+    if (!scope) return;
+
+    std::string indent(level * 2, ' ');
+    for (const auto& elem : scope->elements)
+    {
+        std::cout << indent << elem.first << std::endl;
+    }
+
+    for (const auto& child : scope->children)
+    {
+        DumpScope(child, level + 1);
+    }
 }
