@@ -31,7 +31,7 @@ void AtmoDriver::parse(std::istream &stream)
         exit(EXIT_FAILURE);
     }
 
-
+    SymbolTable::Initialize();
     int accept_code = 0;
     if (parser->parse() != accept_code)
     {

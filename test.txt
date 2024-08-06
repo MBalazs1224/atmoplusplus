@@ -1,5 +1,5 @@
 until 3 and 5 or 3
-	create integer a equals 5
+	create char a equals 'c'
 	until a
 		create string b
 if 3 less than "2"

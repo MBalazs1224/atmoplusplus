@@ -4,66 +4,57 @@
 #include <iostream>
 #include <cassert>
 
-// Initialize the private members inside the class
-std::unordered_map<std::string, std::shared_ptr<SymbolTableElement>> SymbolTable::map;
-int SymbolTable::current_scope = 0;
+//Initialize private members
+std::shared_ptr<Scope> SymbolTable::root;
+std::shared_ptr<Scope> SymbolTable::current;
 
 void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> element)
 {
     assert(!id.empty());
     assert(element != nullptr);
     
-    element->AddScope(current_scope);
-    map.insert(std::make_pair(id,element));
+    //TODO: Implement SymbolTable Insert
 }
 
 std::shared_ptr<SymbolTableElement>& SymbolTable::LookUp(std::string id)
 {
     assert(!id.empty());
+    //TODO: Implement SymbolTable Lookup
     
-    return map[id];
-    
-}
-void SymbolTable::IncreaseScope()
-{
-    current_scope++;
 }
 
-void SymbolTable::HideScope()
+void SymbolTable::Initialize()
 {
-    if(current_scope > 0)
-        current_scope--;
+    root = std::make_shared<Scope>();
+    current = root;
+}
+
+void SymbolTable::IncreaseScope()
+{
+    auto new_scope = std::make_shared<Scope>();
+
+    current->AddChild(new_scope);
+    new_scope->parent = current;
+    current = new_scope;
+    
+}
+
+void SymbolTable::DecreaseScope()
+{
+    if (current->parent) 
+    {
+        current = current->parent;
+    }
 }
 void SymbolTable::Dump()
 {
-    for (auto it = map.begin(); it != map.end(); ++it)
-    {
-        std::cout << it->first << std::endl;;
-        std::cout << "------------------" << std::endl;
-    }
+    //TODO: Implement SymbolTable Dump
     
 }
 
 void SymbolTable::Insert(std::string id)
 {
     assert(!id.empty());
-
-    map.insert(std::make_pair(id,std::shared_ptr<SymbolTableElement>(nullptr)));
-}
-
-bool SymbolTable::SymbolIsValid(std::string id)
-{
-    assert(!id.empty());
-    auto iterator = map.find(id);
-    return iterator != map.end();
-}
-
-bool SymbolTable::SymbolAlreadyDeclared(std::string id)
-{
-    return map[id] != nullptr;
-}
-
-void SymbolTable::Switch(std::string id, std::shared_ptr<SymbolTableElement> element)
-{
-    map[id] = element;
+    //TODO: Implement SymbolTable Insert
+    //map.insert(std::make_pair(id,std::shared_ptr<SymbolTableElement>(nullptr)));
 }

@@ -3,12 +3,13 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include "scope.hh"
 // Class for managing symbols
 class SymbolTable
 {
     private:
-        static std::unordered_map<std::string,std::shared_ptr<SymbolTableElement>> map;
-        static int current_scope;
+        static std::shared_ptr<Scope> root;
+        static std::shared_ptr<Scope> current;
 
 // Make the constructor private so no one can instantiate
         SymbolTable(){};
@@ -20,11 +21,10 @@ class SymbolTable
         static void Insert(std::string);
         // Will return a reference to the SymbolTableElement or null if the element wasn't found.
         static std::shared_ptr<SymbolTableElement>& LookUp(std::string);
-        static void HideScope();
+        static void DecreaseScope();
         static void IncreaseScope();
         // Debug function to dump all the contents inside the hashmap on the screen.
         static void Dump();
-        static bool SymbolIsValid(std::string);
-        static bool SymbolAlreadyDeclared(std::string);
-        static void Switch(std::string, std::shared_ptr<SymbolTableElement>);
+
+        static void Initialize();
 };

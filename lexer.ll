@@ -64,6 +64,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     {
         dedents_remaining--;
         std::cout << "Identation level popped! Remaning dedents: " << dedents_remaining << std::endl;
+        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT; 
     }
     // FIXME: This probably could be improved so we don't have to reset the current identation level after every token
@@ -88,6 +89,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         BEGIN NORMAL;
         current_indent = 0;
         yyless(0);
+        SymbolTable::IncreaseScope();
         return yy::parser::token::INDENT;
     }
     else if(current_indent < previous_ident)
@@ -101,6 +103,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         BEGIN NORMAL;
         dedents_remaining--;
         std::cout << "Identation popped: Remeaning dedents: " << dedents_remaining << std::endl;
+        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT;
         
     }
@@ -117,11 +120,13 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     {
         dedents_remaining--;
         std::cout << "Identation level popped!" << std::endl;
+        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT; 
     }
     else if(!ident_stack.empty())
     {
         ident_stack.pop();
+        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT;
     }
     else
@@ -134,11 +139,13 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     {
         dedents_remaining--;
         std::cout << "Identation level popped!" << std::endl;
+        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT; 
     }
     else if(!ident_stack.empty())
     {
         ident_stack.pop();
+        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT;
     }
     else
@@ -179,7 +186,6 @@ return yy::parser::token::STRING_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' { // /*yylval->cval = yytext[0] */;
 yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-    /*BUG: 'c' gets recongized as invalid character literal*/
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
 <CHAR_LITERAL_TOKEN><<EOF>> {std::cout << "Unclosed character literal" << std::endl ; exit(1);}
 
