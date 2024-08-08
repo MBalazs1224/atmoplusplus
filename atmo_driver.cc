@@ -30,7 +30,8 @@ void AtmoDriver::parse(std::istream &stream)
          ba.what() << ")" << std::endl;
         exit(EXIT_FAILURE);
     }
-
+    //TODO: Let the user choose input file, currently defaults to test.txt
+    Error::Initialize();
     SymbolTable::Initialize();
     int accept_code = 0;
     if (parser->parse() != accept_code)

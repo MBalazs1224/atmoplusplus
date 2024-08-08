@@ -3,8 +3,6 @@
 
 #include "AtmoLexer.hh"
 #include "parser.tab.hh"
-
-
 class AtmoDriver
 {
     public:
