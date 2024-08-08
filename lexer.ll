@@ -76,12 +76,10 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 <NORMAL>\n		{  ;BEGIN IDENTATION;}
 <NORMAL>[ ]+ {/* skip whitespace */ }
 
-<IDENTATION>\t {current_indent++; /*std::cout << "identation incremented: " << current_indent << std::endl;*/}
+<IDENTATION>\t {current_indent++;}
 <IDENTATION>\n {  ; current_indent = 0;}
 <IDENTATION>[^\t\n] {
     int previous_ident = ident_stack.empty() ? 0 : ident_stack.top();
-    //std::cout << "Previous ident: " << previous_ident << std::endl;
-    //std::cout << "Current ident: " << current_indent << std::endl;
     if(current_indent > previous_ident)
     {
         ident_stack.push(current_indent);
@@ -161,7 +159,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 
 
 <NORMAL>\" {;BEGIN STRING_LITERAL_TOKEN;}
-<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; yylval->emplace<std::string>(str_buffer.str()); //yylval->sval = str_buffer.str();
+<STRING_LITERAL_TOKEN>\" {  BEGIN NORMAL; yylval->emplace<std::string>(str_buffer.str());
 str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
@@ -179,11 +177,11 @@ return yy::parser::token::STRING_LITERAL;}
 <NORMAL>' {BEGIN CHAR_LITERAL_TOKEN;}
 <CHAR_LITERAL_TOKEN>\t {std::cout << "Invalid tabulator inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\n {std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
-<CHAR_LITERAL_TOKEN>\\t' {// yylval->cval = '\t';
+<CHAR_LITERAL_TOKEN>\\t' {
     yylval->emplace<char>('\t');
     BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>\\n' { ; /* yylval->cval = '\n' */;yylval->emplace<char>('\n');BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>.' { // /*yylval->cval = yytext[0] */;
+<CHAR_LITERAL_TOKEN>\\n' { yylval->emplace<char>('\n');BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>.' {
 yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
@@ -243,15 +241,13 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 
 
 <NORMAL>{letter}({letter}|{digit})* {
-    //yylval->sval = std::string(YYText());
     yylval->emplace<std::string>(std::string(YYText()));
     return yy::parser::token::IDENTIFIER;
 }
 
-<NORMAL>{digit}+	 { /*yylval->ival = atoi(YYText()); */ yylval->emplace<int>(atoi(YYText())); return yy::parser::token::NUMBER;}
+<NORMAL>{digit}+	 { yylval->emplace<int>(atoi(YYText())); return yy::parser::token::NUMBER;}
 
-<NORMAL>\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{
-    //yylval->dval = atof(YYText());	
+<NORMAL>\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{	
     yylval->emplace<double>(atof(YYText()));			
     return yy::parser::token::NUMBER_FLOAT;
 }
