@@ -4,7 +4,7 @@ nodes := ./build/statement_list_node.o ./build/until_statement_node.o ./build/bo
 expressions :=  ./build/expression.o ./build/expressionable.o ./build/literal.o 
 
 
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o  $(nodes) $(expressions)
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o  $(nodes) $(expressions)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
@@ -51,6 +51,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/symboltable.o: ./src/symboltable/symboltable.cc ./src/symboltable/symboltable.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/symboltableelement.o: ./src/symboltable/symboltableelement.cc ./src/symboltable/symboltableelement.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/parser.tab.o: parser.tab.cc AtmoLexer.hh

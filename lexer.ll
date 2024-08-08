@@ -2,7 +2,7 @@
     #include "AtmoLexer.hh"
     #include "parser.tab.hh"
     #include "src/symboltable/symboltable.hh"
-    #include "src/symboltable/symbols.hh"
+    #include "src/symboltable/all_symbols.hh"
     #include <memory>
     /*
 

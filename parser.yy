@@ -17,9 +17,10 @@
     #include <string>
     #include <sstream>
     #include "src/symboltable/symboltable.hh"
-    #include "src/symboltable/symbols.hh"
+    #include "src/symboltable/all_symbols.hh"
     #include "src/ast/nodes/all_nodes.hh"
     #include "src/ast/expressions/all_expressions.hh"
+    #include "src/ast/types/all_types.hh"
     #include <memory>
     #include <vector>
     #include "src/ast/literals/all_literals.hh"
@@ -130,6 +131,8 @@
 %nterm<std::unique_ptr<IfStatementNode>> if_statement
 %nterm<std::unique_ptr<ElseStatementNode>> else_statement
 %nterm<std::unique_ptr<IExpressionable>> expression
+%nterm<Type> datatype
+%nterm<Type> variable_type
 %%
 
 
@@ -164,13 +167,15 @@ variable_assignment: IDENTIFIER EQUALS expression
 
 variable_definition:CREATE variable_type IDENTIFIER equals_holder {
     //FIXME: For testing the type is fixed VaribleSymbol but later needs correct setting
-   SymbolTable::Insert($3,std::make_unique<VariableSymbol>(),@3);
+    auto variable = std::make_unique<VariableSymbol>();
+    variable->SetType($2);
+    SymbolTable::Insert($3,std::move(variable),@3);
 }
 
 
 
-variable_type: DATATYPE
-                | ARRAY_OF DATATYPE
+variable_type: datatype
+                | ARRAY_OF datatype
 equals_holder: %empty
                 |EQUALS expression
 
@@ -197,21 +202,26 @@ function_call_arguments: %empty
 
 function_create: CREATE function_return_type FUNCTION IDENTIFIER argument_list body
 
-function_return_type: DATATYPE
+function_return_type: datatype
                     | VOID
 
 argument_list: %empty
             | WITH argument
             | argument_list COMMA argument
 
-argument: DATATYPE IDENTIFIER
+argument: datatype IDENTIFIER
 
 
-DATATYPE: INT
-          | BOOLEAN
-          | STRING
-          | FLOAT 
-          | CHAR
+datatype: INT {TypeInteger t;
+                $$ = t;}
+          | BOOLEAN {TypeBoolean t;
+                $$ = t;}
+          | STRING {TypeString t;
+                $$ = t;}
+          | FLOAT {TypeFloat t;
+                $$ = t;}
+          | CHAR {TypeChar t;
+                $$ = t;}
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
 
