@@ -8,12 +8,12 @@
 std::shared_ptr<Scope> SymbolTable::root;
 std::shared_ptr<Scope> SymbolTable::current;
 
-void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> element)
+void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> element,yy::location loc)
 {
     assert(!id.empty());
     //assert(element != nullptr);
     
-    current->AddElement(id,element);
+    current->AddElement(id,element,loc);
 }
 
 std::shared_ptr<SymbolTableElement>& SymbolTable::LookUp(std::string id)

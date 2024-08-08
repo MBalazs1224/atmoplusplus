@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include "symboltableelement.hh"
+#include "../../location.hh"
+#include "../error/error.hh"
 class Scope
 {
     std::shared_ptr<Scope> parent;
@@ -16,7 +18,7 @@ class Scope
 
     }
     void AddChild(std::shared_ptr<Scope>);
-    void AddElement(std::string, std::shared_ptr<SymbolTableElement>);
+    void AddElement(std::string, std::shared_ptr<SymbolTableElement>,yy::location);
     bool SymbolAlreadyDeclared(std::string);
     friend class SymbolTable;
 };

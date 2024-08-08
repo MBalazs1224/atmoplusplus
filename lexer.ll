@@ -12,7 +12,7 @@
     */
 
     #undef YY_DECL
-    #define YY_DECL int AtmoLexer::yylex(yy::parser::semantic_type* const yylval, yy::parser::location_type* location)
+    #define YY_DECL int AtmoLexer::yylex(yy::parser::semantic_type* const yylval, yy::parser::location_type* loc)
 
     // The stack used to keep track of the identation levels
     std::stack<int> ident_stack;
@@ -25,13 +25,12 @@
     // Update location on every token match
     #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
 %}
-/*
 
-%option c++ - We switch the output language to C++.
+    /* - We switch the output language to C++. */
+%option c++ 
+    /* - Finally, we set which class should be used by lexer instead of the yyFlexLexer. It will create the method yylex in this class. */
+%option yyclass="FooLexer" 
 
-%option yyclass="FooLexer" - Finally, we set which class should be used by lexer instead of the yyFlexLexer. It will create the method yylex in this class.
-
-*/
 %option noyywrap c++
 %option yyclass="AtmoLexer"
 %option debug
@@ -73,11 +72,11 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
     // Normal state is needed so the identation scanning can be started on the first line
 
 
-<NORMAL>\n		{  ;BEGIN IDENTATION;}
+<NORMAL>\n		{ loc->lines();  ;BEGIN IDENTATION;}
 <NORMAL>[ ]+ {/* skip whitespace */ }
 
 <IDENTATION>\t {current_indent++;}
-<IDENTATION>\n {  ; current_indent = 0;}
+<IDENTATION>\n { loc->lines();  ; current_indent = 0;}
 <IDENTATION>[^\t\n] {
     int previous_ident = ident_stack.empty() ? 0 : ident_stack.top();
     if(current_indent > previous_ident)
@@ -153,7 +152,7 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
 }
 
 <NORMAL>"//" { BEGIN COMMENT_TOKEN;}
-<COMMENT_TOKEN>(\n) {  ;BEGIN NORMAL;}
+<COMMENT_TOKEN>(\n) { loc->lines();  ;BEGIN NORMAL;}
 <COMMENT_TOKEN>[^'"]"\\\\" {BEGIN NORMAL;}
 <COMMENT_TOKEN>[^\n] { /* Skip the chars */}
 
@@ -164,23 +163,23 @@ str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
 <STRING_LITERAL_TOKEN><<EOF>>  {std::cout << "Unclosed string literal"; exit(1);}
-<STRING_LITERAL_TOKEN>\\n { ;str_buffer << "\n";}
+<STRING_LITERAL_TOKEN>\\n { loc->lines(); ;str_buffer << "\n";}
 <STRING_LITERAL_TOKEN>\\t {str_buffer << "\t";}
 <STRING_LITERAL_TOKEN>\\\" {str_buffer << "\"";}
 <STRING_LITERAL_TOKEN>\\\\ {str_buffer << "\\";}
 <STRING_LITERAL_TOKEN>\t { std::cout << "Invalid tabulator inside string literal"; exit(1);}
-<STRING_LITERAL_TOKEN>\n { std::cout << "Invalid new line inside string literal"; exit(1);}
+<STRING_LITERAL_TOKEN>\n {  loc->lines();std::cout << "Invalid new line inside string literal"; exit(1);}
 <STRING_LITERAL_TOKEN>[^\"] {str_buffer << YYText();}
 
 
 
 <NORMAL>' {BEGIN CHAR_LITERAL_TOKEN;}
 <CHAR_LITERAL_TOKEN>\t {std::cout << "Invalid tabulator inside character literal" << std::endl ; exit(1);}
-<CHAR_LITERAL_TOKEN>\n {std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
+<CHAR_LITERAL_TOKEN>\n { loc->lines();std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
 <CHAR_LITERAL_TOKEN>\\t' {
     yylval->emplace<char>('\t');
     BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>\\n' { yylval->emplace<char>('\n');BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
+<CHAR_LITERAL_TOKEN>\\n' { loc->lines(); yylval->emplace<char>('\n');BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' {
 yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
@@ -258,6 +257,6 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>. {std::cerr << "Invalid token: " << YYText();exit(1);}
 
 . { yyless(0);BEGIN IDENTATION;}
-\n { yyless(0);BEGIN IDENTATION;}
+\n { loc->lines(); yyless(0);BEGIN IDENTATION;}
 %%
 

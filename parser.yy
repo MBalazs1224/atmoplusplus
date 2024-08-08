@@ -152,7 +152,7 @@ statement:function_create
 variable_assignment: IDENTIFIER EQUALS expression
 
 variable_definition:CREATE variable_type IDENTIFIER equals_holder {
-   SymbolTable::Insert($3,nullptr);
+   SymbolTable::Insert($3,nullptr,@3);
 }
 
 
