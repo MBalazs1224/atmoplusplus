@@ -3,5 +3,5 @@ if asd
 	until a
 		create integer b
 		create integer d
-		a equals 5
+	g equals 5
 	create char c

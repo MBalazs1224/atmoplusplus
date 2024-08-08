@@ -5,9 +5,23 @@ int Error::MAX_ERRORS = 3;
 std::vector<std::string> Error::source;
 void Error::ShowError(std::string message, yy::location loc)
 {
+
+    
     std::cerr << Red("Error:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
-    PrintSource(loc.begin.line, loc.begin.column, loc.end.column);
+        // Print line before error
+    if (loc.begin.line > 1)
+    {
+        PrintSource(loc.begin.line - 1);
+    }
+    PrintSource(loc.begin.line);
     PrintUnderline(loc.begin.column, loc.end.column);
+
+    // Print line after the error
+    if (loc.begin.line < source.size())
+    {
+        PrintSource(loc.begin.line + 1);
+    }
+    
     if (++error_count == MAX_ERRORS)
     {
         std::cerr << "Maximum number of errors reached (" << MAX_ERRORS << "), exiting!" << std::endl;
@@ -21,7 +35,7 @@ void Error::ShowCompilerError(std::string message)
     std::cerr << Red("Error:") << " " << message << std::endl;
 }
 
-void Error::PrintSource(int line, int col_start, int col_end)
+void Error::PrintSource(int line)
 {
     std::string correct_line = source[line - 1];
     std::cout << line << ". | " << correct_line << std::endl;
