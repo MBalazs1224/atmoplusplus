@@ -25,3 +25,16 @@ bool Scope::SymbolAlreadyDeclared(std::string id)
 {
     return elements.find(id) != elements.end();
 }
+
+std::shared_ptr<SymbolTableElement> Scope::GetElement(std::string id)
+{
+    if (!SymbolAlreadyDeclared(id))
+    {
+        if (parent)
+        {
+            return parent->GetElement(id);
+        }
+        return nullptr;
+    }
+    return elements[id];
+}

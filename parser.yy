@@ -15,6 +15,7 @@
 %language "c++"
 %code requires {
     #include <string>
+    #include <sstream>
     #include "src/symboltable/symboltable.hh"
     #include "src/symboltable/symbols.hh"
     #include "src/ast/nodes/all_nodes.hh"
@@ -150,9 +151,20 @@ statement:function_create
         | return_statement
 
 variable_assignment: IDENTIFIER EQUALS expression
+{
+    auto symbol = SymbolTable::LookUp($1);
+    if(!symbol)
+    {
+        //FIXME: Stringstream might not be needed
+        std::stringstream s;
+        s << "Unknown identifier '" << $1 << "'!";
+        Error::ShowError(s.str(),@1);
+    }
+}
 
 variable_definition:CREATE variable_type IDENTIFIER equals_holder {
-   SymbolTable::Insert($3,nullptr,@3);
+    //FIXME: For testing the type is fixed VaribleSymbol but later needs correct setting
+   SymbolTable::Insert($3,std::make_unique<VariableSymbol>(),@3);
 }
 
 

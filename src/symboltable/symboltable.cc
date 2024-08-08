@@ -16,11 +16,10 @@ void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> ele
     current->AddElement(id,element,loc);
 }
 
-std::shared_ptr<SymbolTableElement>& SymbolTable::LookUp(std::string id)
+std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(std::string id)
 {
     assert(!id.empty());
-    //TODO: Implement SymbolTable Lookup
-    
+    return current->GetElement(id);
 }
 
 void SymbolTable::Initialize()

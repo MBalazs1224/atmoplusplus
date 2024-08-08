@@ -20,5 +20,6 @@ class Scope
     void AddChild(std::shared_ptr<Scope>);
     void AddElement(std::string, std::shared_ptr<SymbolTableElement>,yy::location);
     bool SymbolAlreadyDeclared(std::string);
+    std::shared_ptr<SymbolTableElement> GetElement(std::string);
     friend class SymbolTable;
 };
