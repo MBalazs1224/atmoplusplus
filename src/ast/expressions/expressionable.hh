@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 #include "expressionable.hh"
-
-class IExpressionable
+#include "../../location/ilocation.hh"
+class IExpressionable : public ILocation
 {
     protected:
         std::unique_ptr<IExpressionable> left;

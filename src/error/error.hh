@@ -19,10 +19,10 @@ class Error
 
         };
         static void ShowCompilerError(std::string);
-        static void Initialize();
         static void PrintSource(int,int,int);
         static void PrintUnderline(int,int);
     public:
         static void ShowError(std::string,yy::location);
+        static void Initialize();
 
 };

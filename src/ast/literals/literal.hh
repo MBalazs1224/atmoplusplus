@@ -1,5 +1,6 @@
 #pragma once
 #include "../expressions/expressionable.hh"
+#include "../../location/ilocation.hh"
 class Literal : public IExpressionable
 {
     protected:

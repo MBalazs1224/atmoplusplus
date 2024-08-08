@@ -2,5 +2,5 @@ if asd
 	create integer a
 	until a
 		create integer b
-		create integer b
+		create integer d
 	create char c

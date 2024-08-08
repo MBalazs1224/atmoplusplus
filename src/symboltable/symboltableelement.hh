@@ -1,5 +1,6 @@
 #pragma once
-class SymbolTableElement
+#include "../location/ilocation.hh"
+class SymbolTableElement : public ILocation
 {
     protected:
         int lineno;
