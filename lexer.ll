@@ -96,12 +96,12 @@ not_matches (not[ ]matches)|(NOT[ ]MATCHES)
         {
             ident_stack.pop();
             dedents_remaining++;
+
         }
         yyless(0);
         BEGIN NORMAL;
         dedents_remaining--;
         std::cout << "Identation popped: Remeaning dedents: " << dedents_remaining << std::endl;
-        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT;
         
     }

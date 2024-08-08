@@ -1,5 +1,5 @@
 if asd
 	create string a
-	until a
+	if a
 		create integer b
 	create char c
