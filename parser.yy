@@ -182,7 +182,7 @@ attribute: %empty {AttributePrivate a; $$ = a;}
             | STATIC {AttributeStatic a; $$ = a;}
 
 variable_type: datatype
-                | ARRAY_OF datatype
+                | ARRAY_OF datatype {$2.SetIsArray(true); $$ = $2;}
 equals_holder: %empty
                 |EQUALS expression
 

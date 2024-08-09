@@ -2,6 +2,6 @@ if asd
 	create public integer a
 	until a
 		create private integer b
-		create integer d
+		create array of integer d
 	d equals 5
 	create static char c
