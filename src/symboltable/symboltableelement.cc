@@ -1,11 +1,11 @@
 #include "symboltableelement.hh"
 
-void SymbolTableElement::SetType(Type type)
+void SymbolTableElement::SetType(std::unique_ptr<Type> type)
 {
-    this->type = type;
+    this->type = std::move(type);
 }
 
-void SymbolTableElement::SetAttribute(Attribute attr)
+void SymbolTableElement::SetAttribute(std::unique_ptr<Attribute> attr)
 {
-    attribute = attr;
+    this->attribute = std::move(attr);
 }

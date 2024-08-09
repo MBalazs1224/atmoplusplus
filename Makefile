@@ -4,7 +4,7 @@ nodes := ./build/statement_list_node.o ./build/until_statement_node.o ./build/bo
 expressions :=  ./build/expression.o ./build/expressionable.o ./build/literal.o 
 
 
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o  $(nodes) $(expressions)
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(expressions)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
@@ -33,6 +33,12 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/expression.o: ./src/ast/expressions/expression.cc ./src/ast/expressions/expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/type.o: ./src/ast/types/type.cc ./src/ast/types/type.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/attribute.o: ./src/ast/attributes/attribute.cc ./src/ast/attributes/attribute.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/literal.o: ./src/ast/literals/literal.cc ./src/ast/literals/literal.hh

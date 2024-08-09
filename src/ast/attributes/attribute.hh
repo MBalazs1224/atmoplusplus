@@ -2,5 +2,5 @@
 class Attribute
 {
     public:
-        ~Attribute() = default;
+        virtual ~Attribute();
 };

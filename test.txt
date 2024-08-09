@@ -1,7 +1,7 @@
 if asd
 	create public integer a
 	until a
-		create private integer b
-		create array of integer d
+		create private string b
+		create array of float d
 	d equals 5
 	create static char c

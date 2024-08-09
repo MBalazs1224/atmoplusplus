@@ -90,6 +90,7 @@
 %token CLASS
 %token PUBLIC
 %token PRIVATE
+%token PROTECTED
 %token STATIC
 %token ARRAY_OF
 %token<int> NUMBER
@@ -133,9 +134,9 @@
 %nterm<std::unique_ptr<IfStatementNode>> if_statement
 %nterm<std::unique_ptr<ElseStatementNode>> else_statement
 %nterm<std::unique_ptr<IExpressionable>> expression
-%nterm<Type> datatype
-%nterm<Type> variable_type
-%nterm<Attribute> attribute
+%nterm<std::unique_ptr<Type>> datatype
+%nterm<std::unique_ptr<Type>> variable_type
+%nterm<std::unique_ptr<Attribute>> attribute
 %%
 
 
@@ -171,18 +172,18 @@ variable_assignment: IDENTIFIER EQUALS expression
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     //FIXME: For testing the type is fixed VaribleSymbol but later needs correct setting
     auto variable = std::make_unique<VariableSymbol>();
-    variable->SetType($3);
-    variable->SetAttribute($2);
+    variable->SetType(std::move($3));
+    variable->SetAttribute(std::move($2));
     SymbolTable::Insert($4,std::move(variable),@4);
 }
     /*FIXME: Probably could be made easier, so we don't have to create a temp variable before assigning it to $$*/
-attribute: %empty {AttributePrivate a; $$ = a;}
-            | PRIVATE {AttributePrivate a; $$ = a;}
-            | PUBLIC {AttributePublic a; $$ = a;}
-            | STATIC {AttributeStatic a; $$ = a;}
-
-variable_type: datatype
-                | ARRAY_OF datatype {$2.SetIsArray(true); $$ = $2;}
+attribute: %empty {$$ = std::make_unique<AttributePrivate>();}
+            | PUBLIC {$$ = std::make_unique<AttributePublic>();}
+            | PROTECTED {$$ = std::make_unique<AttributeProtected>();}
+            | PRIVATE {$$ = std::make_unique<AttributePrivate>();}
+            | STATIC {$$ = std::make_unique<AttributeStatic>();}
+variable_type: datatype {$$ = std::move($1);}
+                | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
 equals_holder: %empty
                 |EQUALS expression
 
@@ -219,16 +220,11 @@ argument_list: %empty
 argument: datatype IDENTIFIER
 
 
-datatype: INT {TypeInteger t;
-                $$ = t;}
-          | BOOLEAN {TypeBoolean t;
-                $$ = t;}
-          | STRING {TypeString t;
-                $$ = t;}
-          | FLOAT {TypeFloat t;
-                $$ = t;}
-          | CHAR {TypeChar t;
-                $$ = t;}
+datatype: INT { $$ = std::make_unique<TypeInteger>();}
+          | BOOLEAN  { $$ = std::make_unique<TypeBoolean>();}
+          | STRING  { $$ = std::make_unique<TypeString>();}
+          | FLOAT  { $$ = std::make_unique<TypeFloat>();}
+          | CHAR  { $$ = std::make_unique<TypeChar>();}
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
 

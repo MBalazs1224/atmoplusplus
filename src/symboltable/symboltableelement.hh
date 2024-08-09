@@ -2,15 +2,16 @@
 #include "../location/ilocation.hh"
 #include "../ast/types/type.hh"
 #include "../ast/attributes/attribute.hh"
+#include <memory>
 class SymbolTableElement : public ILocation
 {
     private:
-        Type type;
-        Attribute attribute;
+        std::unique_ptr<Type> type;
+        std::unique_ptr<Attribute> attribute;
     public:
         SymbolTableElement()
         {
         }
-        void SetType(Type);
-        void SetAttribute(Attribute);
+        void SetType(std::unique_ptr<Type>);
+        void SetAttribute(std::unique_ptr<Attribute>);
 };

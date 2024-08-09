@@ -4,17 +4,15 @@ class Type
     protected:
         bool isArray = false;
     public:
-        virtual ~Type() = default;
+        virtual ~Type();
         void SetIsArray(bool isArray)
         {
             this->isArray = isArray;
         }
         Type()
         {
-            
+
         }
-        Type(const Type& other)
-        {
-            this->isArray = other.isArray;
-        }
+        Type(const Type& other);
+        Type& operator=(const Type& other);
 };
