@@ -24,6 +24,7 @@
     #include <memory>
     #include <vector>
     #include "src/ast/literals/all_literals.hh"
+    #include "src/ast/attributes/all_attributes.hh"
     class AtmoDriver;
     class AtmoLexer;
 }
@@ -89,6 +90,7 @@
 %token CLASS
 %token PUBLIC
 %token PRIVATE
+%token STATIC
 %token ARRAY_OF
 %token<int> NUMBER
 %token<double> NUMBER_FLOAT
@@ -133,6 +135,7 @@
 %nterm<std::unique_ptr<IExpressionable>> expression
 %nterm<Type> datatype
 %nterm<Type> variable_type
+%nterm<Attribute> attribute
 %%
 
 
@@ -165,14 +168,18 @@ variable_assignment: IDENTIFIER EQUALS expression
     }
 }
 
-variable_definition:CREATE variable_type IDENTIFIER equals_holder {
+variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     //FIXME: For testing the type is fixed VaribleSymbol but later needs correct setting
     auto variable = std::make_unique<VariableSymbol>();
-    variable->SetType($2);
-    SymbolTable::Insert($3,std::move(variable),@3);
+    variable->SetType($3);
+    variable->SetAttribute($2);
+    SymbolTable::Insert($4,std::move(variable),@4);
 }
-
-
+    /*FIXME: Probably could be made easier, so we don't have to create a temp variable before assigning it to $$*/
+attribute: %empty {AttributePrivate a; $$ = a;}
+            | PRIVATE {AttributePrivate a; $$ = a;}
+            | PUBLIC {AttributePublic a; $$ = a;}
+            | STATIC {AttributeStatic a; $$ = a;}
 
 variable_type: datatype
                 | ARRAY_OF datatype
@@ -200,7 +207,7 @@ function_call_arguments: %empty
                         | WITH expression
                         | function_call_arguments COMMA expression
 
-function_create: CREATE function_return_type FUNCTION IDENTIFIER argument_list body
+function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 
 function_return_type: datatype
                     | VOID

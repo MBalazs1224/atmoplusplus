@@ -54,6 +54,10 @@ array_of array[ ]of|ARRAY[ ]OF
 do (do)|DO
 void (void)|VOID
 not_matches (not[ ]matches)|(NOT[ ]MATCHES)
+private (private)|PRIVATE
+public (public)|PUBLIC
+protected (protected)|PROTECTED
+static (static)|STATIC
 
 %%
     // This code will be put into the top of yylex
@@ -222,6 +226,9 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{do} {return yy::parser::token::DO;}
 <NORMAL>{not_matches} {return yy::parser::token::NOT_MATCHES;}
 <NORMAL>{void} {return yy::parser::token::VOID;}
+<NORMAL>{private} {return yy::parser::token::PRIVATE;}
+<NORMAL>{public} {return yy::parser::token::PUBLIC;}
+<NORMAL>{static} {return yy::parser::token::STATIC;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}

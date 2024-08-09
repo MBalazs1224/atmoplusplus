@@ -1,7 +1,7 @@
 if asd
-	create integer a
+	create public integer a
 	until a
-		create integer b
+		create private integer b
 		create integer d
 	d equals 5
-	create char c
+	create static char c
