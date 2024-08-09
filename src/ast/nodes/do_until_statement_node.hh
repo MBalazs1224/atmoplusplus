@@ -5,7 +5,7 @@
 #include <memory>
 #include <iostream>
 
-class DoUntilStatementNode
+class DoUntilStatementNode : public StatementNode
 {
     std::unique_ptr<BodyNode> body;
     std::unique_ptr<IExpressionable> expression;

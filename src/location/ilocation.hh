@@ -4,9 +4,8 @@
 //Location inteface for everything that needs it's location stored
 class ILocation
 {
-    private:
-        yy::location location;
     public:
-        void SetLocation(yy::location);
+        yy::location location;
+
         virtual ~ILocation();
 };

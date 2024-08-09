@@ -1,7 +1,8 @@
-if asd
+if 4 less than 5
 	create public integer a
 	until a
 		create private string b
 		create array of float d
-	d equals 5
+	f equals 5
 	create static char c
+	return 5

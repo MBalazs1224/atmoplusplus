@@ -30,7 +30,7 @@
 }
 %define api.value.type variant
 %define         parse.trace
-%define         parse.lac           full
+ //%define         parse.lac           full
 
 /* "unexpected" is unhelpful. "unexpected IDENTIFIER, expected NUMBER or STRING_LITERAL" is better. */
 %define         parse.error         detailed
@@ -51,9 +51,6 @@
     void* test = nullptr;
     
 }
-%define parse.error detailed
-%define parse.lac full
-
 %token CREATE
 %token FUNCTION
 %token VARIABLE
@@ -137,40 +134,40 @@
 %nterm<std::unique_ptr<Type>> datatype
 %nterm<std::unique_ptr<Type>> variable_type
 %nterm<std::unique_ptr<Attribute>> attribute
+
+ //TODO: Temporary definitions so I can test individually
+%nterm<std::unique_ptr<StatementNode>> function_call
+%nterm<std::unique_ptr<StatementNode>> function_create
+%nterm<std::unique_ptr<StatementNode>> variable_definition
+%nterm<std::unique_ptr<StatementNode>> variable_assignment
+
 %%
 
-
+    //BUG: All statements gets added to root (even if they are in a body etc..)
 statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
                 | statement_list statement {
                     $1->Add(std::move($2));
                     $$ = std::move($1);
+                    test = $$.get();
                 }
                  
 
 
-statement:function_create 
-        | variable_definition 
-        | variable_assignment 
-        | if_statement 
-        | until_statement 
-        | do_until_statement 
-        | function_call
-        | return_statement
+statement:function_create {$$ = nullptr;}
+        | variable_definition {$$ = nullptr;} 
+        | variable_assignment {$$ = std::move($1);} 
+        | if_statement  {$$ = std::move($1);}
+        | until_statement  {$$ = std::move($1);}
+        | do_until_statement  {$$ = std::move($1);}
+        | function_call {$$ = nullptr;}
+        | return_statement {$$ = std::move($1);}
 
 variable_assignment: IDENTIFIER EQUALS expression
 {
-    auto symbol = SymbolTable::LookUp($1);
-    if(!symbol)
-    {
-        //FIXME: Stringstream might not be needed
-        std::stringstream s;
-        s << "Unknown identifier '" << $1 << "'!";
-        Error::ShowError(s.str(),@1);
-    }
+    $$ = std::make_unique<VariableAssignmentNode>(SymbolTable::LookUp($1),std::move($3));
 }
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
-    //FIXME: For testing the type is fixed VaribleSymbol but later needs correct setting
     auto variable = std::make_unique<VariableSymbol>();
     variable->SetType(std::move($3));
     variable->SetAttribute(std::move($2));
@@ -194,12 +191,12 @@ do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilState
 until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3)); test = $$.get();
     }
 
-if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4)); test = $$.get();}
+if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4)); test = $$.get(); /* TODO: Implement else if */}
 
 else_statement: %empty
                 | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2));}
 
-return_statement: RETURN expression
+return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2));}
 
 
 function_call: CALL IDENTIFIER function_call_arguments //TODO: Add params to the SymbolTable
@@ -227,29 +224,29 @@ datatype: INT { $$ = std::make_unique<TypeInteger>();}
           | CHAR  { $$ = std::make_unique<TypeChar>();}
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
-
-expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(std::move($1),std::move($3));}
-            | expression MINUS expression {$$ = std::make_unique<SubtractExpression>(std::move($1),std::move($3));}
-            | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>(std::move($1),std::move($3));}
-            | expression DIVIDE expression {$$ = std::make_unique<DivideExpression>(std::move($1),std::move($3));}
-            | expression AND expression {$$ = std::make_unique<AndExpression>(std::move($1),std::move($3));}
-            | expression OR expression {$$ = std::make_unique<OrExpression>(std::move($1),std::move($3));}
-            | expression GREATER_THAN expression {$$ = std::make_unique<GreaterThanExpression>(std::move($1),std::move($3));}
-            | expression LESS_THAN expression {$$ = std::make_unique<LessThanExpression>(std::move($1),std::move($3));}
-            | expression GREATER_THAN_OR_EQUAL expression {$$ = std::make_unique<GreaterThanOrEqualExpression>(std::move($1),std::move($3));}
-            | expression LESS_THAN_OR_EQUAL expression {$$ = std::make_unique<LessThanOrEqualExpression>(std::move($1),std::move($3));}
-            | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>(std::move($1),std::move($3));}
-            | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>(std::move($1),std::move($3));}
+    // BUG: Expression location is not set correctly
+expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(std::move($1),std::move($3));  }
+            | expression MINUS expression {$$ = std::make_unique<SubtractExpression>(std::move($1),std::move($3));  }
+            | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>(std::move($1),std::move($3));  }
+            | expression DIVIDE expression {$$ = std::make_unique<DivideExpression>(std::move($1),std::move($3));  }
+            | expression AND expression {$$ = std::make_unique<AndExpression>(std::move($1),std::move($3));  }
+            | expression OR expression {$$ = std::make_unique<OrExpression>(std::move($1),std::move($3));  }
+            | expression GREATER_THAN expression {$$ = std::make_unique<GreaterThanExpression>(std::move($1),std::move($3));  }
+            | expression LESS_THAN expression {$$ = std::make_unique<LessThanExpression>(std::move($1),std::move($3));  }
+            | expression GREATER_THAN_OR_EQUAL expression {$$ = std::make_unique<GreaterThanOrEqualExpression>(std::move($1),std::move($3));  }
+            | expression LESS_THAN_OR_EQUAL expression {$$ = std::make_unique<LessThanOrEqualExpression>(std::move($1),std::move($3));  }
+            | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>(std::move($1),std::move($3));  }
+            | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>(std::move($1),std::move($3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ = std::move($2);}
             // TODO: Make NotExpression take only one parameter instead of the null pointer
-            | NOT expression {$$ = std::make_unique<NotExpression>(std::move($2), nullptr);}
-            | IDENTIFIER {$$ = nullptr;}
-            | NUMBER {$$ = std::make_unique<IntegerLiteral>($1);}
-            | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1);}
-            | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1);}
-            | STRING_LITERAL {$$ = std::make_unique<StringLiteral>($1);}
-            | TRUE {$$ = std::make_unique<BooleanLiteral>($1);}
-            | FALSE {$$ = std::make_unique<BooleanLiteral>($1);}
+            | NOT expression {$$ = std::make_unique<NotExpression>(std::move($2), nullptr);  $$->location = $2->location;}
+            | IDENTIFIER { /* TODO:Implement variables as expressions */}
+            | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
+            | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
+            | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1); $$->location = @1;}
+            | STRING_LITERAL {$$ = std::make_unique<StringLiteral>($1); $$->location = @1;}
+            | TRUE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
+            | FALSE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
 
 %%
 

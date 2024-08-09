@@ -1,5 +1,5 @@
 
-nodes := ./build/statement_list_node.o ./build/until_statement_node.o ./build/body_node.o 
+nodes := ./build/statement_list_node.o ./build/body_node.o 
 
 expressions :=  ./build/expression.o ./build/expressionable.o ./build/literal.o 
 
@@ -50,8 +50,6 @@ main: $(objects)
 ./build/statement_list_node.o: ./src/ast/nodes/statement_list_node.cc ./src/ast/nodes/statement_list_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/until_statement_node.o: ./src/ast/nodes/until_statement_node.cc ./src/ast/nodes/until_statement_node.hh
-	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/body_node.o: ./src/ast/nodes/body_node.cc ./src/ast/nodes/body_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
