@@ -6,7 +6,7 @@
 #include <memory>
 class SymbolTableElement : public ILocation
 {
-    private:
+    protected:
     // FIXME: These definitely shouldn't be a pointer
         std::unique_ptr<Type> type;
         std::unique_ptr<Attribute> attribute = std::make_unique<AttributePrivate>();
