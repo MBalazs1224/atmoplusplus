@@ -1,6 +1,8 @@
 
 create public integer function asd with string a1, integer b2
 	create string rakos
+	rakos = "asd"
+	return a1
 
 if 4 less than 5
 	create public integer a

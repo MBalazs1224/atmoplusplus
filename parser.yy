@@ -189,7 +189,11 @@ equals_holder: %empty
                 |EQUALS expression
 
 
-body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); }
+body: indent statement_list dedent {$$ = std::make_unique<BodyNode>(std::move($2)); }
+
+
+indent: INDENT {SymbolTable::IncreaseScope();}
+dedent: DEDENT {SymbolTable::DecreaseScope();}
 
 do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilStatementNode>(std::move($4),std::move($2));}
 
@@ -233,10 +237,14 @@ function_return_type: datatype {$$ = std::move($1);}
 
 argument_list: %empty
             | WITH argument {
-                $$.push_back(std::move($2));
+                std::vector<std::shared_ptr<Argument>> args;
+                
+                args.push_back(std::move($2));
+                $$ = args;
                 }
             | argument_list COMMA argument {$1.push_back(std::move($3));
-            auto valami = $$;
+            $$ = $1;
+            auto valami = $1;
             std::cout << std::endl;
             }
 

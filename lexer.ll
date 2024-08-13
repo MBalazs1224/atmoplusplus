@@ -65,7 +65,6 @@ static (static)|STATIC
     {
         dedents_remaining--;
         std::cout << "Identation level popped! Remaning dedents: " << dedents_remaining << std::endl;
-        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT; 
     }
     // FIXME: This probably could be improved so we don't have to reset the current identation level after every token
@@ -88,7 +87,6 @@ static (static)|STATIC
         BEGIN NORMAL;
         current_indent = 0;
         yyless(0);
-        SymbolTable::IncreaseScope();
         return yy::parser::token::INDENT;
     }
     else if(current_indent < previous_ident)
@@ -119,13 +117,11 @@ static (static)|STATIC
     {
         dedents_remaining--;
         std::cout << "Identation level popped!" << std::endl;
-        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT; 
     }
     else if(!ident_stack.empty())
     {
         ident_stack.pop();
-        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT;
     }
     else
@@ -138,13 +134,11 @@ static (static)|STATIC
     {
         dedents_remaining--;
         std::cout << "Identation level popped!" << std::endl;
-        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT; 
     }
     else if(!ident_stack.empty())
     {
         ident_stack.pop();
-        SymbolTable::DecreaseScope();
         return yy::parser::token::DEDENT;
     }
     else
