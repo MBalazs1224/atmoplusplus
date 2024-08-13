@@ -133,6 +133,7 @@
 %nterm<std::unique_ptr<IExpressionable>> expression
 %nterm<std::unique_ptr<Type>> datatype
 %nterm<std::unique_ptr<Type>> variable_type
+%nterm<std::unique_ptr<Type>> function_return_type
 %nterm<std::unique_ptr<Attribute>> attribute
 
  //TODO: Temporary definitions so I can test individually
@@ -141,7 +142,9 @@
 %nterm<std::unique_ptr<StatementNode>> variable_definition
 %nterm<std::unique_ptr<StatementNode>> variable_assignment
 
+
 %%
+
 
     //BUG: All statements gets added to root (even if they are in a body etc..)
 statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
@@ -168,9 +171,7 @@ variable_assignment: IDENTIFIER EQUALS expression
 }
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
-    auto variable = std::make_unique<VariableSymbol>();
-    variable->SetType(std::move($3));
-    variable->SetAttribute(std::move($2));
+    auto variable = std::make_unique<VariableSymbol>(std::move($3),std::move($2));
     SymbolTable::Insert($4,std::move(variable),@4);
 }
     /*FIXME: Probably could be made easier, so we don't have to create a temp variable before assigning it to $$*/
@@ -183,6 +184,7 @@ variable_type: datatype {$$ = std::move($1);}
                 | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
 equals_holder: %empty
                 |EQUALS expression
+
 
 body: INDENT statement_list DEDENT {$$ = std::make_unique<BodyNode>(std::move($2)); }
 
@@ -206,9 +208,12 @@ function_call_arguments: %empty
                         | function_call_arguments COMMA expression
 
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
+{
 
-function_return_type: datatype
-                    | VOID
+}
+
+function_return_type: datatype {$$ = std::move($1);}
+                    | VOID {$$ = std::make_unique<TypeVoid>();}
 
 argument_list: %empty
             | WITH argument
@@ -216,7 +221,7 @@ argument_list: %empty
 
 argument: datatype IDENTIFIER
 
-
+    //FIXME: Type probably shouldn't be a pointer
 datatype: INT { $$ = std::make_unique<TypeInteger>();}
           | BOOLEAN  { $$ = std::make_unique<TypeBoolean>();}
           | STRING  { $$ = std::make_unique<TypeString>();}

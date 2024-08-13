@@ -3,8 +3,8 @@
 class VariableSymbol : public SymbolTableElement
 {
     public:
-    VariableSymbol() : SymbolTableElement()
+    VariableSymbol(std::unique_ptr<Type> type, std::unique_ptr<Attribute> attr) : SymbolTableElement(std::move(type),std::move(attr))
     {
-        
+
     }
 };

@@ -12,6 +12,5 @@ class SymbolTableElement : public ILocation
         SymbolTableElement()
         {
         }
-        void SetType(std::unique_ptr<Type>);
-        void SetAttribute(std::unique_ptr<Attribute>);
+        SymbolTableElement(std::unique_ptr<Type>,std::unique_ptr<Attribute>);
 };
