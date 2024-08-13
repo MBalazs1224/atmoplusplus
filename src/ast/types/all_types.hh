@@ -3,3 +3,4 @@
 #include "typefloat.hh"
 #include "typechar.hh"
 #include "typeboolean.hh"
+#include "typevoid.hh"

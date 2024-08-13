@@ -23,6 +23,7 @@ class SymbolTable
         static std::shared_ptr<SymbolTableElement> LookUp(std::string);
         static void DecreaseScope();
         static void IncreaseScope();
+        static bool IsRoot();
         // Debug function to dump all the contents inside the hashmap on the screen.
         static void Dump();
         static void DumpScope(std::shared_ptr<Scope> scope, int level);

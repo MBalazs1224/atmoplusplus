@@ -25,6 +25,7 @@
     #include <vector>
     #include "src/ast/literals/all_literals.hh"
     #include "src/ast/attributes/all_attributes.hh"
+    #include "src/symboltable/argument.hh"
     class AtmoDriver;
     class AtmoLexer;
 }
@@ -135,6 +136,8 @@
 %nterm<std::unique_ptr<Type>> variable_type
 %nterm<std::unique_ptr<Type>> function_return_type
 %nterm<std::unique_ptr<Attribute>> attribute
+%nterm<std::unique_ptr<Argument>> argument
+%nterm<std::vector<std::shared_ptr<Argument>>> argument_list
 
  //TODO: Temporary definitions so I can test individually
 %nterm<std::unique_ptr<StatementNode>> function_call
@@ -209,6 +212,19 @@ function_call_arguments: %empty
 
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 {
+    if(!SymbolTable::IsRoot())
+    {
+        Error::ShowError("Functions can only be created on the root level!",@5);
+    }
+    else
+    {
+        //TODO: Put arguments inside symboltable
+
+        auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
+        
+        SymbolTable::Insert($5,functionSymbol,@5);
+    }
+    
 
 }
 
@@ -216,10 +232,15 @@ function_return_type: datatype {$$ = std::move($1);}
                     | VOID {$$ = std::make_unique<TypeVoid>();}
 
 argument_list: %empty
-            | WITH argument
-            | argument_list COMMA argument
+            | WITH argument {
+                $$.push_back(std::move($2));
+                }
+            | argument_list COMMA argument {$1.push_back(std::move($3));
+            auto valami = $$;
+            std::cout << std::endl;
+            }
 
-argument: datatype IDENTIFIER
+argument: datatype IDENTIFIER {$$ = std::make_unique<Argument>($2,std::move($1));}
 
     //FIXME: Type probably shouldn't be a pointer
 datatype: INT { $$ = std::make_unique<TypeInteger>();}

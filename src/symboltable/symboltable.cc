@@ -34,6 +34,8 @@ void SymbolTable::IncreaseScope()
 
     current->AddChild(new_scope);
     current = new_scope;
+
+    std::cout << "Scope increased!" << std::endl;
     
 }
 
@@ -42,6 +44,7 @@ void SymbolTable::DecreaseScope()
     if (current->parent) 
     {
         current = current->parent;
+        std::cout << "Scope decreased!" << std::endl;
     }
 }
 void SymbolTable::Dump()
@@ -63,4 +66,9 @@ void SymbolTable::DumpScope(std::shared_ptr<Scope> scope, int level)
     {
         DumpScope(child, level + 1);
     }
+}
+
+bool SymbolTable::IsRoot()
+{
+    return root == current;
 }
