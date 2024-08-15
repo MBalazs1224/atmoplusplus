@@ -7,8 +7,8 @@ if 4 less than 5
 	create public integer a
 	until a
 		create private string b
-		create array of float d
-	f equals 5
+		create array of float c
+	d equals 5
 	create static char c
 	return 5
 	

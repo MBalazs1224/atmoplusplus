@@ -192,10 +192,10 @@ variable_type: datatype {$$ = std::move($1);}
                 | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
-    auto variable = std::make_unique<VariableSymbol>(std::move($3),std::move($2));
-    SymbolTable::Insert($4,std::move(variable),@4);
+    auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
+    variable->location = @4;
+    SymbolTable::Insert($4,std::move(variable));
 }
-    /*FIXME: Probably could be made easier, so we don't have to create a temp variable before assigning it to $$*/
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}
             | PROTECTED {$$ = AttributeProtectedHolder;}
@@ -242,11 +242,10 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     }
     else
     {
-        //TODO: Put arguments inside symboltable
         auto temp = $6;
         auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
-        
-        SymbolTable::Insert($5,functionSymbol,@5);
+        functionSymbol->location = @5;
+        SymbolTable::Insert($5,functionSymbol);
     }
     
 
@@ -264,7 +263,7 @@ argument_list: %empty
                 auto variableSymbol = std::make_shared<VariableSymbol>($2->type,std::make_unique<AttributePrivate>());
                 variableSymbol->location = @2;
 
-                SymbolTable::Insert($2->name,variableSymbol,@2);
+                SymbolTable::Insert($2->name,variableSymbol);
                 
                 args.push_back(std::move(variableSymbol));
                 $$ = args;
@@ -277,13 +276,12 @@ argument_list: %empty
                 auto variableSymbol = std::make_shared<VariableSymbol>($3->type,std::make_unique<AttributePrivate>());
                 variableSymbol->location = @3;
                 $1.push_back(variableSymbol);
-                SymbolTable::Insert($3->name,std::move(variableSymbol),@2);
+                SymbolTable::Insert($3->name,std::move(variableSymbol));
                 $$ = $1;
             }
 
 argument: datatype IDENTIFIER {$$ = std::make_shared<Argument>($2,std::move($1));}
 
-    //FIXME: Type probably shouldn't be a pointer
 datatype: INT { $$ = TypeIntegerHolder;}
           | BOOLEAN  { $$ = TypeBooleanHolder;}
           | STRING  { $$ = TypeStringHolder;}
