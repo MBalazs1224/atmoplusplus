@@ -1,4 +1,3 @@
-
 create public integer function asd with string a1, integer b2
 	create boolean rakos
 	rakos = "asd"
@@ -12,4 +11,5 @@ if 4 less than 5
 	f equals 5
 	create static char c
 	return 5
+	
 

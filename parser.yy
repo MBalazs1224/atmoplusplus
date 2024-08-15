@@ -228,6 +228,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 {
     // Decrease the scope so the function will be inserted into the root, so everything can access it
     SymbolTable::DecreaseScope();
+    //BUG: If the function is not added, the scopes and variables stay inside the SymbolTable
     if(!SymbolTable::IsRoot())
     {
         Error::ShowError("Functions can only be created on the root level!",@5);
@@ -235,7 +236,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     else
     {
         //TODO: Put arguments inside symboltable
-
+        auto temp = $6;
         auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
         
         SymbolTable::Insert($5,functionSymbol,@5);
@@ -262,11 +263,15 @@ argument_list: %empty
                 $$ = args;
                 }
             | argument_list COMMA argument {
+
+                auto temp = $1;
+                auto temp2 = $3;
                 $1.push_back($3);
                 auto variableSymbol = std::make_unique<VariableSymbol>($3->type,std::make_unique<AttributePrivate>());
                 variableSymbol->location = @3;
 
                 SymbolTable::Insert($3->name,std::move(variableSymbol),@2);
+                $$ = $1;
             }
 
 argument: datatype IDENTIFIER {$$ = std::make_shared<Argument>($2,std::move($1));}
