@@ -9,8 +9,4 @@ class GreaterThanOrEqualExpression : public Expression
 
     }
     ~GreaterThanOrEqualExpression() override = default;
-    std::string Type() override
-    {
-        return "GreaterThanOrEqual";
-    }
 };

@@ -7,8 +7,4 @@ class MultiplyExpression : public Expression
 
     }
     ~MultiplyExpression() override = default;
-    std::string Type() override
-    {
-        return "Multiply";
-    }
 };

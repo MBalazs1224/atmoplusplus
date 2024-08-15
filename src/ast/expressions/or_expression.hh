@@ -8,8 +8,4 @@ class OrExpression : public Expression
 
     }
     ~OrExpression() override = default;
-    std::string Type() override
-    {
-        return "Or";
-    }
 };

@@ -8,8 +8,4 @@ class DivideExpression : public Expression
 
     }
     ~DivideExpression() override = default;
-    std::string Type() override
-    {
-        return "Divide";
-    }
 };

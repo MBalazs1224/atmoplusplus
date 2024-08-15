@@ -7,8 +7,4 @@ class SubtractExpression : public Expression
 
     }
     ~SubtractExpression() override = default;
-    std::string Type() override
-    {
-        return "Subtract";
-    }
 };

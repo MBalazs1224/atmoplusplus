@@ -10,8 +10,4 @@ class AndExpression : public Expression
 
     }
     ~AndExpression() override = default;
-    std::string Type() override
-    {
-        return "And";
-    }
 };

@@ -7,8 +7,4 @@ class NotMatchesExpression : public Expression
 
     }
     ~NotMatchesExpression() override = default;
-    std::string Type() override
-    {
-        return "NotMatches";
-    }
 };

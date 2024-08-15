@@ -9,9 +9,5 @@ class AddExpression : public Expression
 
     }
     ~AddExpression() override = default;
-    std::string Type() override
-    {
-        return "Add";
-    }
 
 };

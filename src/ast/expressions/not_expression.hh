@@ -7,8 +7,4 @@ class NotExpression : public Expression
 
     }
     ~NotExpression() override = default;
-    std::string Type() override
-    {
-        return "Not";
-    }
 };

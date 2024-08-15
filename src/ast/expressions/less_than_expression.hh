@@ -7,8 +7,4 @@ class LessThanExpression : public Expression
 
     }
     ~LessThanExpression() override = default;
-    std::string Type() override
-    {
-        return "LessThan";
-    }
 };

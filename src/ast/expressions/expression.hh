@@ -16,5 +16,4 @@ class Expression : public IExpressionable
    // Public because unique_ptr has to call it to correctly delete itself
    public:
      virtual ~Expression();
-     virtual std::string Type() = 0;
 };

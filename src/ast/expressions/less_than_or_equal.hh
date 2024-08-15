@@ -8,8 +8,4 @@ class LessThanOrEqualExpression : public Expression
 
     }
     ~LessThanOrEqualExpression() override = default;
-    std::string Type() override
-    {
-        return "LessThanOrEqual";
-    }
 };

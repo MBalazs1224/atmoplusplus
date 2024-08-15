@@ -9,8 +9,4 @@ class GreaterThanExpression : public Expression
 
     }
     ~GreaterThanExpression() override = default;
-    std::string Type() override
-    {
-        return "GreaterThan";
-    }
 };

@@ -154,9 +154,11 @@
 %nterm<std::shared_ptr<Attribute>> attribute
 %nterm<std::shared_ptr<Argument>> argument
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
+%nterm<std::shared_ptr<FunctionCall>> function_call
+%nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
+
 
  //TODO: Temporary definitions so I can test individually
-%nterm<std::unique_ptr<StatementNode>> function_call
 %nterm<std::unique_ptr<StatementNode>> function_create
 %nterm<std::unique_ptr<StatementNode>> variable_definition
 %nterm<std::unique_ptr<StatementNode>> variable_assignment
@@ -181,11 +183,11 @@ statement:function_create {$$ = nullptr;}
         | if_statement  {$$ = std::move($1);}
         | until_statement  {$$ = std::move($1);}
         | do_until_statement  {$$ = std::move($1);}
-        | function_call {$$ = nullptr;}
         | return_statement {$$ = std::move($1);}
 
 variable_assignment: IDENTIFIER EQUALS expression
 {
+    auto test = $3;
     $$ = std::make_unique<VariableAssignmentNode>(SymbolTable::LookUp($1),std::move($3));
 }
 variable_type: datatype {$$ = std::move($1);}
@@ -225,11 +227,7 @@ else_statement: %empty
 return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2));}
 
 
-function_call: CALL IDENTIFIER function_call_arguments //TODO: Add params to the SymbolTable
 
-function_call_arguments: %empty
-                        | WITH expression
-                        | function_call_arguments COMMA expression
 
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 {
@@ -250,6 +248,13 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     
 
 }
+function_call: CALL IDENTIFIER function_call_arguments {
+    auto function = SymbolTable::LookUp($2);
+    $$ = std::make_shared<FunctionCall>(nullptr,nullptr, function,$3);
+    }
+
+function_call_arguments: %empty //TODO: Add params to the function call
+                        
 
 function_return_type: datatype {$$ = std::move($1);}
                     | VOID {$$ = TypeVoidHolder;}
@@ -313,6 +318,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(st
             | STRING_LITERAL {$$ = std::make_unique<StringLiteral>($1); $$->location = @1;}
             | TRUE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
             | FALSE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
+            | function_call {$$ = $1;}
 
 %%
 

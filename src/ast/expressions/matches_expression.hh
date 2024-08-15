@@ -7,8 +7,4 @@ class MatchesExpression : public Expression
 
     }
     ~MatchesExpression() override = default;
-    std::string Type() override
-    {
-        return "Matches";
-    }
 };
