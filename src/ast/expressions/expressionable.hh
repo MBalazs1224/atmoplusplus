@@ -4,10 +4,11 @@
 #include "../../location/ilocation.hh"
 class IExpressionable : public ILocation
 {
+    // FIXME: Not everything needs 2 expressions
     protected:
-        std::unique_ptr<IExpressionable> left;
-        std::unique_ptr<IExpressionable> right;
-        IExpressionable(std::unique_ptr<IExpressionable> left_in, std::unique_ptr<IExpressionable> right_in) : left(std::move(left_in)), right(std::move(right_in))
+        std::shared_ptr<IExpressionable> left;
+        std::shared_ptr<IExpressionable> right;
+        IExpressionable(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in) : left(std::move(left_in)), right(std::move(right_in))
         {
             // FIXME: Thishas to be in an if statement because not exp only has the left_in and would segfault because right_in = nullptr
             if (left_in && right_in)

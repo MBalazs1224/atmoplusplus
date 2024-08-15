@@ -50,6 +50,15 @@
     #define yylex lexer.yylex
     #define YYDEBUG 1
     void* test = nullptr;
+
+    //Type pointers so everything with the same type cah share them, not needing to create their owns (they need to be pointers so typeid can work correctly)
+
+    std::shared_ptr<TypeInteger> TypeIntegerHolder = std::make_shared<TypeInteger>();
+    std::shared_ptr<TypeFloat> TypeFloatHolder = std::make_shared<TypeFloat>();
+    std::shared_ptr<TypeString> TypeStringHolder = std::make_shared<TypeString>();
+    std::shared_ptr<TypeChar> TypeCharHolder = std::make_shared<TypeChar>();
+    std::shared_ptr<TypeBoolean> TypeBooleanHolder = std::make_shared<TypeBoolean>();
+    std::shared_ptr<TypeVoid> TypeVoidHolder = std::make_shared<TypeVoid>();
     
 }
 %token CREATE
@@ -131,12 +140,13 @@
 %nterm<std::unique_ptr<ReturnStatementNode>> return_statement
 %nterm<std::unique_ptr<IfStatementNode>> if_statement
 %nterm<std::unique_ptr<ElseStatementNode>> else_statement
-%nterm<std::unique_ptr<IExpressionable>> expression
-%nterm<std::unique_ptr<Type>> datatype
-%nterm<std::unique_ptr<Type>> variable_type
-%nterm<std::unique_ptr<Type>> function_return_type
+    /*FIXME:This has to be a shared_ptr because of variableSymbols, might be improved*/
+%nterm<std::shared_ptr<IExpressionable>> expression
+%nterm<std::shared_ptr<Type>> datatype
+%nterm<std::shared_ptr<Type>> variable_type
+%nterm<std::shared_ptr<Type>> function_return_type
 %nterm<std::unique_ptr<Attribute>> attribute
-%nterm<std::unique_ptr<Argument>> argument
+%nterm<std::shared_ptr<Argument>> argument
 %nterm<std::vector<std::shared_ptr<Argument>>> argument_list
 
  //TODO: Temporary definitions so I can test individually
@@ -216,6 +226,8 @@ function_call_arguments: %empty
 
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 {
+    // Decrease the scope so the function will be inserted into the root, so everything can access it
+    SymbolTable::DecreaseScope();
     if(!SymbolTable::IsRoot())
     {
         Error::ShowError("Functions can only be created on the root level!",@5);
@@ -233,29 +245,38 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 }
 
 function_return_type: datatype {$$ = std::move($1);}
-                    | VOID {$$ = std::make_unique<TypeVoid>();}
+                    | VOID {$$ = TypeVoidHolder;}
 
 argument_list: %empty
             | WITH argument {
+                // Increase the scope so the arguments can be pushed into their own scope
+                SymbolTable::IncreaseScope();
                 std::vector<std::shared_ptr<Argument>> args;
+
+                auto variableSymbol = std::make_unique<VariableSymbol>($2->type,std::make_unique<AttributePrivate>());
+                variableSymbol->location = @2;
+
+                SymbolTable::Insert($2->name,std::move(variableSymbol),@2);
                 
                 args.push_back(std::move($2));
                 $$ = args;
                 }
-            | argument_list COMMA argument {$1.push_back(std::move($3));
-            $$ = $1;
-            auto valami = $1;
-            std::cout << std::endl;
+            | argument_list COMMA argument {
+                $1.push_back($3);
+                auto variableSymbol = std::make_unique<VariableSymbol>($3->type,std::make_unique<AttributePrivate>());
+                variableSymbol->location = @3;
+
+                SymbolTable::Insert($3->name,std::move(variableSymbol),@2);
             }
 
-argument: datatype IDENTIFIER {$$ = std::make_unique<Argument>($2,std::move($1));}
+argument: datatype IDENTIFIER {$$ = std::make_shared<Argument>($2,std::move($1));}
 
     //FIXME: Type probably shouldn't be a pointer
-datatype: INT { $$ = std::make_unique<TypeInteger>();}
-          | BOOLEAN  { $$ = std::make_unique<TypeBoolean>();}
-          | STRING  { $$ = std::make_unique<TypeString>();}
-          | FLOAT  { $$ = std::make_unique<TypeFloat>();}
-          | CHAR  { $$ = std::make_unique<TypeChar>();}
+datatype: INT { $$ = TypeIntegerHolder;}
+          | BOOLEAN  { $$ = TypeBooleanHolder;}
+          | STRING  { $$ = TypeStringHolder;}
+          | FLOAT  { $$ = TypeFloatHolder;}
+          | CHAR  { $$ = TypeCharHolder;}
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
     // BUG: Expression location is not set correctly
@@ -274,7 +295,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(st
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ = std::move($2);}
             // TODO: Make NotExpression take only one parameter instead of the null pointer
             | NOT expression {$$ = std::make_unique<NotExpression>(std::move($2), nullptr);  $$->location = $2->location;}
-            | IDENTIFIER { /* TODO:Implement variables as expressions */}
+            | IDENTIFIER { /* TODO:Implement variables as expressions */ $$ = SymbolTable::LookUp($1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
             | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1); $$->location = @1;}

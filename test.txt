@@ -1,6 +1,6 @@
 
 create public integer function asd with string a1, integer b2
-	create string rakos
+	create boolean rakos
 	rakos = "asd"
 	return a1
 

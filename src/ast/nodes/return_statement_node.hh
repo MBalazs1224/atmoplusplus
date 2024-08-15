@@ -4,9 +4,9 @@
 #include <memory>
 class ReturnStatementNode : public  StatementNode
 {
-    std::unique_ptr<IExpressionable> expression;
+    std::shared_ptr<IExpressionable> expression;
     public:
-        ReturnStatementNode(std::unique_ptr<IExpressionable> exp_in) : expression(std::move(exp_in))
+        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in) : expression(std::move(exp_in))
         {
 
         }

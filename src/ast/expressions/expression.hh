@@ -6,7 +6,7 @@ class Expression : public IExpressionable
 {
     protected:
         
-        Expression(std::unique_ptr<IExpressionable> left_in, std::unique_ptr<IExpressionable> right_in) : IExpressionable(std::move(left_in),(std::move(right_in)))
+        Expression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in) : IExpressionable(std::move(left_in),(std::move(right_in)))
         {
 
         }

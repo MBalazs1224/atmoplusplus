@@ -8,10 +8,10 @@
 class DoUntilStatementNode : public StatementNode
 {
     std::unique_ptr<BodyNode> body;
-    std::unique_ptr<IExpressionable> expression;
+    std::shared_ptr<IExpressionable> expression;
 
     public:
-        DoUntilStatementNode(std::unique_ptr<IExpressionable> expression_in,std::unique_ptr<BodyNode> body_in)
+        DoUntilStatementNode(std::shared_ptr<IExpressionable> expression_in,std::unique_ptr<BodyNode> body_in)
         : body(std::move(body_in)), expression(std::move(expression_in))
         {
         }
