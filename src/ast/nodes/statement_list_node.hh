@@ -10,4 +10,5 @@ class StatementListNode : public Node
     public:
         void Add(std::unique_ptr<StatementNode>);
         StatementListNode(std::unique_ptr<StatementNode> statement);
+        std::vector<std::unique_ptr<StatementNode>> GetStatements();
 };

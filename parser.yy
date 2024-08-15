@@ -208,7 +208,7 @@ equals_holder: %empty
                 |EQUALS expression
 
 
-body: indent statement_list dedent {$$ = std::make_unique<BodyNode>(std::move($2)); }
+body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetStatements()); }
 
 
 indent: INDENT {SymbolTable::IncreaseScope();}

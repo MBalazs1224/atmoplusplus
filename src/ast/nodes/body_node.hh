@@ -6,10 +6,9 @@
 #include <memory>
 class BodyNode : public Node
 {
-    std::unique_ptr<StatementListNode> statementList;
-
+    std::vector<std::unique_ptr<StatementNode>> statements;
     public:
-    BodyNode(std::unique_ptr<StatementListNode>);
+    BodyNode(std::vector<std::unique_ptr<StatementNode>>);
 
     BodyNode(BodyNode&& other);
 };
