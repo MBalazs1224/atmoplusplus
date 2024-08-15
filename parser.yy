@@ -59,6 +59,12 @@
     std::shared_ptr<TypeChar> TypeCharHolder = std::make_shared<TypeChar>();
     std::shared_ptr<TypeBoolean> TypeBooleanHolder = std::make_shared<TypeBoolean>();
     std::shared_ptr<TypeVoid> TypeVoidHolder = std::make_shared<TypeVoid>();
+
+    std::shared_ptr<AttributePrivate> AttributePrivateHolder = std::make_shared<AttributePrivate>();
+    std::shared_ptr<AttributePublic> AttributePublicHolder = std::make_shared<AttributePublic>();
+    std::shared_ptr<AttributeProtected> AttributeProtectedHolder = std::make_shared<AttributeProtected>();
+    std::shared_ptr<AttributeStatic> AttributeStaticHolder = std::make_shared<AttributeStatic>();
+
     
 }
 %token CREATE
@@ -145,7 +151,7 @@
 %nterm<std::shared_ptr<Type>> datatype
 %nterm<std::shared_ptr<Type>> variable_type
 %nterm<std::shared_ptr<Type>> function_return_type
-%nterm<std::unique_ptr<Attribute>> attribute
+%nterm<std::shared_ptr<Attribute>> attribute
 %nterm<std::shared_ptr<Argument>> argument
 %nterm<std::vector<std::shared_ptr<Argument>>> argument_list
 
@@ -182,19 +188,20 @@ variable_assignment: IDENTIFIER EQUALS expression
 {
     $$ = std::make_unique<VariableAssignmentNode>(SymbolTable::LookUp($1),std::move($3));
 }
+variable_type: datatype {$$ = std::move($1);}
+                | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_unique<VariableSymbol>(std::move($3),std::move($2));
     SymbolTable::Insert($4,std::move(variable),@4);
 }
     /*FIXME: Probably could be made easier, so we don't have to create a temp variable before assigning it to $$*/
-attribute: %empty {$$ = std::make_unique<AttributePrivate>();}
-            | PUBLIC {$$ = std::make_unique<AttributePublic>();}
-            | PROTECTED {$$ = std::make_unique<AttributeProtected>();}
-            | PRIVATE {$$ = std::make_unique<AttributePrivate>();}
-            | STATIC {$$ = std::make_unique<AttributeStatic>();}
-variable_type: datatype {$$ = std::move($1);}
-                | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
+attribute: %empty {$$ = AttributePrivateHolder;}
+            | PUBLIC {$$ = AttributePublicHolder;}
+            | PROTECTED {$$ = AttributeProtectedHolder;}
+            | PRIVATE {$$ = AttributePrivateHolder;}
+            | STATIC {$$ = AttributeStaticHolder;}
+
 equals_holder: %empty
                 |EQUALS expression
 
@@ -282,6 +289,7 @@ datatype: INT { $$ = TypeIntegerHolder;}
           | STRING  { $$ = TypeStringHolder;}
           | FLOAT  { $$ = TypeFloatHolder;}
           | CHAR  { $$ = TypeCharHolder;}
+
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
     // BUG: Expression location is not set correctly
