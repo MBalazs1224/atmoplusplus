@@ -153,7 +153,7 @@
 %nterm<std::shared_ptr<Type>> function_return_type
 %nterm<std::shared_ptr<Attribute>> attribute
 %nterm<std::shared_ptr<Argument>> argument
-%nterm<std::vector<std::shared_ptr<Argument>>> argument_list
+%nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
 
  //TODO: Temporary definitions so I can test individually
 %nterm<std::unique_ptr<StatementNode>> function_call
@@ -259,24 +259,24 @@ argument_list: %empty
             | WITH argument {
                 // Increase the scope so the arguments can be pushed into their own scope
                 SymbolTable::IncreaseScope();
-                std::vector<std::shared_ptr<Argument>> args;
+                std::vector<std::shared_ptr<VariableSymbol>> args;
 
-                auto variableSymbol = std::make_unique<VariableSymbol>($2->type,std::make_unique<AttributePrivate>());
+                auto variableSymbol = std::make_shared<VariableSymbol>($2->type,std::make_unique<AttributePrivate>());
                 variableSymbol->location = @2;
 
-                SymbolTable::Insert($2->name,std::move(variableSymbol),@2);
+                SymbolTable::Insert($2->name,variableSymbol,@2);
                 
-                args.push_back(std::move($2));
+                args.push_back(std::move(variableSymbol));
                 $$ = args;
                 }
             | argument_list COMMA argument {
 
                 auto temp = $1;
                 auto temp2 = $3;
-                $1.push_back($3);
-                auto variableSymbol = std::make_unique<VariableSymbol>($3->type,std::make_unique<AttributePrivate>());
+                
+                auto variableSymbol = std::make_shared<VariableSymbol>($3->type,std::make_unique<AttributePrivate>());
                 variableSymbol->location = @3;
-
+                $1.push_back(variableSymbol);
                 SymbolTable::Insert($3->name,std::move(variableSymbol),@2);
                 $$ = $1;
             }
