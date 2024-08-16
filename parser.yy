@@ -148,9 +148,9 @@
 %nterm<std::unique_ptr<ElseStatementNode>> else_statement
     /*FIXME:This has to be a shared_ptr because of variableSymbols, might be improved*/
 %nterm<std::shared_ptr<IExpressionable>> expression
-%nterm<std::shared_ptr<Type>> datatype
-%nterm<std::shared_ptr<Type>> variable_type
-%nterm<std::shared_ptr<Type>> function_return_type
+%nterm<Type> datatype
+%nterm<Type> variable_type
+%nterm<Type> function_return_type
 %nterm<std::shared_ptr<Attribute>> attribute
 %nterm<std::shared_ptr<Argument>> argument
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
@@ -191,7 +191,7 @@ variable_assignment: IDENTIFIER EQUALS expression
     $$ = std::make_unique<VariableAssignmentNode>(SymbolTable::LookUp($1),std::move($3));
 }
 variable_type: datatype {$$ = std::move($1);}
-                | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
+                | ARRAY_OF datatype {$2.SetIsArray(true); $$ = std::move($2);}
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
@@ -257,7 +257,7 @@ function_call_arguments: %empty //TODO: Add params to the function call
                         
 
 function_return_type: datatype {$$ = std::move($1);}
-                    | VOID {$$ = TypeVoidHolder;}
+                    | VOID {$$ = TypeVoid();}
 
 argument_list: %empty
             | WITH argument {
@@ -287,11 +287,11 @@ argument_list: %empty
 
 argument: datatype IDENTIFIER {$$ = std::make_shared<Argument>($2,std::move($1));}
 
-datatype: INT { $$ = TypeIntegerHolder;}
-          | BOOLEAN  { $$ = TypeBooleanHolder;}
-          | STRING  { $$ = TypeStringHolder;}
-          | FLOAT  { $$ = TypeFloatHolder;}
-          | CHAR  { $$ = TypeCharHolder;}
+datatype: INT { $$ = TypeInteger();}
+          | BOOLEAN  { $$ = TypeBoolean();}
+          | STRING  { $$ = TypeString();}
+          | FLOAT  { $$ = TypeFloat();}
+          | CHAR  { $$ = TypeChar();}
 
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure

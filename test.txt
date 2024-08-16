@@ -1,5 +1,5 @@
 create public integer function asd with string a1, integer b2
-	create boolean rakos
+	create array of boolean rakos
 	rakos = "asd"
 	return a1
 
@@ -9,7 +9,7 @@ if 4 less than 5
 		create private string b
 		create array of float c
 	d equals call asd
-	create static char c
+	create static array of char c
 	return 5
 	
 

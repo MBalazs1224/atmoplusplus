@@ -6,8 +6,8 @@ class Argument
 {
     public:
         std::string name;
-        std::shared_ptr<Type> type;
-        Argument(std::string name_in,std::shared_ptr<Type> type_in) : name(name_in), type(type_in)
+        Type type;
+        Argument(std::string name_in,Type type_in) : name(name_in), type(type_in)
         {
 
         }
