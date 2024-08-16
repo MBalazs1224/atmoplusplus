@@ -1,13 +1,13 @@
 #pragma once
-#include "statement_node.hh"
+#include "node.hh"
 #include "body_node.hh"
 #include <memory>
-class ElseStatementNode : public  StatementNode
+class ElseStatementNode : public  Node
 {
     std::unique_ptr<BodyNode> body;
 
     public:
-        ElseStatementNode(std::unique_ptr<BodyNode> body_in) : body(std::move(body_in))
+        ElseStatementNode(std::unique_ptr<BodyNode> body_in, yy::location loc) : body(std::move(body_in)) , Node(loc)
         {
 
         }

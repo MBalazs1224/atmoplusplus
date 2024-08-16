@@ -10,7 +10,8 @@ class FunctionCall : public Expression
         std::shared_ptr<SymbolTableElement> function;
 
     public:
-        FunctionCall(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in, std::shared_ptr<SymbolTableElement> func_in, std::vector<std::shared_ptr<IExpressionable>> args_in) : Expression(std::move(left_in),std::move(right_in))
+        //FIXME: function call doesn't need expressions
+        FunctionCall(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in, std::shared_ptr<SymbolTableElement> func_in, std::vector<std::shared_ptr<IExpressionable>> args_in,yy::location loc) : Expression(std::move(left_in),std::move(right_in),loc)
         {
             arguments = args_in;
             function = func_in;

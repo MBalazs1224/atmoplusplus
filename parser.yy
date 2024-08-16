@@ -214,17 +214,17 @@ body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetState
 indent: INDENT {SymbolTable::IncreaseScope();}
 dedent: DEDENT {SymbolTable::DecreaseScope();}
 
-do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilStatementNode>(std::move($4),std::move($2));}
+do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilStatementNode>(std::move($4),std::move($2),@1);}
 
-until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3)); test = $$.get();
+until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3),@1); test = $$.get();
     }
 
-if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4)); test = $$.get(); /* TODO: Implement else if */}
+if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4),@1); test = $$.get(); /* TODO: Implement else if */}
 
 else_statement: %empty
-                | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2));}
+                | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2),@1);}
 
-return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2));}
+return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2),@1 + $2->location);}
 
 
 
@@ -250,7 +250,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 }
 function_call: CALL IDENTIFIER function_call_arguments {
     auto function = SymbolTable::LookUp($2);
-    $$ = std::make_shared<FunctionCall>(nullptr,nullptr, function,$3);
+    $$ = std::make_shared<FunctionCall>(nullptr,nullptr, function,$3,@1+@2);
     }
 
 function_call_arguments: %empty //TODO: Add params to the function call
@@ -296,21 +296,21 @@ datatype: INT { $$ = TypeInteger();}
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
     // BUG: Expression location is not set correctly
-expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(std::move($1),std::move($3));  }
-            | expression MINUS expression {$$ = std::make_unique<SubtractExpression>(std::move($1),std::move($3));  }
-            | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>(std::move($1),std::move($3));  }
-            | expression DIVIDE expression {$$ = std::make_unique<DivideExpression>(std::move($1),std::move($3));  }
-            | expression AND expression {$$ = std::make_unique<AndExpression>(std::move($1),std::move($3));  }
-            | expression OR expression {$$ = std::make_unique<OrExpression>(std::move($1),std::move($3));  }
-            | expression GREATER_THAN expression {$$ = std::make_unique<GreaterThanExpression>(std::move($1),std::move($3));  }
-            | expression LESS_THAN expression {$$ = std::make_unique<LessThanExpression>(std::move($1),std::move($3));  }
-            | expression GREATER_THAN_OR_EQUAL expression {$$ = std::make_unique<GreaterThanOrEqualExpression>(std::move($1),std::move($3));  }
-            | expression LESS_THAN_OR_EQUAL expression {$$ = std::make_unique<LessThanOrEqualExpression>(std::move($1),std::move($3));  }
-            | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>(std::move($1),std::move($3));  }
-            | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>(std::move($1),std::move($3));  }
-            | OPEN_BRACKET expression CLOSE_BRACKET {$$ = std::move($2);}
+expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, $1->location + $3->location);  }
+            | expression MINUS expression {$$ = std::make_unique<SubtractExpression>( $1, $3, $1->location + $3->location);  }
+            | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>( $1, $3, $1->location + $3->location);  }
+            | expression DIVIDE expression {$$ = std::make_unique<DivideExpression>( $1, $3, $1->location + $3->location);  }
+            | expression AND expression {$$ = std::make_unique<AndExpression>( $1, $3, $1->location + $3->location);  }
+            | expression OR expression {$$ = std::make_unique<OrExpression>( $1, $3, $1->location + $3->location);  }
+            | expression GREATER_THAN expression {$$ = std::make_unique<GreaterThanExpression>( $1, $3, $1->location + $3->location);  }
+            | expression LESS_THAN expression {$$ = std::make_unique<LessThanExpression>( $1, $3, $1->location + $3->location);  }
+            | expression GREATER_THAN_OR_EQUAL expression {$$ = std::make_unique<GreaterThanOrEqualExpression>( $1, $3, $1->location + $3->location);  }
+            | expression LESS_THAN_OR_EQUAL expression {$$ = std::make_unique<LessThanOrEqualExpression>( $1, $3, $1->location + $3->location);  }
+            | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>( $1, $3, $1->location + $3->location);  }
+            | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, $1->location + $3->location);  }
+            | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
             // TODO: Make NotExpression take only one parameter instead of the null pointer
-            | NOT expression {$$ = std::make_unique<NotExpression>(std::move($2), nullptr);  $$->location = $2->location;}
+            | NOT expression {$$ = std::make_unique<NotExpression>( $2, nullptr, @1 + $2->location); }
             | IDENTIFIER { /* TODO:Implement variables as expressions */ $$ = SymbolTable::LookUp($1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
@@ -321,8 +321,18 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(st
             | function_call {$$ = $1;}
             | expression EQUALS expression
                 {
+                    // FIXME: This needs to be edited to ignore the location if it's null
+                    yy::location loc = @2;
+                    if($1)
+                    {
+                        loc += $1->location;
+                    }
+                    if($3)
+                    {
+                        loc += $3->location;
+                    }
                     auto test = $3;
-                    $$ = std::make_unique<AssignmentExpression>(std::move($1),std::move($3));
+                    $$ = std::make_unique<AssignmentExpression>( $1, $3, loc);
                 }
 
 %%

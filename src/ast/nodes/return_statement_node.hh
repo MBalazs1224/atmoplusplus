@@ -1,12 +1,12 @@
 #pragma once
-#include "statement_node.hh"
+#include "node.hh"
 #include "../expressions/expressionable.hh"
 #include <memory>
-class ReturnStatementNode : public  StatementNode
+class ReturnStatementNode : public  Node
 {
     std::shared_ptr<IExpressionable> expression;
     public:
-        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in) : expression(std::move(exp_in))
+        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc) : expression(std::move(exp_in)) , Node(loc)
         {
 
         }

@@ -7,5 +7,12 @@ class ILocation
     public:
         yy::location location;
 
+        ILocation(yy::location loc)
+        {
+            location = loc;
+        }
+
+        ILocation() {}
+
         virtual ~ILocation();
 };
