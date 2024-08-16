@@ -5,10 +5,10 @@
 #include <memory>
 class StatementListNode : public Node
 {
-    std::vector<std::unique_ptr<StatementNode>> statements;
+    std::vector<std::shared_ptr<Node>> statements;
 
     public:
-        void Add(std::unique_ptr<StatementNode>);
-        StatementListNode(std::unique_ptr<StatementNode> statement);
-        std::vector<std::unique_ptr<StatementNode>> GetStatements();
+        void Add(std::shared_ptr<Node>);
+        StatementListNode(std::shared_ptr<Node> statement);
+        std::vector<std::shared_ptr<Node>> GetStatements();
 };

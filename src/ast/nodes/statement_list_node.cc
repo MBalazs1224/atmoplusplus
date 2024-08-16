@@ -1,13 +1,13 @@
 #include "statement_list_node.hh"
 
 
-void StatementListNode::Add(std::unique_ptr<StatementNode> node)
+void StatementListNode::Add(std::shared_ptr<Node> node)
 {
     statements.push_back(std::move(node));
 }
 
 
-StatementListNode::StatementListNode(std::unique_ptr<StatementNode> node)
+StatementListNode::StatementListNode(std::shared_ptr<Node> node)
 {
     if (node)
     {
@@ -17,7 +17,7 @@ StatementListNode::StatementListNode(std::unique_ptr<StatementNode> node)
 
 }
 
-std::vector<std::unique_ptr<StatementNode>> StatementListNode::GetStatements()
+std::vector<std::shared_ptr<Node>> StatementListNode::GetStatements()
 {
     return std::move(statements);
 }

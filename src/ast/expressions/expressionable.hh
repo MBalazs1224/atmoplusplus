@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 #include "expressionable.hh"
-#include "../../location/ilocation.hh"
-class IExpressionable : public ILocation
+#include "../nodes/node.hh"
+class IExpressionable : public Node
 {
     // FIXME: Not everything needs 2 expressions
     protected:

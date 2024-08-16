@@ -139,7 +139,7 @@
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 
 %nterm<std::unique_ptr<StatementListNode>> statement_list
-%nterm<std::unique_ptr<StatementNode>> statement
+%nterm<std::shared_ptr<Node>> statement
 %nterm<std::unique_ptr<BodyNode>> body
 %nterm<std::unique_ptr<UntilStatementNode>> until_statement
 %nterm<std::unique_ptr<DoUntilStatementNode>> do_until_statement
@@ -159,9 +159,9 @@
 
 
  //TODO: Temporary definitions so I can test individually
-%nterm<std::unique_ptr<StatementNode>> function_create
-%nterm<std::unique_ptr<StatementNode>> variable_definition
-%nterm<std::unique_ptr<StatementNode>> variable_assignment
+%nterm<std::unique_ptr<Node>> function_create
+%nterm<std::unique_ptr<Node>> variable_definition
+%nterm<std::unique_ptr<Node>> variable_assignment
 
 
 %%
@@ -189,6 +189,7 @@ statement:function_create {$$ = nullptr;}
         | until_statement  {$$ = std::move($1);}
         | do_until_statement  {$$ = std::move($1);}
         | return_statement {$$ = std::move($1);}
+        | expression {$$ = std::move($1);}
 
 variable_assignment: IDENTIFIER EQUALS expression
 {
