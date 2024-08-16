@@ -9,6 +9,7 @@ if 4 less than 5
 		create private string b
 		create array of float c
 	d equals call asd
+	a = 5
 	create static array of char c
 	return 5
 	

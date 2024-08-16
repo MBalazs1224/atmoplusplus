@@ -170,7 +170,12 @@
     //BUG: All statements gets added to root (even if they are in a body etc..)
 statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
                 | statement_list statement {
-                    $1->Add(std::move($2));
+                    auto sl = $1.get();
+                    auto valami = $2.get();
+                    if($2)
+                    {
+                        $1->Add(std::move($2));
+                    }
                     $$ = std::move($1);
                     test = $$.get();
                 }
