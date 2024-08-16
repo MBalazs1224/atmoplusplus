@@ -14,3 +14,4 @@
 #include "greater_than_or_equal.hh"
 #include "not_matches_expression.hh"
 #include "function_call.hh"
+#include "assignment_expression.hh"

@@ -161,7 +161,6 @@
  //TODO: Temporary definitions so I can test individually
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
-%nterm<std::unique_ptr<Node>> variable_assignment
 
 
 %%
@@ -183,19 +182,14 @@ statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1
 
 
 statement:function_create {$$ = nullptr;}
-        | variable_definition {$$ = nullptr;} 
-        | variable_assignment {$$ = std::move($1);} 
+        | variable_definition {$$ = nullptr;}
         | if_statement  {$$ = std::move($1);}
         | until_statement  {$$ = std::move($1);}
         | do_until_statement  {$$ = std::move($1);}
         | return_statement {$$ = std::move($1);}
         | expression {$$ = std::move($1);}
 
-variable_assignment: IDENTIFIER EQUALS expression
-{
-    auto test = $3;
-    $$ = std::make_unique<VariableAssignmentNode>(SymbolTable::LookUp($1),std::move($3));
-}
+
 variable_type: datatype {$$ = std::move($1);}
                 | ARRAY_OF datatype {$2.SetIsArray(true); $$ = std::move($2);}
 
@@ -325,6 +319,11 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>(st
             | TRUE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
             | FALSE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
             | function_call {$$ = $1;}
+            | expression EQUALS expression
+                {
+                    auto test = $3;
+                    $$ = std::make_unique<AssignmentExpression>(std::move($1),std::move($3));
+                }
 
 %%
 
