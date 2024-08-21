@@ -1,11 +1,9 @@
 #pragma once
-#include "body_node.hh"
 #include "node.hh"
 #include "../expressions/expressionable.hh"
 #include "../attributes/attribute.hh"
 #include "../types/type.hh"
 #include <memory>
-#include <iostream>
 
 class VariableDefinitionNode : public Node
 {

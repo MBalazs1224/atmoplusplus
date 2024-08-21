@@ -6,3 +6,4 @@
 #include "do_until_statement_node.hh"
 #include "return_statement_node.hh"
 #include "variable_definition_node.hh"
+#include "function_definition_node.hh"

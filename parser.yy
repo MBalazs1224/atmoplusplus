@@ -254,11 +254,10 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     // Decrease the scope so the function will be inserted into the root, so everything can access it
     SymbolTable::DecreaseScope();
     //TODO: The semantics analyzer will have to check if the function is on the root
-
-        auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
-        functionSymbol->location = @5;
-        SymbolTable::Insert($5,functionSymbol);
-    
+    $$ = std::make_unique<FunctionDefinitionNode>($2,$3,$6,@1 + @5);
+    auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
+    functionSymbol->location = @5;
+    SymbolTable::Insert($5,functionSymbol);
 
 }
 function_call: CALL IDENTIFIER function_call_arguments {
