@@ -101,6 +101,7 @@
 %token<char> CHAR_LITERAL
 %token CHAR
 %token CLASS
+%token DERIVES_FROM
 %token PUBLIC
 %token PRIVATE
 %token PROTECTED
@@ -156,6 +157,7 @@
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
 %nterm<std::shared_ptr<FunctionCall>> function_call
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
+%nterm<std::vector<std::shared_ptr<ClassSymbol>>> base_classes
 
 
  //TODO: Temporary definitions so I can test individually
@@ -165,23 +167,19 @@
 
 %%
 
-
-    //BUG: All statements gets added to root (even if they are in a body etc..)
 statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
                 | statement_list statement {
-                    auto sl = $1.get();
-                    auto valami = $2.get();
                     if($2)
                     {
                         $1->Add(std::move($2));
                     }
                     $$ = std::move($1);
-                    test = $$.get();
                 }
                  
 
 
 statement:function_create {$$ = nullptr;}
+        | class_create {$$ = nullptr;}
         | variable_definition {$$ = nullptr;}
         | if_statement  {$$ = std::move($1);}
         | until_statement  {$$ = std::move($1);}
@@ -226,25 +224,38 @@ else_statement: %empty
 
 return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2),@1 + $2->location);}
 
+class_create: create_class_holder IDENTIFIER base_classes body
+{
+    
+    
+}
+    /*FIXME: Might need to show error here if the given identifier is not class type, beacuse in the syntax analyzer, we wont have location or the given string jnfo*/
+base_classes: %empty
+            | DERIVES_FROM IDENTIFIER 
+            {
+                auto symbol = SymbolTable::LookUp($2);
+                std::vector<std::shared_ptr<ClassSymbol>> vec;
+                vec.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+                $$ = std::move(vec);
+            }
+            | base_classes COMMA IDENTIFIER
+            {
+                auto symbol = SymbolTable::LookUp($3);
+                $$ = std::move($1);
+                $$.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+            }
 
-
+create_class_holder: CREATE CLASS {/*Need to increase the scope so the class variables and functions have their own scope*/ SymbolTable::IncreaseScope();}
 
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 {
     // Decrease the scope so the function will be inserted into the root, so everything can access it
     SymbolTable::DecreaseScope();
-    //BUG: If the function is not added, the scopes and variables stay inside the SymbolTable
-    if(!SymbolTable::IsRoot())
-    {
-        Error::ShowError("Functions can only be created on the root level!",@5);
-    }
-    else
-    {
-        auto temp = $6;
+    //TODO: The semantics analyzer will have to check if the function is on the root
+
         auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
         functionSymbol->location = @5;
         SymbolTable::Insert($5,functionSymbol);
-    }
     
 
 }
