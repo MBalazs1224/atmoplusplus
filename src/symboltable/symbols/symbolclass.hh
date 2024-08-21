@@ -9,13 +9,10 @@ class ClassSymbol : public SymbolTableElement
 {
     private:
         std::vector<std::shared_ptr<ClassSymbol>> parents;
-        std::vector<std::shared_ptr<VariableSymbol>> variables;
-        std::vector<std::shared_ptr<FunctionSymbol>> functions;
+        std::unique_ptr<BodyNode> body;
     public:
-    ClassSymbol(std::vector<std::shared_ptr<ClassSymbol>> parents_in, std::vector<std::shared_ptr<VariableSymbol>> vars, std::vector<std::shared_ptr<FunctionSymbol>> funcs)
+    ClassSymbol(std::vector<std::shared_ptr<ClassSymbol>> parents_in, std::unique_ptr<BodyNode> body_in) : parents(std::move(parents_in)), body(std::move(body_in))
     {
-        parents = std::move(parents_in);
-        variables = std::move(vars);
-        functions = std::move(funcs);
+        
     }
 };

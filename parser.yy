@@ -179,7 +179,7 @@ statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1
                  
 
 
-statement:function_create {$$ = nullptr;}
+statement:function_create {$$ = std::move($1);}
         | class_create {$$ = nullptr;}
         | variable_definition {$$ = std::move($1);}
         | if_statement  {$$ = std::move($1);}
@@ -195,8 +195,8 @@ variable_type: datatype {$$ = std::move($1);}
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
-    SymbolTable::Insert($4,std::move(variable));
-    $$ = std::make_unique<VariableDefinitionNode>($2,$3,std::move($5),@1 + @4);
+    SymbolTable::Insert($4,variable);
+    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable));
 }
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}
@@ -228,7 +228,14 @@ return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(
 
 class_create: create_class_holder IDENTIFIER base_classes body
 {
-    
+    // Decrease the scope to get back to the root from the own scope of the class
+    SymbolTable::DecreaseScope();
+    if(!SymbolTable::IsRoot())
+    {
+        Error::ShowError("Classes can only be created on the root scope!",@2);
+    }
+    auto symbol = std::make_shared<ClassSymbol>($3,std::move($4));
+    SymbolTable::Insert($2,symbol);
     
 }
     /*FIXME: Might need to show error here if the given identifier is not class type, beacuse in the syntax analyzer, we wont have location or the given string jnfo*/
@@ -254,10 +261,10 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     // Decrease the scope so the function will be inserted into the root, so everything can access it
     SymbolTable::DecreaseScope();
     //TODO: The semantics analyzer will have to check if the function is on the root
-    $$ = std::make_unique<FunctionDefinitionNode>($2,$3,$6,@1 + @5);
     auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
     functionSymbol->location = @5;
     SymbolTable::Insert($5,functionSymbol);
+    $$ = std::make_unique<FunctionDefinitionNode>(std::move(functionSymbol));
 
 }
 function_call: CALL IDENTIFIER function_call_arguments {
