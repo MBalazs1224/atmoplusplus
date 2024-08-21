@@ -149,6 +149,7 @@
 %nterm<std::unique_ptr<ElseStatementNode>> else_statement
     /*FIXME:This has to be a shared_ptr because of variableSymbols, might be improved*/
 %nterm<std::shared_ptr<IExpressionable>> expression
+%nterm<std::shared_ptr<IExpressionable>> equals_holder
 %nterm<Type> datatype
 %nterm<Type> variable_type
 %nterm<Type> function_return_type
@@ -180,7 +181,7 @@ statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1
 
 statement:function_create {$$ = nullptr;}
         | class_create {$$ = nullptr;}
-        | variable_definition {$$ = nullptr;}
+        | variable_definition {$$ = std::move($1);}
         | if_statement  {$$ = std::move($1);}
         | until_statement  {$$ = std::move($1);}
         | do_until_statement  {$$ = std::move($1);}
@@ -195,6 +196,7 @@ variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,std::move(variable));
+    $$ = std::make_unique<VariableDefinitionNode>($2,$3,std::move($5),@1 + @4);
 }
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}
@@ -203,7 +205,7 @@ attribute: %empty {$$ = AttributePrivateHolder;}
             | STATIC {$$ = AttributeStaticHolder;}
 
 equals_holder: %empty
-                |EQUALS expression
+                |EQUALS expression {$$ = $2;}
 
 
 body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetStatements()); }
