@@ -5,6 +5,15 @@ create class osztaly
 	create void function test with char osztaly_3
 		return osztaly_3
 
+create class orokolt derives from osztaly
+	create integer asd
+
+create class atmeneti
+	create string asd
+
+
+create class orokolt_2 derives from osztaly, atmeneti 
+	create char c
 
 create public integer function asd with string a1, integer b2
 	create array of boolean rakos

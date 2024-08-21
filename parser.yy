@@ -239,7 +239,7 @@ class_create: create_class_holder IDENTIFIER base_classes body
     
 }
     /*FIXME: Might need to show error here if the given identifier is not class type, beacuse in the syntax analyzer, we wont have location or the given string jnfo*/
-base_classes: %empty
+base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
                 auto symbol = SymbolTable::LookUp($2);
@@ -247,12 +247,16 @@ base_classes: %empty
                 vec.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
                 $$ = std::move(vec);
             }
+            /*BUG: Multiple parents give back empty vector*/
             | base_classes COMMA IDENTIFIER
             {
                 auto symbol = SymbolTable::LookUp($3);
                 $$ = std::move($1);
                 $$.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+                auto valami = $$;
             }
+            
+
 
 create_class_holder: CREATE CLASS {/*Need to increase the scope so the class variables and functions have their own scope*/ SymbolTable::IncreaseScope();}
 
