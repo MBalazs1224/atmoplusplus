@@ -10,4 +10,6 @@ class BodyNode : public Node
     BodyNode(std::vector<std::shared_ptr<Node>>);
 
     BodyNode(BodyNode&& other);
+    public:
+        ~BodyNode() override = default;
 };

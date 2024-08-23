@@ -16,4 +16,5 @@ class VariableDefinitionNode : public Node
         {
 
         }
+        ~VariableDefinitionNode() override = default;
 };

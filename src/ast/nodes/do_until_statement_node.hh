@@ -14,4 +14,5 @@ class DoUntilStatementNode : public Node
         : body(std::move(body_in)), expression(std::move(expression_in)) , Node(loc)
         {
         }
+        ~DoUntilStatementNode() override = default;
 };

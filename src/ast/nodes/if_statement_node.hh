@@ -14,4 +14,5 @@ class IfStatementNode : public  Node
         {
 
         }
+        ~IfStatementNode() override = default;
 };

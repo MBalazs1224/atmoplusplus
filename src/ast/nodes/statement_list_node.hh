@@ -10,4 +10,5 @@ class StatementListNode : public Node
         void Add(std::shared_ptr<Node>);
         StatementListNode(std::shared_ptr<Node> statement);
         std::vector<std::shared_ptr<Node>> GetStatements();
+        ~StatementListNode() override = default;
 };

@@ -13,4 +13,6 @@ class Node : public ILocation
     {
         location = loc;
     }
+    public:
+        virtual ~Node() = default;
 };

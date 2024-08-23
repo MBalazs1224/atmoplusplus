@@ -10,4 +10,5 @@ class ReturnStatementNode : public  Node
         {
 
         }
+        ~ReturnStatementNode() override = default;
 };

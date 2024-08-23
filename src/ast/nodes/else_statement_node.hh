@@ -11,4 +11,5 @@ class ElseStatementNode : public  Node
         {
 
         }
+        ~ElseStatementNode() override = default;
 };

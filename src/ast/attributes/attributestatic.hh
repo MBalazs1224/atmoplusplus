@@ -2,6 +2,6 @@
 #include "attribute.hh"
 class AttributeStatic : public Attribute
 {
-    public:
+    public:     
     ~AttributeStatic() override = default;
 };

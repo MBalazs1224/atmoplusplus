@@ -17,4 +17,5 @@ class FunctionDefinitionNode : public Node
         {
 
         }
+        ~FunctionDefinitionNode() override = default;
 };
