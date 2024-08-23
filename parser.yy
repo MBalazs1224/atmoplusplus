@@ -139,7 +139,6 @@
 %nterm<std::unique_ptr<ReturnStatementNode>> return_statement
 %nterm<std::unique_ptr<IfStatementNode>> if_statement
 %nterm<std::unique_ptr<ElseStatementNode>> else_statement
-    /*FIXME:This has to be a shared_ptr because of variableSymbols, might be improved*/
 %nterm<std::shared_ptr<IExpressionable>> expression
 %nterm<std::shared_ptr<IExpressionable>> equals_holder
 %nterm<std::shared_ptr<Type>> datatype

@@ -45,18 +45,18 @@ void Error::PrintUnderline(int col_start, int col_end, int lint_number)
     // Get the number of chars in the line number
     int char_length = std::floor(std::log10(lint_number));
     // + 4 is the size of  .space | space
-    for (size_t i = 0; i < char_length + 3; i++)
+    for (int i = 0; i < char_length + 3; i++)
     {
         std::cout << " ";
     }
     
     
     //Print spaces to push the underline
-    for (size_t i = 0; i < col_start; i++)
+    for (int i = 0; i < col_start; i++)
     {
         std::cout << " ";
     }
-    for (size_t i = col_start; i < col_end; i++)
+    for (int i = col_start; i < col_end; i++)
     {
         std::cout << Red("~");
     }
