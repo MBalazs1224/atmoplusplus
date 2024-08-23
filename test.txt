@@ -4,6 +4,12 @@ create class osztaly
 	create void function test with char osztaly_3
 		return osztaly_3
 
+create osztaly asd equals 5
+
+create osztaly function valami
+	create integer asd
+
+
 create class orokolt derives from osztaly
 	create integer asd
 

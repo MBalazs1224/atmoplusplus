@@ -9,12 +9,12 @@ class SymbolTableElement : public IExpressionable
 {
     protected:
     // These need to be pointers so typeid works correctly
-        Type type;
+        std::shared_ptr<Type> type;
         std::shared_ptr<Attribute> attribute = std::make_unique<AttributePrivate>();
     public:
         SymbolTableElement()
         {
         }
-        SymbolTableElement(Type,std::shared_ptr<Attribute>);
+        SymbolTableElement(std::shared_ptr<Type>,std::shared_ptr<Attribute>);
         virtual ~SymbolTableElement();
 };

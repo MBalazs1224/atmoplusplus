@@ -5,7 +5,8 @@
 #include "../../ast/nodes/body_node.hh"
 #include <memory>
 #include <vector>
-class ClassSymbol : public SymbolTableElement
+#include "../../ast/types/type.hh"
+class ClassSymbol : public SymbolTableElement, public Type
 {
     private:
         std::vector<std::shared_ptr<ClassSymbol>> parents;

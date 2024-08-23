@@ -51,15 +51,7 @@
     #define YYDEBUG 1
     void* test = nullptr;
 
-    //Type pointers so everything with the same type cah share them, not needing to create their owns (they need to be pointers so typeid can work correctly)
-
-    std::shared_ptr<TypeInteger> TypeIntegerHolder = std::make_shared<TypeInteger>();
-    std::shared_ptr<TypeFloat> TypeFloatHolder = std::make_shared<TypeFloat>();
-    std::shared_ptr<TypeString> TypeStringHolder = std::make_shared<TypeString>();
-    std::shared_ptr<TypeChar> TypeCharHolder = std::make_shared<TypeChar>();
-    std::shared_ptr<TypeBoolean> TypeBooleanHolder = std::make_shared<TypeBoolean>();
-    std::shared_ptr<TypeVoid> TypeVoidHolder = std::make_shared<TypeVoid>();
-
+    //std::shared_ptr<Type> pointers so everything with the same type cah share them, not needing to create their owns (they need to be pointers so typeid can work correctly)
     std::shared_ptr<AttributePrivate> AttributePrivateHolder = std::make_shared<AttributePrivate>();
     std::shared_ptr<AttributePublic> AttributePublicHolder = std::make_shared<AttributePublic>();
     std::shared_ptr<AttributeProtected> AttributeProtectedHolder = std::make_shared<AttributeProtected>();
@@ -150,9 +142,9 @@
     /*FIXME:This has to be a shared_ptr because of variableSymbols, might be improved*/
 %nterm<std::shared_ptr<IExpressionable>> expression
 %nterm<std::shared_ptr<IExpressionable>> equals_holder
-%nterm<Type> datatype
-%nterm<Type> variable_type
-%nterm<Type> function_return_type
+%nterm<std::shared_ptr<Type>> datatype
+%nterm<std::shared_ptr<Type>> variable_type
+%nterm<std::shared_ptr<Type>> function_return_type
 %nterm<std::shared_ptr<Attribute>> attribute
 %nterm<std::shared_ptr<Argument>> argument
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
@@ -190,7 +182,7 @@ statement:function_create {$$ = std::move($1);}
 
 
 variable_type: datatype {$$ = std::move($1);}
-                | ARRAY_OF datatype {$2.SetIsArray(true); $$ = std::move($2);}
+                | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
@@ -280,7 +272,7 @@ function_call_arguments: %empty //TODO: Add params to the function call
                         
 
 function_return_type: datatype {$$ = std::move($1);}
-                    | VOID {$$ = TypeVoid();}
+                    | VOID {$$ = std::make_shared<TypeVoid>();;}
 
 argument_list: %empty
             | WITH argument {
@@ -310,11 +302,16 @@ argument_list: %empty
 
 argument: datatype IDENTIFIER {$$ = std::make_shared<Argument>($2,std::move($1));}
 
-datatype: INT { $$ = TypeInteger();}
-          | BOOLEAN  { $$ = TypeBoolean();}
-          | STRING  { $$ = TypeString();}
-          | FLOAT  { $$ = TypeFloat();}
-          | CHAR  { $$ = TypeChar();}
+datatype: INT { $$ = std::make_shared<TypeInteger>();}
+          | BOOLEAN  { $$ = std::make_shared<TypeBoolean>();}
+          | STRING  { $$ = std::make_shared<TypeString>();}
+          | FLOAT  { $$ = std::make_shared<TypeFloat>();}
+          | CHAR  { $$ = std::make_shared<TypeChar>();}
+          | IDENTIFIER
+          {
+            auto symbol = SymbolTable::LookUp($1);
+            $$ = std::move(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+          }
 
 
     //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
