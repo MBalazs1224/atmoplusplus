@@ -67,6 +67,7 @@
 %token IF
 %token CALL
 %token ELSE
+%token ELSE_IF
 %token COMMA
 %token LESS_THAN
 %token GREATER_THAN
@@ -150,9 +151,10 @@
 %nterm<std::shared_ptr<FunctionCall>> function_call
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
 %nterm<std::vector<std::shared_ptr<ClassSymbol>>> base_classes
+%nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
+%nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
 
 
- //TODO: Temporary definitions so I can test individually
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
 
@@ -210,10 +212,32 @@ do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilState
 until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3),@1); test = $$.get();
     }
 
-if_statement: IF expression body else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4),@1); test = $$.get(); /* TODO: Implement else if */}
+if_statement: IF expression body
+else_if_statements else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4),std::move($5),@1); test = $$.get(); }
 
 else_statement: %empty
                 | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2),@1);}
+
+else_if_statement: ELSE_IF expression body
+                {
+                    $$ = std::make_unique<ElseIfStatementNode>(std::move($2),std::move($3),@1);
+
+                }
+
+else_if_statements: %empty
+                | else_if_statement
+                {
+                    std::vector<std::unique_ptr<ElseIfStatementNode>> temp;
+                    temp.push_back(std::move($1));
+                    $$ = std::move(temp);
+
+                }
+                | else_if_statements else_if_statement
+                {
+                    
+                    $$ = std::move($1);
+                    $$.push_back(std::move($2));
+                }
 
 return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2),@1 + $2->location);}
 

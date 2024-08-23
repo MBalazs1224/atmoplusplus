@@ -37,5 +37,10 @@ if 4 less than 5
 	a = 5
 	create static array of char c
 	return 5
-	
+else if call asd
+	return 4
+else if true
+	return 3
+else
+	return 2	
 
