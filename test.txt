@@ -1,7 +1,6 @@
 create class osztaly
 	create integer osztaly_1 equals 5
 	create string osztaly_2 equals "3"
-
 	create void function test with char osztaly_3
 		return osztaly_3
 
@@ -19,6 +18,8 @@ create public integer function asd with string a1, integer b2
 	create array of boolean rakos
 	rakos = "asd"
 	return a1
+
+
 
 if 4 less than 5
 	create public integer a

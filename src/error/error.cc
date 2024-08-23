@@ -1,5 +1,5 @@
 #include "error.hh"
-
+#include <math.h>
 int Error::error_count = 0;
 int Error::MAX_ERRORS = 3;
 std::vector<std::string> Error::source;
@@ -14,7 +14,7 @@ void Error::ShowError(std::string message, yy::location loc)
         PrintSource(loc.begin.line - 1);
     }
     PrintSource(loc.begin.line);
-    PrintUnderline(loc.begin.column, loc.end.column);
+    PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
 
     // Print line after the error
     if (loc.begin.line < source.size())
@@ -40,8 +40,17 @@ void Error::PrintSource(int line)
     std::string correct_line = source[line - 1];
     std::cout << line << ". | " << correct_line << std::endl;
 }
-void Error::PrintUnderline(int col_start, int col_end)
+void Error::PrintUnderline(int col_start, int col_end, int lint_number)
 {
+    // Get the number of chars in the line number
+    int char_length = std::floor(std::log10(lint_number));
+    // + 4 is the size of  .space | space
+    for (size_t i = 0; i < char_length + 3; i++)
+    {
+        std::cout << " ";
+    }
+    
+    
     //Print spaces to push the underline
     for (size_t i = 0; i < col_start; i++)
     {
