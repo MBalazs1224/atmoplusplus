@@ -12,6 +12,7 @@ class SymbolTableElement : public IExpressionable
         std::shared_ptr<Type> type;
         std::shared_ptr<Attribute> attribute = std::make_unique<AttributePrivate>();
     public:
+        std::string name;
         SymbolTableElement()
         {
         }

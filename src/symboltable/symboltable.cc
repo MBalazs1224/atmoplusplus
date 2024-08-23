@@ -11,7 +11,9 @@ std::shared_ptr<Scope> SymbolTable::current;
 void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> element)
 {
     assert(!id.empty());
-    //assert(element != nullptr);
+    assert(element);
+
+    element->name = id;
     
     current->AddElement(id,element);
 }
