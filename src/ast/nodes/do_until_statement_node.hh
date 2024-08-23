@@ -11,7 +11,7 @@ class DoUntilStatementNode : public Node
 
     public:
         DoUntilStatementNode(std::shared_ptr<IExpressionable> expression_in,std::unique_ptr<BodyNode> body_in, yy::location loc)
-        : body(std::move(body_in)), expression(std::move(expression_in)) , Node(loc)
+        : Node(loc), body(std::move(body_in)), expression(std::move(expression_in))
         {
         }
         ~DoUntilStatementNode() override = default;

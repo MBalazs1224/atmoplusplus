@@ -6,7 +6,7 @@ class ReturnStatementNode : public  Node
 {
     std::shared_ptr<IExpressionable> expression;
     public:
-        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc) : expression(std::move(exp_in)) , Node(loc)
+        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc) :Node(loc),  expression(std::move(exp_in)) 
         {
 
         }

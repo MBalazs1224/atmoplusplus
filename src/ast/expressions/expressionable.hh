@@ -8,12 +8,12 @@ class IExpressionable : public Node
     protected:
         std::shared_ptr<IExpressionable> left;
         std::shared_ptr<IExpressionable> right;
-        IExpressionable(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in, yy::location loc) : left(std::move(left_in)), right(std::move(right_in)), Node(loc)
+        IExpressionable(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in, yy::location loc) : Node(loc), left(std::move(left_in)), right(std::move(right_in))
         {
 
         }
         // Default function for expressions that doesn't use 2 epressions (literals)
-        IExpressionable() : left(nullptr), right(nullptr)
+        IExpressionable() : Node(), left(nullptr), right(nullptr)
         {
 
         }

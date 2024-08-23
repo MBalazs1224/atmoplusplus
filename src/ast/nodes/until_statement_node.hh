@@ -12,7 +12,7 @@ class UntilStatementNode : public Node
 
     public:
         UntilStatementNode(std::shared_ptr<IExpressionable> expression_in,std::unique_ptr<BodyNode> body_in,yy::location loc)
-        : body(std::move(body_in)), expression(std::move(expression_in)), Node(loc)
+        :  Node(loc) ,body(std::move(body_in)), expression(std::move(expression_in))
         {
         }
         ~UntilStatementNode() override = default;
