@@ -1,7 +1,7 @@
 
 nodes := ./build/statement_list_node.o ./build/body_node.o 
 
-expressions :=  ./build/expression.o ./build/expressionable.o ./build/literal.o 
+expressions :=  ./build/expressionable.o ./build/literal.o 
 
 
 objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(expressions)
@@ -30,9 +30,6 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
-	g++ $(CXXFLAGS) -c $< -o $@
-
-./build/expression.o: ./src/ast/expressions/expression.cc ./src/ast/expressions/expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/type.o: ./src/ast/types/type.cc ./src/ast/types/type.hh

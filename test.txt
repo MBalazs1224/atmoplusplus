@@ -42,5 +42,4 @@ else if call asd
 else if true
 	return 3
 else
-	return 2	
-
+	return 2

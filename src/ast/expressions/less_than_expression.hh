@@ -1,8 +1,11 @@
-#include "expression.hh"
-class LessThanExpression : public Expression
+#pragma once
+#include "expressionable.hh"
+class LessThanExpression : public IExpressionable
 {
+    std::shared_ptr<IExpressionable> exp_left;
+	std::shared_ptr<IExpressionable> exp_right;
     public:
-    LessThanExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc) : Expression(std::move(left_in),std::move(right_in),loc)
+    LessThanExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc) : IExpressionable(loc), exp_left(left_in),exp_right(right_in)
     {
 
     }

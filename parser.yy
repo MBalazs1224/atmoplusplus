@@ -212,6 +212,7 @@ do_until_statement: DO body UNTIL expression {$$ = std::make_unique<DoUntilState
 until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode>(std::move($2),std::move($3),@1); test = $$.get();
     }
 
+
 if_statement: IF expression body
 else_if_statements else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4),std::move($5),@1); test = $$.get(); }
 
@@ -288,7 +289,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 }
 function_call: CALL IDENTIFIER function_call_arguments {
     auto function = SymbolTable::LookUp($2);
-    $$ = std::make_shared<FunctionCall>(nullptr,nullptr, function,$3,@1+@2);
+    $$ = std::make_shared<FunctionCall>(function,$3,@1+@2);
     }
 
 function_call_arguments: %empty //TODO: Add params to the function call
@@ -353,7 +354,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, $1->location + $3->location);  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
             // TODO: Make NotExpression take only one parameter instead of the null pointer
-            | NOT expression {$$ = std::make_unique<NotExpression>( $2, nullptr, @1 + $2->location); }
+            | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
             | IDENTIFIER { /* TODO:Implement variables as expressions */ $$ = SymbolTable::LookUp($1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
