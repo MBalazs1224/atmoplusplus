@@ -9,7 +9,7 @@ class ElseIfStatementNode : public  Node
     std::unique_ptr<BodyNode> body;
 
     public:
-        ElseIfStatementNode(std::shared_ptr<IExpressionable> expression_in ,std::unique_ptr<BodyNode> body_in, yy::location loc) : Node(loc), body(std::move(body_in)), expression(std::move(expression_in))
+        ElseIfStatementNode(std::shared_ptr<IExpressionable> expression_in ,std::unique_ptr<BodyNode> body_in, yy::location loc) : Node(loc), expression(std::move(expression_in)), body(std::move(body_in))
         {
 
         }

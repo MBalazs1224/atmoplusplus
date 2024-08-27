@@ -17,7 +17,7 @@ void Error::ShowError(std::string message, yy::location loc)
     PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
 
     // Print line after the error
-    if (loc.begin.line < source.size())
+    if ((size_t)loc.begin.line < source.size())
     {
         PrintSource(loc.begin.line + 1);
     }
