@@ -27,7 +27,7 @@ create public integer function asd with string a1, integer b2
 
 
 
-if 4 less than 5
+if 4 less than 5 + 2
 	create public integer a
 	until a
 		create private string b
