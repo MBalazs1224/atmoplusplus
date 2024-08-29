@@ -4,8 +4,18 @@ create class osztaly
 	create void function test with char osztaly_3
 		return osztaly_3
 
+create integer int = 5
+
+create void function b
+	return 5
+
+create void function test_func with integer a, string b
+	return b
+
+call test_func with 3 + 3, int, call b
+
 create osztaly asd equals 5
-call test inside asd
+call test with 3 + 3, int inside asd
 create osztaly function valami
 	create integer asd
 

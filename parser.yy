@@ -73,6 +73,16 @@
         }
         return sum;
     }
+    // Used at return stmt, because that doesn't haave 2 expressions
+    yy::location AddLocations(yy::location loc, std::shared_ptr<IExpressionable> exp_two)
+    {
+        yy::location sum = loc;
+        if(exp_two)
+        {
+            sum += exp_two->location; 
+        }
+        return sum;
+    }
 
     
 }
@@ -133,6 +143,7 @@
 %token DO
 %token VOID
 
+%left CALL WITH
 %left INSIDE
 %left OPEN_BRACKET CLOSE_BRACKET
 %right NOT
@@ -165,6 +176,7 @@
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
 %nterm<std::shared_ptr<FunctionCall>> function_call
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
+%nterm<std::vector<std::shared_ptr<IExpressionable>>> more_arguments
 %nterm<std::vector<std::shared_ptr<ClassSymbol>>> base_classes
 %nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
@@ -256,7 +268,7 @@ else_if_statements: %empty
                     $$.push_back(std::move($2));
                 }
 
-return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(std::move($2),@1 + $2->location);}
+return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>($2,AddLocations(@1,$2));}
 
 class_create: create_class_holder IDENTIFIER base_classes body
 {
@@ -305,9 +317,39 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 function_call: CALL IDENTIFIER function_call_arguments {
     auto function = SymbolTable::LookUp($2);
     $$ = std::make_shared<FunctionCall>(function,$3,@1+@2,$2);
+    test = $$.get();
     }
 
-function_call_arguments: %empty //TODO: Add params to the function call
+function_call_arguments: %empty
+                        | WITH expression
+                        {
+                            std::vector<std::shared_ptr<IExpressionable>> vec;
+                            vec.push_back($2);
+                            $$ = std::move(vec);
+                        }
+                        | WITH expression more_arguments
+                        {
+                            // The first added expression should be on the front of the vector, so it can be compared to the function's wanted arguments
+
+
+                            //FIXME: Inserting one element to the front of the vector will copy everything to the side which is an O(n) op, should be done with a better performance operation
+
+                            $3.insert($3.begin(), $2);
+                            $$ = std::move($3);
+                        }
+    // makes it clear that after the first argument, any next argument must be followed by a COMMA
+more_arguments: COMMA expression
+                {
+                    std::vector<std::shared_ptr<IExpressionable>> vec;
+                    vec.push_back(std::move($2));
+                    $$ = std::move(vec);
+                }
+              | more_arguments COMMA expression
+              {
+                $1.push_back(std::move($3));
+                $$ = std::move($1);
+              }
+
                         
 
 function_return_type: datatype {$$ = std::move($1);}
