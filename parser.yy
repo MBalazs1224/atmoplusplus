@@ -58,6 +58,22 @@
     std::shared_ptr<AttributeProtected> AttributeProtectedHolder = std::make_shared<AttributeProtected>();
     std::shared_ptr<AttributeStatic> AttributeStaticHolder = std::make_shared<AttributeStatic>();
 
+    // Will return the summed of the locations, but ignore if the pointer is empty
+    yy::location AddLocations(std::shared_ptr<IExpressionable> exp_one, std::shared_ptr<IExpressionable> exp_two)
+    {
+        yy::location sum;
+        if(exp_one)
+        {
+            // Set the beginning and the end also, because += only sets the end
+            sum = exp_one->location;
+        }
+        if(exp_two)
+        {
+            sum += exp_two->location; 
+        }
+        return sum;
+    }
+
     
 }
 %token CREATE
@@ -117,11 +133,9 @@
 %token DO
 %token VOID
 
- //%left MINUS PLUS
- //%left MULTIPLY DIVIDE AND OR GREATER_THAN LESS_THAN MATCHES NOT_MATCHES NOT
-
+%left INSIDE
 %left OPEN_BRACKET CLOSE_BRACKET
-%right NOT ADDRESS_OF
+%right NOT
 %left GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL
 %left MULTIPLY DIVIDE
 %left PLUS MINUS
@@ -265,7 +279,6 @@ base_classes: %empty {}
                 vec.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
                 $$ = std::move(vec);
             }
-            /*BUG: Multiple parents give back empty vector*/
             | base_classes COMMA IDENTIFIER
             {
                 auto symbol = SymbolTable::LookUp($3);
@@ -340,24 +353,23 @@ datatype: INT { $$ = std::make_shared<TypeInteger>();}
           }
 
 
-    //FIXME: Expression precedence might need a rework, I tested it but I'm not really sure
     // BUG: Expression location is not set correctly
-expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, $1->location + $3->location);  }
-            | expression MINUS expression {$$ = std::make_unique<SubtractExpression>( $1, $3, $1->location + $3->location);  }
-            | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>( $1, $3, $1->location + $3->location);  }
-            | expression DIVIDE expression {$$ = std::make_unique<DivideExpression>( $1, $3, $1->location + $3->location);  }
-            | expression AND expression {$$ = std::make_unique<AndExpression>( $1, $3, $1->location + $3->location);  }
-            | expression OR expression {$$ = std::make_unique<OrExpression>( $1, $3, $1->location + $3->location);  }
-            | expression GREATER_THAN expression {$$ = std::make_unique<GreaterThanExpression>( $1, $3, $1->location + $3->location);  }
-            | expression LESS_THAN expression {$$ = std::make_unique<LessThanExpression>( $1, $3, $1->location + $3->location);  }
-            | expression GREATER_THAN_OR_EQUAL expression {$$ = std::make_unique<GreaterThanOrEqualExpression>( $1, $3, $1->location + $3->location);  }
-            | expression LESS_THAN_OR_EQUAL expression {$$ = std::make_unique<LessThanOrEqualExpression>( $1, $3, $1->location + $3->location);  }
-            | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>( $1, $3, $1->location + $3->location);  }
-            | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, $1->location + $3->location);  }
+expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression MINUS expression {$$ = std::make_unique<SubtractExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression DIVIDE expression {$$ = std::make_unique<DivideExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression AND expression {$$ = std::make_unique<AndExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression OR expression {$$ = std::make_unique<OrExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression GREATER_THAN expression {$$ = std::make_unique<GreaterThanExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression LESS_THAN expression {$$ = std::make_unique<LessThanExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression GREATER_THAN_OR_EQUAL expression {$$ = std::make_unique<GreaterThanOrEqualExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression LESS_THAN_OR_EQUAL expression {$$ = std::make_unique<LessThanOrEqualExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>( $1, $3, AddLocations($1,$3));  }
+            | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
             // TODO: Make NotExpression take only one parameter instead of the null pointer
             | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
-            | IDENTIFIER { /* TODO:Implement variables as expressions */ $$ = SymbolTable::LookUp($1);}
+            | IDENTIFIER { $$ = SymbolTable::LookUp($1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
             | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1); $$->location = @1;}
@@ -367,21 +379,10 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | function_call {$$ = $1;}
             | expression EQUALS expression
                 {
-                    // FIXME: This needs to be edited to ignore the location if it's null
-                    yy::location loc = @2;
-                    if($1)
-                    {
-                        loc += $1->location;
-                    }
-                    if($3)
-                    {
-                        loc += $3->location;
-                    }
-                    auto test = $3;
-                    $$ = std::make_unique<AssignmentExpression>( $1, $3, loc);
+                  std::make_unique<AssignmentExpression>( $1, $3, AddLocations($1,$3));
                 }
 		| expression INSIDE expression{
-			$$ = std::make_unique<MemberAccessExpression>($1,$3, @1 + @3);}
+			$$ = std::make_unique<MemberAccessExpression>($1,$3, AddLocations($1,$3));}
 
 %%
 
