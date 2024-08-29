@@ -14,3 +14,4 @@
 #include "not_matches_expression.hh"
 #include "function_call.hh"
 #include "assignment_expression.hh"
+#include "member_access_expression.hh"

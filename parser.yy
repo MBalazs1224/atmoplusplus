@@ -167,6 +167,7 @@ statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1
                     {
                         $1->Add(std::move($2));
                     }
+			test = $1.get();
                     $$ = std::move($1);
                 }
                  
@@ -289,7 +290,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 }
 function_call: CALL IDENTIFIER function_call_arguments {
     auto function = SymbolTable::LookUp($2);
-    $$ = std::make_shared<FunctionCall>(function,$3,@1+@2);
+    $$ = std::make_shared<FunctionCall>(function,$3,@1+@2,$2);
     }
 
 function_call_arguments: %empty //TODO: Add params to the function call
@@ -378,6 +379,8 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
                     auto test = $3;
                     $$ = std::make_unique<AssignmentExpression>( $1, $3, loc);
                 }
+		| expression INSIDE expression{
+			$$ = std::make_unique<MemberAccessExpression>($1,$3, @1 + @3);}
 
 %%
 

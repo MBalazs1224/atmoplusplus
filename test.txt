@@ -5,7 +5,7 @@ create class osztaly
 		return osztaly_3
 
 create osztaly asd equals 5
-
+call test inside asd
 create osztaly function valami
 	create integer asd
 
