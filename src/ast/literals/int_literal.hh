@@ -11,4 +11,8 @@ class IntegerLiteral : public Literal
 
         }
         ~IntegerLiteral() = default;
+    std::shared_ptr<Type> GetType() override
+    {
+        return std::make_shared<TypeInteger>();
+    }
 };

@@ -11,5 +11,9 @@ class AddExpression : public IExpressionable
 
     }
     ~AddExpression() override = default;
-
+    std::shared_ptr<Type> GetType() override
+    {
+        // TODO: We need to check if the type of the two expression match
+        return exp_left->GetType();
+    }
 };

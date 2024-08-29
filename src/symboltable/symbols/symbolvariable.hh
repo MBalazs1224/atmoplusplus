@@ -7,4 +7,9 @@ class VariableSymbol : public SymbolTableElement
     {
 
     }
+    std::shared_ptr<Type> GetType() override
+    {
+        return this->type;
+    }
+
 };

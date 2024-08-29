@@ -11,4 +11,8 @@ class FloatLiteral : public Literal
 
         }
         ~FloatLiteral() = default;
+    std::shared_ptr<Type> GetType() override
+    {
+        return std::make_shared<TypeFloat>();
+    }
 };

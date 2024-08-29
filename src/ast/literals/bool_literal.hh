@@ -11,4 +11,9 @@ class BooleanLiteral : public Literal
 
         }
         ~BooleanLiteral() = default;
+
+    std::shared_ptr<Type> GetType() override
+    {
+        return std::make_shared<TypeBoolean>();
+    }
 };

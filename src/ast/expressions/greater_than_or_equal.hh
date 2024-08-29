@@ -10,5 +10,10 @@ class GreaterThanOrEqualExpression : public IExpressionable
     {
 
     }
+    std::shared_ptr<Type> GetType() override
+    {
+        // TODO: We need to check if the type of the two expression match
+        return std::make_shared<TypeBoolean>();
+    }
     ~GreaterThanOrEqualExpression() override = default;
 };

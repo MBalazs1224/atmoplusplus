@@ -16,4 +16,10 @@ class ClassSymbol : public SymbolTableElement, public Type
     {
         
     }
+
+    std::shared_ptr<Type> GetType() override
+    {
+        // FIXME: The type of a class symbol should be itself but cannot owrk aorund that yet
+        return nullptr;
+    }
 };

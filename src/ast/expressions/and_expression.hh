@@ -10,4 +10,12 @@ class AndExpression : public IExpressionable
 
     }
     ~AndExpression() override = default;
+
+    std::shared_ptr<Type> GetType() override
+    {
+        // TODO: We need to check if the type of the two expression match
+
+        //FIXME: This might not need to be pointer
+        return std::make_shared<TypeBoolean>();
+    }
 };

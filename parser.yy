@@ -51,7 +51,8 @@
     #define YYDEBUG 1
     void* test = nullptr;
 
-    //std::shared_ptr<Type> pointers so everything with the same type cah share them, not needing to create their owns (they need to be pointers so typeid can work correctly)
+    //FIXME: Attributes might not need to be pointers
+
     std::shared_ptr<AttributePrivate> AttributePrivateHolder = std::make_shared<AttributePrivate>();
     std::shared_ptr<AttributePublic> AttributePublicHolder = std::make_shared<AttributePublic>();
     std::shared_ptr<AttributeProtected> AttributeProtectedHolder = std::make_shared<AttributeProtected>();

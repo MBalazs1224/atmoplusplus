@@ -9,5 +9,10 @@ class MemberAccessExpression : public IExpressionable
     {
 
     }
+        std::shared_ptr<Type> GetType() override
+    {
+        // FIXME: Member access might needs it's unique type
+        return exp_left->GetType();
+    }
     ~MemberAccessExpression() override = default;
 };

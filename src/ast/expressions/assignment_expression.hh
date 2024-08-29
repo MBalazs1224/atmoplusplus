@@ -13,4 +13,11 @@ class AssignmentExpression : public IExpressionable
         {
 
         }
+    std::shared_ptr<Type> GetType() override
+    {
+        // TODO: We need to check if the type of the two expression match
+
+        // FIXME: Assignment might needit's unique type
+        return exp_left->GetType();
+    }
 };

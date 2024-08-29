@@ -9,5 +9,10 @@ class NotMatchesExpression : public IExpressionable
     {
 
     }
+    std::shared_ptr<Type> GetType() override
+    {
+        // TODO: Need to check if the type of the 2 expressions match
+        return std::make_shared<TypeBoolean>();
+    }
     ~NotMatchesExpression() override = default;
 };

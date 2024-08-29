@@ -15,4 +15,9 @@ class FunctionSymbol : public SymbolTableElement
         arguments = args_in;
         body = std::move(body_in);
     }
+
+    std::shared_ptr<Type> GetType() override
+    {
+        return this->type;
+    }
 };

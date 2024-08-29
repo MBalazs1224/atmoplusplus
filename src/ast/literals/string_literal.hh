@@ -11,4 +11,8 @@ class StringLiteral : public Literal
 
         }
         ~StringLiteral() = default;
+    std::shared_ptr<Type> GetType() override
+    {
+        return std::make_shared<TypeString>();
+    }
 };

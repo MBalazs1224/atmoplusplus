@@ -1,13 +1,10 @@
 #pragma once
 #include <memory>
-#include "expressionable.hh"
 #include "../nodes/node.hh"
+#include "../types/all_types.hh"
 class IExpressionable : public Node
 {
-    // FIXME: Not everything needs 2 expressions
-    // 
     protected:
-               // Default function for expressions that doesn't use 2 epressions (literals)
         IExpressionable() : Node()
         {
 
@@ -18,5 +15,6 @@ class IExpressionable : public Node
 
     public:
         virtual ~IExpressionable() = 0;
+        virtual std::shared_ptr<Type> GetType() = 0;
         
 };

@@ -8,5 +8,9 @@ class NotExpression : public IExpressionable
     {
 
     }
+    std::shared_ptr<Type> GetType() override
+    {
+        return std::make_shared<TypeBoolean>();
+    }
     ~NotExpression() override = default;
 };

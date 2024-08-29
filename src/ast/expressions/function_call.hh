@@ -17,5 +17,15 @@ class FunctionCall : public IExpressionable
             function = func_in;
 		name_for_function = name;
         }
+    std::shared_ptr<Type> GetType() override
+    {
+       // If the function was found we give back it's return type
+       if (function)
+       {
+        return function->GetType();
+       }
+       // TODO: Resolvefunction if it was not found by the parser
+        return nullptr;
+    }
         ~FunctionCall() override = default;
 };
