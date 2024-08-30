@@ -36,8 +36,6 @@ void SymbolTable::IncreaseScope()
 
     current->AddChild(new_scope);
     current = new_scope;
-
-    std::cout << "Scope increased!" << std::endl;
     
 }
 
@@ -46,7 +44,6 @@ void SymbolTable::DecreaseScope()
     if (current->parent) 
     {
         current = current->parent;
-        std::cout << "Scope decreased!" << std::endl;
     }
 }
 void SymbolTable::Dump()

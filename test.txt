@@ -1,43 +1,3 @@
-create class osztaly
-	create integer osztaly_1 equals 5
-	create string osztaly_2 equals "3"
-	create void function test with char osztaly_3
-		return osztaly_3
-
-create integer int = 5
-
-
-create class valami derives from rakos, int
-
-
-create void function b
-	return 5
-
-create void function test_func with integer a, string b
-	return b
-
-call test_func with 3 + 3, int, call b
-
-create osztaly asd equals 5
-call test with 3 + 3, int inside asd
-create osztaly function valami
-	create integer asd
-
-
-create class orokolt derives from osztaly
-	create integer asd
-
-create class atmeneti
-	create string asd
-
-
-create class orokolt_2 derives from osztaly, atmeneti 
-	create char c
-
-create public integer function asd with string a1, integer b2
-	create array of boolean rakos
-	rakos = "asd"
-	return a1
 
 
 
@@ -48,6 +8,8 @@ if 4 less than 5 + 2
 		create array of float c
 	d equals call asd
 	call asd
+	create class valami
+		create integer int
 	a = 5
 	create static array of char c
 	return 5

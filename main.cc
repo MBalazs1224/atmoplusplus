@@ -31,6 +31,5 @@ int main(int argc, char** argv)
     std::vector<std::string> params(argv + 1, argv+argc);
     Process_Args(params,driver);
     driver.parse(input);
-    SymbolTable::Dump();
     return 0;
 }

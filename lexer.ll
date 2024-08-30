@@ -66,7 +66,6 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
     if(dedents_remaining > 0)
     {
         dedents_remaining--;
-        std::cout << "Identation level popped! Remaning dedents: " << dedents_remaining << std::endl;
         return yy::parser::token::DEDENT; 
     }
     // FIXME: This probably could be improved so we don't have to reset the current identation level after every token
@@ -85,7 +84,6 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
     if(current_indent > previous_ident)
     {
         ident_stack.push(current_indent);
-        std::cout << "New identation level pushed to stack: " << current_indent << std::endl;
         BEGIN NORMAL;
         current_indent = 0;
         yyless(0);
@@ -102,7 +100,6 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
         yyless(0);
         BEGIN NORMAL;
         dedents_remaining--;
-        std::cout << "Identation popped: Remeaning dedents: " << dedents_remaining << std::endl;
         return yy::parser::token::DEDENT;
         
     }
@@ -118,7 +115,6 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
     if(dedents_remaining > 0)
     {
         dedents_remaining--;
-        std::cout << "Identation level popped!" << std::endl;
         return yy::parser::token::DEDENT; 
     }
     else if(!ident_stack.empty())
@@ -135,7 +131,6 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
     if(dedents_remaining > 0)
     {
         dedents_remaining--;
-        std::cout << "Identation level popped!" << std::endl;
         return yy::parser::token::DEDENT; 
     }
     else if(!ident_stack.empty())
@@ -160,20 +155,31 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
 str_buffer.str("");
 str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
-<STRING_LITERAL_TOKEN><<EOF>>  {std::cout << "Unclosed string literal"; exit(1);}
+<STRING_LITERAL_TOKEN><<EOF>>  {
+    Error::ShowError("Unclosed string literal!",*loc);
+    exit(1);
+    }
 <STRING_LITERAL_TOKEN>\\n { loc->lines(); ;str_buffer << "\n";}
 <STRING_LITERAL_TOKEN>\\t {str_buffer << "\t";}
 <STRING_LITERAL_TOKEN>\\\" {str_buffer << "\"";}
 <STRING_LITERAL_TOKEN>\\\\ {str_buffer << "\\";}
-<STRING_LITERAL_TOKEN>\t { std::cout << "Invalid tabulator inside string literal"; exit(1);}
-<STRING_LITERAL_TOKEN>\n {  loc->lines();std::cout << "Invalid new line inside string literal"; exit(1);}
+<STRING_LITERAL_TOKEN>\t { 
+    Error::ShowError("Invalid tabulator inside string literal!",*loc);
+    exit(1);}
+<STRING_LITERAL_TOKEN>\n {  loc->lines();
+Error::ShowError("Invalid new line inside string literal!",*loc);
+ exit(1);}
 <STRING_LITERAL_TOKEN>[^\"] {str_buffer << YYText();}
 
 
 
 <NORMAL>' {BEGIN CHAR_LITERAL_TOKEN;}
-<CHAR_LITERAL_TOKEN>\t {std::cout << "Invalid tabulator inside character literal" << std::endl ; exit(1);}
-<CHAR_LITERAL_TOKEN>\n { loc->lines();std::cout << "Invalid new line inside character literal" << std::endl ; exit(1);}
+<CHAR_LITERAL_TOKEN>\t {
+    Error::ShowError("Invalid tabulator inside character literal!",*loc);
+exit(1);}
+<CHAR_LITERAL_TOKEN>\n { loc->lines();
+Error::ShowError("Invalid new line inside character literal!",*loc);
+exit(1);}
 <CHAR_LITERAL_TOKEN>\\t' {
     yylval->emplace<char>('\t');
     BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
@@ -181,8 +187,13 @@ return yy::parser::token::STRING_LITERAL;}
 <CHAR_LITERAL_TOKEN>.' {
 yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
-<CHAR_LITERAL_TOKEN>.{2,} {std::cout << "Too many characters inside character literal" << std::endl; exit(1);}
-<CHAR_LITERAL_TOKEN><<EOF>> {std::cout << "Unclosed character literal" << std::endl ; exit(1);}
+<CHAR_LITERAL_TOKEN>.{2,} {
+    Error::ShowError("Too many characters inside character literal!",*loc);
+    exit(1);}
+<CHAR_LITERAL_TOKEN><<EOF>> {
+    Error::ShowError("Unclosed character literal!",*loc);
+    exit(1);
+    }
 
 
 
