@@ -7,6 +7,9 @@ create class osztaly
 create integer int = 5
 
 
+create class valami derives from rakos, int
+
+
 create void function b
 	return 5
 

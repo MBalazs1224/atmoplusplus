@@ -286,6 +286,8 @@ class_create: create_class_holder IDENTIFIER base_classes body
 base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
+                // FIXME: Might need to check if it's an unidentified symbol and show different error
+                
                 std::vector<std::shared_ptr<ClassSymbol>> vec;
                 auto symbol = SymbolTable::LookUp($2);
 
@@ -305,10 +307,20 @@ base_classes: %empty {}
             }
             | base_classes COMMA IDENTIFIER
             {
+                // FIXME: Might need to check if it's an unidentified symbol and show different error
+
                 auto symbol = SymbolTable::LookUp($3);
+                 auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
+                 if(!casted)
+                {
+                    Error::ShowError("Classes can only derive from class types!", @3);
+                }
+                else
+                {
+                    $1.push_back(std::dynamic_pointer_cast<ClassSymbol>(casted));
+                }
+                
                 $$ = std::move($1);
-                $$.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
-                auto valami = $$;
             }
             
 
