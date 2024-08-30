@@ -288,14 +288,17 @@ base_classes: %empty {}
             {
                 std::vector<std::shared_ptr<ClassSymbol>> vec;
                 auto symbol = SymbolTable::LookUp($2);
+
+                auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
+
                 /*FIXME: We might need to somehow delegate type checking down to the semnatic analyzer*/
-                if(!std::dynamic_pointer_cast<ClassSymbol>(symbol))
+                if(!casted)
                 {
                     Error::ShowError("Classes can only derive from class types!", @2);
                 }
                 else
                 {
-                vec.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+                vec.push_back(casted);
                 }
                 $$ = std::move(vec);
                 
