@@ -6,6 +6,9 @@ create class osztaly
 
 create integer int = 5
 
+
+create class valami derives from int
+
 create void function b
 	return 5
 

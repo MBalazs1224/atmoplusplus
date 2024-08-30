@@ -282,14 +282,23 @@ class_create: create_class_holder IDENTIFIER base_classes body
     SymbolTable::Insert($2,symbol);
     
 }
-    /*FIXME: Might need to show error here if the given identifier is not class type, beacuse in the syntax analyzer, we wont have location or the given string jnfo*/
+    
 base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
-                auto symbol = SymbolTable::LookUp($2);
                 std::vector<std::shared_ptr<ClassSymbol>> vec;
+                auto symbol = SymbolTable::LookUp($2);
+                /*FIXME: We might need to somehow delegate type checking down to the semnatic analyzer*/
+                if(!std::dynamic_pointer_cast<ClassSymbol>(symbol))
+                {
+                    Error::ShowError("Classes can only derive from class types!", @2);
+                }
+                else
+                {
                 vec.push_back(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+                }
                 $$ = std::move(vec);
+                
             }
             | base_classes COMMA IDENTIFIER
             {
@@ -409,7 +418,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
-            // TODO: Make NotExpression take only one parameter instead of the null pointer
+            
             | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
             | IDENTIFIER { $$ = SymbolTable::LookUp($1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
