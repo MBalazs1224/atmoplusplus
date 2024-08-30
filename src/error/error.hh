@@ -22,7 +22,7 @@ class Error
         static void PrintSource(int);
         static void PrintUnderline(int,int,int);
     public:
-        static void ShowError(std::string,yy::location);
+        static void ShowError(std::string,const yy::location&);
         static void Initialize();
 
 };

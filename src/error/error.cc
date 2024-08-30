@@ -3,7 +3,7 @@
 int Error::error_count = 0;
 int Error::MAX_ERRORS = 3;
 std::vector<std::string> Error::source;
-void Error::ShowError(std::string message, yy::location loc)
+void Error::ShowError(std::string message, const yy::location& loc)
 {
 
     
@@ -38,7 +38,10 @@ void Error::ShowCompilerError(std::string message)
 void Error::PrintSource(int line)
 {
     std::string correct_line = source[line - 1];
-    std::cout << line << ". | " << correct_line << std::endl;
+    if(!correct_line.empty())
+    {
+        std::cout << line << ". | " << correct_line << std::endl;
+    }
 }
 void Error::PrintUnderline(int col_start, int col_end, int lint_number)
 {

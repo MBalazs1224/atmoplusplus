@@ -30,12 +30,11 @@
     class AtmoLexer;
 }
 %define api.value.type variant
-%define         parse.trace
+ //This gives segfault immediately
  //%define         parse.lac           full
 
 /* "unexpected" is unhelpful. "unexpected IDENTIFIER, expected NUMBER or STRING_LITERAL" is better. */
-%define         parse.error         detailed
-
+%define parse.error detailed
 %locations
 
 %parse-param {AtmoLexer &lexer}
@@ -287,7 +286,7 @@ base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
                 // FIXME: Might need to check if it's an unidentified symbol and show different error
-                
+
                 std::vector<std::shared_ptr<ClassSymbol>> vec;
                 auto symbol = SymbolTable::LookUp($2);
 
@@ -452,7 +451,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
 
 %%
 
-void yy::parser::error(const location_type &l, const std::string &message)
+void yy::parser::error(const location_type &loc, const std::string &message)
 {
-    std::cerr << "Error at " << l << ":" << message << std::endl;
+    Error::ShowError(message, loc);
 }
