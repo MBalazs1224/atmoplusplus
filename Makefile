@@ -7,7 +7,7 @@ expressions :=  ./build/expressionable.o ./build/literal.o
 objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(expressions)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
-CXXFLAGS = -g -Wpedantic -Wextra -Wall
+CXXFLAGS = -g -Wpedantic -Wextra -Wall -Werror
 #LDFLAGS = -static-libasan
 
 
