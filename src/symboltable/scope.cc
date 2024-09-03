@@ -10,10 +10,7 @@ void Scope::AddElement(const std::string& id, std::shared_ptr<SymbolTableElement
 {
     if (SymbolAlreadyDeclared(id))
     {
-        //FIXME: Stringstream on error mesages looks unnecessary
-        std::stringstream s;
-        s << "Multiple definition of symbol '" << id << "'!";
-        Error::ShowError(s.str(),element->location);
+        Error::ShowError(Error::FormatString("Multiple definition for symbol '%s'",id.c_str()),element->location);
     }
     else
     {

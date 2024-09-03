@@ -27,10 +27,7 @@ std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(const std::string& id, c
     // If there is no element found show unknown error
     if(!element)
     {
-        //FIXME: Fix stringstream
-        std::stringstream ss;
-        ss << "Unknown identifier '" << id << "'!";
-        Error::ShowError(ss.str(),loc);
+        Error::ShowError(Error::FormatString("Unknown identifier '%s'!", id.c_str()),loc);
     }
 
     return element;

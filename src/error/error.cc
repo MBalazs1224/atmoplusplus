@@ -30,6 +30,8 @@ PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
     
 }
 
+
+
 void Error::ShowCompilerError(const std::string& message)
 {
     std::cerr << Red("Error:") << " " << message << std::endl;
@@ -73,6 +75,27 @@ std::string Error::Red(const std::string& text)
     std::stringstream s;
     s << "\033[1;31m" << text << "\033[0m";
     return s.str();
+}
+
+std::string Error::FormatString(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    // Determine the required size
+    int size = std::vsnprintf(nullptr, 0, format, args) + 1; // +1 for null terminator
+    va_end(args);
+
+    // Fill the string with nulls
+
+    std::string result(size, '\0');
+
+    // Fill the string with the format
+
+    va_start(args, format);
+    std::vsnprintf(&result[0], size, format, args);
+    va_end(args);
+
+    return result;
 }
 
 
