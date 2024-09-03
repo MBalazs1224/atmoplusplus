@@ -17,3 +17,9 @@ Type& Type::operator=(const Type& other)
 
     return *this;
 }
+
+
+bool Type::NotEquals(const std::shared_ptr<Type> other)
+{
+    return !this->Equals(other);
+}

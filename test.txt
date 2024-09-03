@@ -4,7 +4,7 @@ create class osztaly
 
 create osztaly asd equals 5
 
-if 4 less than 5 + 2
+if 4 less than 3
 	create public integer a
 	until a
 		create private string b

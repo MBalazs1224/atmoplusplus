@@ -8,4 +8,9 @@ class TypeChar : public Type
         auto casted = std::dynamic_pointer_cast<TypeChar>(other);
         return casted && this->isArray == casted->isArray;
     }
+
+    std::string ToString() override
+    {
+        return "type char";
+    }
 };

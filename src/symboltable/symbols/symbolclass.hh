@@ -28,5 +28,11 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         return casted && this->name == casted->name;
     }
 
+    std::string ToString() override
+    {
+        // FIXME: FormatString should be in a helper class
+        return Error::FormatString("type class (%s)",name.c_str());
+    }
+
 
 };
