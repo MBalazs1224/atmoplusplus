@@ -1,21 +1,11 @@
 
-create asd equals 5
-
 if 4 less than 5 + 2
 	create public integer a
 	until a
 		create private string b
 		create array of float c
-	d equals call asd
-	call asd
-	create class valami
-		create integer int
 	a = 5
 	create static array of char c
 	return 5
-else if call asd
-	return 4
-else if true
-	return 3
 else
-	return 2
+	return 3

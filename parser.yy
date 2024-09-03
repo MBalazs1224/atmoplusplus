@@ -179,6 +179,7 @@
 %nterm<std::vector<std::shared_ptr<ClassSymbol>>> base_classes
 %nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
+%nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_list
 
 
 %nterm<std::unique_ptr<Node>> function_create
@@ -198,16 +199,14 @@ statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1
                  
 
 
-statement:function_create NEW_LINE {$$ = std::move($1);}
-        | class_create NEW_LINE  {$$ = nullptr;}
-        | variable_definition NEW_LINE {$$ = std::move($1);}
-        | if_statement NEW_LINE  {$$ = std::move($1);}
-        | until_statement NEW_LINE  {$$ = std::move($1);}
-        | do_until_statement NEW_LINE  {$$ = std::move($1);}
-        | return_statement NEW_LINE {$$ = std::move($1);}
-        | expression NEW_LINE {$$ = std::move($1);}
-        | error NEW_LINE  {$$ = nullptr;}
-
+statement:function_create {$$ = std::move($1);}
+        | class_create  {}
+        | variable_definition {$$ = std::move($1);}
+        | if_statement  {$$ = std::move($1);}
+        | until_statement  {$$ = std::move($1);}
+        | do_until_statement  {$$ = std::move($1);}
+        | return_statement {$$ = std::move($1);}
+        | expression {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
                 | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
@@ -224,12 +223,11 @@ attribute: %empty {$$ = AttributePrivateHolder;}
             | PRIVATE {$$ = AttributePrivateHolder;}
             | STATIC {$$ = AttributeStaticHolder;}
 
-equals_holder: %empty
+equals_holder: %empty {}
                 |EQUALS expression {$$ = $2;}
 
 
 body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetStatements()); }
-    | indent error dedent
 
 
 indent: INDENT {SymbolTable::IncreaseScope();}
@@ -244,29 +242,31 @@ until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode
 if_statement: IF expression body
 else_if_statements else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4),std::move($5),@1); test = $$.get(); }
 
-else_statement: %empty
+else_statement: %empty {}
                 | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2),@1);}
+else_if_statements:
+    %empty {}
+    | else_if_list {$$ = std::move($1);}
+;
 
-else_if_statement: ELSE_IF expression body
-                {
-                    $$ = std::make_unique<ElseIfStatementNode>(std::move($2),std::move($3),@1);
+else_if_list:
+    else_if_statement {
+        std::vector<std::unique_ptr<ElseIfStatementNode>> temp;
+        temp.push_back(std::move($1));
+        $$ = std::move(temp);
+    }
+    | else_if_list else_if_statement
+    {
+        $1.push_back(std::move($2));
+        $$ = std::move($1);
+    }
+;
 
-                }
-
-else_if_statements: %empty
-                | else_if_statement
-                {
-                    std::vector<std::unique_ptr<ElseIfStatementNode>> temp;
-                    temp.push_back(std::move($1));
-                    $$ = std::move(temp);
-
-                }
-                | else_if_statements else_if_statement
-                {
-                    
-                    $$ = std::move($1);
-                    $$.push_back(std::move($2));
-                }
+else_if_statement:
+    ELSE_IF expression body {
+        $$ = std::make_unique<ElseIfStatementNode>(std::move($2),std::move($3),@1);
+    }
+;
 
 return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>($2,AddLocations(@1,$2));}
 
@@ -341,7 +341,7 @@ function_call: CALL IDENTIFIER function_call_arguments {
     test = $$.get();
     }
 
-function_call_arguments: %empty
+function_call_arguments: %empty {}
                         | WITH expression
                         {
                             std::vector<std::shared_ptr<IExpressionable>> vec;
@@ -376,7 +376,7 @@ more_arguments: COMMA expression
 function_return_type: datatype {$$ = std::move($1);}
                     | VOID {$$ = std::make_shared<TypeVoid>();;}
 
-argument_list: %empty
+argument_list: %empty {}
             | WITH argument {
                 // Increase the scope so the arguments can be pushed into their own scope
                 SymbolTable::IncreaseScope();
@@ -428,7 +428,6 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
-            | OPEN_BRACKET error CLOSE_BRACKET {$$ = nullptr;}
             | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
             | IDENTIFIER { $$ = SymbolTable::LookUp($1,@1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
