@@ -18,10 +18,22 @@ void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> ele
     current->AddElement(id,element);
 }
 
-std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(std::string id)
+std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(std::string id, const yy::location& loc)
 {
     assert(!id.empty());
-    return current->GetElement(id);
+
+    auto element = current->GetElement(id);
+
+    // If there is no element found show unknown error
+    if(!element)
+    {
+        //FIXME: Fix stringstream
+        std::stringstream ss;
+        ss << "Unknown identifier '" << id << "'!";
+        Error::ShowError(ss.str(),loc);
+    }
+
+    return element;
 }
 
 void SymbolTable::Initialize()

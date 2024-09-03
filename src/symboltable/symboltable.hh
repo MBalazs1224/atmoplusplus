@@ -20,7 +20,7 @@ class SymbolTable
         static void Insert(std::string,std::shared_ptr<SymbolTableElement>);
         // Will return a reference to the SymbolTableElement or null if the element wasn't found.
         //BUG: Symbol in a scope under the current one gets recognized correctly
-        static std::shared_ptr<SymbolTableElement> LookUp(std::string);
+        static std::shared_ptr<SymbolTableElement> LookUp(std::string, const yy::location&);
         static void DecreaseScope();
         static void IncreaseScope();
         static bool IsRoot();
