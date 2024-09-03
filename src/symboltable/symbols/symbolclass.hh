@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 #include "../../ast/types/type.hh"
-class ClassSymbol : public SymbolTableElement, public Type
+class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
     private:
         std::vector<std::shared_ptr<ClassSymbol>> parents;
@@ -19,7 +19,6 @@ class ClassSymbol : public SymbolTableElement, public Type
 
     std::shared_ptr<Type> GetType() override
     {
-        // FIXME: The type of a class symbol should be itself but cannot owrk aorund that yet
-        return nullptr;
+        return shared_from_this();
     }
 };

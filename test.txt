@@ -1,3 +1,8 @@
+create class osztaly
+	create void function test
+		return 4
+
+create osztaly asd equals 5
 
 if 4 less than 5 + 2
 	create public integer a
