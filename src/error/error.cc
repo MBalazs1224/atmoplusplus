@@ -61,7 +61,7 @@ void Error::PrintUnderline(int col_start, int col_end, int lint_number)
     }
     for (int i = col_start; i < col_end; i++)
     {
-        std::cout << Red("~");
+        std::cout << Red("\u02DC");
     }
     std::cout << std::endl;
     
