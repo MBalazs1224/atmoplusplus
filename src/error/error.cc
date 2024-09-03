@@ -3,7 +3,7 @@
 int Error::error_count = 0;
 int Error::MAX_ERRORS = 3;
 std::vector<std::string> Error::source;
-void Error::ShowError(std::string message, const yy::location& loc)
+void Error::ShowError(const std::string& message, const yy::location& loc)
 {
 
     
@@ -30,7 +30,7 @@ PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
     
 }
 
-void Error::ShowCompilerError(std::string message)
+void Error::ShowCompilerError(const std::string& message)
 {
     std::cerr << Red("Error:") << " " << message << std::endl;
 }
@@ -67,7 +67,7 @@ void Error::PrintUnderline(int col_start, int col_end, int lint_number)
     
 }
 
-std::string Error::Red(std::string text)
+std::string Error::Red(const std::string& text)
 {
     //FIXME: Fix stringstream
     std::stringstream s;

@@ -6,7 +6,7 @@ void Scope::AddChild(std::shared_ptr<Scope> child)
     children.push_back(child);
 }
 
-void Scope::AddElement(std::string id, std::shared_ptr<SymbolTableElement> element)
+void Scope::AddElement(const std::string& id, std::shared_ptr<SymbolTableElement> element)
 {
     if (SymbolAlreadyDeclared(id))
     {
@@ -21,12 +21,12 @@ void Scope::AddElement(std::string id, std::shared_ptr<SymbolTableElement> eleme
     }
 }
 
-bool Scope::SymbolAlreadyDeclared(std::string id)
+bool Scope::SymbolAlreadyDeclared(const std::string& id)
 {
     return elements.find(id) != elements.end();
 }
 
-std::shared_ptr<SymbolTableElement> Scope::GetElement(std::string id)
+std::shared_ptr<SymbolTableElement> Scope::GetElement(const std::string& id)
 {
     if (!SymbolAlreadyDeclared(id))
     {

@@ -9,7 +9,7 @@ class Error
     private:
         static int MAX_ERRORS;
         static int error_count;
-        static std::string Red(std::string);
+        static std::string Red(const std::string&);
         // The vector containing the source code line-by-line, used for error messages
         static std::vector<std::string> source;
 
@@ -18,11 +18,11 @@ class Error
         {
 
         };
-        static void ShowCompilerError(std::string);
+        static void ShowCompilerError(const std::string&);
         static void PrintSource(int);
         static void PrintUnderline(int,int,int);
     public:
-        static void ShowError(std::string,const yy::location&);
+        static void ShowError(const std::string&,const yy::location&);
         static void Initialize();
 
 };

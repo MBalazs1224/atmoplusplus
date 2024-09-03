@@ -18,7 +18,7 @@ void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> ele
     current->AddElement(id,element);
 }
 
-std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(std::string id, const yy::location& loc)
+std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(const std::string& id, const yy::location& loc)
 {
     assert(!id.empty());
 
