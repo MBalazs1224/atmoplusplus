@@ -184,7 +184,6 @@
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
 
-
 %%
 
 statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
@@ -199,14 +198,15 @@ statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1
                  
 
 
-statement:function_create {$$ = std::move($1);}
-        | class_create {$$ = nullptr;}
-        | variable_definition {$$ = std::move($1);}
-        | if_statement  {$$ = std::move($1);}
-        | until_statement  {$$ = std::move($1);}
-        | do_until_statement  {$$ = std::move($1);}
-        | return_statement {$$ = std::move($1);}
-        | expression {$$ = std::move($1);}
+statement:function_create NEW_LINE {$$ = std::move($1);}
+        | class_create NEW_LINE  {$$ = nullptr;}
+        | variable_definition NEW_LINE {$$ = std::move($1);}
+        | if_statement NEW_LINE  {$$ = std::move($1);}
+        | until_statement NEW_LINE  {$$ = std::move($1);}
+        | do_until_statement NEW_LINE  {$$ = std::move($1);}
+        | return_statement NEW_LINE {$$ = std::move($1);}
+        | expression NEW_LINE {$$ = std::move($1);}
+        | error NEW_LINE  {$$ = nullptr;}
 
 
 variable_type: datatype {$$ = std::move($1);}
@@ -217,7 +217,7 @@ variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     variable->location = @4;
     SymbolTable::Insert($4,variable);
     $$ = std::make_unique<VariableDefinitionNode>(std::move(variable));
-}
+} 
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}
             | PROTECTED {$$ = AttributeProtectedHolder;}
@@ -229,6 +229,7 @@ equals_holder: %empty
 
 
 body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetStatements()); }
+    | indent error dedent
 
 
 indent: INDENT {SymbolTable::IncreaseScope();}
@@ -285,8 +286,6 @@ class_create: create_class_holder IDENTIFIER base_classes body
 base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
-                // FIXME: Might need to check if it's an unidentified symbol and show different error
-
                 std::vector<std::shared_ptr<ClassSymbol>> vec;
                 auto symbol = SymbolTable::LookUp($2,@2);
 
@@ -306,7 +305,6 @@ base_classes: %empty {}
             }
             | base_classes COMMA IDENTIFIER
             {
-                // FIXME: Might need to check if it's an unidentified symbol and show different error
 
                 auto symbol = SymbolTable::LookUp($3,@3);
                  auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
@@ -417,8 +415,6 @@ datatype: INT { $$ = std::make_shared<TypeInteger>();}
             $$ = std::move(std::dynamic_pointer_cast<ClassSymbol>(symbol));
           }
 
-
-    // BUG: Expression location is not set correctly
 expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, AddLocations($1,$3));  }
             | expression MINUS expression {$$ = std::make_unique<SubtractExpression>( $1, $3, AddLocations($1,$3));  }
             | expression MULTIPLY expression {$$ = std::make_unique<MultiplyExpression>( $1, $3, AddLocations($1,$3));  }
@@ -432,7 +428,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | expression MATCHES expression {$$ = std::make_unique<MatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
-            
+            | OPEN_BRACKET error CLOSE_BRACKET {$$ = nullptr;}
             | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
             | IDENTIFIER { $$ = SymbolTable::LookUp($1,@1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
