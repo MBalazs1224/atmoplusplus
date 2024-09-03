@@ -11,5 +11,4 @@ class VariableSymbol : public SymbolTableElement
     {
         return this->type;
     }
-
 };

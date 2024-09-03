@@ -21,4 +21,12 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
     {
         return shared_from_this();
     }
+
+    bool Equals(const std::shared_ptr<Type> other) override
+    {
+        auto casted = std::dynamic_pointer_cast<ClassSymbol>(other);
+        return casted && this->name == casted->name;
+    }
+
+
 };
