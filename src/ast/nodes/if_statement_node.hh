@@ -41,7 +41,14 @@ class IfStatementNode : public  Node
            {
                 Error::ShowWarning("Empty body of if statement!",location);
            }
-           
-           body->Check();
+
+            for (auto& else_if : else_ifs)
+            {
+                else_if->Check();
+            }
+
+            else_->Check();
+            
+            body->Check();
         }
 };
