@@ -42,8 +42,6 @@ void SymbolTable::Initialize()
 void SymbolTable::IncreaseScope()
 {
     auto new_scope = std::make_shared<Scope>(current);
-
-    current->AddChild(new_scope);
     current = new_scope;
     
 }
@@ -53,26 +51,6 @@ void SymbolTable::DecreaseScope()
     if (current->parent) 
     {
         current = current->parent;
-    }
-}
-void SymbolTable::Dump()
-{
-    DumpScope(current, 0);
-}
-
-void SymbolTable::DumpScope(std::shared_ptr<Scope> scope, int level)
-{
-    if (!scope) return;
-
-    std::string indent(level * 2, ' ');
-    for (const auto& elem : scope->elements)
-    {
-        std::cout << indent << elem.first << std::endl;
-    }
-
-    for (const auto& child : scope->children)
-    {
-        DumpScope(child, level + 1);
     }
 }
 

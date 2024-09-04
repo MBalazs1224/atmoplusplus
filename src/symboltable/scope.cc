@@ -1,10 +1,6 @@
 #include "scope.hh"
 #include <iostream>
 #include <sstream>
-void Scope::AddChild(std::shared_ptr<Scope> child)
-{
-    children.push_back(child);
-}
 
 void Scope::AddElement(const std::string& id, std::shared_ptr<SymbolTableElement> element)
 {

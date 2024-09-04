@@ -9,7 +9,6 @@
 class Scope
 {
     std::shared_ptr<Scope> parent;
-    std::vector<std::shared_ptr<Scope>> children;
     std::unordered_map<std::string, std::shared_ptr<SymbolTableElement>> elements;
 
     public:
@@ -17,7 +16,6 @@ class Scope
     {
 
     }
-    void AddChild(std::shared_ptr<Scope>);
     void AddElement(const std::string&, std::shared_ptr<SymbolTableElement>);
     bool SymbolAlreadyDeclared(const std::string&);
     std::shared_ptr<SymbolTableElement> GetElement(const std::string&);
