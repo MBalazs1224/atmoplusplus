@@ -17,6 +17,17 @@ class DoUntilStatementNode : public Node
         ~DoUntilStatementNode() override = default;
         void Check() override
         {
-            //TODO: Implement do until node checking
+            auto exp_type = expression->GetType();
+            if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
+            {
+                Error::ShowError(Error::FormatString("The expression of an do-until statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
+            }
+            
+            if (body->isEmpty())
+            {
+                Error::ShowWarning("Empty body of do-until statement!",location);
+            }
+            body->Check();
+
         }
 };
