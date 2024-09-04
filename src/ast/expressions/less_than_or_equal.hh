@@ -11,12 +11,19 @@ class LessThanOrEqualExpression : public IExpressionable
     }
     std::shared_ptr<Type> GetType() override
     {
-        // TODO: We need to check if the type of the two expression match
         return std::make_shared<TypeBoolean>();
     }
     ~LessThanOrEqualExpression() override = default;
     void Check() override
     {
-        //TODO: Implement Less tahn or equal expression checking
+        exp_left->Check();
+        exp_right->Check();
+        auto exp_left_type = exp_left->GetType();
+        auto exp_right_type = exp_right->GetType();
+        if (exp_left_type->NotEquals(exp_right_type))
+        {
+            Error::ShowError(Error::FormatString("The two operands of LESS THAN OR EQUAL (<=) expression must be of same type! (received '%s' and '%s')",exp_left_type->ToString().c_str(),exp_right_type->ToString().c_str()),location);
+        }
+
     }
 };

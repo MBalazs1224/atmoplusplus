@@ -2,14 +2,9 @@ create class osztaly
 	create void function test
 		return 4
 
-create boolean asd equals true
 
-create float b = 3
-
-create osztaly a = b
-
-if asd
-	create public integer a
+if 4 and true
+	create public boolean a
 	until a
 		create private string b
 		create array of float c
