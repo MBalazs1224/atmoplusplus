@@ -14,4 +14,5 @@ class Node : public ILocation
     }
     public:
         virtual ~Node() = default;
+        virtual void Check() = 0;
 };

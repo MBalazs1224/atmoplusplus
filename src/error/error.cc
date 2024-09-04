@@ -116,3 +116,8 @@ void Error::Initialize()
     }
     
 }
+
+bool Error::CanContinue()
+{
+    return error_count == 0;
+}

@@ -12,4 +12,6 @@ class BodyNode : public Node
     BodyNode(BodyNode&& other);
     public:
         ~BodyNode() override = default;
+
+        void Check() override;
 };

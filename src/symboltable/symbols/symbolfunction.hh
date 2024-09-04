@@ -20,4 +20,8 @@ class FunctionSymbol : public SymbolTableElement
     {
         return this->type;
     }
+    void Check() override
+    {
+        //TODO: Implement symbol function checking
+    }
 };

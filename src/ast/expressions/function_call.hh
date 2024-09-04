@@ -28,4 +28,9 @@ class FunctionCall : public IExpressionable
         return nullptr;
     }
         ~FunctionCall() override = default;
+
+    void Check() override
+    {
+        //TODO: Implement Function call expression checking
+    }
 };

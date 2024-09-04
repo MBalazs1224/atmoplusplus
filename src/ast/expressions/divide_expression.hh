@@ -15,4 +15,9 @@ class DivideExpression : public IExpressionable
         return std::make_shared<TypeFloat>();
     }
     ~DivideExpression() override = default;
+
+    void Check() override
+    {
+        //TODO: Implement Divide expression checking
+    }
 };

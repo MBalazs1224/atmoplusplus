@@ -14,4 +14,8 @@ class ElseIfStatementNode : public  Node
 
         }
         ~ElseIfStatementNode() override = default;
+        void Check() override
+        {
+            //TODO: Implement else if node checking
+        }
 };

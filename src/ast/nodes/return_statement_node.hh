@@ -11,4 +11,8 @@ class ReturnStatementNode : public  Node
 
         }
         ~ReturnStatementNode() override = default;
+        void Check() override
+        {
+            //TODO: Implement return node checking
+        }
 };

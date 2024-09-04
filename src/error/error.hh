@@ -28,5 +28,7 @@ class Error
         
         // TODO: Might need to put FormatString fucntion into a different helper class
         static std::string FormatString(const char* format, ...);
+        
+        static bool CanContinue();
 
 };

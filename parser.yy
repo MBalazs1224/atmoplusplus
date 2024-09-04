@@ -39,6 +39,7 @@
 
 %parse-param {AtmoLexer &lexer}
 %parse-param {AtmoDriver &driver}
+%parse-param {std::shared_ptr<StatementListNode> ast_root}
 
 %header
 
@@ -141,6 +142,7 @@
 %token DEDENT
 %token DO
 %token VOID
+%token END_OF_FILE
 
 %left CALL WITH
 %left INSIDE
@@ -187,16 +189,24 @@
 
     /* TODO: Implement error recovery */
 
+
+    /* FIXME: create int asd equals 5 ... if statements, gets recognized as VariableDefinition (isntead of assignment) and if statements*/
+
 %%
 
-statement_list: statement {$$ = std::make_shared<StatementListNode>(std::move($1));}
+program: statement_list  {
+    auto test = $1;
+    ast_root = std::move($1);
+    }
+
+statement_list: statement {$$ =     std::make_shared<StatementListNode>(std::move($1));
+}
                 | statement_list statement {
                     if($2)
                     {
                         $1->Add(std::move($2));
                     }
-			test = $1.get();
-                    $$ = std::move($1);
+                    $$ = $1;
                 }
                  
 

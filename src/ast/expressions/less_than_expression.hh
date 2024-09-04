@@ -22,4 +22,8 @@ class LessThanExpression : public IExpressionable
         return std::make_shared<TypeBoolean>();
     }
     ~LessThanExpression() override = default;
+    void Check() override
+    {
+        //TODO: Implement Less than expression checking
+    }
 };

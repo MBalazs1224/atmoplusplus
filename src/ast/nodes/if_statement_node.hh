@@ -17,4 +17,8 @@ class IfStatementNode : public  Node
 
         }
         ~IfStatementNode() override = default;
+        void Check() override
+        {
+            //TODO: Implement if node checking
+        }
 };

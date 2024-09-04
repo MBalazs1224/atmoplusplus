@@ -17,4 +17,8 @@ class VariableDefinitionNode : public Node
 
         }
         ~VariableDefinitionNode() override = default;
+        void Check() override
+        {
+            //TODO: Implement variable definition node checking
+        }
 };

@@ -15,4 +15,9 @@ class OrExpression : public IExpressionable
         return std::make_shared<TypeBoolean>();
     }
     ~OrExpression() override = default;
+
+    void Check() override
+    {
+        //TODO: Implement Or expression checking
+    }
 };

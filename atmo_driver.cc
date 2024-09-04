@@ -1,6 +1,6 @@
 #include "atmo_driver.hh"
 
-void AtmoDriver::parse(std::istream &stream)
+void AtmoDriver::StartCompilation(std::istream &stream)
 {
     if (!stream.good() && stream.eof())
     {
@@ -21,7 +21,7 @@ void AtmoDriver::parse(std::istream &stream)
 
     try
     { 
-        parser = std::make_unique<yy::parser>(*lexer, *this);
+        parser = std::make_unique<yy::parser>(*lexer, *this, ast_root);
         parser->set_debug_level(parser_debug_level);
     }
     catch(const std::bad_alloc& ba)
@@ -33,12 +33,23 @@ void AtmoDriver::parse(std::istream &stream)
     //TODO: Let the user choose input file, currently defaults to test.txt
     Error::Initialize();
     SymbolTable::Initialize();
-    int accept_code = 0;
-    if (parser->parse() != accept_code)
+    parser->parse();
+    if (!Error::CanContinue())
     {
-        std::cerr << "Parse failed!" << std::endl;
+        std::cerr << "Parsing failed, exiting!" << std::endl;
+        exit(EXIT_FAILURE);
     }
+    SemanticAnalyze();
 
+}
+
+void AtmoDriver::SemanticAnalyze()
+{
+    for (auto statement : ast_root->GetStatementsRef())
+    {
+        statement->Check();
+    }
+    
 }
 
 void AtmoDriver::set_parser_debug_level(int level)

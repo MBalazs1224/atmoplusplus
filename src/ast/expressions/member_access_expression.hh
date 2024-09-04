@@ -15,4 +15,9 @@ class MemberAccessExpression : public IExpressionable
         return exp_left->GetType();
     }
     ~MemberAccessExpression() override = default;
+
+    void Check() override
+    {
+        //TODO: Implement Member access expression checking
+    }
 };

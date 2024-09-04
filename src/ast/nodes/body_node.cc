@@ -9,3 +9,8 @@ BodyNode::BodyNode(std::vector<std::shared_ptr<Node>> statements)
 {
     this->statements = std::move(statements);
 }
+
+void BodyNode::Check()
+{
+    //TODO: Implement body node checking
+}

@@ -24,13 +24,12 @@
     std::stringstream str_buffer;
     // Update location on every token match
     #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
+
 %}
 
     /* - We switch the output language to C++. */
 %option c++ 
     /* - Finally, we set which class should be used by lexer instead of the yyFlexLexer. It will create the method yylex in this class. */
-%option yyclass="FooLexer" 
-
 %option noyywrap c++
 %option yyclass="AtmoLexer"
 %option debug

@@ -17,7 +17,16 @@ StatementListNode::StatementListNode(std::shared_ptr<Node> node)
 
 }
 
+std::vector<std::shared_ptr<Node>> StatementListNode::GetStatementsRef()
+{
+    return statements;
+} 
+
 std::vector<std::shared_ptr<Node>> StatementListNode::GetStatements()
 {
     return std::move(statements);
+}
+void StatementListNode::Check()
+{
+    //TODO: Implement statementlist node checking
 }

@@ -15,4 +15,8 @@ class MultiplyExpression : public IExpressionable
         return exp_left->GetType();
     }
     ~MultiplyExpression() override = default;
+    void Check() override
+    {
+        //TODO: Implement Multiply expression checking
+    }
 };

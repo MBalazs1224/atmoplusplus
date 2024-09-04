@@ -14,5 +14,9 @@ class IntegerLiteral : public Literal
     std::shared_ptr<Type> GetType() override
     {
         return std::make_shared<TypeInteger>();
+    }    
+    void Check() override
+    {
+        // FIXME: Literals shouldn't be nodes
     }
 };

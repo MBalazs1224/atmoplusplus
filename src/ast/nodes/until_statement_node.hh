@@ -16,4 +16,8 @@ class UntilStatementNode : public Node
         {
         }
         ~UntilStatementNode() override = default;
+        void Check() override
+        {
+            //TODO: Implement until node checking
+        }
 };

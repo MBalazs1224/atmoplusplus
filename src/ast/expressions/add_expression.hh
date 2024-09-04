@@ -16,4 +16,9 @@ class AddExpression : public IExpressionable
         // TODO: We need to check if the type of the two expression match
         return exp_left->GetType();
     }
+
+    void Check() override
+    {
+        //TODO: Implement Add expression checking
+    }
 };

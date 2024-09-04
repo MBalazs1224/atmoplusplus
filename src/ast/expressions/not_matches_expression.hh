@@ -15,4 +15,9 @@ class NotMatchesExpression : public IExpressionable
         return std::make_shared<TypeBoolean>();
     }
     ~NotMatchesExpression() override = default;
+
+    void Check() override
+    {
+        //TODO: Implement Not matches expression checking
+    }
 };

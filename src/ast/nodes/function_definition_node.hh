@@ -18,4 +18,8 @@ class FunctionDefinitionNode : public Node
 
         }
         ~FunctionDefinitionNode() override = default;
+        void Check() override
+        {
+            //TODO: Implement function definition node checking
+        }
 };

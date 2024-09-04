@@ -9,6 +9,10 @@ class StatementListNode : public Node
     public:
         void Add(std::shared_ptr<Node>);
         StatementListNode(std::shared_ptr<Node> statement);
+        // Will move the vector, making it invalid afterwards
         std::vector<std::shared_ptr<Node>> GetStatements();
         ~StatementListNode() override = default;
+        // Will not move the vector
+        std::vector<std::shared_ptr<Node>> GetStatementsRef();
+        void Check() override;
 };

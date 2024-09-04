@@ -1,6 +1,6 @@
 #include <istream>
 #include <memory>
-
+#include <iostream>
 #include "AtmoLexer.hh"
 #include "parser.tab.hh"
 class AtmoDriver
@@ -8,11 +8,14 @@ class AtmoDriver
     public:
     AtmoDriver() = default;
     ~AtmoDriver() = default;
-    void parse(std::istream &iss);
+    void StartCompilation(std::istream &iss);
     void set_parser_debug_level(int);
     void set_lexer_debug_level(int);
 
+
     private:
+    std::shared_ptr<StatementListNode> ast_root;
+    void SemanticAnalyze();
     
     int lexer_debug_level = 0;
     int parser_debug_level = 0;

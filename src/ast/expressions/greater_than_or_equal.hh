@@ -16,4 +16,8 @@ class GreaterThanOrEqualExpression : public IExpressionable
         return std::make_shared<TypeBoolean>();
     }
     ~GreaterThanOrEqualExpression() override = default;
+    void Check() override
+    {
+        //TODO: Implement Graeter than or equal expression checking
+    }
 };

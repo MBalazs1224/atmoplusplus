@@ -15,4 +15,9 @@ class SubtractExpression : public IExpressionable
         return exp_left->GetType();
     }
     ~SubtractExpression() override = default;
+
+    void Check() override
+    {
+        //TODO: Implement Subtract expression checking
+    }
 };

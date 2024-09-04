@@ -34,5 +34,10 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         return Error::FormatString("type class (%s)",name.c_str());
     }
 
+    void Check() override
+    {
+        //TODO: Implement symbol class checking
+    }
+
 
 };

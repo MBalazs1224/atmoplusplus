@@ -29,7 +29,9 @@ int main(int argc, char** argv)
     std::ifstream input("test.txt");
     // + 1 because first arg is app name
     std::vector<std::string> params(argv + 1, argv+argc);
+    
     Process_Args(params,driver);
-    driver.parse(input);
+    driver.StartCompilation(input);
+    
     return 0;
 }

@@ -18,4 +18,8 @@ class AndExpression : public IExpressionable
         //FIXME: This might not need to be pointer
         return std::make_shared<TypeBoolean>();
     }
+    void Check() override
+    {
+        //TODO: Implement And expression checking
+    }
 };

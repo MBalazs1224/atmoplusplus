@@ -14,5 +14,9 @@ class StringLiteral : public Literal
     std::shared_ptr<Type> GetType() override
     {
         return std::make_shared<TypeString>();
+    }    
+    void Check() override
+    {
+        // FIXME: Literals shouldn't be nodes
     }
 };

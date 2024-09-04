@@ -14,5 +14,9 @@ class FloatLiteral : public Literal
     std::shared_ptr<Type> GetType() override
     {
         return std::make_shared<TypeFloat>();
+    }    
+    void Check() override
+    {
+        // FIXME: Literals shouldn't be nodes
     }
 };

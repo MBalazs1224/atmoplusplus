@@ -15,4 +15,8 @@ class LessThanOrEqualExpression : public IExpressionable
         return std::make_shared<TypeBoolean>();
     }
     ~LessThanOrEqualExpression() override = default;
+    void Check() override
+    {
+        //TODO: Implement Less tahn or equal expression checking
+    }
 };

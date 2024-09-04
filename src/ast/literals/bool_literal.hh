@@ -16,4 +16,8 @@ class BooleanLiteral : public Literal
     {
         return std::make_shared<TypeBoolean>();
     }
+    void Check() override
+    {
+        // FIXME: Literals shouldn't be nodes
+    }
 };
