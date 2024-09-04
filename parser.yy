@@ -157,7 +157,7 @@
 
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
 
-%nterm<std::unique_ptr<StatementListNode>> statement_list
+%nterm<std::shared_ptr<StatementListNode>> statement_list
 %nterm<std::shared_ptr<Node>> statement
 %nterm<std::unique_ptr<BodyNode>> body
 %nterm<std::unique_ptr<UntilStatementNode>> until_statement
@@ -185,9 +185,11 @@
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
 
+    /* TODO: Implement error recovery */
+
 %%
 
-statement_list: statement {$$ = std::make_unique<StatementListNode>(std::move($1));}
+statement_list: statement {$$ = std::make_shared<StatementListNode>(std::move($1));}
                 | statement_list statement {
                     if($2)
                     {
@@ -439,7 +441,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | function_call {$$ = $1;}
             | expression EQUALS expression
                 {
-                  std::make_unique<AssignmentExpression>( $1, $3, AddLocations($1,$3));
+                  $$ = std::make_unique<AssignmentExpression>( $1, $3, AddLocations($1,$3));
                 }
 		| expression INSIDE expression{
 			$$ = std::make_unique<MemberAccessExpression>($1,$3, AddLocations($1,$3));}
