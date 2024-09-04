@@ -227,7 +227,7 @@ variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,variable);
-    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable));
+    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), std::move($5));
 } 
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}

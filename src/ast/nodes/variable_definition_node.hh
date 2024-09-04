@@ -9,10 +9,11 @@ class VariableDefinitionNode : public Node
 {
     // Pointer to the created variable
     std::shared_ptr<VariableSymbol> variable;
+    std::shared_ptr<IExpressionable> expression;
 
     public:
-        VariableDefinitionNode( std::shared_ptr<VariableSymbol> attribute_in)
-        :  variable(std::move(attribute_in))
+        VariableDefinitionNode( std::shared_ptr<VariableSymbol> var_in, std::shared_ptr<IExpressionable> exp_in)
+        :  variable(std::move(var_in)), expression(std::move(exp_in))
         {
 
         }
