@@ -3,6 +3,10 @@ create class osztaly
 		return 4
 
 
+until 3.2
+	create integer b
+
+
 do
 until 4
 

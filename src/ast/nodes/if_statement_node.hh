@@ -46,8 +46,11 @@ class IfStatementNode : public  Node
             {
                 else_if->Check();
             }
-
-            else_->Check();
+            
+            if (else_)
+            {
+                else_->Check();
+            }
             
             body->Check();
         }
