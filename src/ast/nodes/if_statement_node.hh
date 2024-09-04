@@ -39,7 +39,7 @@ class IfStatementNode : public  Node
            }
            if (body->isEmpty())
            {
-                Error::ShowError("Empty body of if statement!",location);
+                Error::ShowWarning("Empty body of if statement!",location);
            }
            
            body->Check();
