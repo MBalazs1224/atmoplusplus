@@ -21,7 +21,7 @@ void AtmoDriver::StartCompilation(std::istream &stream)
 
     try
     { 
-        parser = std::make_unique<yy::parser>(*lexer, *this, ast_root);
+        parser = std::make_unique<yy::parser>(*lexer, *this);
         parser->set_debug_level(parser_debug_level);
     }
     catch(const std::bad_alloc& ba)

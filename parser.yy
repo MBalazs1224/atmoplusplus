@@ -39,7 +39,6 @@
 
 %parse-param {AtmoLexer &lexer}
 %parse-param {AtmoDriver &driver}
-%parse-param {std::shared_ptr<StatementListNode> ast_root}
 
 %header
 
@@ -196,7 +195,7 @@
 
 program: statement_list  {
     auto test = $1;
-    ast_root = std::move($1);
+    driver.ast_root = std::move($1);
     }
 
 statement_list: statement {$$ =     std::make_shared<StatementListNode>(std::move($1));

@@ -11,10 +11,10 @@ class AtmoDriver
     void StartCompilation(std::istream &iss);
     void set_parser_debug_level(int);
     void set_lexer_debug_level(int);
+    std::shared_ptr<StatementListNode> ast_root;
 
 
     private:
-    std::shared_ptr<StatementListNode> ast_root;
     void SemanticAnalyze();
     
     int lexer_debug_level = 0;
