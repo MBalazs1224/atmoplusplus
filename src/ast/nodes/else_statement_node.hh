@@ -14,6 +14,6 @@ class ElseStatementNode : public  Node
         ~ElseStatementNode() override = default;
         void Check() override
         {
-            //TODO: Implement else node checking
+            body->Check();
         }
 };
