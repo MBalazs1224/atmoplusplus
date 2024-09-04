@@ -3,7 +3,13 @@ create class osztaly
 		return 4
 
 
-if 4 and true
+
+create integer a
+create integer b
+
+create integer c = a * b
+
+if c > 10
 	create public boolean a
 	until a
 		create private string b

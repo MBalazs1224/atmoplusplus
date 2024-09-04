@@ -20,9 +20,10 @@ class VariableDefinitionNode : public Node
         ~VariableDefinitionNode() override = default;
         void Check() override
         {
-            
+            // If the expression is not set, it means that there is no initalizing value
             if(expression)
             {
+                expression->Check();
                 auto exp_type = expression->GetType();
                 auto var_type = variable->GetType();
 
