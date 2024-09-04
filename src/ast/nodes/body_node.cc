@@ -14,3 +14,8 @@ void BodyNode::Check()
 {
     //TODO: Implement body node checking
 }
+
+bool BodyNode::isEmpty()
+{
+    return statements.empty();
+}

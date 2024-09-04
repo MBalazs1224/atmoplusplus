@@ -19,6 +19,18 @@ class IfStatementNode : public  Node
         ~IfStatementNode() override = default;
         void Check() override
         {
-            //TODO: Implement if node checking
+           expression->Check();
+           auto exp_type = expression->GetType();
+           // FIXME: shared_ptr must be made everytime it check an if statemetn
+           if (expression->GetType()->NotEquals(std::make_shared<TypeBoolean>()))
+           {
+                Error::ShowError(Error::FormatString("The expression of the if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
+           }
+           if (body->isEmpty())
+           {
+                Error::ShowError("Empty body of if statement!",location);
+           }
+           
+           body->Check();
         }
 };

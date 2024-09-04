@@ -14,4 +14,5 @@ class BodyNode : public Node
         ~BodyNode() override = default;
 
         void Check() override;
+        bool isEmpty();
 };
