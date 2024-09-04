@@ -58,7 +58,7 @@
     std::shared_ptr<AttributeStatic> AttributeStaticHolder = std::make_shared<AttributeStatic>();
 
     // Will return the summed of the locations, but ignore if the pointer is empty
-    yy::location AddLocations(std::shared_ptr<IExpressionable> exp_one, std::shared_ptr<IExpressionable> exp_two)
+    yy::location AddLocations(std::shared_ptr<Node> exp_one, std::shared_ptr<Node> exp_two)
     {
         yy::location sum;
         if(exp_one)
@@ -73,7 +73,7 @@
         return sum;
     }
     // Used at return stmt, because that doesn't haave 2 expressions
-    yy::location AddLocations(yy::location loc, std::shared_ptr<IExpressionable> exp_two)
+    yy::location AddLocations(yy::location loc, std::shared_ptr<Node> exp_two)
     {
         yy::location sum = loc;
         if(exp_two)
@@ -189,8 +189,6 @@
     /* TODO: Implement error recovery */
 
 
-    /* FIXME: create int asd equals 5 ... if statements, gets recognized as VariableDefinition (isntead of assignment) and if statements*/
-
 %%
 
 program: statement_list  {
@@ -226,7 +224,7 @@ variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,variable);
-    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), std::move($5));
+    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), $5,AddLocations(variable, $5));
 } 
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}
