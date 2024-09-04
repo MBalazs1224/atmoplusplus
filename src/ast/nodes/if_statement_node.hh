@@ -33,7 +33,7 @@ class IfStatementNode : public  Node
             */  
 
 
-           if (expression->GetType()->NotEquals(std::make_shared<TypeBoolean>()))
+           if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
            {
                 Error::ShowError(Error::FormatString("The expression of an if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
            }

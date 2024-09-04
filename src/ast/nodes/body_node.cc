@@ -12,7 +12,10 @@ BodyNode::BodyNode(std::vector<std::shared_ptr<Node>> statements)
 
 void BodyNode::Check()
 {
-    //TODO: Implement body node checking
+    for (auto &statement : statements)
+    {
+        statement->Check();
+    }
 }
 
 bool BodyNode::isEmpty()
