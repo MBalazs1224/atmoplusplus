@@ -2,18 +2,11 @@ create class osztaly
 	create void function test
 		return 4
 
+create boolean asd equals true
 
-until 3.2
-	create integer b
+create float b = 3
 
-
-do
-until 4
-
-
-create osztaly asd equals 5
-
-if true
+create osztaly a = b
 
 if asd
 	create public integer a

@@ -20,6 +20,20 @@ class VariableDefinitionNode : public Node
         ~VariableDefinitionNode() override = default;
         void Check() override
         {
-            //TODO: Implement variable definition node checking
+            
+            if(expression)
+            {
+                auto exp_type = expression->GetType();
+                auto var_type = variable->GetType();
+
+                if (var_type->NotEquals(exp_type))
+                {
+                    Error::ShowError(Error::FormatString("Type mismatch between variable and initializing value! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
+                }
+            }
+
+            
+            
+
         }
 };
