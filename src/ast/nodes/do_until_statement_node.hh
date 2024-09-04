@@ -17,6 +17,7 @@ class DoUntilStatementNode : public Node
         ~DoUntilStatementNode() override = default;
         void Check() override
         {
+            expression->Check();
             auto exp_type = expression->GetType();
             if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
             {
