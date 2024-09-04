@@ -16,6 +16,19 @@ class ElseIfStatementNode : public  Node
         ~ElseIfStatementNode() override = default;
         void Check() override
         {
-            //TODO: Implement else if node checking
+            expression->Check();
+            auto exp_type = expression->GetType();
+
+            if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
+            {
+                Error::ShowError(Error::FormatString("The expression of an else-if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
+            }
+            if (body->isEmpty())
+            {
+                Error::ShowWarning("Empty body of else-if statement!",location);
+            }
+            
+            body->Check();
+
         }
 };
