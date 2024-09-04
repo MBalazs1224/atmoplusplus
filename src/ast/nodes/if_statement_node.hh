@@ -22,9 +22,20 @@ class IfStatementNode : public  Node
            expression->Check();
            auto exp_type = expression->GetType();
            // FIXME: shared_ptr must be made everytime it check an if statemetn
+
+            /*
+            BUG:
+            create osztaly asd
+            if asd 
+                ...
+
+            Error will be shown on the first line where asd is created isntead of next to if
+            */  
+
+
            if (expression->GetType()->NotEquals(std::make_shared<TypeBoolean>()))
            {
-                Error::ShowError(Error::FormatString("The expression of the if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
+                Error::ShowError(Error::FormatString("The expression of an if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
            }
            if (body->isEmpty())
            {

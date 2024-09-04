@@ -4,6 +4,8 @@ create class osztaly
 
 create osztaly asd equals 5
 
+if true
+
 if asd
 	create public integer a
 	until a

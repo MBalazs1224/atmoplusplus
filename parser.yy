@@ -239,6 +239,9 @@ equals_holder: %empty {}
 
 
 body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetStatements()); }
+        | %empty {
+            $$ = std::make_unique<BodyNode>();
+        }
 
 
 indent: INDENT {SymbolTable::IncreaseScope();}
