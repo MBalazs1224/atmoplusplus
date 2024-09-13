@@ -144,7 +144,7 @@
 %token END_OF_FILE
 
 %left CALL WITH
-%left INSIDE
+%right INSIDE
 %left OPEN_BRACKET CLOSE_BRACKET
 %left AND
 %left OR

@@ -1,14 +1,22 @@
 create class osztaly
-	create void function test
+	create boolean kesz 
+	create boolean function test
 		return 4
 
-create osztaly oszt
+create class osztaly_2
+	create osztaly valami
+
+create osztaly_2 function letrehoz
+	return 0
+
+
+create osztaly_2 oszt
 
 create boolean a
 create integer b
 
 
-if a
+if kesz inside valami inside call letrehoz
 	create public boolean a
 	until a
 		create private string b
