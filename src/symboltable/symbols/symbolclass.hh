@@ -8,6 +8,7 @@
 #include "../../ast/types/type.hh"
 #include "../../ast/nodes/variable_definition_node.hh"
 #include "../../ast/nodes/function_definition_node.hh"
+#include "../../ast/expressions/identifier.hh"
 
 
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
@@ -16,7 +17,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // To prevent multiple checking when accessing multiple things inside the same class type
         bool alreadyChecked = false;
 
-        std::vector<std::shared_ptr<ClassSymbol>> parents;
+        std::vector<std::shared_ptr<Identifier>> parents;
         std::unique_ptr<BodyNode> body;
 
         // The hashmap storing the variables inside the class
@@ -25,7 +26,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> functions;
     public:
-    ClassSymbol(std::vector<std::shared_ptr<ClassSymbol>> parents_in, std::unique_ptr<BodyNode> body_in) : parents(std::move(parents_in)), body(std::move(body_in))
+    ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in) : parents(std::move(parents_in)), body(std::move(body_in))
     {
         
     }

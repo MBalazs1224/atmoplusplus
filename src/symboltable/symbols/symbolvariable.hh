@@ -1,5 +1,6 @@
 #pragma once
 #include "../symboltableelement.hh"
+#include "../../ast/expressions/identifier.hh"
 class VariableSymbol : public SymbolTableElement
 {
     public:
@@ -9,6 +10,11 @@ class VariableSymbol : public SymbolTableElement
     }
     std::shared_ptr<Type> GetType() override
     {
+        if (auto id = std::dynamic_pointer_cast<Identifier>(type))
+        {
+            return id->GetType();
+        }
+        
         return this->type;
     }
     void Check() override

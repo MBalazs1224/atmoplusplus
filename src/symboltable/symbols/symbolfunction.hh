@@ -2,6 +2,7 @@
 #include "../symboltableelement.hh"
 #include "symbolvariable.hh"
 #include "../../ast/nodes/body_node.hh"
+#include "../../ast/expressions/identifier.hh"
 #include <memory>
 #include <vector>
 class FunctionSymbol : public SymbolTableElement
@@ -18,6 +19,10 @@ class FunctionSymbol : public SymbolTableElement
 
     std::shared_ptr<Type> GetType() override
     {
+        if (auto id = std::dynamic_pointer_cast<Identifier>(type))
+        {
+            return id->GetType();
+        }
         return this->type;
     }
     void Check() override

@@ -178,7 +178,7 @@
 %nterm<std::shared_ptr<FunctionCall>> function_call
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> more_arguments
-%nterm<std::vector<std::shared_ptr<ClassSymbol>>> base_classes
+%nterm<std::vector<std::shared_ptr<Identifier>>> base_classes
 %nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_list
@@ -287,6 +287,8 @@ class_create: create_class_holder IDENTIFIER base_classes body
 {
     // Decrease the scope to get back to the root from the own scope of the class
     SymbolTable::DecreaseScope();
+
+    //TODO: Class symbol only on root error should be shown in the SymbolTable
     if(!SymbolTable::IsRoot())
     {
         Error::ShowError("Classes can only be created on the root scope!",@2);
@@ -299,37 +301,19 @@ class_create: create_class_holder IDENTIFIER base_classes body
 base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
-                std::vector<std::shared_ptr<ClassSymbol>> vec;
-                auto symbol = SymbolTable::LookUp($2);
+                std::vector<std::shared_ptr<Identifier>> vec;
+                auto id = std::make_shared<Identifier>(SymbolTable::LookUp($2),$2,@2);
+                vec.push_back(id);
 
-                auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
-
-                /*FIXME: We might need to somehow delegate type checking down to the semnatic analyzer*/
-                if(!casted)
-                {
-                    Error::ShowError("Classes can only derive from class types!", @2);
-                }
-                else
-                {
-                vec.push_back(casted);
-                }
                 $$ = std::move(vec);
-                
             }
             | base_classes COMMA IDENTIFIER
             {
 
-                auto symbol = SymbolTable::LookUp($3);
-                 auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
-                 if(!casted)
-                {
-                    Error::ShowError("Classes can only derive from class types!", @3);
-                }
-                else
-                {
-                    $1.push_back(std::dynamic_pointer_cast<ClassSymbol>(casted));
-                }
-                
+                auto id = std::make_shared<Identifier>(SymbolTable::LookUp($3),$3,@3);
+
+                $1.push_back(id);
+
                 $$ = std::move($1);
             }
             
@@ -349,8 +333,8 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 
 }
 function_call: CALL IDENTIFIER function_call_arguments {
-    auto function = SymbolTable::LookUp($2);
-    $$ = std::make_shared<FunctionCall>(function,$3,@1+@2,$2);
+    auto id = std::make_shared<Identifier>(SymbolTable::LookUp($2),$2,@2);
+    $$ = std::make_shared<FunctionCall>(id,$3,@1+@2,$2);
     test = $$.get();
     }
 
@@ -424,8 +408,8 @@ datatype: INT { $$ = std::make_shared<TypeInteger>();}
           | CHAR  { $$ = std::make_shared<TypeChar>();}
           | IDENTIFIER
           {
-            auto symbol = SymbolTable::LookUp($1);
-            $$ = std::move(std::dynamic_pointer_cast<ClassSymbol>(symbol));
+            auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);
+            $$ = std::move(id);
           }
 
 expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, AddLocations($1,$3));  }
@@ -442,7 +426,10 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
             | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
-            | IDENTIFIER { $$ = SymbolTable::LookUp($1);}
+            | IDENTIFIER { 
+                auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);
+                $$ = std::move(id);
+                }
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
             | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1); $$->location = @1;}
