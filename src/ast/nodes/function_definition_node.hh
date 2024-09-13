@@ -22,4 +22,9 @@ class FunctionDefinitionNode : public Node
         {
             //TODO: Implement function definition node checking
         }
+
+    std::shared_ptr<FunctionSymbol> GetFunction()
+    {
+        return function;
+    }
 };

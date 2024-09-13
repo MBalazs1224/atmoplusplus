@@ -16,4 +16,5 @@ class BodyNode : public Node
 
         void Check() override;
         bool isEmpty();
+        std::vector<std::shared_ptr<Node>> GetStatements();
 };

@@ -300,7 +300,7 @@ base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {
                 std::vector<std::shared_ptr<ClassSymbol>> vec;
-                auto symbol = SymbolTable::LookUp($2,@2);
+                auto symbol = SymbolTable::LookUp($2);
 
                 auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
 
@@ -319,7 +319,7 @@ base_classes: %empty {}
             | base_classes COMMA IDENTIFIER
             {
 
-                auto symbol = SymbolTable::LookUp($3,@3);
+                auto symbol = SymbolTable::LookUp($3);
                  auto casted = std::dynamic_pointer_cast<ClassSymbol>(symbol);
                  if(!casted)
                 {
@@ -349,7 +349,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 
 }
 function_call: CALL IDENTIFIER function_call_arguments {
-    auto function = SymbolTable::LookUp($2,@2);
+    auto function = SymbolTable::LookUp($2);
     $$ = std::make_shared<FunctionCall>(function,$3,@1+@2,$2);
     test = $$.get();
     }
@@ -424,7 +424,7 @@ datatype: INT { $$ = std::make_shared<TypeInteger>();}
           | CHAR  { $$ = std::make_shared<TypeChar>();}
           | IDENTIFIER
           {
-            auto symbol = SymbolTable::LookUp($1,@1);
+            auto symbol = SymbolTable::LookUp($1);
             $$ = std::move(std::dynamic_pointer_cast<ClassSymbol>(symbol));
           }
 
@@ -442,7 +442,7 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
             | expression NOT_MATCHES expression {$$ = std::make_unique<NotMatchesExpression>( $1, $3, AddLocations($1,$3));  }
             | OPEN_BRACKET expression CLOSE_BRACKET {$$ =  $2;}
             | NOT expression {$$ = std::make_unique<NotExpression>( $2, @1 + $2->location); }
-            | IDENTIFIER { $$ = SymbolTable::LookUp($1,@1);}
+            | IDENTIFIER { $$ = SymbolTable::LookUp($1);}
             | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
             | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
             | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1); $$->location = @1;}

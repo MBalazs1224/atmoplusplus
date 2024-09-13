@@ -23,3 +23,8 @@ bool BodyNode::isEmpty()
 {
     return statements.empty();
 }
+
+std::vector<std::shared_ptr<Node>> BodyNode::GetStatements()
+{
+    return statements;
+}

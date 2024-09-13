@@ -8,9 +8,9 @@ class FunctionCall : public IExpressionable
     private:
         std::vector<std::shared_ptr<IExpressionable>> arguments;
         std::shared_ptr<SymbolTableElement> function;
-	// It will be set to the wanted function if the parser cannot find it (because it's in a class etc.)
-	std::string name_for_function; 
     public:
+    // It will be set to the wanted function if the parser cannot find it (because it's in a class etc.)
+	    std::string name_for_function; 
         FunctionCall(std::shared_ptr<SymbolTableElement> func_in, std::vector<std::shared_ptr<IExpressionable>> args_in,yy::location loc, std::string name) : IExpressionable(loc)
         {
             arguments = args_in;
@@ -32,5 +32,10 @@ class FunctionCall : public IExpressionable
     void Check() override
     {
         //TODO: Implement Function call expression checking
+    }
+    // Set the function to be called, if it wasn't found originally
+    void SetFunction(std::shared_ptr<SymbolTableElement> element)
+    {
+        function = element;
     }
 };

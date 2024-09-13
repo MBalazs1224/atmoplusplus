@@ -19,7 +19,7 @@ class SymbolTable
         // Will insert the SymbolTableElement into the hashmap and add the current scope.
         static void Insert(std::string,std::shared_ptr<SymbolTableElement>);
         // Will return a reference to the SymbolTableElement or null if the element wasn't found.
-        static std::shared_ptr<SymbolTableElement> LookUp(const std::string&, const yy::location&);
+        static std::shared_ptr<SymbolTableElement> LookUp(const std::string&);
         static void DecreaseScope();
         static void IncreaseScope();
         static bool IsRoot();

@@ -6,11 +6,24 @@
 #include <memory>
 #include <vector>
 #include "../../ast/types/type.hh"
+#include "../../ast/nodes/variable_definition_node.hh"
+#include "../../ast/nodes/function_definition_node.hh"
+
+
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
     private:
+        // To prevent multiple checking when accessing multiple things inside the same class type
+        bool alreadyChecked = false;
+
         std::vector<std::shared_ptr<ClassSymbol>> parents;
         std::unique_ptr<BodyNode> body;
+
+        // The hashmap storing the variables inside the class
+        std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> variables;
+
+        // The hashmap storing the variables inside the class
+        std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> functions;
     public:
     ClassSymbol(std::vector<std::shared_ptr<ClassSymbol>> parents_in, std::unique_ptr<BodyNode> body_in) : parents(std::move(parents_in)), body(std::move(body_in))
     {
@@ -36,8 +49,41 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     void Check() override
     {
-        //TODO: Implement symbol class checking
+        if (alreadyChecked)
+        {
+            return;
+        }
+        alreadyChecked = true;
+        for (auto &node : body->GetStatements())
+        {
+            // If it's a variable definition insert it into the variable hashmap for later access
+            if (auto variableDefinition = std::dynamic_pointer_cast<VariableDefinitionNode>(node))
+            {
+                auto variable = variableDefinition->GetVariable();
+                variables[variable->name] = variable;
+            }
+            else if (auto functionDefinition = std::dynamic_pointer_cast<FunctionDefinitionNode>(node))
+            {
+                auto function = functionDefinition->GetFunction();
+                functions[function->name] = function;
+            }
+            else
+            {
+                Error::ShowError("Only variable and/or function definitions can appear at the top level of a class!",node->location);
+            }
+            
+        }
+        
+    }
+    // Will return the function based on the given ID or null if it wasn't found
+    std::shared_ptr<FunctionSymbol> GetFunction(const std::string& id)
+    {
+        return functions[id];
     }
 
-
+    // Will return the variable based on the given ID or null if it wasn't found
+    std::shared_ptr<VariableSymbol> GetVariable(const std::string& id)
+    {
+        return variables[id];
+    }
 };

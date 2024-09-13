@@ -1,15 +1,16 @@
 create class osztaly
-	create void function test
+	create boolean function test
 		return 4
 
-
+create osztaly oszt
 
 create integer a
 create integer b
 
+
 create integer c = a * b
 
-if c > 10
+if call test inside oszt
 	create public boolean a
 	until a
 		create private string b
