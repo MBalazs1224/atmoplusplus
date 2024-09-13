@@ -17,6 +17,9 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // To prevent multiple checking when accessing multiple things inside the same class type
         bool alreadyChecked = false;
 
+        //The result of the first check so we can return it again if the class symbol is used later
+        bool checkedResult;
+
         std::vector<std::shared_ptr<Identifier>> parents;
         std::unique_ptr<BodyNode> body;
 
@@ -48,11 +51,11 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         return Error::FormatString("type class (%s)",name.c_str());
     }
 
-    void Check() override
+    bool Check() override
     {
         if (alreadyChecked)
         {
-            return;
+            return checkedResult;
         }
         alreadyChecked = true;
         for (auto &node : body->GetStatements())
@@ -71,10 +74,13 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
             else
             {
                 Error::ShowError("Only variable and/or function definitions can appear at the top level of a class!",node->location);
+                checkedResult = false;
+                return false;
             }
             
         }
-        
+        checkedResult = true;
+        return true;
     }
     // Will return the function based on the given ID or null if it wasn't found
     std::shared_ptr<FunctionSymbol> GetFunction(const std::string& id)

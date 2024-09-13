@@ -24,9 +24,10 @@ class FunctionCall : public IExpressionable
     }
         ~FunctionCall() override = default;
 
-    void Check() override
+    bool Check() override
     {
         //TODO: Implement Function call expression checking
+        return true;
     }
     // Set the function to be called, if it wasn't found originally
     void SetFunction(std::shared_ptr<FunctionSymbol> element)

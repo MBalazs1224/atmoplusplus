@@ -16,12 +16,13 @@ class MemberAccessExpression : public IExpressionable
     }
     ~MemberAccessExpression() override = default;
 
-    void Check() override
+    bool Check() override
     {
         auto classSymbol = std::dynamic_pointer_cast<ClassSymbol>(exp_right->GetType());
         if (!classSymbol)
         {
            Error::ShowError(Error::FormatString("ONly class types can appear on the right side of member access (inside) expression! (received '%s')",exp_right->GetType()->ToString().c_str()),exp_right->location);
+           return false;
         }
         
         classSymbol->Check();
@@ -30,7 +31,8 @@ class MemberAccessExpression : public IExpressionable
             auto variable = classSymbol->GetVariable(id->name);
             if(!variable)
             {
-                Error::ShowError(Error::FormatString("Cannot find '%s' inside '%s'",variable->name.c_str(),classSymbol->ToString().c_str()),variable->location);
+                Error::ShowError(Error::FormatString("Cannot find '%s' inside '%s'",id->name.c_str(),classSymbol->ToString().c_str()),id->location);
+                return false;
             }
             id->SetElement(variable);
         }
@@ -40,6 +42,7 @@ class MemberAccessExpression : public IExpressionable
             if (!function)
             {
                 Error::ShowError(Error::FormatString("Cannot find '%s' inside '%s'",functionCall->name_for_function.c_str(),classSymbol->ToString().c_str()),functionCall->location);
+                return false;
             }
             else
             {
@@ -50,6 +53,9 @@ class MemberAccessExpression : public IExpressionable
         else
         {
             Error::ShowError("Only function calls and variables can appear on the left side of the member access (inside) expression!",exp_left->location);
+            return false;
         }
+
+        return true;
     }
 };

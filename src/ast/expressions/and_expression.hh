@@ -18,10 +18,12 @@ class AndExpression : public IExpressionable
         //FIXME: This might not need to be pointer
         return std::make_shared<TypeBoolean>();
     }
-    void Check() override
+    bool Check() override
     {
-        exp_left->Check();
-        exp_right->Check();
+        if(!exp_left->Check() || !exp_right->Check())
+        {
+            return false;
+        }
 
         // FIXME: Fix boolean dynamic memory alloc
         auto boolean = std::make_shared<TypeBoolean>();
@@ -31,6 +33,8 @@ class AndExpression : public IExpressionable
         if (exp_left_type->NotEquals(boolean) || exp_right_type->NotEquals(boolean))
         {
             Error::ShowError(Error::FormatString("Both of the two operands of AND (&&) expression must be of type boolean! (received '%s' and '%s')",exp_left_type->ToString().c_str(),exp_right_type->ToString().c_str()),location);
+            return false;
         }
+        return true;
     }
 };

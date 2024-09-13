@@ -7,8 +7,9 @@ class Literal : public IExpressionable
         Literal() = default;
     public:
         virtual ~Literal() = 0;    
-    void Check() override
+    bool Check() override
     {
         // FIXME: Literals shouldn't be nodes
+        return true;
     }
 };

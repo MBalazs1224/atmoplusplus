@@ -18,20 +18,25 @@ class VariableDefinitionNode : public Node
 
         }
         ~VariableDefinitionNode() override = default;
-        void Check() override
+        bool Check() override
         {
             // If the expression is not set, it means that there is no initalizing value
             if(expression)
             {
-                expression->Check();
+                if(!expression->Check())
+            {
+                return false;
+            };
                 auto exp_type = expression->GetType();
                 auto var_type = variable->GetType();
 
                 if (var_type->NotEquals(exp_type))
                 {
                     Error::ShowError(Error::FormatString("Type mismatch between variable and initializing value! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
+                    return false;
                 }
             }
+            return true;
 
         }
 

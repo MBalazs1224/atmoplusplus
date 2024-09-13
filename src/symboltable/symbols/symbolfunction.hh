@@ -25,8 +25,9 @@ class FunctionSymbol : public SymbolTableElement
         }
         return this->type;
     }
-    void Check() override
+    bool Check() override
     {
         //TODO: Implement symbol function checking
+        return true;
     }
 };

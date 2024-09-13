@@ -15,8 +15,9 @@ class IntegerLiteral : public Literal
     {
         return std::make_shared<TypeInteger>();
     }    
-    void Check() override
+    bool Check() override
     {
         // FIXME: Literals shouldn't be nodes
+        return true;
     }
 };

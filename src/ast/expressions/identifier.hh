@@ -42,9 +42,14 @@ class Identifier : public IExpressionable, public Type
         return element->GetType()->ToString();
     }
 
-    void Check() override
+    bool Check() override
     {
-
+        //TODO: Implement identifier check
+        if(!element)
+        {
+            Error::ShowError(Error::FormatString("Unknown identifier '%s'!",name.c_str()),location);
+        }
+        return element != nullptr;
     }
 
     std::shared_ptr<Type> GetType() override

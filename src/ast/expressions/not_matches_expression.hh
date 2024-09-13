@@ -16,8 +16,9 @@ class NotMatchesExpression : public IExpressionable
     }
     ~NotMatchesExpression() override = default;
 
-    void Check() override
+    bool Check() override
     {
         //TODO: Implement Not matches expression checking
+        return true;
     }
 };

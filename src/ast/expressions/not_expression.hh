@@ -13,8 +13,9 @@ class NotExpression : public IExpressionable
         return std::make_shared<TypeBoolean>();
     }
     ~NotExpression() override = default;
-    void Check() override
+    bool Check() override
     {
         //TODO: Implement Not expression checking
+        return true;
     }
 };

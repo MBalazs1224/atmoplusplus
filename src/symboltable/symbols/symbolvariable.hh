@@ -17,9 +17,10 @@ class VariableSymbol : public SymbolTableElement
         
         return this->type;
     }
-    void Check() override
+    bool Check() override
     {
         // FIXME: Symbols should'nt be node, i leave it here for now, later i need to redo the class hierarchy
         //TODO: Implement symbol variable checking
+        return true;
     }
 };

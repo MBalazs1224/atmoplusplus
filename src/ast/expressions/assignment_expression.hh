@@ -20,8 +20,9 @@ class AssignmentExpression : public IExpressionable
         // FIXME: Assignment might needit's unique type
         return exp_left->GetType();
     }
-    void Check() override
+    bool Check() override
     {
         //TODO: Implement Assignment expression checking
+        return true;
     }
 };

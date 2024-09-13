@@ -15,8 +15,9 @@ class StringLiteral : public Literal
     {
         return std::make_shared<TypeString>();
     }    
-    void Check() override
+    bool Check() override
     {
         // FIXME: Literals shouldn't be nodes
+        return true;
     }
 };

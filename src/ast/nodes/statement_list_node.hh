@@ -14,5 +14,5 @@ class StatementListNode : public Node
         ~StatementListNode() override = default;
         // Will not move the vector
         std::vector<std::shared_ptr<Node>> GetStatementsRef();
-        void Check() override;
+        bool Check() override;
 };

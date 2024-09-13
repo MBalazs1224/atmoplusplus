@@ -12,8 +12,8 @@ class ElseStatementNode : public  Node
 
         }
         ~ElseStatementNode() override = default;
-        void Check() override
+        bool Check() override
         {
-            body->Check();
+            return body->Check();
         }
 };

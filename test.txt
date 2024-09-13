@@ -4,18 +4,16 @@ create class osztaly
 
 create osztaly oszt
 
-create integer a
+create boolean a
 create integer b
 
 
-create integer c = a * b
-
-if call valam inside oszt
+if a
 	create public boolean a
 	until a
 		create private string b
 		create array of float c
-	a = 5
+	c = 5
 	create static array of char c
 	return 5
 else

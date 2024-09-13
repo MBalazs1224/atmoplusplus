@@ -18,9 +18,10 @@ class FunctionDefinitionNode : public Node
 
         }
         ~FunctionDefinitionNode() override = default;
-        void Check() override
+        bool Check() override
         {
             //TODO: Implement function definition node checking
+            return true;
         }
 
     std::shared_ptr<FunctionSymbol> GetFunction()

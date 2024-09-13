@@ -26,7 +26,8 @@ std::vector<std::shared_ptr<Node>> StatementListNode::GetStatements()
 {
     return std::move(statements);
 }
-void StatementListNode::Check()
+bool StatementListNode::Check()
 {
     //TODO: Implement statementlist node checking
+    return true;
 }

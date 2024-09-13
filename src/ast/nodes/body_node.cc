@@ -10,13 +10,15 @@ BodyNode::BodyNode(std::vector<std::shared_ptr<Node>> statements)
     this->statements = std::move(statements);
 }
 
-void BodyNode::Check()
+bool BodyNode::Check()
 {
     // TODO: Might need to calculate the size of teh body here
     for (auto &statement : statements)
     {
+        //Might need to stop checking if one of the statements is wrong
         statement->Check();
     }
+    return true;
 }
 
 bool BodyNode::isEmpty()
