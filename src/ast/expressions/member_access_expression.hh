@@ -31,7 +31,7 @@ class MemberAccessExpression : public IExpressionable
         auto classSymbol = std::dynamic_pointer_cast<ClassSymbol>(exp_right->GetType());
         if (!classSymbol)
         {
-           Error::ShowError(Error::FormatString("ONly class types can appear on the right side of member access (inside) expression! (received '%s')",exp_right->GetType()->ToString().c_str()),exp_right->location);
+           Error::ShowError(Error::FormatString("Only class types can appear on the right side of member access (inside) expression! (received '%s')",exp_right->GetType()->ToString().c_str()),exp_right->location);
            return false;
         }
         
@@ -57,6 +57,7 @@ class MemberAccessExpression : public IExpressionable
             else
             {
                 functionCall->SetFunction(function);
+                functionCall->Check();
             }
             
         }

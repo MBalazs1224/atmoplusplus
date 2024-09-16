@@ -19,15 +19,6 @@ int yylex(yylval_type yylval); - We do declare the function but the definition i
 #include "location.hh"
 #include <memory>
 
-class test
-    {
-    public:
-        int ival;
-        double dval;
-        std::string sval;
-        char cval;
-    };
-
 class AtmoLexer : public yyFlexLexer
 {
     private:

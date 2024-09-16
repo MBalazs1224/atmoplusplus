@@ -143,8 +143,9 @@
 %token VOID
 %token END_OF_FILE
 
-%left CALL WITH
 %right INSIDE
+%left CALL
+%left WITH
 %left OPEN_BRACKET CLOSE_BRACKET
 %left AND
 %left OR
