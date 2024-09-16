@@ -143,6 +143,8 @@
 %token VOID
 %token END_OF_FILE
 
+
+%right EQUALS
 %right INSIDE
 %left CALL
 %left WITH
@@ -155,7 +157,6 @@
 %left PLUS MINUS
 %left MATCHES NOT_MATCHES
 
-%right EQUALS
 %left COMMA
 
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.

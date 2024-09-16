@@ -15,6 +15,7 @@ main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
+	@mkdir -p ./build
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/atmo_driver.o: atmo_driver.cc atmo_driver.hh

@@ -17,12 +17,12 @@ create boolean a
 create integer b
 
 
-if call test with unknwon inside valami inside oszt
-	create public boolean a
-	until a
+if call test inside valami inside oszt
+	create public integer a
+	until true
 		create private string b
 		create array of float c
-	c = 5
+	a = call test with check inside valami inside oszt
 	create static array of char c
 	return 5
 else
