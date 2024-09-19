@@ -15,7 +15,20 @@ class NotExpression : public IExpressionable
     ~NotExpression() override = default;
     bool Check() override
     {
-        //TODO: Implement Not expression checking
+        if (!exp->Check())
+        {
+            return false;
+        }
+
+        // The NOT statement can only work with boolean types
+        auto exp_type = exp->GetType();
+        if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
+        {
+            Error::ShowError(Error::FormatString("The expression of not expression must be of type boolean! (received '%s')",exp_type->ToString().c_str()),exp->location);
+            return false;
+        }
+        
+        
         return true;
     }
 };

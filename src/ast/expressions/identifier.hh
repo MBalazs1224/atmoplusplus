@@ -44,7 +44,6 @@ class Identifier : public IExpressionable, public Type
 
     bool Check() override
     {
-        //TODO: Implement identifier check
         if(!element)
         {
             Error::ShowError(Error::FormatString("Unknown identifier '%s'!",name.c_str()),location);

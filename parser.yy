@@ -143,7 +143,7 @@
 %token VOID
 %token END_OF_FILE
 
-
+%right NOT
 %right EQUALS
 %right INSIDE
 %left CALL
@@ -151,7 +151,6 @@
 %left OPEN_BRACKET CLOSE_BRACKET
 %left AND
 %left OR
-%right NOT
 %left GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL
 %left MULTIPLY DIVIDE
 %left PLUS MINUS
