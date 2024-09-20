@@ -5,16 +5,16 @@ symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./b
 
 literals := ./build/literal.o
 
-expressions := ./build/add_expression.o ./build/and_expression.o ./build/assignment_expression.o ./build/divide_expression.o ./build/expressionable.o ./build/function_call.o ./build/greater_than_expression.o ./build/greater_than_or_equal_expression.o ./build/identifier.o  ./build/less_than_expression.o ./build/less_than_or_equal_expression.o ./build/matches_expression.o ./build/member_access_expression.o ./build/multiply_expression.o ./build/not_expression.o ./build/not_matches_expression.o ./build/or_expression.o ./build/subtract_expression.o
+expressions := ./build/expressions/add_expression.o ./build/expressions/and_expression.o ./build/expressions/assignment_expression.o ./build/expressions/divide_expression.o ./build/expressions/expressionable.o ./build/expressions/function_call.o ./build/expressions/greater_than_expression.o ./build/expressions/greater_than_or_equal_expression.o ./build/expressions/identifier.o  ./build/expressions/less_than_expression.o ./build/expressions/less_than_or_equal_expression.o ./build/expressions/matches_expression.o ./build/expressions/member_access_expression.o ./build/expressions/multiply_expression.o ./build/expressions/not_expression.o ./build/expressions/not_matches_expression.o ./build/expressions/or_expression.o ./build/expressions/subtract_expression.o
 
-attributes := ./build/attribute_private.o ./build/attribute_protected.o ./build/attribute_public.o ./build/attribute_static.o
+attributes := ./build/attribute.o ./build/attribute_private.o ./build/attribute_protected.o ./build/attribute_public.o ./build/attribute_static.o
 
 
 helper := ./build/helper.o
 
 
 
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols)
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o   $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall -Werror
@@ -25,7 +25,6 @@ main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
-	@mkdir -p ./build/symbols
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/atmo_driver.o: atmo_driver.cc atmo_driver.hh
@@ -69,6 +68,8 @@ main: $(objects)
 # Symbols
 
 ./build/symbols/symbolvariable.o : ./src/symboltable/symbols/symbolvariable.cc ./src/symboltable/symbols/symbolvariable.cc
+#	Symbolvariable will be compiled first, so it needs to check if the symbol folder exists
+	@mkdir -p ./build/symbols
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/symbols/symbolfunction.o : ./src/symboltable/symbols/symbolfunction.cc ./src/symboltable/symbols/symbolfunction.cc
@@ -81,62 +82,64 @@ main: $(objects)
 # Expressions
 
 
-./build/add_expression.o: ./src/ast/expressions/add_expression.cc ./src/ast/expressions/add_expression.hh
+./build/expressions/add_expression.o: ./src/ast/expressions/add_expression.cc ./src/ast/expressions/add_expression.hh
+# Add expression will be compiled first, so it needs to check if the expressions folder exists
+	@mkdir -p ./build/expressions
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/and_expression.o: ./src/ast/expressions/and_expression.cc ./src/ast/expressions/and_expression.hh
+./build/expressions/and_expression.o: ./src/ast/expressions/and_expression.cc ./src/ast/expressions/and_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/assignment_expression.o: ./src/ast/expressions/assignment_expression.cc ./src/ast/expressions/assignment_expression.hh
+./build/expressions/assignment_expression.o: ./src/ast/expressions/assignment_expression.cc ./src/ast/expressions/assignment_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/divide_expression.o: ./src/ast/expressions/divide_expression.cc ./src/ast/expressions/divide_expression.hh
+./build/expressions/divide_expression.o: ./src/ast/expressions/divide_expression.cc ./src/ast/expressions/divide_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/expressionable.o: ./src/ast/expressions/expressionable.cc ./src/ast/expressions/expressionable.hh
+./build/expressions/expressionable.o: ./src/ast/expressions/expressionable.cc ./src/ast/expressions/expressionable.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/function_call.o: ./src/ast/expressions/function_call.cc ./src/ast/expressions/function_call.hh
-	g++ $(CXXFLAGS) -c $< -o $@
-
-
-./build/greater_than_expression.o: ./src/ast/expressions/greater_than_expression.cc ./src/ast/expressions/greater_than_expression.hh
-	g++ $(CXXFLAGS) -c $< -o $@
-
-./build/greater_than_or_equal_expression.o: ./src/ast/expressions/greater_than_or_equal.cc ./src/ast/expressions/greater_than_or_equal.hh
-	g++ $(CXXFLAGS) -c $< -o $@
-
-./build/identifier.o: ./src/ast/expressions/identifier.cc ./src/ast/expressions/identifier.hh
-	g++ $(CXXFLAGS) -c $< -o $@
-
-./build/less_than_expression.o: ./src/ast/expressions/less_than_expression.cc ./src/ast/expressions/less_than_expression.hh
-	g++ $(CXXFLAGS) -c $< -o $@
-
-./build/less_than_or_equal_expression.o: ./src/ast/expressions/less_than_or_equal.cc ./src/ast/expressions/less_than_or_equal.hh
+./build/expressions/function_call.o: ./src/ast/expressions/function_call.cc ./src/ast/expressions/function_call.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 
-./build/matches_expression.o: ./src/ast/expressions/matches_expression.cc ./src/ast/expressions/matches_expression.hh
+./build/expressions/greater_than_expression.o: ./src/ast/expressions/greater_than_expression.cc ./src/ast/expressions/greater_than_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/member_access_expression.o: ./src/ast/expressions/member_access_expression.cc ./src/ast/expressions/member_access_expression.hh
+./build/expressions/greater_than_or_equal_expression.o: ./src/ast/expressions/greater_than_or_equal.cc ./src/ast/expressions/greater_than_or_equal.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/expressions/identifier.o: ./src/ast/expressions/identifier.cc ./src/ast/expressions/identifier.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/expressions/less_than_expression.o: ./src/ast/expressions/less_than_expression.cc ./src/ast/expressions/less_than_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/expressions/less_than_or_equal_expression.o: ./src/ast/expressions/less_than_or_equal.cc ./src/ast/expressions/less_than_or_equal.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+./build/expressions/matches_expression.o: ./src/ast/expressions/matches_expression.cc ./src/ast/expressions/matches_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/expressions/member_access_expression.o: ./src/ast/expressions/member_access_expression.cc ./src/ast/expressions/member_access_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 	
 
-./build/multiply_expression.o: ./src/ast/expressions/multiply_expression.cc ./src/ast/expressions/multiply_expression.hh
+./build/expressions/multiply_expression.o: ./src/ast/expressions/multiply_expression.cc ./src/ast/expressions/multiply_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/not_expression.o: ./src/ast/expressions/not_expression.cc ./src/ast/expressions/not_expression.hh
+./build/expressions/not_expression.o: ./src/ast/expressions/not_expression.cc ./src/ast/expressions/not_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/not_matches_expression.o: ./src/ast/expressions/not_matches_expression.cc ./src/ast/expressions/not_matches_expression.hh
+./build/expressions/not_matches_expression.o: ./src/ast/expressions/not_matches_expression.cc ./src/ast/expressions/not_matches_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 
-./build/or_expression.o: ./src/ast/expressions/or_expression.cc ./src/ast/expressions/or_expression.hh
+./build/expressions/or_expression.o: ./src/ast/expressions/or_expression.cc ./src/ast/expressions/or_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/subtract_expression.o: ./src/ast/expressions/subtract_expression.cc ./src/ast/expressions/subtract_expression.hh
+./build/expressions/subtract_expression.o: ./src/ast/expressions/subtract_expression.cc ./src/ast/expressions/subtract_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Attributes
