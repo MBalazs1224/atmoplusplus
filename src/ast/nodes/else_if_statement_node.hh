@@ -24,7 +24,7 @@ class ElseIfStatementNode : public  Node
 
             if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
             {
-                Error::ShowError(Error::FormatString("The expression of an else-if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
+                Error::ShowError(Helper::FormatString("The expression of an else-if statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
                 return false;
             }
             if (body->isEmpty())

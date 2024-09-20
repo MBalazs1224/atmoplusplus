@@ -9,7 +9,7 @@
 #include "../../ast/nodes/variable_definition_node.hh"
 #include "../../ast/nodes/function_definition_node.hh"
 #include "../../ast/expressions/identifier.hh"
-
+#include <unordered_map>
 
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
@@ -47,8 +47,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     std::string ToString() override
     {
-        // FIXME: FormatString should be in a helper class
-        return Error::FormatString("type class (%s)",name.c_str());
+        return Helper::FormatString("type class (%s)",name.c_str());
     }
 
     bool Check() override

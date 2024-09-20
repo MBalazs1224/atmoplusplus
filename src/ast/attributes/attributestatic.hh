@@ -4,4 +4,6 @@ class AttributeStatic : public Attribute
 {
     public:     
     ~AttributeStatic() override = default;
+    std::string ToString() override;
+
 };

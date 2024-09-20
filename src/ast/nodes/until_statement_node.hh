@@ -25,7 +25,7 @@ class UntilStatementNode : public Node
             auto exp_type = expression->GetType();
             if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
             {
-                Error::ShowError(Error::FormatString("The expression of an until statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
+                Error::ShowError(Helper::FormatString("The expression of an until statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
                 return false;
             }
             

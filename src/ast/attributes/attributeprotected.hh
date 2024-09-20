@@ -4,4 +4,5 @@ class AttributeProtected : public Attribute
 {
     public:
     ~AttributeProtected() override = default;
+    std::string ToString() override;
 };

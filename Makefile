@@ -1,10 +1,19 @@
 
 nodes := ./build/statement_list_node.o ./build/body_node.o 
 
-expressions :=  ./build/expressionable.o ./build/literal.o 
+
+literals := ./build/literal.o
+
+expressions := ./build/add_expression.o ./build/and_expression.o ./build/assignment_expression.o ./build/divide_expression.o ./build/expressionable.o ./build/function_call.o ./build/greater_than_expression.o ./build/greater_than_or_equal_expression.o ./build/identifier.o  ./build/less_than_expression.o ./build/less_than_or_equal_expression.o ./build/matches_expression.o ./build/member_access_expression.o ./build/multiply_expression.o ./build/not_expression.o ./build/not_matches_expression.o ./build/or_expression.o ./build/subtract_expression.o
+
+attributes := ./build/attribute_private.o ./build/attribute_protected.o ./build/attribute_public.o ./build/attribute_static.o
 
 
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(expressions)
+helper := ./build/helper.o
+
+
+
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(literals) $(expressions) $(attributes) $(helper)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall -Werror
@@ -42,8 +51,6 @@ main: $(objects)
 ./build/literal.o: ./src/ast/literals/literal.cc ./src/ast/literals/literal.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/expressionable.o: ./src/ast/expressions/expressionable.cc ./src/ast/expressions/expressionable.hh
-	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/statement_list_node.o: ./src/ast/nodes/statement_list_node.cc ./src/ast/nodes/statement_list_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
@@ -58,22 +65,93 @@ main: $(objects)
 ./build/symboltableelement.o: ./src/symboltable/symboltableelement.cc ./src/symboltable/symboltableelement.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/parser.tab.o: parser.tab.cc AtmoLexer.hh
-ifdef DEBUG
-	g++ $(CXXFLAGS) -DYYDEBUG=1 -c $< -o $@
-endif
-ifndef DEBUG
+# Expressions
+
+
+./build/add_expression.o: ./src/ast/expressions/add_expression.cc ./src/ast/expressions/add_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
-endif
+
+./build/and_expression.o: ./src/ast/expressions/and_expression.cc ./src/ast/expressions/and_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/assignment_expression.o: ./src/ast/expressions/assignment_expression.cc ./src/ast/expressions/assignment_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/divide_expression.o: ./src/ast/expressions/divide_expression.cc ./src/ast/expressions/divide_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/expressionable.o: ./src/ast/expressions/expressionable.cc ./src/ast/expressions/expressionable.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/function_call.o: ./src/ast/expressions/function_call.cc ./src/ast/expressions/function_call.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+./build/greater_than_expression.o: ./src/ast/expressions/greater_than_expression.cc ./src/ast/expressions/greater_than_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/greater_than_or_equal_expression.o: ./src/ast/expressions/greater_than_or_equal.cc ./src/ast/expressions/greater_than_or_equal.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/identifier.o: ./src/ast/expressions/identifier.cc ./src/ast/expressions/identifier.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/less_than_expression.o: ./src/ast/expressions/less_than_expression.cc ./src/ast/expressions/less_than_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/less_than_or_equal_expression.o: ./src/ast/expressions/less_than_or_equal.cc ./src/ast/expressions/less_than_or_equal.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+./build/matches_expression.o: ./src/ast/expressions/matches_expression.cc ./src/ast/expressions/matches_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/member_access_expression.o: ./src/ast/expressions/member_access_expression.cc ./src/ast/expressions/member_access_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+	
+
+./build/multiply_expression.o: ./src/ast/expressions/multiply_expression.cc ./src/ast/expressions/multiply_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/not_expression.o: ./src/ast/expressions/not_expression.cc ./src/ast/expressions/not_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/not_matches_expression.o: ./src/ast/expressions/not_matches_expression.cc ./src/ast/expressions/not_matches_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+./build/or_expression.o: ./src/ast/expressions/or_expression.cc ./src/ast/expressions/or_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/subtract_expression.o: ./src/ast/expressions/subtract_expression.cc ./src/ast/expressions/subtract_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+# Attributes
+
+./build/attribute_private.o: ./src/ast/attributes/attributeprivate.cc ./src/ast/attributes/attributeprivate.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/attribute_protected.o: ./src/ast/attributes/attributeprotected.cc ./src/ast/attributes/attributeprotected.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/attribute_public.o: ./src/ast/attributes/attributepublic.cc ./src/ast/attributes/attributepublic.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/attribute_static.o: ./src/ast/attributes/attributestatic.cc ./src/ast/attributes/attributestatic.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+# Helper
+
+./build/helper.o: ./src/helper/helper.cc ./src/helper/helper.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+	
+./build/parser.tab.o: parser.tab.cc AtmoLexer.hh
+	g++ $(CXXFLAGS) -c $< -o $@
 
 lex.yy.cc: lexer.ll
-ifdef DEBUG
-	flex -d -+ $<
-endif
-ifndef DEBUG
-	flex -+ $<
-endif
-	
+	flex -d -+ $<	
 	
 parser.tab.cc: parser.yy
 	bison -d $(DEBUG) $<

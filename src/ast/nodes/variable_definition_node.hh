@@ -32,7 +32,7 @@ class VariableDefinitionNode : public Node
 
                 if (var_type->NotEquals(exp_type))
                 {
-                    Error::ShowError(Error::FormatString("Type mismatch between variable and initializing value! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
+                    Error::ShowError(Helper::FormatString("Type mismatch between variable and initializing value! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
                     return false;
                 }
             }

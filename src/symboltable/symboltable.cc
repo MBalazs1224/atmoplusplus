@@ -27,7 +27,7 @@ std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(const std::string& id)
     // // TODO: Show error for unknown identifier
     // if(!element)
     // {
-    //     Error::ShowError(Error::FormatString("Unknown identifier '%s'!", id.c_str()),loc);
+    //     Error::ShowError(Helper::FormatString("Unknown identifier '%s'!", id.c_str()),loc);
     // }
 
     return element;

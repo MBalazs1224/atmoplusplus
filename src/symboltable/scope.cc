@@ -6,7 +6,7 @@ void Scope::AddElement(const std::string& id, std::shared_ptr<SymbolTableElement
 {
     if (SymbolAlreadyDeclared(id))
     {
-        Error::ShowError(Error::FormatString("Multiple definition for symbol '%s'",id.c_str()),element->location);
+        Error::ShowError(Helper::FormatString("Multiple definition for symbol '%s'",id.c_str()),element->location);
     }
     else
     {

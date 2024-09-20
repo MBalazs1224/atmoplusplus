@@ -2,6 +2,9 @@
 #include <memory>
 #include "../nodes/node.hh"
 #include "../types/all_types.hh"
+// For showing eroor messages 
+#include "../../helper/helper.hh"
+#include "../../error/error.hh"
 class IExpressionable : public Node
 {
     protected:

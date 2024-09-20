@@ -28,8 +28,7 @@ class Error
         static void ShowError(const std::string&,const yy::location&);
         static void ShowWarning(const std::string&,const yy::location&);
         static void Initialize();
-        // TODO: Might need to put FormatString fucntion into a different helper class
-        static std::string FormatString(const char* format, ...);
+
         
         static bool CanContinue();
 
