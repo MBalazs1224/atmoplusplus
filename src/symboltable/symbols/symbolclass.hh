@@ -21,7 +21,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         bool checkedResult;
 
         std::vector<std::shared_ptr<Identifier>> parents;
-        std::unique_ptr<BodyNode> body;
+        std::vector<std::shared_ptr<Node>> body;
 
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> variables;
@@ -29,67 +29,18 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> functions;
     public:
-    ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in) : parents(std::move(parents_in)), body(std::move(body_in))
-    {
-        
-    }
+    ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in);
 
-    std::shared_ptr<Type> GetType() override
-    {
-        return shared_from_this();
-    }
+    std::shared_ptr<Type> GetType() override;
 
-    bool Equals(const std::shared_ptr<Type> other) override
-    {
-        auto casted = std::dynamic_pointer_cast<ClassSymbol>(other);
-        return casted && this->name == casted->name;
-    }
+    bool Equals(const std::shared_ptr<Type> other) override;
 
-    std::string ToString() override
-    {
-        return Helper::FormatString("type class (%s)",name.c_str());
-    }
+    std::string ToString() override;
 
-    bool Check() override
-    {
-        if (alreadyChecked)
-        {
-            return checkedResult;
-        }
-        alreadyChecked = true;
-        for (auto &node : body->GetStatements())
-        {
-            // If it's a variable definition insert it into the variable hashmap for later access
-            if (auto variableDefinition = std::dynamic_pointer_cast<VariableDefinitionNode>(node))
-            {
-                auto variable = variableDefinition->GetVariable();
-                variables[variable->name] = variable;
-            }
-            else if (auto functionDefinition = std::dynamic_pointer_cast<FunctionDefinitionNode>(node))
-            {
-                auto function = functionDefinition->GetFunction();
-                functions[function->name] = function;
-            }
-            else
-            {
-                Error::ShowError("Only variable and/or function definitions can appear at the top level of a class!",node->location);
-                checkedResult = false;
-                return false;
-            }
-            
-        }
-        checkedResult = true;
-        return true;
-    }
+    bool Check() override;
     // Will return the function based on the given ID or null if it wasn't found
-    std::shared_ptr<FunctionSymbol> GetFunction(const std::string& id)
-    {
-        return functions[id];
-    }
+    std::shared_ptr<FunctionSymbol> GetFunction(const std::string& id);
 
     // Will return the variable based on the given ID or null if it wasn't found
-    std::shared_ptr<VariableSymbol> GetVariable(const std::string& id)
-    {
-        return variables[id];
-    }
+    std::shared_ptr<VariableSymbol> GetVariable(const std::string&);
 };

@@ -1,6 +1,7 @@
 
 nodes := ./build/statement_list_node.o ./build/body_node.o 
 
+symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./build/symbols/symbolclass.o
 
 literals := ./build/literal.o
 
@@ -13,7 +14,7 @@ helper := ./build/helper.o
 
 
 
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(literals) $(expressions) $(attributes) $(helper)
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o ./build/attribute.o  $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall -Werror
@@ -24,7 +25,7 @@ main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
-	@mkdir -p ./build
+	@mkdir -p ./build/symbols
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/atmo_driver.o: atmo_driver.cc atmo_driver.hh
@@ -64,6 +65,18 @@ main: $(objects)
 
 ./build/symboltableelement.o: ./src/symboltable/symboltableelement.cc ./src/symboltable/symboltableelement.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
+
+# Symbols
+
+./build/symbols/symbolvariable.o : ./src/symboltable/symbols/symbolvariable.cc ./src/symboltable/symbols/symbolvariable.cc
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/symbols/symbolfunction.o : ./src/symboltable/symbols/symbolfunction.cc ./src/symboltable/symbols/symbolfunction.cc
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/symbols/symbolclass.o : ./src/symboltable/symbols/symbolclass.cc ./src/symboltable/symbols/symbolclass.cc
+	g++ $(CXXFLAGS) -c $< -o $@
+
 
 # Expressions
 

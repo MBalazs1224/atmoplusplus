@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include "scope.hh"
-#include "../../location.hh"
+#include "symbols/symbolclass.hh"
 // Class for managing symbols
 class SymbolTable
 {
@@ -23,6 +23,8 @@ class SymbolTable
         static void DecreaseScope();
         static void IncreaseScope();
         static bool IsRoot();
+        // Returns true if the given element is a class element
+        static bool IsClass(std::shared_ptr<SymbolTableElement>);
 
         static void Initialize();
 };

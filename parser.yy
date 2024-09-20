@@ -50,8 +50,6 @@
     #define YYDEBUG 1
     void* test = nullptr;
 
-    //FIXME: Attributes might not need to be pointers
-
     std::shared_ptr<AttributePrivate> AttributePrivateHolder = std::make_shared<AttributePrivate>();
     std::shared_ptr<AttributePublic> AttributePublicHolder = std::make_shared<AttributePublic>();
     std::shared_ptr<AttributeProtected> AttributeProtectedHolder = std::make_shared<AttributeProtected>();
@@ -289,12 +287,8 @@ class_create: create_class_holder IDENTIFIER base_classes body
     // Decrease the scope to get back to the root from the own scope of the class
     SymbolTable::DecreaseScope();
 
-    //TODO: Class symbol only on root error should be shown in the SymbolTable
-    if(!SymbolTable::IsRoot())
-    {
-        Error::ShowError("Classes can only be created on the root scope!",@2);
-    }
     auto symbol = std::make_shared<ClassSymbol>($3,std::move($4));
+    symbol->location = @2;
     SymbolTable::Insert($2,symbol);
     
 }

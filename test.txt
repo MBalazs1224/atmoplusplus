@@ -18,6 +18,8 @@ create integer b
 
 if oszt
 	create boolean a
+	create class asd
+		create boolean b
 
 if not call test with 1 inside valami inside oszt
 	create public integer a

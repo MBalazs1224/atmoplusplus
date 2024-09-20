@@ -12,10 +12,21 @@ void SymbolTable::Insert(std::string id, std::shared_ptr<SymbolTableElement> ele
 {
     assert(!id.empty());
     assert(element);
-
     element->name = id;
+
+    if(IsClass(element) && !IsRoot())
+    {
+        Error::ShowError("Classes can only be created on the root level!",element->location);
+        return;
+    }
+
     
     current->AddElement(id,element);
+}
+
+bool SymbolTable::IsClass(std::shared_ptr<SymbolTableElement> element)
+{
+    return std::dynamic_pointer_cast<ClassSymbol>(element) != nullptr;
 }
 
 std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(const std::string& id)
@@ -23,12 +34,6 @@ std::shared_ptr<SymbolTableElement> SymbolTable::LookUp(const std::string& id)
     assert(!id.empty());
 
     auto element = current->GetElement(id);
-
-    // // TODO: Show error for unknown identifier
-    // if(!element)
-    // {
-    //     Error::ShowError(Helper::FormatString("Unknown identifier '%s'!", id.c_str()),loc);
-    // }
 
     return element;
 }
