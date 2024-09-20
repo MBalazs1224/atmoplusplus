@@ -327,6 +327,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     functionSymbol->location = @5;
     SymbolTable::Insert($5,functionSymbol);
     $$ = std::make_unique<FunctionDefinitionNode>(std::move(functionSymbol));
+    $$->location = @5;
 
 }
 function_call: CALL IDENTIFIER function_call_arguments {

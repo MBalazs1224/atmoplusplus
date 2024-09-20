@@ -1,4 +1,5 @@
 #include "body_node.hh"
+#include "function_definition_node.hh"
 
 BodyNode::BodyNode(BodyNode&& other)
 {
@@ -13,9 +14,17 @@ BodyNode::BodyNode(std::vector<std::shared_ptr<Node>> statements)
 bool BodyNode::Check()
 {
     // TODO: Might need to calculate the size of teh body here
-    for (auto &statement : statements)
+    for (auto& statement : statements)
     {
-        //Might need to stop checking if one of the statements is wrong
+        // Functions can only be created on the root node, meaning it cannot be inside a body (classes receive the statements inside them through a vector not a body )
+        auto function_definition = std::dynamic_pointer_cast<FunctionDefinitionNode>(statement);
+        if (function_definition)
+        {
+            Error::ShowError("Functions can only be created on the root level!",function_definition->location);
+
+            // Check the rest of the statements, so we can show all error messages
+            continue;
+        }
         statement->Check();
     }
     return true;
