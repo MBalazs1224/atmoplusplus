@@ -1,6 +1,6 @@
 create class osztaly
 	create boolean kesz 
-	create public boolean function test with integer a
+	create public integer function test
 		return 4
 
 create class osztaly_2
@@ -13,15 +13,10 @@ create boolean function teszt with integer a, float b
 
 create osztaly_2 oszt
 
-create boolean a = not call test with 1 inside valami inside oszt
 create integer b
 
-if oszt
-	create boolean a
-	create class asd
-		create boolean b
 
-if not call test with 1 inside valami inside oszt
+if 5 not matches call test inside valami inside oszt
 	create public integer a
 	until true
 		create private string b
