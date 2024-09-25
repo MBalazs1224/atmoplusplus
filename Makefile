@@ -9,12 +9,14 @@ expressions := ./build/expressions/add_expression.o ./build/expressions/and_expr
 
 attributes := ./build/attribute.o ./build/attribute_private.o ./build/attribute_protected.o ./build/attribute_public.o ./build/attribute_static.o
 
+types := ./build/types/typearray.o ./build/types/type.o 
+
 
 helper := ./build/helper.o
 
 
 
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o ./build/type.o   $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols)
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall -Werror
@@ -42,8 +44,6 @@ main: $(objects)
 ./build/lex.yy.o: lex.yy.cc AtmoLexer.hh parser.tab.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/type.o: ./src/ast/types/type.cc ./src/ast/types/type.hh
-	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/attribute.o: ./src/ast/attributes/attribute.cc ./src/ast/attributes/attribute.hh
 	g++ $(CXXFLAGS) -c $< -o $@
@@ -156,6 +156,15 @@ main: $(objects)
 ./build/attribute_static.o: ./src/ast/attributes/attributestatic.cc ./src/ast/attributes/attributestatic.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
+# Types
+
+./build/types/typearray.o: ./src/ast/types/typearray.cc ./src/ast/types/typearray.hh
+	@mkdir -p ./build/types
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/types/type.o: ./src/ast/types/type.cc ./src/ast/types/type.hh
+	@mkdir -p ./build/types
+	g++ $(CXXFLAGS) -c $< -o $@
 
 # Helper
 

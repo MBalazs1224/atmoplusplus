@@ -2,10 +2,6 @@
 
 Type::~Type() = default;
 
-Type::Type(const Type& other)
-{
-    this->isArray = other.isArray;
-}
 
 Type& Type::operator=(const Type& other)
 {
@@ -13,7 +9,6 @@ Type& Type::operator=(const Type& other)
     if (this == &other)
         return *this;
 
-    this->isArray = other.isArray;
 
     return *this;
 }

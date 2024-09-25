@@ -15,8 +15,13 @@ create osztaly_2 oszt
 
 create integer b
 
+create array of array of string laszlo
+create integer andras
 
-if 5 not matches call test inside valami inside oszt
+create array of osztaly function asd
+	return 5
+
+if call asd
 	create public integer a
 	until true
 		create private string b

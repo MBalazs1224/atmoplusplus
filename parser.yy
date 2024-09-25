@@ -153,7 +153,7 @@
 %left GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
-
+%right ARRAY_OF
 
 
 %left COMMA
@@ -220,7 +220,6 @@ statement:function_create {$$ = std::move($1);}
         | expression {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
-                | ARRAY_OF datatype {$2->SetIsArray(true); $$ = std::move($2);}
 
 variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
@@ -235,7 +234,7 @@ attribute: %empty {$$ = AttributePrivateHolder;}
             | STATIC {$$ = AttributeStaticHolder;}
 
 equals_holder: %empty {}
-                |EQUALS expression {$$ = $2;}
+                | EQUALS expression {$$ = $2;}
 
 
 body: indent statement_list dedent {$$ = std::make_unique<BodyNode>($2->GetStatements()); }
@@ -409,6 +408,11 @@ datatype: INT { $$ = std::make_shared<TypeInteger>();}
             auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);
             $$ = std::move(id);
           }
+          | ARRAY_OF datatype
+          {
+            auto array = std::make_shared<Array>($2);
+            $$ = std::move(array);
+        }
 
 expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, AddLocations($1,$3));  }
             | expression MINUS expression {$$ = std::make_unique<SubtractExpression>( $1, $3, AddLocations($1,$3));  }
