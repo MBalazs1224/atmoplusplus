@@ -16,5 +16,6 @@ class FunctionSymbol : public SymbolTableElement
     std::shared_ptr<Type> GetType() override;
     bool Check() override;
 
-    std::vector<std::shared_ptr<VariableSymbol>> GetArguments();
+    // Const and reference so it can be retrevied fast but cannot be changed by other classes
+    const std::vector<std::shared_ptr<VariableSymbol>>& GetArguments();
 };

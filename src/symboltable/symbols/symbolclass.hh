@@ -43,4 +43,6 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     // Will return the variable based on the given ID or null if it wasn't found
     std::shared_ptr<VariableSymbol> GetVariable(const std::string&);
+    // Will return the element either if it's a variable or a function
+    std::shared_ptr<SymbolTableElement> GetElement(const std::string&);
 };

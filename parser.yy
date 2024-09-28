@@ -140,13 +140,14 @@
 %token DO
 %token VOID
 %token END_OF_FILE
-%left MATCHES NOT_MATCHES
 
+
+%left MATCHES NOT_MATCHES
 %right NOT
 %right EQUALS
-%right INSIDE
-%left CALL
 %left WITH
+%right CALL
+%right INSIDE
 %left OPEN_BRACKET CLOSE_BRACKET
 %left AND
 %left OR
@@ -329,9 +330,8 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     $$->location = @5;
 
 }
-function_call: CALL IDENTIFIER function_call_arguments {
-    auto id = std::make_shared<Identifier>(SymbolTable::LookUp($2),$2,@2);
-    $$ = std::make_shared<FunctionCall>(id,$3,@1+@2,$2);
+function_call: CALL expression function_call_arguments {
+    $$ = std::make_shared<FunctionCall>($2,$3,@1+@2);
     test = $$.get();
     }
 

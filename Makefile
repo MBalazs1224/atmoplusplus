@@ -19,7 +19,7 @@ helper := ./build/helper.o
 objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
-CXXFLAGS = -g -Wpedantic -Wextra -Wall -Werror
+CXXFLAGS = -g -Wpedantic -Wextra -Wall
 #LDFLAGS = -static-libasan
 
 

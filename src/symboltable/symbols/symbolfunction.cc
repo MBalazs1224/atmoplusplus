@@ -15,6 +15,6 @@ bool FunctionSymbol::Check() {
     return true;
 }
 
-std::vector<std::shared_ptr<VariableSymbol>> FunctionSymbol::GetArguments() {
+const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments() {
     return arguments;
 }

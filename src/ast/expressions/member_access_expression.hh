@@ -1,6 +1,7 @@
 #pragma once
 #include "expressionable.hh"
-class MemberAccessExpression : public IExpressionable
+#include "../nodes/member_container.hh"
+class MemberAccessExpression : public IExpressionable, public MemberContainer
 {
     std::shared_ptr<IExpressionable> exp_left;
 	std::shared_ptr<IExpressionable> exp_right;
@@ -17,5 +18,5 @@ class MemberAccessExpression : public IExpressionable
     ~MemberAccessExpression() override = default;
 
     bool Check() override;
-    
+    std::shared_ptr<SymbolTableElement> GetElement() override;
 };

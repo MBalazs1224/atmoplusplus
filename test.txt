@@ -5,6 +5,8 @@ create class osztaly
 
 create class osztaly_2
 	create public osztaly valami
+	create public boolean function a with integer a
+		return 5
 
 create osztaly_2 function letrehoz with integer a
 	return 0
@@ -21,7 +23,7 @@ create integer andras
 create array of osztaly function asd
 	return 5
 
-if call asd
+if call test inside valami inside oszt with 1
 	create public integer a
 	until true
 		create private string b

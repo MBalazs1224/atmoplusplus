@@ -7,14 +7,14 @@
 
 bool MemberAccessExpression::Check()
 {
-        // Member access can be chained so the right side of the expression can be a member access (altought the left side of it the inner expression must be class type nad the get type function will check that later)
-        if (auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(exp_right))
+        // Member access can be chained so the right side of the expression can be a member access, so wee need to checked that first, it can also be an identifier (to a variable etc.)
+
+
+        if(!exp_right->Check())
         {
-            if(!memberAccess->Check())
-            {
-                return false;
-            }
+            return false;
         }
+
 
 
         auto classSymbol = std::dynamic_pointer_cast<ClassSymbol>(exp_right->GetType());
@@ -25,53 +25,42 @@ bool MemberAccessExpression::Check()
         }
         
         classSymbol->Check();
+
         if (auto id = std::dynamic_pointer_cast<Identifier>(exp_left))
         {
-            auto variable = classSymbol->GetVariable(id->name);
-            if(!variable)
+            auto element = classSymbol->GetElement(id->name);
+            if(!element)
             {
                 Error::ShowError(Helper::FormatString("Cannot find '%s' inside '%s'",id->name.c_str(),classSymbol->ToString().c_str()),this->location);
                 return false;
             }
-            if (!variable->IsReachableOutside())
+            if (!element->IsReachableOutside())
             {
-                Error::ShowError(Helper::FormatString("'%s' is inaccessible due to it's protection level! ('%s')",variable->name.c_str(), variable->GetAttribute()->ToString().c_str()),exp_left->location);
+                Error::ShowError(Helper::FormatString("'%s' is inaccessible due to it's protection level! ('%s')",element->name.c_str(), element->GetAttribute()->ToString().c_str()),exp_left->location);
                 return false;
             }
             
-            id->SetElement(variable);
-        }
-        else if(auto functionCall = std::dynamic_pointer_cast<FunctionCall>(exp_left))
-        {
-            auto function = classSymbol->GetFunction(functionCall->name_for_function);
-            if (!function)
-            {
-                Error::ShowError(Helper::FormatString("Cannot find '%s' inside '%s'",functionCall->name_for_function.c_str(),classSymbol->ToString().c_str()),this->location);
-                return false;
-            }
-            if (!function->IsReachableOutside())
-            {
-                Error::ShowError(Helper::FormatString("'%s' is inaccessible due to it's protection level! ('%s')",function->name.c_str(), function->GetAttribute()->ToString().c_str()),exp_left->location);
-                return false;
-            }
-            functionCall->SetFunction(function);
-            functionCall->Check();
-            
-        }
-        else if(auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(exp_left))
-        {
-        
-            if(!memberAccess->Check())
-            {
-                return false;
-            }
+            id->SetElement(element);
         }
         else
         {
-            Error::ShowError("Only function calls and variables can appear on the left side of the member access (inside) expression!",exp_left->location);
+            Error::ShowError("Only identifiers can appear on the left side of the member access (inside) expression!",exp_left->location);
             return false;
         }
 
     return true;
 
+}
+
+std::shared_ptr<SymbolTableElement> MemberAccessExpression::GetElement()
+{
+    // This might need a rework if the casted thing doesn't keep it's original type (function or variable etc.)
+
+
+    // TODO: This may needs a rework so we don't have to cast it to identifier (maybe store it in a private variable)
+
+    // The left side of the member access is always an identifier, the Check function made sure it's valid
+    auto identifier = std::dynamic_pointer_cast<Identifier>(exp_left);
+
+    return std::dynamic_pointer_cast<SymbolTableElement>(identifier->GetElement());
 }

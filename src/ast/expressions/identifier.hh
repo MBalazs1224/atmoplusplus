@@ -1,12 +1,13 @@
 #pragma once
 #include "expressionable.hh"
 #include "../types/type.hh"
+#include "../nodes/member_container.hh"
 #include "../../symboltable/symboltableelement.hh"
 #include <memory>
 #include <string>
 #include <assert.h>
 // Type because it can be a class
-class Identifier : public IExpressionable, public Type
+class Identifier : public IExpressionable, public Type, public MemberContainer
 {
     private:
         // The element with this id if found
@@ -21,7 +22,6 @@ class Identifier : public IExpressionable, public Type
 
     void SetElement(std::shared_ptr<SymbolTableElement> element);
 
-    std::shared_ptr<SymbolTableElement> GetElement();
 
     bool Equals(const std::shared_ptr<Type> other) override;
 
@@ -30,5 +30,7 @@ class Identifier : public IExpressionable, public Type
     bool Check() override;
 
     std::shared_ptr<Type> GetType() override;
+
+    std::shared_ptr<SymbolTableElement> GetElement() override; 
 
 };

@@ -45,3 +45,14 @@ std::shared_ptr<FunctionSymbol> ClassSymbol::GetFunction(const std::string& id) 
 std::shared_ptr<VariableSymbol> ClassSymbol::GetVariable(const std::string& id) {
     return variables[id];
 }
+
+std::shared_ptr<SymbolTableElement> ClassSymbol::GetElement(const std::string& id) {
+
+    // Check if the element is a variable if not return the id as a function
+
+    auto variable = GetVariable(id);
+    if (variable) {
+        return variable;
+    }
+    return GetFunction(id);
+}
