@@ -130,6 +130,19 @@ bool ClassSymbol::ProcessBody()
                 return false;
             }
         }
+        else if (auto constructorDefinition = std::dynamic_pointer_cast<ConstructorDefinitionNode>(node))
+        {
+            // We need to check if the constructor was defined correctly
+
+            if (!constructorDefinition->Check())
+            {
+                return false;
+            }
+            // TODO: Implement constructor checking
+            constructors.push_back(constructorDefinition->GetFunction());
+
+
+        }
         else
         {
             Error::ShowError("Only variable and/or function definitions can appear at the top level of a class!", node->location);

@@ -8,6 +8,7 @@
 #include "../../ast/types/type.hh"
 #include "../../ast/nodes/variable_definition_node.hh"
 #include "../../ast/nodes/function_definition_node.hh"
+#include "../../ast/nodes/constructor_definition_node.hh"
 #include "../../ast/expressions/identifier.hh"
 #include <unordered_map>
 
@@ -22,6 +23,9 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
         std::vector<std::shared_ptr<Identifier>> parents;
         std::vector<std::shared_ptr<Node>> body;
+
+        // The constructors of the class
+        std::vector<std::shared_ptr<FunctionSymbol>> constructors;
 
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> variables;

@@ -57,6 +57,7 @@ protected (protected)|PROTECTED
 static (static)|STATIC
 derives_from (DERIVES[ ]FROM)|(derives[ ]from)|(DERIVED[ ]FROM)|(derived[ ]from)|(DERIVE[ ]FROM)|(derive[ ]from)
 else_if  (ELSE[ ]IF)|(else[ ]if)
+constructor  (constructor)|(CONSTRUCTOR)
 
 %%
     // This code will be put into the top of yylex
@@ -234,6 +235,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{protected} {return yy::parser::token::PROTECTED;}
 <NORMAL>{derives_from} {return yy::parser::token::DERIVES_FROM;}
 <NORMAL>{else_if} {return yy::parser::token::ELSE_IF;}
+<NORMAL>{constructor}	{return yy::parser::token::CONSTRUCTOR;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}

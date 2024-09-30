@@ -2,6 +2,10 @@ create class osztaly
 	create protected boolean kesz 
 	create public boolean function test
 		return 4
+	create public constructor
+		return 5
+	create public constructor with boolean a
+		kesz equals a
 
 
 create class osztaly_2 derives from osztaly

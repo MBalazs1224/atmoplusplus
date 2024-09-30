@@ -13,6 +13,9 @@ class FunctionSymbol : public SymbolTableElement
     public: 
     FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<Attribute> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in);
 
+    // Constructor for a constructor function
+    FunctionSymbol(std::shared_ptr<Attribute> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in);
+
     std::shared_ptr<Type> GetType() override;
     bool Check() override;
 

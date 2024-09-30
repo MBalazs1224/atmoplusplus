@@ -140,6 +140,7 @@
 %token DO
 %token VOID
 %token END_OF_FILE
+%token CONSTRUCTOR
 
 
 %left MATCHES NOT_MATCHES
@@ -184,8 +185,8 @@
 %nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_list
-
-
+%nterm<std::shared_ptr<ConstructorDefinitionNode>> constructor_definition
+%nterm<std::shared_ptr<ClassDefinitionNode>> class_create
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
 
@@ -199,8 +200,9 @@ program: statement_list  {
     driver.ast_root = std::move($1);
     }
 
-statement_list: statement {$$ =     std::make_shared<StatementListNode>(std::move($1));
-}
+statement_list: statement {
+                    $$ = std::make_shared<StatementListNode>(std::move($1));
+                }
                 | statement_list statement {
                     if($2)
                     {
@@ -212,13 +214,14 @@ statement_list: statement {$$ =     std::make_shared<StatementListNode>(std::mov
 
 
 statement:function_create {$$ = std::move($1);}
-        | class_create  {}
+        | class_create  {$$ = std::move($1);}
         | variable_definition {$$ = std::move($1);}
         | if_statement  {$$ = std::move($1);}
         | until_statement  {$$ = std::move($1);}
         | do_until_statement  {$$ = std::move($1);}
         | return_statement {$$ = std::move($1);}
         | expression {$$ = std::move($1);}
+        | constructor_definition {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
 
@@ -292,7 +295,7 @@ class_create: create_class_holder IDENTIFIER base_classes body
     auto symbol = std::make_shared<ClassSymbol>($3,std::move($4));
     symbol->location = @2;
     SymbolTable::Insert($2,symbol);
-    
+    $$ = std::make_unique<ClassDefinitionNode>(std::move(symbol));
 }
     
 base_classes: %empty {}
@@ -321,6 +324,9 @@ create_class_holder: CREATE CLASS {/*Need to increase the scope so the class var
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 {
     // Decrease the scope so the function will be inserted into the root, so everything can access it
+
+    // FIXME: I dont know why we need this decrease  scope, but it works
+
     SymbolTable::DecreaseScope();
     //TODO: The semantics analyzer will have to check if the function is on the root
     auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
@@ -330,6 +336,15 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     $$->location = @5;
 
 }
+
+constructor_definition: CREATE attribute CONSTRUCTOR argument_list body
+{
+    auto function = std::make_shared<FunctionSymbol>(std::move($2),std::move($5),std::move($4));
+    auto constructor = std::make_shared<ConstructorDefinitionNode>(std::move(function));
+    $$ = std::move(constructor);
+}
+
+
 function_call: CALL expression function_call_arguments {
     $$ = std::make_shared<FunctionCall>($2,$3,@1+@2 + @3);
     test = $$.get();

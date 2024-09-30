@@ -19,3 +19,9 @@ bool SymbolTableElement::IsReachableOutside()
 {
     return std::dynamic_pointer_cast<AttributePublic>(attribute) || std::dynamic_pointer_cast<AttributeStatic>(attribute);
 }
+
+
+SymbolTableElement::SymbolTableElement(std::shared_ptr<Attribute> attr)
+{
+    this->attribute = std::move(attr);
+}

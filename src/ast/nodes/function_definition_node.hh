@@ -10,7 +10,7 @@ class FunctionDefinitionNode : public Node
 {
     // Pointer to the created funtion
     std::shared_ptr<FunctionSymbol> function;
-
+    
     public:
         FunctionDefinitionNode( std::shared_ptr<FunctionSymbol> func_in)
         :  function(std::move(func_in))
