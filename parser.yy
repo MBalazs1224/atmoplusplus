@@ -331,7 +331,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 
 }
 function_call: CALL expression function_call_arguments {
-    $$ = std::make_shared<FunctionCall>($2,$3,@1+@2);
+    $$ = std::make_shared<FunctionCall>($2,$3,@1+@2 + @3);
     test = $$.get();
     }
 

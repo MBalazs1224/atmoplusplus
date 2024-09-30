@@ -1,5 +1,5 @@
 create class osztaly
-	create boolean kesz 
+	create protected boolean kesz 
 	create public integer function test
 		return 4
 
@@ -14,6 +14,10 @@ create osztaly_2 function letrehoz with integer a
 create boolean function teszt with integer a, float b
 
 create osztaly_2 oszt
+
+create osztaly o
+
+test inside o equals 3
 
 create integer b
 

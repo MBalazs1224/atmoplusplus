@@ -7,14 +7,19 @@ bool AssignmentExpression::Check()
     {
         return false;
     }
-    
-    auto identifier = std::dynamic_pointer_cast<Identifier>(exp_left);
-    if (!identifier)
+    auto member_container = std::dynamic_pointer_cast<MemberContainer>(exp_left);
+
+    // Only direct variables and variables that are members of a class can be on the left side of an assignment
+
+    if (!member_container)
     {
-        Error::ShowError("Only variables can appear on the left side of an assignment (=) expression!",exp_left->location);
+        Error::ShowError("Only member containers can appear on the left side of an assignment (=) expression!",exp_left->location);
         return false;
     }
-    auto variable = std::dynamic_pointer_cast<VariableSymbol>(identifier->GetElement());
+
+    // Functions cannot be assigned to
+
+    auto variable = std::dynamic_pointer_cast<VariableSymbol>(member_container->GetElement());
     if (!variable)
     {
         Error::ShowError("Only variables can appear on the left side of an assignment (=) expression!",exp_left->location);
@@ -25,6 +30,7 @@ bool AssignmentExpression::Check()
     auto exp_right_type = exp_right->GetType();
     if (variable_type->NotEquals(exp_right_type))
     {
+        // TODO: Implement polyporphism so a value can be assigned to a variable of a base class type
         Error::ShowError(Helper::FormatString("Invalid type of expression on the right side of assignment (=) expression! The expression's type ('%s') must match the variable's type ('%s')!",exp_right_type->ToString().c_str(),variable_type->ToString().c_str()),exp_right->location);
         return false;
     }
