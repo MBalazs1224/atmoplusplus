@@ -1,12 +1,10 @@
 create class osztaly
 	create protected boolean kesz 
-	create public integer function test
+	create public boolean function test
 		return 4
 
-create class osztaly_2
-	create public osztaly valami
-	create public boolean function a with integer a
-		return 5
+
+create class osztaly_2 derives from osztaly
 
 create osztaly_2 function letrehoz with integer a
 	return 0
@@ -17,7 +15,6 @@ create osztaly_2 oszt
 
 create osztaly o
 
-test inside o equals 3
 
 create integer b
 
@@ -27,7 +24,7 @@ create integer andras
 create array of osztaly function asd
 	return 5
 
-if call test inside valami inside oszt with 1
+if call test inside oszt
 	create public integer a
 	until true
 		create private string b

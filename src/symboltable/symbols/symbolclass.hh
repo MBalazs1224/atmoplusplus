@@ -28,6 +28,28 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> functions;
+
+        // Will check if the parents are valid and inherit the variables and functions from the parent classes
+        bool CheckParents();
+
+        // Will check if the body is valid and process the variables and functions
+        bool ProcessBody();
+
+        // Will check if the identifier is already declared in the class (either as a variable or a function)
+        bool IdentifierAlreadyDeclared(const std::string& id);
+
+        // Will insert the variable into the class, returns false if the variable is already declared
+        bool InsertVariable(const std::shared_ptr<VariableDefinitionNode>& node);
+
+        // Will insert the function into the class, returns false if the function is already declared
+        bool InsertFunction(const std::shared_ptr<FunctionDefinitionNode>& node);
+
+        // Will return all the variables in this class
+        std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> GetVariables();
+
+        // WIll return all the functions in this class
+        std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>>
+        GetFunctions();
     public:
     ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in);
 
