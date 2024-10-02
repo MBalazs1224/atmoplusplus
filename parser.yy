@@ -289,8 +289,6 @@ return_statement: RETURN expression {$$ = std::make_unique<ReturnStatementNode>(
 
 class_create: create_class_holder IDENTIFIER base_classes body
 {
-    // Decrease the scope to get back to the root from the own scope of the class
-    SymbolTable::DecreaseScope();
 
     auto symbol = std::make_shared<ClassSymbol>($3,std::move($4));
     symbol->location = @2;
@@ -319,15 +317,16 @@ base_classes: %empty {}
             
 
 
-create_class_holder: CREATE CLASS {/*Need to increase the scope so the class variables and functions have their own scope*/ SymbolTable::IncreaseScope();}
+create_class_holder: CREATE CLASS {/*Need to increase the scope so the class variables and functions have their own scope*/ //SymbolTable::IncreaseScope();
+}
 
 function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
 {
-    // Decrease the scope so the function will be inserted into the root, so everything can access it
 
-    // FIXME: I dont know why we need this decrease  scope, but it works
+    // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too
 
     SymbolTable::DecreaseScope();
+
     //TODO: The semantics analyzer will have to check if the function is on the root
     auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
     functionSymbol->location = @5;
@@ -339,6 +338,9 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 
 constructor_definition: CREATE attribute CONSTRUCTOR argument_list body
 {
+    // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too
+    SymbolTable::DecreaseScope();
+
     auto function = std::make_shared<FunctionSymbol>(std::move($2),std::move($5),std::move($4));
     auto constructor = std::make_shared<ConstructorDefinitionNode>(std::move(function));
     $$ = std::move(constructor);
@@ -385,7 +387,10 @@ more_arguments: COMMA expression
 function_return_type: datatype {$$ = std::move($1);}
                     | VOID {$$ = std::make_shared<TypeVoid>();;}
 
-argument_list: %empty {}
+argument_list: %empty {
+    // The function non terminal will decrease the scope no matter what, so we need to increase it here too
+    SymbolTable::IncreaseScope();
+}
             | WITH argument {
                 // Increase the scope so the arguments can be pushed into their own scope
                 SymbolTable::IncreaseScope();
