@@ -23,7 +23,7 @@
     // The stringstream to temporarily store the state of string literals
     std::stringstream str_buffer;
     // Update location on every token match
-    #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
+    #define YY_USER_ACTION loc->step(); loc->columns(yyleng + current_indent);
 
 %}
 

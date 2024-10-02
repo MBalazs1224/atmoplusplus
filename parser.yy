@@ -348,7 +348,14 @@ constructor_definition: CREATE attribute CONSTRUCTOR argument_list body
 
 
 function_call: CALL expression function_call_arguments {
-    $$ = std::make_shared<FunctionCall>($2,$3,@1+@2 + @3);
+
+    //FIXME: For some reason the location is not set here correctly
+    auto f = @1;
+    auto s = @2;
+
+    auto c = f + s;
+
+    $$ = std::make_shared<FunctionCall>($2,$3,@1+@2);
     test = $$.get();
     }
 
@@ -358,6 +365,7 @@ function_call_arguments: %empty {}
                             std::vector<std::shared_ptr<IExpressionable>> vec;
                             vec.push_back($2);
                             $$ = std::move(vec);
+                            @$ = @1 + @2;
                         }
                         | WITH expression more_arguments
                         {
@@ -368,6 +376,7 @@ function_call_arguments: %empty {}
 
                             $3.insert($3.begin(), $2);
                             $$ = std::move($3);
+                            @$ = @1 + @3;
                         }
     // makes it clear that after the first argument, any next argument must be followed by a COMMA
 more_arguments: COMMA expression
@@ -375,11 +384,14 @@ more_arguments: COMMA expression
                     std::vector<std::shared_ptr<IExpressionable>> vec;
                     vec.push_back(std::move($2));
                     $$ = std::move(vec);
+                    @$ = @1 + @2;
                 }
               | more_arguments COMMA expression
               {
                 $1.push_back(std::move($3));
                 $$ = std::move($1);
+                @$ = @1 + @3;
+
               }
 
                         

@@ -1,7 +1,7 @@
 create class osztaly
 	create protected boolean kesz 
-	create public boolean function test
-		return 4
+	create public boolean function test with integer a, boolean b
+		kesz equals a
 	create public constructor
 		return 5
 	create public constructor with integer a
@@ -13,7 +13,7 @@ create class osztaly_2 derives from osztaly
 create osztaly_2 function letrehoz with integer a
 	return 0
 
-create boolean function teszt with integer a, float b
+create boolean function teszt with osztaly_2 a
 
 create osztaly_2 oszt
 
@@ -28,13 +28,15 @@ create integer andras
 create array of osztaly function asd
 	return 5
 
-if call test inside oszt
+if true
 	create public integer a
 	until true
 		create private string b
 		create array of float c
-	a = 5
 	create static array of char c
+	if call teszt with oszt
+		a = 1 + .5
+		return 1 + .4
 	return 5
 else
 	return 3
