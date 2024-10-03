@@ -17,7 +17,7 @@ bool LessThanOrEqualExpression::Check() {
     auto exp_left_type = exp_left->GetType();
     auto exp_right_type = exp_right->GetType();
     
-    if (exp_left_type->NotEquals(exp_right_type))
+    if (exp_left_type->NotCompatible(exp_right_type))
     {
         Error::ShowError(Helper::FormatString(
             "The two operands of LESS THAN OR EQUAL (<=) expression must be of same type! (received '%s' and '%s')",

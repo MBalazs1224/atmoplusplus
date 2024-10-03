@@ -14,9 +14,9 @@ std::shared_ptr<SymbolTableElement> Identifier::GetElement() {
     return element;
 }
 
-bool Identifier::Equals(const std::shared_ptr<Type> other)
+bool Identifier::Compatible(const std::shared_ptr<Type> other)
 {
-    return other->Equals(element->GetType());
+    return other->Compatible(element->GetType());
 }
 
 std::string Identifier::ToString()

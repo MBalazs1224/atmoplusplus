@@ -30,9 +30,9 @@ class VariableDefinitionNode : public Node
                 auto exp_type = expression->GetType();
                 auto var_type = variable->GetType();
 
-                if (var_type->NotEquals(exp_type))
+                if (exp_type->NotCompatible(var_type))
                 {
-                    Error::ShowError(Helper::FormatString("Type mismatch between variable and initializing value! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
+                    Error::ShowError(Helper::FormatString("The type of initialization value must be compatible with the variable's type! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
                     return false;
                 }
             }

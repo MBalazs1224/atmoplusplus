@@ -9,7 +9,7 @@ bool AndExpression::Check()
     }   // FIXME: Fix boolean dynamic memory alloc
     auto boolean = std::make_shared<TypeBoolean>();
     auto exp_left_type = exp_left->GetType();
-    auto exp_right_type = exp_right->GetType(); if (exp_left_type->NotEquals(boolean) || exp_right_type->NotEquals(boolean))
+    auto exp_right_type = exp_right->GetType(); if (exp_left_type->NotCompatible(boolean) || exp_right_type->NotCompatible(boolean))
     {
         Error::ShowError(Helper::FormatString("Both of the two operands of AND (&&) expression must be of type boolean! (received '%s' and '%s')",exp_left_type->ToString().c_str(),exp_right_type->ToString().c_str()),location);
         return false;

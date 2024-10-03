@@ -7,9 +7,12 @@ std::shared_ptr<Type> ClassSymbol::GetType() {
     return shared_from_this();
 }
 
-bool ClassSymbol::Equals(const std::shared_ptr<Type> other) {
+bool ClassSymbol::Compatible(const std::shared_ptr<Type> other) {
     auto casted = std::dynamic_pointer_cast<ClassSymbol>(other);
-    return casted && this->name == casted->name;
+
+    // The class i compatible with the other if they are the same or if the other class is a parent of this class
+
+    return casted && this->name == casted->name || this->IsClassAParent(casted);
 }
 
 std::string ClassSymbol::ToString() {
@@ -21,6 +24,26 @@ std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> ClassSymbol::Ge
 
 std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> ClassSymbol::GetFunctions() {
     return functions;
+}
+
+bool ClassSymbol::IsClassAParent(const std::shared_ptr<ClassSymbol>& other)
+{
+    for (auto &&parent : parents)
+    {
+
+
+        auto parent_class = std::dynamic_pointer_cast<ClassSymbol>(parent->GetElement());
+
+        // The check function already checked at this point that the identifiers are valid and that the parent is a class
+
+        if (parent_class == other)
+        {
+            return true;
+        }
+    }
+
+    return false;
+    
 }
 
 bool ClassSymbol::CheckParents() {

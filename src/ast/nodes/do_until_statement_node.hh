@@ -22,7 +22,7 @@ class DoUntilStatementNode : public Node
                 return false;
             };
             auto exp_type = expression->GetType();
-            if (exp_type->NotEquals(std::make_shared<TypeBoolean>()))
+            if (exp_type->NotCompatible(std::make_shared<TypeBoolean>()))
             {
                 Error::ShowError(Helper::FormatString("The expression of an do-until statement must be of type boolean! (received '%s')",exp_type->ToString().c_str()),expression->location);
                 return false;

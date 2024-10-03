@@ -23,7 +23,7 @@ class Identifier : public IExpressionable, public Type, public MemberContainer
     void SetElement(std::shared_ptr<SymbolTableElement> element);
 
 
-    bool Equals(const std::shared_ptr<Type> other) override;
+    bool Compatible(const std::shared_ptr<Type> other) override;
 
     std::string ToString() override;
 

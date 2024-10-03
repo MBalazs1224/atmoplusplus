@@ -26,12 +26,11 @@ bool AssignmentExpression::Check()
         return false;
     }
     
-    auto variable_type = exp_left->GetType();
+    auto variable_type = variable->GetType();
     auto exp_right_type = exp_right->GetType();
-    if (variable_type->NotEquals(exp_right_type))
+    if (exp_right_type->NotCompatible(variable_type))
     {
-        // TODO: Implement polyporphism so a value can be assigned to a variable of a base class type
-        Error::ShowError(Helper::FormatString("Invalid type of expression on the right side of assignment (=) expression! The expression's type ('%s') must match the variable's type ('%s')!",exp_right_type->ToString().c_str(),variable_type->ToString().c_str()),exp_right->location);
+        Error::ShowError(Helper::FormatString("Invalid type of expression on the right side of assignment (=) expression! The expression's type ('%s') must be compatible with the variable's type ('%s')!",exp_right_type->ToString().c_str(),variable_type->ToString().c_str()),this->location);
         return false;
     }
     return true;

@@ -12,8 +12,8 @@ std::string Array::ToString()
     return Helper::FormatString("array of '%s'", inner_type->ToString().c_str());
 }
 
-bool Array::Equals(const std::shared_ptr<Type> other)
+bool Array::Compatible(const std::shared_ptr<Type> other)
 {
     auto casted = std::dynamic_pointer_cast<Array>(other);
-    return casted && this->inner_type->Equals(casted->inner_type);
+    return casted && this->inner_type->Compatible(casted->inner_type);
 }

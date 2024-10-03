@@ -17,7 +17,7 @@ bool NotExpression::Check()
 
     auto exp_type = exp->GetType();
 
-    if (exp_type->NotEquals(std::make_shared<TypeBoolean>())) 
+    if (exp_type->NotCompatible(std::make_shared<TypeBoolean>())) 
     {
         Error::ShowError(Helper::FormatString(
             "The expression of not expression must be of type boolean! (received '%s')",

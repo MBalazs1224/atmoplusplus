@@ -7,7 +7,7 @@ bool GreaterThanExpression::Check()
     }
     auto exp_left_type = exp_left->GetType();
     auto exp_right_type = exp_right->GetType();
-    if (exp_left_type->NotEquals(exp_right_type))
+    if (exp_left_type->NotCompatible(exp_right_type))
     {
         Error::ShowError(Helper::FormatString("The two operands of GREATER THAN (>) expression must be of same type! (received '%s' and '%s')",exp_left_type->ToString().c_str(),exp_right_type->ToString().c_str()),location);
         return false;

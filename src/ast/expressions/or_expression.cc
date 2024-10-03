@@ -18,7 +18,7 @@ bool OrExpression::Check() {
     auto exp_left_type = exp_left->GetType();
     auto exp_right_type = exp_right->GetType();
 
-    if (exp_left_type->NotEquals(boolean) || exp_right_type->NotEquals(boolean)) 
+    if (exp_left_type->NotCompatible(boolean) || exp_right_type->NotCompatible(boolean)) 
     {
         Error::ShowError(Helper::FormatString(
             "Both of the two operands of OR (||) expression must be of type boolean! (received '%s' and '%s')",

@@ -14,6 +14,6 @@ class Array : public Type
 
         std::string ToString() override;
 
-        bool Equals(const std::shared_ptr<Type>) override;
+        bool Compatible(const std::shared_ptr<Type>) override;
 
 };

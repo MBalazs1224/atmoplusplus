@@ -14,7 +14,7 @@ Type& Type::operator=(const Type& other)
 }
 
 
-bool Type::NotEquals(const std::shared_ptr<Type> other)
+bool Type::NotCompatible(const std::shared_ptr<Type> other)
 {
-    return !this->Equals(other);
+    return !this->Compatible(other);
 }

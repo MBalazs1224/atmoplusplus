@@ -59,7 +59,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     std::shared_ptr<Type> GetType() override;
 
-    bool Equals(const std::shared_ptr<Type> other) override;
+    bool Compatible(const std::shared_ptr<Type> other) override;
 
     std::string ToString() override;
 
@@ -71,4 +71,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
     std::shared_ptr<VariableSymbol> GetVariable(const std::string&);
     // Will return the element either if it's a variable or a function
     std::shared_ptr<SymbolTableElement> GetElement(const std::string&);
+
+    // Will check if the given class is a parent of this class
+    bool IsClassAParent(const std::shared_ptr<ClassSymbol>& parent);
 };

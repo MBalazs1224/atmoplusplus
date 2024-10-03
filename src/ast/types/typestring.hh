@@ -2,7 +2,7 @@
 #include "type.hh"
 class TypeString : public Type
 {
-bool Equals(const std::shared_ptr<Type> other) override
+bool Compatible(const std::shared_ptr<Type> other) override
     {
         auto casted = std::dynamic_pointer_cast<TypeString>(other);
         return casted != nullptr;
