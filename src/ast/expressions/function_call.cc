@@ -48,7 +48,7 @@ bool FunctionCall::CheckArguments()
         
         auto wanted_argument_type = wanted_arguments[i]->GetType();
         auto current_argument_type = arguments[i]->GetType(); 
-        if (wanted_argument_type->NotCompatible(current_argument_type))
+        if (current_argument_type->NotCompatible(wanted_argument_type))
         {
             Error::ShowError(Helper::FormatString("Type mismatch between the %i. parameter to call '%s'! (wanted: '%s', received: '%s')",i+1, function->name.c_str(),wanted_argument_type->ToString().c_str(),current_argument_type->ToString().c_str()),arguments[i]->location);
             return false;

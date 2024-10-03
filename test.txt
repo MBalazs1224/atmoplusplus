@@ -11,16 +11,15 @@ create class osztaly_2 derives from osztaly
 create osztaly_2 function letrehoz with integer a
 	return 0
 
-create boolean function teszt with osztaly_2 a
+create boolean function teszt with osztaly a
 
 create osztaly_2 oszt
 
 create osztaly o equals oszt
 
-o equals 5
-
-
 create integer b
+
+call teszt with oszt
 
 create array of array of string laszlo
 create integer andras
