@@ -21,3 +21,5 @@ bool FunctionSymbol::Check() {
 const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments() {
     return arguments;
 }
+
+FunctionSymbol::FunctionSymbol() : SymbolTableElement(std::make_shared<AttributePublic>()), body(nullptr), arguments() {}

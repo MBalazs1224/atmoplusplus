@@ -235,6 +235,14 @@ bool ClassSymbol::Check()
         checkedResult = false;
         return false;
     }
+    // Generate empty constructor if no constructor is defined
+    if(constructors.empty())
+    {
+        auto empty_constructor = std::make_shared<FunctionSymbol>();
+        constructors.push_back(empty_constructor);
+        
+        Error::ShowWarning("No constructor defined for class, generating default one!",this->location);
+    }
     
     
 

@@ -3,6 +3,7 @@
 #include "symbolvariable.hh"
 #include "../../ast/nodes/body_node.hh"
 #include "../../ast/expressions/identifier.hh"
+#include "../../ast/attributes/attributepublic.hh"
 #include <memory>
 #include <vector>
 class FunctionSymbol : public SymbolTableElement
@@ -15,6 +16,9 @@ class FunctionSymbol : public SymbolTableElement
 
     // Constructor for a constructor function
     FunctionSymbol(std::shared_ptr<Attribute> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in);
+
+    // Will create an empty public function with no body or parameters 
+    FunctionSymbol();
 
     std::shared_ptr<Type> GetType() override;
     bool Check() override;
