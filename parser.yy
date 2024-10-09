@@ -225,11 +225,12 @@ statement:function_create {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
 
-variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder {
+variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder function_call_arguments {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,variable);
-    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), $5,AddLocations(variable, $5));
+    auto s = $6;
+    $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), $5,AddLocations(variable, $5), $6);
 } 
 attribute: %empty {$$ = AttributePrivateHolder;}
             | PUBLIC {$$ = AttributePublicHolder;}
@@ -335,7 +336,7 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
     $$->location = @5;
 
 }
-
+    // FIXME: Constructor definition might be unnecessary, can be implemented with an empty return type for funcion where the semantic analyzer will check if the function is a constructor
 constructor_definition: CREATE attribute CONSTRUCTOR argument_list body
 {
     // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too
@@ -349,14 +350,7 @@ constructor_definition: CREATE attribute CONSTRUCTOR argument_list body
 
 function_call: CALL expression function_call_arguments {
 
-    //FIXME: For some reason the location is not set here correctly
-    auto f = @1;
-    auto s = @2;
-
-    auto c = f + s;
-
     $$ = std::make_shared<FunctionCall>($2,$3,@1+@2);
-    test = $$.get();
     }
 
 function_call_arguments: %empty {}

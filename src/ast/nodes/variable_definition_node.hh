@@ -3,45 +3,37 @@
 #include "../expressions/expressionable.hh"
 #include "../attributes/attribute.hh"
 #include "../types/type.hh"
+#include "../../symboltable/symbols/symbolvariable.hh"
+#include "../../symboltable/symbols/symbolclass.hh"
+#include "../../symboltable/symbols/symbolfunction.hh"
 #include <memory>
+#include <vector>
 
 class VariableDefinitionNode : public Node
 {
-    // Pointer to the created variable
-    std::shared_ptr<VariableSymbol> variable;
-    std::shared_ptr<IExpressionable> expression;
+    private:
+        // Pointer to the created variable
+        std::shared_ptr<VariableSymbol> variable;
+        std::shared_ptr<IExpressionable> expression;
+
+        // If the variable is a class, this will hold the arguments to the constructor
+        std::vector<std::shared_ptr<IExpressionable>> arguments_to_constructor;
+
+        // If the variable is a class and the arguments match a constructor, this will hold the constructor
+        std::shared_ptr<FunctionSymbol> constructor;
+
+        // Will check if the variable is a class
+        bool VariableIsClass();
+
+        // Will check if the constructor exists and is valid
+        bool CheckConstructor();
 
     public:
-        VariableDefinitionNode( std::shared_ptr<VariableSymbol> var_in, std::shared_ptr<IExpressionable> exp_in, yy::location loc)
-        : Node(loc), variable(std::move(var_in)), expression(std::move(exp_in))
-        {
+        VariableDefinitionNode( std::shared_ptr<VariableSymbol> var_in, std::shared_ptr<IExpressionable> exp_in, yy::location loc, std::vector<std::shared_ptr<IExpressionable>>  args);
 
-        }
         ~VariableDefinitionNode() override = default;
-        bool Check() override
-        {
-            // If the expression is not set, it means that there is no initalizing value
-            if(expression)
-            {
-                if(!expression->Check())
-            {
-                return false;
-            };
-                auto exp_type = expression->GetType();
-                auto var_type = variable->GetType();
 
-                if (exp_type->NotCompatible(var_type))
-                {
-                    Error::ShowError(Helper::FormatString("The type of initialization value must be compatible with the variable's type! (Variable: '%s', Value: '%s')",var_type->ToString().c_str(),exp_type->ToString().c_str()),this->location);
-                    return false;
-                }
-            }
-            return true;
+        bool Check() override;
 
-        }
-
-        std::shared_ptr<VariableSymbol> GetVariable()
-        {
-            return variable;
-        }
+        std::shared_ptr<VariableSymbol> GetVariable();
 };

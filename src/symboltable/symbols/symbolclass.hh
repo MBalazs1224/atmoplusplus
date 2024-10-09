@@ -12,6 +12,10 @@
 #include "../../ast/expressions/identifier.hh"
 #include <unordered_map>
 
+
+// We have to pre-define the VariableDefinitionNode because they both include each other so it ends up in a loop
+class VariableDefinitionNode;
+
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
     private:
@@ -64,14 +68,19 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
     std::string ToString() override;
 
     bool Check() override;
+
     // Will return the function based on the given ID or null if it wasn't found
     std::shared_ptr<FunctionSymbol> GetFunction(const std::string& id);
 
     // Will return the variable based on the given ID or null if it wasn't found
     std::shared_ptr<VariableSymbol> GetVariable(const std::string&);
+    
     // Will return the element either if it's a variable or a function
     std::shared_ptr<SymbolTableElement> GetElement(const std::string&);
 
     // Will check if the given class is a parent of this class
     bool IsClassAParent(const std::shared_ptr<ClassSymbol>& parent);
+
+    // Will that could be called with the given parameters
+    const std::vector<std::shared_ptr<FunctionSymbol>> GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>>&);
 };

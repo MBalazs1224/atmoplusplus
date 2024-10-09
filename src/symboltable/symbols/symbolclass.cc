@@ -12,7 +12,7 @@ bool ClassSymbol::Compatible(const std::shared_ptr<Type> other) {
 
     // The class i compatible with the other if they are the same or if the other class is a parent of this class
 
-    return casted && this->name == casted->name || this->IsClassAParent(casted);
+    return (casted && this->name == casted->name) || this->IsClassAParent(casted);
 }
 
 std::string ClassSymbol::ToString() {
@@ -43,6 +43,44 @@ bool ClassSymbol::IsClassAParent(const std::shared_ptr<ClassSymbol>& other)
     }
 
     return false;
+    
+}
+
+const std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>>& params_in)
+{
+    std::vector<std::shared_ptr<FunctionSymbol>> matching_constructors;
+
+    for (auto &&constructor : constructors)
+    {
+        auto const_arguments = constructor->GetArguments();
+
+        // If the number of parameters doesn't match, we can skip this constructor
+
+        if (const_arguments.size() != params_in.size())
+        {
+            continue;
+        }
+        // Check if the given parameters' types match with the wanted ones
+
+        for (size_t i = 0; i < const_arguments.size(); i++)
+        {
+            auto wanted_argument_type = const_arguments[i]->GetType();
+            auto current_argument_type = params_in[i]->GetType();
+
+            // If the types don't match, we can skip this constructor
+
+            if (wanted_argument_type->NotCompatible(current_argument_type))
+            {
+                goto parameters_dont_match;
+            }
+        }
+        matching_constructors.push_back(constructor);
+        // FIXME: This might be implemented without a goto
+        parameters_dont_match:
+            continue;
+    }
+
+    return matching_constructors;
     
 }
 

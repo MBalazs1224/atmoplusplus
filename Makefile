@@ -1,5 +1,5 @@
 
-nodes := ./build/statement_list_node.o ./build/body_node.o 
+nodes := ./build/nodes/statement_list_node.o ./build/nodes/body_node.o ./build/nodes/variable_definition_node.o
 
 symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./build/symbols/symbolclass.o
 
@@ -52,17 +52,25 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 
-./build/statement_list_node.o: ./src/ast/nodes/statement_list_node.cc ./src/ast/nodes/statement_list_node.hh
-	g++ $(CXXFLAGS) -c $< -o $@
 
-
-./build/body_node.o: ./src/ast/nodes/body_node.cc ./src/ast/nodes/body_node.hh
-	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/symboltable.o: ./src/symboltable/symboltable.cc ./src/symboltable/symboltable.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/symboltableelement.o: ./src/symboltable/symboltableelement.cc ./src/symboltable/symboltableelement.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+# Nodes
+
+./build/nodes/statement_list_node.o: ./src/ast/nodes/statement_list_node.cc ./src/ast/nodes/statement_list_node.hh
+	@mkdir -p ./build/nodes
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+./build/nodes/body_node.o: ./src/ast/nodes/body_node.cc ./src/ast/nodes/body_node.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/nodes/variable_definition_node.o: ./src/ast/nodes/variable_definition_node.cc ./src/ast/nodes/variable_definition_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Symbols

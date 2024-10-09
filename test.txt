@@ -7,13 +7,17 @@ create class osztaly
 
 
 create class osztaly_2 derives from osztaly
+	create public constructor with osztaly andras
+		return 5 
 
-create osztaly_2 function letrehoz with integer a
+create osztaly_2 function letrehoz with osztaly a
 	return 0
 
 create boolean function teszt with osztaly a
 
-create osztaly_2 oszt
+create osztaly a
+
+create osztaly_2 oszt with a
 
 create osztaly o equals oszt
 
