@@ -52,7 +52,7 @@ divide divide(d)*[ ]by|(DIVIDE(D)*[ ]BY)|\/
 array_of array[ ]of|ARRAY[ ]OF
 do (do)|DO
 void (void)|VOID
-not_matches (not[ ]matches)|(NOT[ ]MATCHES)
+not_matches (not[ ]matches)|(NOT[ ]MATCHES)|!=
 protected (protected)|PROTECTED
 static (static)|STATIC
 derives_from (DERIVES[ ]FROM)|(derives[ ]from)|(DERIVED[ ]FROM)|(derived[ ]from)|(DERIVE[ ]FROM)|(derive[ ]from)
@@ -240,7 +240,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}
 <NORMAL>params|PARAMS	{  return yy::parser::token::PARAMS;}
-<NORMAL>matches|MATCHES		{ return yy::parser::token::MATCHES;}
+<NORMAL>matches|MATCHES|==		{ return yy::parser::token::MATCHES;}
 <NORMAL>until|UNTIL {return yy::parser::token::UNTIL;}
 <NORMAL>(char)s*|(CHAR)S* { return yy::parser::token::CHAR;}
 <NORMAL>class|CLASS {return yy::parser::token::CLASS;}

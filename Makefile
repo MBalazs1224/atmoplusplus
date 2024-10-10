@@ -14,17 +14,23 @@ types := ./build/types/typearray.o ./build/types/type.o
 
 helper := ./build/helper.o
 
+lexer := ./build/atmolexer.o
 
-
-objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types)
+objects := ./build/main.o  ./build/lex.yy.o ./build/symboltable.o ./build/symboltableelement.o ./build/atmo_driver.o ./build/parser.tab.o ./build/scope.o ./build/error.o ./build/ilocation.o $(lexer) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g -Wpedantic -Wextra -Wall
 #LDFLAGS = -static-libasan
 
-
 main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
+
+
+./build/atmolexer.o: AtmoLexer.cc AtmoLexer.hh parser.tab.hh lex.yy.cc
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+
 	
 ./build/main.o: main.cc AtmoLexer.hh parser.tab.hh
 	g++ $(CXXFLAGS) -c $< -o $@

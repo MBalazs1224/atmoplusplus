@@ -27,10 +27,10 @@ class AtmoLexer : public yyFlexLexer
     
 
     public:
-    AtmoLexer(std::istream* in) : yyFlexLexer(in)
-    {
-        loc = std::make_unique<yy::parser::location_type>();
-    }
+    AtmoLexer(std::istream* in);
+    // Empty constructor for tests
+    AtmoLexer();
+
     // Flex will provide the definition of this function, we just need to declare it
     int yylex(yy::parser::semantic_type* lval, yy::parser::location_type* location);
 };

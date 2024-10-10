@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Compiled and built files
+
+build/
 lex.yy.cc
 parser.tab.cc
 parser.tab.hh
