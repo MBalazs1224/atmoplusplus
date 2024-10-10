@@ -38,4 +38,5 @@ lex.yy.cc
 parser.tab.cc
 parser.tab.hh
 main
+runTests
 .*

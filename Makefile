@@ -216,4 +216,12 @@ clean:
 	rm -f parser.tab.hh
 	rm -f main
 
+.PHONY: tests
+tests: 
+	@cd src/tests && make && cd ../../
+
+.PHONY: tests_clean
+tests_clean: 
+	@cd src/tests && make clean && cd ../../
+
 # https://makefiletutorial.com00

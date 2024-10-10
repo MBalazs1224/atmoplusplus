@@ -12,7 +12,7 @@ SRCS = main.cc
 OBJS = ./build/main.o ./build/atmo_lexer.o ./build/lexer.o ./build/error.o
 
 # Executable name
-EXEC = runTests
+EXEC = ../../runTests
 
 # Default target
 all: $(EXEC)
