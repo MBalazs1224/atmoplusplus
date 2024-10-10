@@ -25,6 +25,8 @@ class Error
         static void PrintUnderline(int,int,int);
         static void PrintYellowUnderline(int,int,int);
     public:
+        // Test tool, if false, no error messages will be shown
+        static bool ShowMessages;
         static void ShowError(const std::string&,const yy::location&);
         static void ShowWarning(const std::string&,const yy::location&);
         static void Initialize();

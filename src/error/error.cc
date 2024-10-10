@@ -3,9 +3,14 @@
 int Error::error_count = 0;
 int Error::MAX_ERRORS = 3;
 std::vector<std::string> Error::source;
+
+bool Error::ShowMessages = true;
 void Error::ShowError(const std::string& message, const yy::location& loc)
 {
-
+    if(!ShowMessages)
+    {
+        return;
+    }
     
     std::cerr << Red("Error:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
         // Print line before error
@@ -32,6 +37,10 @@ PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
 
 void Error::ShowWarning(const std::string& message, const yy::location& loc)
 {
+    if(!ShowMessages)
+    {
+        return;
+    }
     std::cerr << Yellow("Warning:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
         // Print line before error
     if (loc.begin.line > 1)

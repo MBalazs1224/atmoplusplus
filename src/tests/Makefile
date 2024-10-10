@@ -27,7 +27,7 @@ $(EXEC): $(OBJS)
 
 # Compile source files into object files
 
-./build/main.o: main.cc
+./build/main.o: main.cc lexer_tests.hh
 	@mkdir -p ./build
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
