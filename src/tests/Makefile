@@ -32,13 +32,13 @@ $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
-./build/atmo_lexer.o: ../../AtmoLexer.cc
+./build/atmo_lexer.o: ../lexer/AtmoLexer.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-./build/lexer.o: ../../lex.yy.cc
+./build/lexer.o: ../lexer/lex.yy.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-./build/error.o: ../../src/error/error.cc
+./build/error.o: ../error/error.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up build files

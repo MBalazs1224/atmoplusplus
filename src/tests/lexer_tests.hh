@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../../AtmoLexer.hh"
-#include "../../parser.tab.hh"
+#include "../lexer/AtmoLexer.hh"
+#include "../parser/parser.tab.hh"
 #include <sstream>
 
 class LexerTest : public ::testing::Test {

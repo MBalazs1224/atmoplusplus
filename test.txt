@@ -1,42 +1,63 @@
-create class osztaly
+create class class_1
 	create protected boolean kesz 
-	create public boolean function test with integer a, boolean b
+	create private boolean function test_class_function
 	create public constructor
 		return 5
 	create public constructor with integer a
 
+// Example comment
 
-create class osztaly_2 derives from osztaly
+// Will create an empty class warning, the compiler will also generate an empty constructor for it
 
-create osztaly_2 function letrehoz with osztaly a
-	return 0
+create class class_2 derives from class_1
 
-create boolean function teszt with osztaly a
+// Creates a test named function which returns a boolean and has a class_1 type parameter
+create boolean function test_function with class_1 a
 
-create osztaly a
 
-create osztaly_2 oszt
+// Will generate a type mismatch error
+create integer test_int equals 3.5
 
-create osztaly o equals oszt
+// But you can put a child class into a parent class type variable
 
-create integer b
+create class_2 child_variable
 
-call teszt with oszt
+create class_1 base_var equals child_variable
 
-create array of array of string laszlo
-create integer andras
+// Will generate an unknown identifier error
 
-create array of osztaly function asd
-	return 5
+create integer wrong_variable equals wrong_identifier
 
-if true
-	create public integer a
-	until true
-		create private string b
-		create array of float c
-	create static array of char c
-	if call teszt with oszt
-		return 5
-	return 5
-else
-	return 3
+
+create class class_with_constructor
+	create public constructor with string a
+		return 0
+
+// This will create a cannot find constructor error, because there is no default constructor
+
+create class_with_constructor class_variable
+
+
+// The correct constructor call
+create class_with_constructor class_variable_2 with "example"
+
+
+// You can also put the child_type variable into parameters
+
+call test_function with child_variable
+
+// Will create a wrong type for 1st parameter error
+call test_function with 5
+
+
+ //This will generate an error, because the wanted function is private
+
+call test_class_function inside base_var
+
+// Will create a wrong type error
+if 5
+	call test_function with child_variable
+
+
+until test_int less than 5
+	if 2 greater than 3.2  // Will create a wrong type error \\

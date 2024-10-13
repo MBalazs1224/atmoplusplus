@@ -265,10 +265,11 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
     return yy::parser::token::NUMBER_FLOAT;
 }
 
-<NORMAL>{digit}+{letter}+  { std::cerr << "Invalid token: " << YYText();exit(1) ;}
+<NORMAL>{digit}+{letter}+  { Error::ShowError("Invalid token!",*loc);
+exit(1) ;}
 
 
-<NORMAL>. {std::cerr << "Invalid token: " << YYText();exit(1);}
+<NORMAL>. {Error::ShowError("Invalid token!",*loc);exit(1);}
 
 . { yyless(0);BEGIN IDENTATION;}
 \n { loc->lines(); yyless(0);BEGIN IDENTATION;}

@@ -1,7 +1,7 @@
 #include "error.hh"
 #include <math.h>
 int Error::error_count = 0;
-int Error::MAX_ERRORS = 3;
+int Error::MAX_ERRORS = 15;
 std::vector<std::string> Error::source;
 
 bool Error::ShowMessages = true;
