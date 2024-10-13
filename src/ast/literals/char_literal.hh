@@ -6,19 +6,9 @@ class CharLiteral : public Literal
     char value;
 
     public:
-        CharLiteral(char in) : value(in)
-        {
-
-        }
+        CharLiteral(char in);
         ~CharLiteral() = default;
-    std::shared_ptr<Type> GetType() override
-    {
-        return std::make_shared<TypeChar>();
-    }
+    std::shared_ptr<Type> GetType() override;
     
-    bool Check() override
-    {
-        // FIXME: Literals shouldn't be nodes
-        return true;
-    }
+    bool Check() override;
 };

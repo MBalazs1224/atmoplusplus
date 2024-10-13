@@ -12,20 +12,9 @@ class FunctionDefinitionNode : public Node
     std::shared_ptr<FunctionSymbol> function;
     
     public:
-        FunctionDefinitionNode( std::shared_ptr<FunctionSymbol> func_in)
-        :  function(std::move(func_in))
-        {
+        FunctionDefinitionNode( std::shared_ptr<FunctionSymbol> func_in);
+        ~FunctionDefinitionNode() override;
+        bool Check() override;
 
-        }
-        ~FunctionDefinitionNode() override = default;
-        bool Check() override
-        {
-            //TODO: Implement function definition node checking
-            return function->Check();
-        }
-
-    std::shared_ptr<FunctionSymbol> GetFunction()
-    {
-        return function;
-    }
+    std::shared_ptr<FunctionSymbol> GetFunction();
 };

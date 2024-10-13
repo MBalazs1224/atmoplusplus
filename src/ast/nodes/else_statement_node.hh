@@ -7,13 +7,7 @@ class ElseStatementNode : public  Node
     std::unique_ptr<BodyNode> body;
 
     public:
-        ElseStatementNode(std::unique_ptr<BodyNode> body_in, yy::location loc) : Node(loc), body(std::move(body_in))
-        {
-
-        }
-        ~ElseStatementNode() override = default;
-        bool Check() override
-        {
-            return body->Check();
-        }
+        ElseStatementNode(std::unique_ptr<BodyNode> body_in, yy::location loc);
+        ~ElseStatementNode() override;
+        bool Check() override;
 };

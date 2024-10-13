@@ -1,17 +1,11 @@
 #pragma once
 #include "type.hh"
+#include <string>
 class TypeString : public Type
 {
-bool Compatible(const std::shared_ptr<Type> other) override
-    {
-        auto casted = std::dynamic_pointer_cast<TypeString>(other);
-        return casted != nullptr;
-    }
+    bool Compatible(const std::shared_ptr<Type> other) override;
 
-    std::string ToString() override
-    {
-        return "type string";
-    }
+    std::string ToString() override;
 
     
 };

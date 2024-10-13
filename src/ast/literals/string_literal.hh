@@ -6,18 +6,8 @@ class StringLiteral : public Literal
     std::string value;
 
     public:
-        StringLiteral(std::string in) : value(in)
-        {
-
-        }
+        StringLiteral(std::string in);
         ~StringLiteral() = default;
-    std::shared_ptr<Type> GetType() override
-    {
-        return std::make_shared<TypeString>();
-    }    
-    bool Check() override
-    {
-        // FIXME: Literals shouldn't be nodes
-        return true;
-    }
+    std::shared_ptr<Type> GetType() override;  
+    bool Check() override;
 };

@@ -15,8 +15,8 @@ int yylex(yylval_type yylval); - We do declare the function but the definition i
 #include "FlexLexer.h"
 #endif
 
-#include "parser.tab.hh"
-#include "location.hh"
+#include "../parser/parser.tab.hh"
+#include "../parser/location.hh"
 #include <memory>
 
 class AtmoLexer : public yyFlexLexer

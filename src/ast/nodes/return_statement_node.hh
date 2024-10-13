@@ -6,14 +6,7 @@ class ReturnStatementNode : public  Node
 {
     std::shared_ptr<IExpressionable> expression;
     public:
-        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc) :Node(loc),  expression(std::move(exp_in)) 
-        {
-
-        }
-        ~ReturnStatementNode() override = default;
-        bool Check() override
-        {
-            //TODO: Implement return node checking
-            return true;
-        }
+        ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc);
+        ~ReturnStatementNode() override;
+        bool Check() override;
 };

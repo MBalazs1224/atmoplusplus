@@ -1,8 +1,8 @@
 #include <istream>
 #include <memory>
 #include <iostream>
-#include "AtmoLexer.hh"
-#include "parser.tab.hh"
+#include "../lexer/AtmoLexer.hh"
+#include "../parser/parser.tab.hh"
 class AtmoDriver
 {
     public:

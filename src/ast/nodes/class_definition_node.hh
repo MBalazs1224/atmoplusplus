@@ -12,19 +12,9 @@ class ClassDefinitionNode : public Node
     std::shared_ptr<ClassSymbol> class_;
     
     public:
-        ClassDefinitionNode( std::shared_ptr<ClassSymbol> func_in)
-        :  class_(std::move(func_in))
-        {
+        ClassDefinitionNode( std::shared_ptr<ClassSymbol> func_in);
+        ~ClassDefinitionNode() override;
+        bool Check() override;
 
-        }
-        ~ClassDefinitionNode() override = default;
-        bool Check() override
-        {
-            return class_->Check();
-        }
-
-        std::shared_ptr<ClassSymbol> GetClass()
-        {
-            return class_;
-        }
+        std::shared_ptr<ClassSymbol> GetClass();
 };

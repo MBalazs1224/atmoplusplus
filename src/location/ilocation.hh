@@ -1,5 +1,5 @@
 #pragma once
-#include "../../location.hh"
+#include "../parser/location.hh"
 
 //Location inteface for everything that needs it's location stored
 class ILocation

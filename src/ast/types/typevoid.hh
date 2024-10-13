@@ -1,15 +1,9 @@
 #pragma once
 #include "type.hh"
+#include <string>
 class TypeVoid : public Type
 {
-bool Compatible(const std::shared_ptr<Type> other) override
-    {
-        auto casted = std::dynamic_pointer_cast<TypeVoid>(other);
-        return casted != nullptr;
-    }
+    bool Compatible(const std::shared_ptr<Type> other) override;
 
-    std::string ToString() override
-    {
-        return "type void";
-    }
+    std::string ToString() override;
 };

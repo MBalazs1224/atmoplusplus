@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "symboltableelement.hh"
-#include "../../location.hh"
+#include "../parser/location.hh"
 #include "../error/error.hh"
 class Scope
 {

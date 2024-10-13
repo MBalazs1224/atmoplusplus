@@ -1,6 +1,6 @@
 
-#include "atmo_driver.hh"
-#include "src/symboltable/symboltable.hh"
+#include "driver/atmo_driver.hh"
+#include "symboltable/symboltable.hh"
 #include <fstream>
 // https://stackoverflow.com/questions/76509844/how-do-you-interface-c-flex-with-c-bison
 

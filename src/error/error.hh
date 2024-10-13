@@ -2,7 +2,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "../../location.hh"
+#include "../parser/location.hh"
 #include <fstream>
 #include <cstdarg>
 class Error

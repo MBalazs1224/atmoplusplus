@@ -1,16 +1,9 @@
 #pragma once
 #include "type.hh"
-
+#include <string>
 class TypeInteger : public Type
 {
-bool Compatible(const std::shared_ptr<Type> other) override
-    {
-        auto casted = std::dynamic_pointer_cast<TypeInteger>(other);
-        return casted != nullptr;
-    }
+    bool Compatible(const std::shared_ptr<Type> other) override;
 
-    std::string ToString() override
-    {
-        return "type integer";
-    }
+    std::string ToString() override;
 };

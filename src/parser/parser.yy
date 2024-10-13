@@ -16,16 +16,16 @@
 %code requires {
     #include <string>
     #include <sstream>
-    #include "src/symboltable/symboltable.hh"
-    #include "src/symboltable/all_symbols.hh"
-    #include "src/ast/nodes/all_nodes.hh"
-    #include "src/ast/expressions/all_expressions.hh"
-    #include "src/ast/types/all_types.hh"
+    #include "../symboltable/symboltable.hh"
+    #include "../symboltable/all_symbols.hh"
+    #include "../ast/nodes/all_nodes.hh"
+    #include "../ast/expressions/all_expressions.hh"
+    #include "../ast/types/all_types.hh"
     #include <memory>
     #include <vector>
-    #include "src/ast/literals/all_literals.hh"
-    #include "src/ast/attributes/all_attributes.hh"
-    #include "src/symboltable/argument.hh"
+    #include "../ast/literals/all_literals.hh"
+    #include "../ast/attributes/all_attributes.hh"
+    #include "../symboltable/argument.hh"
     class AtmoDriver;
     class AtmoLexer;
 }
@@ -44,10 +44,10 @@
 
 %code {
 
-    #include "atmo_driver.hh"
+    #include "../driver/atmo_driver.hh"
     // lexer will be the name of the argument passed into the constructor of the parser
     #define yylex lexer.yylex
-    #define YYDEBUG 1
+    //#define YYDEBUG 1
     void* test = nullptr;
 
     std::shared_ptr<AttributePrivate> AttributePrivateHolder = std::make_shared<AttributePrivate>();

@@ -1,5 +1,4 @@
 #pragma once
-#include "../location/ilocation.hh"
 #include "../ast/types/type.hh"
 #include "../ast/attributes/attribute.hh"
 #include "../ast/attributes/attributeprivate.hh"
