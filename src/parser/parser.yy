@@ -296,7 +296,9 @@ class_create: create_class_holder IDENTIFIER base_classes body
     SymbolTable::Insert($2,symbol);
     $$ = std::make_unique<ClassDefinitionNode>(std::move(symbol));
 }
-    
+
+/* Only single inheritance is allowed, but the parser will process more, so a correct error message can be shown by the semantic analyzer */ 
+
 base_classes: %empty {}
             | DERIVES_FROM IDENTIFIER 
             {

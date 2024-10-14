@@ -84,42 +84,56 @@ const std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetConstructorsW
     
 }
 
-bool ClassSymbol::CheckParents() {
+bool ClassSymbol::CheckParents()
+{
+    // Return true if there are no parents
 
-    // We need to check if the identifiers to the parents are valid and inherit the variables and functions from the parent classes
-
-    for (auto &&parent_id : parents)
+    if (parents.empty())
     {
-        // Check if the identifier to the parent class is valid
-
-        if (!parent_id->Check())
-        {
-            return false;
-        }
-
-        // Check if the parent class is actually a class
-
-        auto parent_class = std::dynamic_pointer_cast<ClassSymbol>(parent_id->GetType());
-        if (!parent_class)
-        {
-            Error::ShowError("Only classes can be used as a parent to another class!", parent_id->location);
-            return false;
-        }
-
-        // Check if the parent class itself is valid
-        if (!parent_class->Check())
-        {
-            return false;
-        }
-        
-        ;
-        // Insert the elements into the current class
-
-        auto parent_variables = parent_class->GetVariables();
-        variables.insert(parent_variables.begin(), parent_variables.end());
-        auto parent_functions = parent_class->GetFunctions();
-        functions.insert(parent_functions.begin(), parent_functions.end());
+        return true;
     }
+    
+    if(parents.size() > 1)
+    {
+        Error::ShowError("A class can only have at most one parent!",this->location);
+        return false;
+    }
+
+    // We need to check if the identifier to the parent is valid and inherit the variables and functions from the parent class
+
+    auto parent_id = parents[0];
+
+    // Check if the identifier to the parent class is valid
+
+    if (!parent_id->Check())
+    {
+        return false;
+    }
+
+    // Check if the parent is actually a class
+
+    auto parent_class = std::dynamic_pointer_cast<ClassSymbol>(parent_id->GetType());
+    
+    if (!parent_class)
+    {
+        Error::ShowError("Only classes can be used as a parent to another class!", parent_id->location);
+        return false;
+    }
+
+    // Check if the parent class itself is valid
+
+    if (!parent_class->Check())
+    {
+        return false;
+    }
+    
+    // Insert the elements into the current class
+
+    auto parent_variables = parent_class->GetVariables();
+    variables.insert(parent_variables.begin(), parent_variables.end());
+    auto parent_functions = parent_class->GetFunctions();
+    functions.insert(parent_functions.begin(), parent_functions.end());
+
     return true;
 }
 
