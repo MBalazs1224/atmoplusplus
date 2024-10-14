@@ -8,6 +8,6 @@ class FloatLiteral : public Literal
     public:
         FloatLiteral(double in);
         ~FloatLiteral() = default;
-    std::shared_ptr<Type> GetType();   
+    std::shared_ptr<Type> GetType() override;   
     bool Check() override;
 };

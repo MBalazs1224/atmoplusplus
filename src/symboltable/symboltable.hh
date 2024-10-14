@@ -13,7 +13,7 @@ class SymbolTable
         static std::shared_ptr<Scope> current;
 
 // Make the constructor private so no one can instantiate
-        SymbolTable(){};
+        SymbolTable(){}
 
     public:
         // Will insert the SymbolTableElement into the hashmap and add the current scope.

@@ -19,7 +19,7 @@ class Error
         Error()
         {
 
-        };
+        }
         static void ShowCompilerError(const std::string&);
         static void PrintSource(int);
         static void PrintUnderline(int,int,int);

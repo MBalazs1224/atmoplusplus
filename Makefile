@@ -33,7 +33,7 @@ symboltable:= ./build/symboltable/symboltable.o ./build/symboltable/symboltablee
 objects :=   $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
-CXXFLAGS = -g -Wpedantic -Wextra -Wall
+CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual
 #LDFLAGS = -static-libasan
 
 
