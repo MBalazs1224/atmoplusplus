@@ -13,8 +13,12 @@ class ConstructorDefinitionNode : public Node
     public:
     ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in, std::vector<std::shared_ptr<IExpressionable>>);
 
+    // For default empty constructors in classes, will create an empty FunctionSymbol for the function
+    ConstructorDefinitionNode();
+
+
     ~ConstructorDefinitionNode() override;
     bool Check() override;
-
+    const std::vector<std::shared_ptr<IExpressionable>>& GetArgumentsForParentConstructor();
     std::shared_ptr<FunctionSymbol> GetFunction();
 };

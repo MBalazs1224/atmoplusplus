@@ -29,7 +29,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         std::vector<std::shared_ptr<Node>> body;
 
         // The constructors of the class
-        std::vector<std::shared_ptr<FunctionSymbol>> constructors;
+        std::vector<std::shared_ptr<ConstructorDefinitionNode>> constructors;
 
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> variables;
@@ -42,6 +42,9 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
         // Will check if the body is valid and process the variables and functions
         bool ProcessBody();
+
+        // Will verify the constructors
+        bool CheckConstructors();
 
         // Will check if the identifier is already declared in the class (either as a variable or a function)
         bool IdentifierAlreadyDeclared(const std::string& id);

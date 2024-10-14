@@ -28,6 +28,7 @@ std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> ClassSymbol::Ge
 
 bool ClassSymbol::IsClassAParent(const std::shared_ptr<ClassSymbol>& other)
 {
+    // Wecan only have one class so it might be more effctive to change the loop to a normal check
     for (auto &&parent : parents)
     {
 
@@ -52,18 +53,28 @@ const std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetConstructorsW
 
     for (auto &&constructor : constructors)
     {
-        auto const_arguments = constructor->GetArguments();
+        auto constructor_function = constructor->GetFunction();
+        auto const_arguments = constructor_function->GetArguments();
 
-        // If the number of parameters doesn't match, we can skip this constructor
+        // If the number of parameters don't match, we can skip this constructor
 
         if (const_arguments.size() != params_in.size())
         {
             continue;
         }
+        
         // Check if the given parameters' types match with the wanted ones
 
         for (size_t i = 0; i < const_arguments.size(); i++)
         {
+            // The parameters can be complex expressions so we need to check them
+
+            if (!params_in[i]->Check())
+            {
+                goto parameters_dont_match;
+            }
+            
+
             auto wanted_argument_type = const_arguments[i]->GetType();
             auto current_argument_type = params_in[i]->GetType();
 
@@ -74,7 +85,7 @@ const std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetConstructorsW
                 goto parameters_dont_match;
             }
         }
-        matching_constructors.push_back(constructor);
+        matching_constructors.push_back(constructor_function);
         // FIXME: This might be implemented without a goto
         parameters_dont_match:
             continue;
@@ -214,7 +225,7 @@ bool ClassSymbol::ProcessBody()
                 return false;
             }
             // TODO: Implement constructor checking
-            constructors.push_back(constructorDefinition->GetFunction());
+            constructors.push_back(constructorDefinition);
 
 
         }
@@ -225,6 +236,54 @@ bool ClassSymbol::ProcessBody()
         }
     }
     return true;
+}
+
+bool ClassSymbol::CheckConstructors()
+{
+    // Generate empty constructor if no constructor is defined
+    if(constructors.empty())
+    {
+        auto empty_constructor = std::make_shared<ConstructorDefinitionNode>();
+        constructors.push_back(empty_constructor);
+        
+        Error::ShowWarning("No constructor defined for class, generating default one!",this->location);
+        return true;
+    }
+    // Get the parent class if there is one, otherwise set it to nullptr, indicating there is no parent
+
+    auto parent_class = !parents.empty() ? std::dynamic_pointer_cast<ClassSymbol>(parents[0]->GetType()) : nullptr;
+
+    for (auto &&constructor : constructors)
+    {
+        // The constructor was checked inside the ProcessBody function so we don't need to check here
+
+        // The children class must call the parent's constructor, so if there is a parent we need to check if the constructors are correctly chained
+
+        if(parent_class)
+        {
+            auto arguments_for_parent_constructor = constructor->GetArgumentsForParentConstructor();
+
+            auto parent_constructors = parent_class->GetConstructorsWithParametersMatching(arguments_for_parent_constructor);
+
+            // FIXME: The constructors location is not set for some reason
+
+            if (parent_constructors.empty())
+            {
+                Error::ShowError("No suitable parent constructor found for the given parameters!",constructor->location);
+                return false;
+            }
+            
+            if(parent_constructors.size() > 1)
+            {
+                Error::ShowError("Ambigous parent constructor call for the given parameters!",constructor->location);
+                return false;
+            }
+            
+        }
+    }
+
+    return true;
+    
 }
 
 bool ClassSymbol::Check()
@@ -249,14 +308,15 @@ bool ClassSymbol::Check()
         checkedResult = false;
         return false;
     }
-    // Generate empty constructor if no constructor is defined
-    if(constructors.empty())
+
+
+    if(!CheckConstructors())
     {
-        auto empty_constructor = std::make_shared<FunctionSymbol>();
-        constructors.push_back(empty_constructor);
-        
-        Error::ShowWarning("No constructor defined for class, generating default one!",this->location);
+        checkedResult = false;
+        return false;
     }
+
+
     
     
 

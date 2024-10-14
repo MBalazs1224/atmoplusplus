@@ -6,6 +6,8 @@ ConstructorDefinitionNode::ConstructorDefinitionNode(std::shared_ptr<FunctionSym
 {
 }
 
+ConstructorDefinitionNode::ConstructorDefinitionNode() : function(std::make_shared<FunctionSymbol>()), arguments_to_parent() {}
+
 // Destructor: uses default since no custom cleanup is required
 ConstructorDefinitionNode::~ConstructorDefinitionNode() = default;
 
@@ -19,4 +21,9 @@ bool ConstructorDefinitionNode::Check()
 std::shared_ptr<FunctionSymbol> ConstructorDefinitionNode::GetFunction()
 {
     return function;
+}
+
+const std::vector<std::shared_ptr<IExpressionable>>& ConstructorDefinitionNode::GetArgumentsForParentConstructor()
+{
+    return arguments_to_parent;
 }
