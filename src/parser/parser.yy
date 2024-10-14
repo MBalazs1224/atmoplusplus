@@ -141,7 +141,7 @@
 %token VOID
 %token END_OF_FILE
 %token CONSTRUCTOR
-
+%token PARENT
 
 %left MATCHES NOT_MATCHES
 %right NOT
@@ -189,6 +189,8 @@
 %nterm<std::shared_ptr<ClassDefinitionNode>> class_create
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
+
+%nterm<std::vector<std::shared_ptr<IExpressionable>>> parent_costructor_call
 
     /* TODO: Implement error recovery */
 
@@ -339,15 +341,25 @@ function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argum
 
 }
     // FIXME: Constructor definition might be unnecessary, can be implemented with an empty return type for funcion where the semantic analyzer will check if the function is a constructor
-constructor_definition: CREATE attribute CONSTRUCTOR argument_list body
+constructor_definition: CREATE attribute CONSTRUCTOR argument_list parent_costructor_call body
 {
     // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too
     SymbolTable::DecreaseScope();
 
-    auto function = std::make_shared<FunctionSymbol>(std::move($2),std::move($5),std::move($4));
-    auto constructor = std::make_shared<ConstructorDefinitionNode>(std::move(function));
+    auto function = std::make_shared<FunctionSymbol>(std::move($2),std::move($6),std::move($4));
+    auto constructor = std::make_shared<ConstructorDefinitionNode>(std::move(function), std::move($5));
     $$ = std::move(constructor);
 }
+
+parent_costructor_call: %empty
+                        {
+                            std::vector<std::shared_ptr<IExpressionable>> empty;
+                            $$ = empty;
+                        }
+                        | AND CALL PARENT function_call_arguments
+                        {
+                            $$ = $4;
+                        }
 
 
 function_call: CALL expression function_call_arguments {

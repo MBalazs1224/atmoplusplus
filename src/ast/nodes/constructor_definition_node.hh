@@ -7,8 +7,11 @@ class ConstructorDefinitionNode : public Node
     private:
         // The function symbol of the constructor
         std::shared_ptr<FunctionSymbol> function;
+
+        // The arguments to parent for correct chaining
+        std::vector<std::shared_ptr<IExpressionable>> arguments_to_parent;
     public:
-    ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in);
+    ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in, std::vector<std::shared_ptr<IExpressionable>>);
 
     ~ConstructorDefinitionNode() override;
     bool Check() override;

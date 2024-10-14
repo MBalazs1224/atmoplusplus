@@ -1,7 +1,7 @@
 create class class_1
 	create protected boolean kesz 
 	create private boolean function test_class_function
-	create public constructor
+	create public constructor with integer a and call parent with kesz, 5
 		return 5
 	create public constructor with integer a
 

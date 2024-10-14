@@ -1,8 +1,8 @@
 #include "constructor_definition_node.hh"
 
 // Constructor: initializes the function symbol
-ConstructorDefinitionNode::ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in)
-    : function(std::move(function_in))
+ConstructorDefinitionNode::ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in, std::vector<std::shared_ptr<IExpressionable>> args_in)
+    : function(std::move(function_in)), arguments_to_parent(args_in)
 {
 }
 

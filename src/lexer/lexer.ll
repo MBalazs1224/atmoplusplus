@@ -58,7 +58,7 @@ static (static)|STATIC
 derives_from (DERIVES[ ]FROM)|(derives[ ]from)|(DERIVED[ ]FROM)|(derived[ ]from)|(DERIVE[ ]FROM)|(derive[ ]from)
 else_if  (ELSE[ ]IF)|(else[ ]if)
 constructor  (constructor)|(CONSTRUCTOR)
-
+parent  (parent)|(PARENT)
 %%
     // This code will be put into the top of yylex
     // to check if there are remeaning dedents
@@ -236,6 +236,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{derives_from} {return yy::parser::token::DERIVES_FROM;}
 <NORMAL>{else_if} {return yy::parser::token::ELSE_IF;}
 <NORMAL>{constructor}	{return yy::parser::token::CONSTRUCTOR;}
+<NORMAL>{parent}	{return yy::parser::token::PARENT;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}
