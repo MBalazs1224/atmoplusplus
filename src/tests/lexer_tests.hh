@@ -1,7 +1,11 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include "../lexer/AtmoLexer.hh"
 #include "../parser/parser.tab.hh"
 #include <sstream>
+
+
+using ::testing::HasSubstr;
 
 class LexerTest : public ::testing::Test {
 protected:
@@ -9,15 +13,20 @@ protected:
     yy::parser::semantic_type yylval;
     yy::parser::location_type loc;
 
+    // The buffer that holds all the last error message written to cerr
+    std::stringstream buffer;
+
     void SetUp() override {
         loc.initialize();
-        Error::ShowMessages = false;
+        Error::InTest = true;
+        // Redirect cerr to the buffer
+        std::cerr.rdbuf(buffer.rdbuf());
     }
 
     int lex(const std::string& input) {
         std::istringstream iss(input);
         lexer.switch_streams(&iss, nullptr);
-        return lexer.yylex(&yylval, &loc);
+        return static_cast<yy::parser::token::yytokentype>(lexer.yylex(&yylval, &loc));
     }
 };
 
@@ -225,16 +234,31 @@ TEST_F(LexerTest, NegativeAbbreviatedFloatInsideStringLiteral) {
     EXPECT_EQ(yylval.as<std::string>(), "-.2");
 }
 
-TEST_F(LexerTest, TabulatorInsideStringLiteral) {
-    EXPECT_EQ(lex("\"\t\""), yy::parser::token::STRING_LITERAL);
-    EXPECT_EQ(yylval.as<std::string>(), "\t");
+// TEST_F(LexerTest, TabulatorInsideStringLiteral) {
+//     EXPECT_EQ(lex("\"\t\""), yy::parser::token::STRING_LITERAL);
+//     EXPECT_EQ(yylval.as<std::string>(), "\t");
+// }
+
+// TEST_F(LexerTest, NewLineInsideStringLiteral) {
+//     EXPECT_EQ(lex("\"\n\""), yy::parser::token::STRING_LITERAL);
+//     EXPECT_EQ(yylval.as<std::string>(), "\n");
+// }
+
+// String literal errors
+
+TEST_F(LexerTest, ShowsErrorOnUnclosedStringLiteral) {
+    lex("\"Hello World");
+
+    EXPECT_THAT(buffer.str(), HasSubstr("Unclosed string literal"));
+
 }
 
-TEST_F(LexerTest, NewLineInsideStringLiteral) {
-    EXPECT_EQ(lex("\"\n\""), yy::parser::token::STRING_LITERAL);
-    EXPECT_EQ(yylval.as<std::string>(), "\n");
+TEST_F(LexerTest, ShowsErrorOnInvalidTabulatorInsideStringLiteral) {
+    lex("\" \"");
+    EXPECT_THAT(buffer.str(), HasSubstr("Invalid tabulator inside string literal"));
 }
 
+// Char literals
 
 TEST_F(LexerTest,NormalCharLiteral)
 {
@@ -260,6 +284,14 @@ TEST_F(LexerTest,NewLineInsideCharLiteral)
     EXPECT_EQ(lex("'\n'"), yy::parser::token::CHAR_LITERAL);
     EXPECT_EQ(yylval.as<char>(), '\n');
 }
+
+TEST_F(LexerTest,TooManyCharactersInsideCharLiteral)
+{
+
+    lex("'ab'");
+    EXPECT_THAT(buffer.str(), HasSubstr("Too many characters"));
+}
+
 
 //TODO: Test string and char literal errors
 

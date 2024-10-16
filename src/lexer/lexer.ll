@@ -40,8 +40,8 @@
 %x CHAR_LITERAL_TOKEN
 letter [A-Za-z_]
 digit [0-9]
-less_than (less[ ]than)|(LESS[ ]THAN)<
-less_than_or_equal (less[ ]than[ ]or[ ]equal)|(LESS[ ]THAN[ ]OR[ ]EQUAL)<=
+less_than (less[ ]than)|(LESS[ ]THAN)|<
+less_than_or_equal (less[ ]than[ ]or[ ]equal)|(LESS[ ]THAN[ ]OR[ ]EQUAL)|<=
 greater_than greater[ ]than|(GREATER[ ]THAN)|>
 greater_than_or_equal greater[ ]than[ ]or[ ]equal|(GREATER[ ]THAN[ ]OR[ ]EQUAL)|>=
 equals equals|EQUALS|=
@@ -157,7 +157,7 @@ str_buffer.clear();
 return yy::parser::token::STRING_LITERAL;}
 <STRING_LITERAL_TOKEN><<EOF>>  {
     Error::ShowError("Unclosed string literal!",*loc);
-    exit(1);
+    yyterminate();
     }
 <STRING_LITERAL_TOKEN>\\n { loc->lines(); ;str_buffer << "\n";}
 <STRING_LITERAL_TOKEN>\\t {str_buffer << "\t";}
@@ -165,10 +165,10 @@ return yy::parser::token::STRING_LITERAL;}
 <STRING_LITERAL_TOKEN>\\\\ {str_buffer << "\\";}
 <STRING_LITERAL_TOKEN>\t { 
     Error::ShowError("Invalid tabulator inside string literal!",*loc);
-    exit(1);}
+    yyterminate();}
 <STRING_LITERAL_TOKEN>\n {  loc->lines();
 Error::ShowError("Invalid new line inside string literal!",*loc);
- exit(1);}
+ yyterminate();}
 <STRING_LITERAL_TOKEN>[^\"] {str_buffer << YYText();}
 
 
@@ -176,10 +176,10 @@ Error::ShowError("Invalid new line inside string literal!",*loc);
 <NORMAL>' {BEGIN CHAR_LITERAL_TOKEN;}
 <CHAR_LITERAL_TOKEN>\t {
     Error::ShowError("Invalid tabulator inside character literal!",*loc);
-exit(1);}
+yyterminate();}
 <CHAR_LITERAL_TOKEN>\n { loc->lines();
 Error::ShowError("Invalid new line inside character literal!",*loc);
-exit(1);}
+yyterminate();}
 <CHAR_LITERAL_TOKEN>\\t' {
     yylval->emplace<char>('\t');
     BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
@@ -189,10 +189,10 @@ yylval->emplace<char>(yytext[0]);
 BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <CHAR_LITERAL_TOKEN>.{2,} {
     Error::ShowError("Too many characters inside character literal!",*loc);
-    exit(1);}
+    yyterminate();}
 <CHAR_LITERAL_TOKEN><<EOF>> {
     Error::ShowError("Unclosed character literal!",*loc);
-    exit(1);
+    yyterminate();
     }
 
 
@@ -267,10 +267,10 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 }
 
 <NORMAL>{digit}+{letter}+  { Error::ShowError("Invalid token!",*loc);
-exit(1) ;}
+yyterminate() ;}
 
 
-<NORMAL>. {Error::ShowError("Invalid token!",*loc);exit(1);}
+<NORMAL>. {Error::ShowError("Invalid token!",*loc);yyterminate();}
 
 . { yyless(0);BEGIN IDENTATION;}
 \n { loc->lines(); yyless(0);BEGIN IDENTATION;}

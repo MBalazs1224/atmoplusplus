@@ -4,22 +4,25 @@ int Error::error_count = 0;
 int Error::MAX_ERRORS = 15;
 std::vector<std::string> Error::source;
 
-bool Error::ShowMessages = true;
+bool Error::InTest = false;
+
 void Error::ShowError(const std::string& message, const yy::location& loc)
 {
-    if(!ShowMessages)
+
+    
+    std::cerr << Red("Error:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
+    if (InTest)
     {
         return;
     }
     
-    std::cerr << Red("Error:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
         // Print line before error
     if (loc.begin.line > 1)
     {
         PrintSource(loc.begin.line - 1);
     }
     PrintSource(loc.begin.line);
-PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
+    PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
 
     // Print line after the error
     if ((size_t)loc.begin.line < source.size())
@@ -37,11 +40,12 @@ PrintUnderline(loc.begin.column, loc.end.column,loc.begin.line);
 
 void Error::ShowWarning(const std::string& message, const yy::location& loc)
 {
-    if(!ShowMessages)
+    std::cerr << Yellow("Warning:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
+
+    if(InTest)
     {
         return;
     }
-    std::cerr << Yellow("Warning:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
         // Print line before error
     if (loc.begin.line > 1)
     {
