@@ -13,14 +13,14 @@ protected:
 	yy::parser::semantic_type yylval;
 	yy::parser::location_type loc;
 
-	// The buffer that holds all the last error message written to cerr
-	std::stringstream buffer;
+	// The error_buffer that holds all the last error message written to cerr
+	std::stringstream error_buffer;
 
 	void SetUp() override {
 		loc.initialize();
 		Error::InTest = true;
-		// Redirect cerr to the buffer
-		std::cerr.rdbuf(buffer.rdbuf());
+		// Redirect cerr to the error_buffer
+		std::cerr.rdbuf(error_buffer.rdbuf());
 	}
 
 	int lex(const std::string& input) {
@@ -141,13 +141,20 @@ TEST_F(LexerTest, DataTypeVoid) {
 	EXPECT_EQ(lex("void"), yy::parser::token::VOID);
 }
 
-// TODO: We need to check incorrect identifiers
 
 TEST_F(LexerTest,NormalIdentifier)
 {
 	EXPECT_EQ(lex("myVar"), yy::parser::token::IDENTIFIER);
 	EXPECT_EQ(yylval.as<std::string>(), "myVar");
 }
+
+TEST_F(LexerTest,ShowsErrorForInvalidIdentifier)
+{
+	lex("3myVar");
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid identifier"));
+}
+
+
 
 TEST_F(LexerTest,IntegerLiteral)
 {
@@ -175,6 +182,24 @@ TEST_F(LexerTest,FloatLiteral)
 {
 	EXPECT_EQ(lex("3.2"), yy::parser::token::NUMBER_FLOAT);
 	EXPECT_EQ(yylval.as<double>(), 3.2);
+}
+
+TEST_F(LexerTest,ShowsErrorOnFloatLiteralStartingWithALetter)
+{
+	lex("a.323");
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid token"));
+}
+
+TEST_F(LexerTest,ShowsErrorOnFloatLiteralEndingWithALetter)
+{
+	lex("3.2a");
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid token"));
+}
+
+TEST_F(LexerTest,ShowsErrorOnFloatLiteralWithALetterInTheMiddle)
+{
+	lex("3.2a3");
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid token"));
 }
 
 TEST_F(LexerTest,NegativeFloatIntegerLiteral)
@@ -239,18 +264,18 @@ TEST_F(LexerTest, NegativeAbbreviatedFloatInsideStringLiteral) {
 TEST_F(LexerTest, ShowsErrorOnUnclosedStringLiteral) {
 	lex("\"Hello World");
 
-	EXPECT_THAT(buffer.str(), HasSubstr("Unclosed string literal"));
+	EXPECT_THAT(error_buffer.str(), HasSubstr("Unclosed string literal"));
 
 }
 
 TEST_F(LexerTest, ShowsErrorOnInvalidTabulatorInsideStringLiteral) {
 	lex("\"\t\"");
-	EXPECT_THAT(buffer.str(), HasSubstr("Invalid tabulator inside string literal"));
+	EXPECT_THAT(error_buffer.str(), HasSubstr("Invalid tabulator inside string literal"));
 }
 
 TEST_F(LexerTest, ShowsErrorOnInvalidNewLineInsideStringLiteral) {
 	lex("\"\n\"");
-	EXPECT_THAT(buffer.str(), HasSubstr("Invalid new line inside string literal"));
+	EXPECT_THAT(error_buffer.str(), HasSubstr("Invalid new line inside string literal"));
 }
 
 // Char literals
@@ -284,7 +309,7 @@ TEST_F(LexerTest,ShowsErrorOnTooManyCharactersInsideCharLiteral)
 {
 
 	lex("'ab'");
-	EXPECT_THAT(buffer.str(), HasSubstr("Too many characters"));
+	EXPECT_THAT(error_buffer.str(), HasSubstr("Too many characters"));
 }
 
 

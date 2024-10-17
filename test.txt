@@ -1,3 +1,5 @@
+create float f equals 3.2a23
+
 create class class_1
 	create protected boolean kesz 
 	create private boolean function test_class_function
