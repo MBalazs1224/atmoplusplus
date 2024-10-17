@@ -266,7 +266,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
     return yy::parser::token::NUMBER_FLOAT;
 }
 
-<NORMAL>{digit}+{letter}+  { Error::ShowError("Invalid token!",*loc);
+<NORMAL>{digit}+{letter}+  { Error::ShowError("Invalid identifier!",*loc);
 yyterminate() ;}
 
 
