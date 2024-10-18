@@ -1,5 +1,1 @@
-#include "char_literal.hh"
-#include "float_literal.hh"
-#include "int_literal.hh"
-#include "string_literal.hh"
-#include "bool_literal.hh"
+#include "literal.hh"
