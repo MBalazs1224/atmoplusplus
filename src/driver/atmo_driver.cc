@@ -7,17 +7,7 @@ void AtmoDriver::StartCompilation(std::istream &stream)
         return;
     }
 
-    try
-    {
-        lexer = std::make_unique<AtmoLexer>(&stream);
-        lexer->set_debug(lexer_debug_level);
-    }
-    catch(const std::bad_alloc& ba)
-    {
-        std::cerr << "Failed to allocate scanner: (" <<
-         ba.what() << ")" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+    lexer = CreateLexer(stream);
 
     try
     { 
@@ -41,6 +31,50 @@ void AtmoDriver::StartCompilation(std::istream &stream)
     }
     SemanticAnalyze();
 
+}
+
+std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(const std::istream &stream)
+{
+    try
+    {
+        std::unique_ptr<AtmoLexer> lex = std::make_unique<AtmoLexer>(stream);
+        lex->set_debug(lexer_debug_level);
+        return lex;
+    }
+    catch(const std::bad_alloc& ba)
+    {
+        std::cerr << "Failed to allocate scanner: (" <<
+         ba.what() << ")" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return  nullptr;    
+    
+}
+
+std::unique_ptr<yy::parser> AtmoDriver::CreateParser(const std::unique_ptr<AtmoLexer> &lexer)
+{
+    try
+    {
+        std::unique_ptr<yy::parser> parser = std::make_unique<yy::parser>(*lexer, *this);
+        parser->set_debug_level(parser_debug_level);
+        return parser;
+    }
+    catch(const std::bad_alloc& ba)
+    {
+        std::cerr << "Failed to allocate parser: (" <<
+         ba.what() << ")" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return  nullptr;    
+    
+}
+
+void AtmoDriver::parse_only(const std::istream& stream)
+{
+    auto lexer = CreateLexer(stream);
+    auto parser = CreateParser(std::move(lexer));
+
+    parser->parse();
 }
 
 void AtmoDriver::SemanticAnalyze()
