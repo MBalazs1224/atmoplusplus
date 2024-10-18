@@ -187,19 +187,19 @@ TEST_F(LexerTest,FloatLiteral)
 TEST_F(LexerTest,ShowsErrorOnFloatLiteralStartingWithALetter)
 {
 	lex("a.323");
-	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid token"));
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid float literal"));
 }
 
 TEST_F(LexerTest,ShowsErrorOnFloatLiteralEndingWithALetter)
 {
 	lex("3.2a");
-	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid token"));
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid float literal"));
 }
 
 TEST_F(LexerTest,ShowsErrorOnFloatLiteralWithALetterInTheMiddle)
 {
 	lex("3.2a3");
-	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid token"));
+	EXPECT_THAT(error_buffer.str(),HasSubstr("Invalid float literal"));
 }
 
 TEST_F(LexerTest,NegativeFloatIntegerLiteral)

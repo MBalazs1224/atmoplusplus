@@ -59,6 +59,10 @@ derives_from (DERIVES[ ]FROM)|(derives[ ]from)|(DERIVED[ ]FROM)|(derived[ ]from)
 else_if  (ELSE[ ]IF)|(else[ ]if)
 constructor  (constructor)|(CONSTRUCTOR)
 parent  (parent)|(PARENT)
+
+float_literal \.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*
+identifier {letter}({letter}|{digit})*
+
 %%
     // This code will be put into the top of yylex
     // to check if there are remeaning dedents
@@ -254,20 +258,37 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{array_of} {return yy::parser::token::ARRAY_OF;}
 
 
-<NORMAL>{letter}({letter}|{digit})* {
+<NORMAL>{identifier} {
     yylval->emplace<std::string>(std::string(YYText()));
     return yy::parser::token::IDENTIFIER;
 }
 
 <NORMAL>{digit}+	 { yylval->emplace<int>(atoi(YYText())); return yy::parser::token::NUMBER;}
 
-<NORMAL>\.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*	{	
+    /* Identifiers cannot begin with numbers */
+    
+<NORMAL>{digit}+{letter}+  { Error::ShowError("Invalid identifier!",*loc);
+yyterminate() ;}
+
+<NORMAL>{float_literal}	{	
     yylval->emplace<double>(atof(YYText()));			
     return yy::parser::token::NUMBER_FLOAT;
 }
 
-<NORMAL>{digit}+{letter}+  { Error::ShowError("Invalid identifier!",*loc);
-yyterminate() ;}
+    /* Floats cannot begin or be followed by letters */
+
+
+<NORMAL>{letter}*{float_literal}	{	
+    Error::ShowError("Invalid float literal!",*loc);
+    yyterminate();
+}
+
+<NORMAL>{float_literal}({letter})*	{	
+    Error::ShowError("Invalid float literal!",*loc);
+    yyterminate();
+}
+
+
 
 
 <NORMAL>. {Error::ShowError("Invalid token!",*loc);yyterminate();}
