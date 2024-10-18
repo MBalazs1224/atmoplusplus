@@ -3,7 +3,6 @@
 
 class BooleanLiteral : public Literal
 {
-    bool value;
 
     public:
         BooleanLiteral(bool in);
@@ -11,4 +10,6 @@ class BooleanLiteral : public Literal
 
     std::shared_ptr<Type> GetType() override;
     bool Check() override;
+    bool value;
+
 };

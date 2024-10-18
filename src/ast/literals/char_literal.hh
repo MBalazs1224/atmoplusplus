@@ -3,7 +3,6 @@
 
 class CharLiteral : public Literal
 {
-    char value;
 
     public:
         CharLiteral(char in);
@@ -11,4 +10,6 @@ class CharLiteral : public Literal
     std::shared_ptr<Type> GetType() override;
     
     bool Check() override;
+    char value;
+
 };

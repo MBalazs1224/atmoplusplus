@@ -43,3 +43,99 @@ TEST_F(ParserTest, IntegerLiteralExpression)
 	EXPECT_EQ(literal->value, 5);
 
 }
+
+TEST_F(ParserTest, FloatLiteralExpression)
+{
+	auto root = parse("3.2");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+
+	ASSERT_NE(statements.size(), 0);
+
+	auto literal = std::dynamic_pointer_cast<FloatLiteral>(statements[0]);
+
+	
+	//If the cast didn't return a nullptr means that the class was csted successfully
+
+	ASSERT_NE(literal, nullptr);
+
+
+	// Expect that the parser set the correct value for the literal
+
+	EXPECT_DOUBLE_EQ(literal->value, 3.2);
+
+}
+
+TEST_F(ParserTest, AbbreviatedFloatLiteralExpression)
+{
+	auto root = parse(".2");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+
+	ASSERT_NE(statements.size(), 0);
+
+	auto literal = std::dynamic_pointer_cast<FloatLiteral>(statements[0]);
+
+	
+	//If the cast didn't return a nullptr means that the class was csted successfully
+
+	ASSERT_NE(literal, nullptr);
+
+
+	// Expect that the parser set the correct value for the literal
+
+	EXPECT_DOUBLE_EQ(literal->value, .2);
+
+}
+
+TEST_F(ParserTest, CharLiteralExpression)
+{
+	auto root = parse("'a'");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+
+	ASSERT_NE(statements.size(), 0);
+
+	auto literal = std::dynamic_pointer_cast<CharLiteral>(statements[0]);
+
+	
+	//If the cast didn't return a nullptr means that the class was csted successfully
+
+	ASSERT_NE(literal, nullptr);
+
+
+	// Expect that the parser set the correct value for the literal
+
+	EXPECT_EQ(literal->value, 'a');
+
+}
+
+TEST_F(ParserTest, StringLiteralExpression)
+{
+	auto root = parse("\"Hello World\"");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+
+	ASSERT_NE(statements.size(), 0);
+
+	auto literal = std::dynamic_pointer_cast<StringLiteral>(statements[0]);
+
+	
+	//If the cast didn't return a nullptr means that the class was csted successfully
+
+	ASSERT_NE(literal, nullptr);
+
+
+	// Expect that the parser set the correct value for the literal
+
+	EXPECT_EQ(literal->value, "abc");
+
+}
