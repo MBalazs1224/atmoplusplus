@@ -12,12 +12,12 @@ class AtmoDriver
     void set_parser_debug_level(int);
     void set_lexer_debug_level(int);
     std::shared_ptr<StatementListNode> ast_root;
-    std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(const std::istream&);
-    std::unique_ptr<yy::parser> AtmoDriver::CreateParser(const std::unique_ptr<AtmoLexer>&);
+    std::unique_ptr<AtmoLexer> CreateLexer(std::istream&);
+    std::unique_ptr<yy::parser> CreateParser(const std::unique_ptr<AtmoLexer>&);
 
     
     // Will only build the AST based on the given stream (used during testing)
-    void parse_only(const std::istream&);
+    void parse_only(std::istream&);
 
     private:
     void SemanticAnalyze();

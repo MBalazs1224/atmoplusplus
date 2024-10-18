@@ -33,11 +33,11 @@ void AtmoDriver::StartCompilation(std::istream &stream)
 
 }
 
-std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(const std::istream &stream)
+std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
 {
     try
     {
-        std::unique_ptr<AtmoLexer> lex = std::make_unique<AtmoLexer>(stream);
+        std::unique_ptr<AtmoLexer> lex = std::make_unique<AtmoLexer>(&stream);
         lex->set_debug(lexer_debug_level);
         return lex;
     }
@@ -69,7 +69,7 @@ std::unique_ptr<yy::parser> AtmoDriver::CreateParser(const std::unique_ptr<AtmoL
     
 }
 
-void AtmoDriver::parse_only(const std::istream& stream)
+void AtmoDriver::parse_only(std::istream& stream)
 {
     auto lexer = CreateLexer(stream);
     auto parser = CreateParser(std::move(lexer));
