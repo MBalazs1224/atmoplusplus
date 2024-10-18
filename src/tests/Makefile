@@ -8,8 +8,10 @@ GTEST_LIBS = -lgtest -lgmock -lgtest_main -pthread
 # Source files
 SRCS = main.cc ../lexer/AtmoLexer.cc ../lexer/lex.yy.cc ../error/error.cc
 
+BUILD_DIR = ../../build
+
 # Object files
-OBJS = ./build/main.o ./build/atmo_lexer.o ./build/lexer.o ./build/error.o
+OBJS = ./main.o $(wildcard ../../build/attributes/*.o) $(wildcard ../../build/driver/*.o) $(wildcard ../../build/error/*.o) $(wildcard ../../build/expressions/*.o) $(wildcard ../../build/helper/*.o) $(wildcard ../../build/lexer/*.o) $(wildcard ../../build/literals/*.o) $(wildcard ../../build/location/*.o) $(wildcard ../../build/nodes/*.o) $(wildcard ../../build/parser/*.o) $(wildcard ../../build/scope/*.o) $(wildcard ../../build/symbols/*.o) $(wildcard ../../build/symboltable/*.o) $(wildcard ../../build/types/*.o)
 
 # Executable name
 EXEC = ../../runTests
@@ -22,17 +24,8 @@ $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
 
 # Compile source files into object files
-./build/main.o: main.cc lexer_tests.hh
+./build/main.o: main.cc lexer_tests.hh parser_tests.hh
 	@mkdir -p ./build
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-./build/atmo_lexer.o: ../lexer/AtmoLexer.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-./build/lexer.o: ../lexer/lex.yy.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-./build/error.o: ../error/error.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up build files

@@ -1,5 +1,5 @@
 #include "lexer_tests.hh"
-
+#include "parser_tests.hh"
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     testing::InitGoogleMock(&argc, argv);
