@@ -73,7 +73,8 @@ void AtmoDriver::parse_only(std::istream& stream)
 {
     auto lexer = CreateLexer(stream);
     auto parser = CreateParser(std::move(lexer));
-
+    Error::Initialize();
+    SymbolTable::Initialize();
     parser->parse();
 }
 
