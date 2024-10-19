@@ -4,7 +4,8 @@
 #include <sstream>
 #include "../driver/atmo_driver.hh"
 #include "../ast/nodes/statement_list_node.hh"
-#include "../ast/literals/int_literal.hh"
+#include "../ast/literals/literal.hh"
+#include "../ast/types/all_types.hh"
 
 class ParserTest : public ::testing::Test {
 protected:
@@ -30,7 +31,7 @@ TEST_F(ParserTest, IntegerLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -54,7 +55,7 @@ TEST_F(ParserTest, FloatLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<FloatLiteral>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<Literal<double,TypeFloat>>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -78,7 +79,7 @@ TEST_F(ParserTest, AbbreviatedFloatLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<FloatLiteral>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<Literal<double,TypeFloat>>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -102,7 +103,7 @@ TEST_F(ParserTest, CharLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<CharLiteral>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<Literal<char,TypeChar>>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -126,7 +127,7 @@ TEST_F(ParserTest, StringLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<StringLiteral>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<Literal<std::string,TypeString>>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -136,6 +137,6 @@ TEST_F(ParserTest, StringLiteralExpression)
 
 	// Expect that the parser set the correct value for the literal
 
-	EXPECT_EQ(literal->value, "abc");
+	EXPECT_EQ(literal->value, "Hello World");
 
 }
