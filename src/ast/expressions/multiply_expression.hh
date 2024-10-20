@@ -1,9 +1,7 @@
 #pragma once
-#include "expressionable.hh"
-class MultiplyExpression : public IExpressionable
+#include "two_operand_expression.hh"
+class MultiplyExpression : public TwoOperandExpression
 {
-    std::shared_ptr<IExpressionable> exp_left;
-	std::shared_ptr<IExpressionable> exp_right;
     public:
     MultiplyExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc);
 

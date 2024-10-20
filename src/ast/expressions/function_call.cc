@@ -65,7 +65,7 @@ FunctionCall::FunctionCall(std::shared_ptr<IExpressionable> func_in, std::vector
     expression = func_in;
 }
 
-std::shared_ptr<Type> FunctionCall::GetType() 
+std::shared_ptr<Type> FunctionCall::GetType()
 {
    // The semantic analyzer already checked if the function is valid so it cannot be null
    return expression->GetType();

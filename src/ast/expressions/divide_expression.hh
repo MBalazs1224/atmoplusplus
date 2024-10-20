@@ -1,9 +1,7 @@
-#include "expressionable.hh"
+#include "two_operand_expression.hh"
 #include <memory>
-class DivideExpression : public IExpressionable
+class DivideExpression : public TwoOperandExpression
 {
-	std::shared_ptr<IExpressionable> exp_left;
-	std::shared_ptr<IExpressionable> exp_right;
     public:
     DivideExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc);
 

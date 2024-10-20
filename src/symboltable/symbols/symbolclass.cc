@@ -6,7 +6,6 @@ ClassSymbol::ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, st
 std::shared_ptr<Type> ClassSymbol::GetType() {
     return shared_from_this();
 }
-
 bool ClassSymbol::Compatible(const std::shared_ptr<Type> other) {
     auto casted = std::dynamic_pointer_cast<ClassSymbol>(other);
 
