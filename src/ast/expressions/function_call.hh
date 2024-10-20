@@ -1,16 +1,14 @@
 #pragma once
-#include "expressionable.hh"
+#include "one_operand_expression.hh"
 #include "identifier.hh"
 #include "member_access_expression.hh"
 #include "../../symboltable/symbols/symbolfunction.hh"
 #include <vector>
 #include <memory>
-class FunctionCall : public IExpressionable
+class FunctionCall : public OneOperandExpression
 {
     private:
         std::vector<std::shared_ptr<IExpressionable>> arguments;
-        // The expression that will be called (should be identifier or member access)
-        std::shared_ptr<IExpressionable> expression;
 
         // The function that will be called if the expression passed in was correct (used for type checking)
         std::shared_ptr<FunctionSymbol> function;

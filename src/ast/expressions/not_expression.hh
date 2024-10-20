@@ -1,8 +1,7 @@
 #pragma once
-#include "expressionable.hh"
-class NotExpression : public IExpressionable
+#include "one_operand_expression.hh"
+class NotExpression : public OneOperandExpression
 {
-    std::shared_ptr<IExpressionable> exp;
     public:
     NotExpression(std::shared_ptr<IExpressionable> exp_in,yy::location loc);
     std::shared_ptr<Type> GetType() override;

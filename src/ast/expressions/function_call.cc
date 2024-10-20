@@ -57,12 +57,11 @@ bool FunctionCall::CheckArguments()
     return true;
 }
 
-FunctionCall::FunctionCall(std::shared_ptr<IExpressionable> func_in, std::vector<std::shared_ptr<IExpressionable>> args_in,yy::location loc) : IExpressionable(loc)
+FunctionCall::FunctionCall(std::shared_ptr<IExpressionable> func_in, std::vector<std::shared_ptr<IExpressionable>> args_in,yy::location loc) : OneOperandExpression(func_in,loc)
 {
     assert(func_in);
 
     arguments = args_in;
-    expression = func_in;
 }
 
 std::shared_ptr<Type> FunctionCall::GetType()

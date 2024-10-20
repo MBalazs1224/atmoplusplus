@@ -1,3 +1,4 @@
+#pragma once
 #include "two_operand_expression.hh"
 #include <memory>
 class DivideExpression : public TwoOperandExpression
