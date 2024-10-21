@@ -349,3 +349,243 @@ TEST_F(ParserTest, ParseLessThanOrEqualExpression) {
 	EXPECT_EQ(left->value, 3);
 	EXPECT_EQ(right->value, 5);
 }
+
+TEST_F(ParserTest, ParseVariableDeclarationWithIntegerType)
+{
+	auto root = parse("create private integer myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
+}
+
+
+
+TEST_F(ParserTest, ParseVariableDeclarationWithFloatType)
+{
+	auto root = parse("create private float myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeFloat>(symbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseVariableDeclarationWithStringType)
+{
+	auto root = parse("create private string myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(symbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseVariableDeclarationWithCharType)
+{
+	auto root = parse("create private char myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeChar>(symbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseVariableDeclarationWithClassType)
+{
+	auto root = parse("create class class_1\n\tcreate public integer a\ncreate class_1 classVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[1]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	auto class_type = std::dynamic_pointer_cast<ClassSymbol>(symbol->GetType());
+	ASSERT_NE(class_type, nullptr);
+
+	// Expect that the class type was set correctly (we can only check that by comparing the names)
+
+	EXPECT_EQ(class_type->name,"class_1");
+	EXPECT_EQ(symbol->name, "classVar");
+}
+
+
+TEST_F(ParserTest, ParseVariableDeclarationWithPrivateAttribute)
+{
+	auto root = parse("create private integer myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	auto attribute = symbol->GetAttribute();
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePrivate>(attribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseVariableDeclarationWithPublicAttribute)
+{
+	auto root = parse("create public integer myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	auto attribute = symbol->GetAttribute();
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePublic>(attribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
+}
+
+
+TEST_F(ParserTest, ParseVariableDeclarationWithProtectedAttribute)
+{
+	auto root = parse("create protected integer myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	auto attribute = symbol->GetAttribute();
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributeProtected>(attribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseVariableDeclarationWithNoAttribute)
+{
+	auto root = parse("create integer myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	auto attribute = symbol->GetAttribute();
+
+	// Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	// The default attribute should be private
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePrivate>(attribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
+}
+
+
+TEST_F(ParserTest, ParseVariableDeclarationWithInitializationValue)
+{
+	auto root = parse("create integer myVar equals 10");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	// Check that the expression was set correctly
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(varDef->expression);
+	ASSERT_NE(literal, nullptr);
+
+
+	EXPECT_EQ(literal->value,10);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
+}
+
+
+
+

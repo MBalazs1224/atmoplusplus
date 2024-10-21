@@ -14,7 +14,7 @@ class VariableDefinitionNode : public Node
     private:
         // Pointer to the created variable
         std::shared_ptr<VariableSymbol> variable;
-        std::shared_ptr<IExpressionable> expression;
+        
 
         // If the variable is a class, this will hold the arguments to the constructor
         std::vector<std::shared_ptr<IExpressionable>> arguments_to_constructor;
@@ -29,6 +29,8 @@ class VariableDefinitionNode : public Node
         bool CheckConstructor();
 
     public:
+        std::shared_ptr<IExpressionable> expression;
+
         VariableDefinitionNode( std::shared_ptr<VariableSymbol> var_in, std::shared_ptr<IExpressionable> exp_in, yy::location loc, std::vector<std::shared_ptr<IExpressionable>>  args);
 
         ~VariableDefinitionNode() override = default;
@@ -36,4 +38,5 @@ class VariableDefinitionNode : public Node
         bool Check() override;
 
         std::shared_ptr<VariableSymbol> GetVariable();
+
 };

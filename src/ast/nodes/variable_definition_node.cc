@@ -3,8 +3,9 @@
 #include "../../helper/helper.hh"
 
 VariableDefinitionNode::VariableDefinitionNode(std::shared_ptr<VariableSymbol> var_in, std::shared_ptr<IExpressionable> exp_in, yy::location loc, std::vector<std::shared_ptr<IExpressionable>> args)
-    : Node(loc), variable(std::move(var_in)), expression(std::move(exp_in)), arguments_to_constructor(std::move(args))
+    : Node(loc), variable(std::move(var_in)), arguments_to_constructor(std::move(args))
 {
+    expression = std::move(exp_in);
     // There must be a variable
     assert(variable);
 }
