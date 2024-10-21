@@ -38,41 +38,44 @@ bool VariableDefinitionNode::CheckConstructor()
 
 bool VariableDefinitionNode::Check()
 {
-    // You cannot pass arguments to a constructor and initialize it at the same time
-
-    if (expression && arguments_to_constructor.size() > 0) 
+    // If the expression is not set it means that there is no initialization value
+    if (expression)
     {
-        Error::ShowError("Cannot pass arguments to a variable and initialize it at the same time!", this->location);
-        return false;
+        // You cannot pass arguments to a constructor and initialize it at the same time
+
+        if (arguments_to_constructor.size() > 0)
+        {
+            Error::ShowError("Cannot pass arguments to a variable and initialize it at the same time!", this->location);
+            return false;
+        }
+
+        if (!expression->Check())
+        {
+            return false;
+        }
+
+        auto exp_type = expression->GetType();
+        auto var_type = variable->GetType();
+
+        if (exp_type->NotCompatible(var_type))
+        {
+            Error::ShowError(Helper::FormatString("The type of initialization value must be compatible with the variable's type! (Variable: '%s', Value: '%s')", var_type->ToString().c_str(), exp_type->ToString().c_str()), this->location);
+            return false;
+        }
+        
     }
-    
-    if (VariableIsClass())
+    // If the variable is a class and we don't have an initializing value,  we need o theck if it correctly calls the constructor
+    else if (VariableIsClass())
     {
         return CheckConstructor();
     }
+
     else
     {
         if (arguments_to_constructor.size() > 0)
         {
             Error::ShowError("Cannot pass arguments to a non-class variable!", this->location);
             return false;
-        }
-
-        // If the expression is not set, it means that there is no initializing value
-        if (expression)
-        {
-            if (!expression->Check())
-            {
-                return false;
-            }
-            auto exp_type = expression->GetType();
-            auto var_type = variable->GetType();
-
-            if (exp_type->NotCompatible(var_type))
-            {
-                Error::ShowError(Helper::FormatString("The type of initialization value must be compatible with the variable's type! (Variable: '%s', Value: '%s')", var_type->ToString().c_str(), exp_type->ToString().c_str()), this->location);
-                return false;
-            }
         }
     }
     return true;
