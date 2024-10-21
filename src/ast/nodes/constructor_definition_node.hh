@@ -11,10 +11,10 @@ class ConstructorDefinitionNode : public Node
         // The arguments to parent for correct chaining
         std::vector<std::shared_ptr<IExpressionable>> arguments_to_parent;
     public:
-    ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in, std::vector<std::shared_ptr<IExpressionable>>);
+    ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in, std::vector<std::shared_ptr<IExpressionable>>, yy::location);
 
     // For default empty constructors in classes, will create an empty FunctionSymbol for the function
-    ConstructorDefinitionNode();
+    ConstructorDefinitionNode(yy::location location);
 
 
     ~ConstructorDefinitionNode() override;

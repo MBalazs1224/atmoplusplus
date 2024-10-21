@@ -348,7 +348,7 @@ constructor_definition: CREATE attribute CONSTRUCTOR argument_list parent_costru
     SymbolTable::DecreaseScope();
 
     auto function = std::make_shared<FunctionSymbol>(std::move($2),std::move($6),std::move($4));
-    auto constructor = std::make_shared<ConstructorDefinitionNode>(std::move(function), std::move($5));
+    auto constructor = std::make_shared<ConstructorDefinitionNode>(std::move(function), std::move($5), @1 + @5);
     $$ = std::move(constructor);
     @$ = @1 + @5;
 }
