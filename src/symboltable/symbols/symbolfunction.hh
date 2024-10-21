@@ -10,8 +10,10 @@ class FunctionSymbol : public SymbolTableElement
 {
     private:
         std::vector<std::shared_ptr<VariableSymbol>> arguments;
-        std::unique_ptr<BodyNode> body;
     public: 
+
+    std::unique_ptr<BodyNode> body;
+    
     FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<Attribute> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in);
 
     // Constructor for a constructor function

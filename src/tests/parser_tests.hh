@@ -23,6 +23,8 @@ protected:
 	}
 };
 
+// Expressions
+
 TEST_F(ParserTest, ParseIntegerLiteralExpression)
 {
 	auto root = parse("5");
@@ -350,6 +352,8 @@ TEST_F(ParserTest, ParseLessThanOrEqualExpression) {
 	EXPECT_EQ(right->value, 5);
 }
 
+// Variable declarations
+
 TEST_F(ParserTest, ParseVariableDeclarationWithIntegerType)
 {
 	auto root = parse("create private integer myVar");
@@ -434,6 +438,27 @@ TEST_F(ParserTest, ParseVariableDeclarationWithCharType)
 	EXPECT_EQ(varDef->expression,nullptr);
 	EXPECT_EQ(symbol->name, "myVar");
 	EXPECT_TRUE(std::dynamic_pointer_cast<TypeChar>(symbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseVariableDeclarationWithArrayType)
+{
+	auto root = parse("create private array of integers myVar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statements[0]);
+	ASSERT_NE(varDef, nullptr);
+
+	auto symbol = varDef->GetVariable();
+	ASSERT_NE(symbol, nullptr);
+
+	//Expect that the expression wasn't set
+	EXPECT_EQ(varDef->expression,nullptr);
+	EXPECT_EQ(symbol->name, "myVar");
+	EXPECT_TRUE(std::dynamic_pointer_cast<Array>(symbol->GetType()) != nullptr);
 }
 
 TEST_F(ParserTest, ParseVariableDeclarationWithClassType)
@@ -586,6 +611,292 @@ TEST_F(ParserTest, ParseVariableDeclarationWithInitializationValue)
 	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(symbol->GetType()) != nullptr);
 }
 
+// Function declarations
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithIntegerType)
+{
+	auto root = parse("create public integer function myFunc");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(funcSymbol->GetType()) != nullptr);
+	EXPECT_EQ(funcSymbol->GetArguments().size(), 0);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithFloatType)
+{
+	auto root = parse("create public float function myFunc");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeFloat>(funcSymbol->GetType()) != nullptr);
+	EXPECT_EQ(funcSymbol->GetArguments().size(), 0);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithStringType)
+{
+	auto root = parse("create public string function myFunc");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(funcSymbol->GetType()) != nullptr);
+	EXPECT_EQ(funcSymbol->GetArguments().size(), 0);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithCharType)
+{
+	auto root = parse("create public char function myFunc");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeChar>(funcSymbol->GetType()) != nullptr);
+	EXPECT_EQ(funcSymbol->GetArguments().size(), 0);
+}
 
 
+TEST_F(ParserTest, ParseFunctionDefinitionWithVoidType)
+{
+	auto root = parse("create public void function myFunc");
 
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+	EXPECT_EQ(funcSymbol->GetArguments().size(), 0);
+}
+
+// Function definitions with arguments
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithIntegerArgument)
+{
+	auto root = parse("create public void function myFunc with integer a");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	auto arguments = funcSymbol->GetArguments();
+
+	ASSERT_EQ(arguments.size(), 1);
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(arguments[0]->GetType()) != nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithFloatArgument)
+{
+	auto root = parse("create public void function myFunc with float a");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	auto arguments = funcSymbol->GetArguments();
+
+	ASSERT_EQ(arguments.size(), 1);
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeFloat>(arguments[0]->GetType()) != nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithStringArgument)
+{
+	auto root = parse("create public void function myFunc with string a");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	auto arguments = funcSymbol->GetArguments();
+
+	ASSERT_EQ(arguments.size(), 1);
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(arguments[0]->GetType()) != nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithCharArgument)
+{
+	auto root = parse("create public void function myFunc with char a");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	auto arguments = funcSymbol->GetArguments();
+
+	ASSERT_EQ(arguments.size(), 1);
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeChar>(arguments[0]->GetType()) != nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
+
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithArrayArgument)
+{
+	auto root = parse("create public void function myFunc with array of integer a");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	auto arguments = funcSymbol->GetArguments();
+
+	ASSERT_EQ(arguments.size(), 1);
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<Array>(arguments[0]->GetType()) != nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithMultipleArguments)
+{
+	auto root = parse("create public void function myFunc with integer i, float b, char c, string s, array of integer ar");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+
+	auto arguments = funcSymbol->GetArguments();
+
+	ASSERT_EQ(arguments.size(), 5);
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(arguments[0]->GetType()) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeFloat>(arguments[1]->GetType()) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeChar>(arguments[2]->GetType()) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(arguments[3]->GetType()) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<Array>(arguments[4]->GetType()) != nullptr);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
+
+TEST_F(ParserTest, ParseFunctionDefinitionWithNonEmptyBody)
+{
+	auto root = parse("create public void function myFunc\n\tcreate integer a\n");
+
+	ASSERT_NE(root, nullptr);
+
+	auto statements = root->GetStatements();
+	ASSERT_NE(statements.size(), 0);
+
+	auto funcDef = std::dynamic_pointer_cast<FunctionDefinitionNode>(statements[0]);
+	ASSERT_NE(funcDef, nullptr);
+
+	auto funcSymbol = funcDef->GetFunction();
+	ASSERT_NE(funcSymbol, nullptr);
+	
+	auto arguments = funcSymbol->GetArguments();
+
+
+	auto body_statements = funcSymbol->body->GetStatements();
+
+	ASSERT_FALSE(body_statements.empty());
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(body_statements[0]) != nullptr);
+
+	EXPECT_EQ(arguments.size(), 0);
+
+	EXPECT_EQ(funcSymbol->name, "myFunc");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
+}
