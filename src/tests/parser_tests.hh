@@ -900,3 +900,344 @@ TEST_F(ParserTest, ParseFunctionDefinitionWithNonEmptyBody)
 	EXPECT_EQ(funcSymbol->name, "myFunc");
 	EXPECT_TRUE(std::dynamic_pointer_cast<TypeVoid>(funcSymbol->GetType()) != nullptr);
 }
+
+
+// Nested Expressions
+
+TEST_F(ParserTest, ParseNestedAdditionAndMultiplicationExpression) {
+    auto root = parse("5 + 3 * 2");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto addExpr = std::dynamic_pointer_cast<AddExpression>(statements[0]);
+    ASSERT_NE(addExpr, nullptr);
+    auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(addExpr->GetLeft());
+    auto right = std::dynamic_pointer_cast<MultiplyExpression>(addExpr->GetRight());
+    ASSERT_NE(left, nullptr);
+    ASSERT_NE(right, nullptr);
+    EXPECT_EQ(left->value, 5);
+    auto rightLeft = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetLeft());
+    auto rightRight = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetRight());
+    ASSERT_NE(rightLeft, nullptr);
+    ASSERT_NE(rightRight, nullptr);
+    EXPECT_EQ(rightLeft->value, 3);
+    EXPECT_EQ(rightRight->value, 2);
+}
+
+TEST_F(ParserTest, ParseNestedLogicalAndComparisonExpression) {
+    auto root = parse("true AND (5 > 3)");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto andExpr = std::dynamic_pointer_cast<AndExpression>(statements[0]);
+    ASSERT_NE(andExpr, nullptr);
+    auto left = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(andExpr->GetLeft());
+    auto right = std::dynamic_pointer_cast<GreaterThanExpression>(andExpr->GetRight());
+    ASSERT_NE(left, nullptr);
+    ASSERT_NE(right, nullptr);
+    EXPECT_EQ(left->value, true);
+    auto rightLeft = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetLeft());
+    auto rightRight = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetRight());
+    ASSERT_NE(rightLeft, nullptr);
+    ASSERT_NE(rightRight, nullptr);
+    EXPECT_EQ(rightLeft->value, 5);
+    EXPECT_EQ(rightRight->value, 3);
+}
+
+// Logical Expressions
+
+TEST_F(ParserTest, ParseComplexLogicalExpression) {
+    auto root = parse("true AND false OR true");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto orExpr = std::dynamic_pointer_cast<OrExpression>(statements[0]);
+    ASSERT_NE(orExpr, nullptr);
+    auto left = std::dynamic_pointer_cast<AndExpression>(orExpr->GetLeft());
+    auto right = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(orExpr->GetRight());
+    ASSERT_NE(left, nullptr);
+    ASSERT_NE(right, nullptr);
+    auto leftLeft = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(left->GetLeft());
+    auto leftRight = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(left->GetRight());
+    ASSERT_NE(leftLeft, nullptr);
+    ASSERT_NE(leftRight, nullptr);
+    EXPECT_EQ(leftLeft->value, true);
+    EXPECT_EQ(leftRight->value, false);
+    EXPECT_EQ(right->value, true);
+}
+
+// Control Flow Statements
+
+// If statement
+
+TEST_F(ParserTest, ParseIfStatementWithNonEmptyBody) {
+    auto root = parse("if true\n\tcreate integer a\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+
+	// Check the condition
+
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+	// Check the body of the if statement
+
+    auto bodyStatements = ifStmt->body->GetStatements();
+    ASSERT_FALSE(bodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(bodyStatements[0]) != nullptr);
+}
+
+TEST_F(ParserTest, ParseIfStatementWithEmptyBody) {
+    auto root = parse("if true\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+
+	// Check the condition
+
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+	// Check if the body of the if statement is empty
+
+	ASSERT_TRUE(ifStmt->body != nullptr);
+    auto bodyStatements = ifStmt->body->GetStatements();
+	EXPECT_TRUE(bodyStatements.empty());
+}
+
+TEST_F(ParserTest, ParseIfStatementWithElseStatement) {
+    auto root = parse("if true\n\tcreate integer a\nelse\n\tcreate integer b\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+
+	// Check the condition
+
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+
+	// Check the body of if statement
+
+    auto ifBodyStatements = ifStmt->body->GetStatements();
+    ASSERT_FALSE(ifBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(ifBodyStatements[0]) != nullptr);
+
+	// Check the else statement
+
+    ASSERT_NE(ifStmt->else_, nullptr);
+	ASSERT_NE(ifStmt->else_->body, nullptr);
+    auto elseBodyStatements = ifStmt->else_->body->GetStatements();
+    ASSERT_FALSE(elseBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(elseBodyStatements[0]) != nullptr);
+}
+
+TEST_F(ParserTest, ParseIfStatementWithOneElseIfStatement) {
+    auto root = parse("if true\n\tcreate integer a\nelse if false\n\tcreate integer b\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+
+	// Check the condition
+
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+
+	// Check the body of if statement
+
+	auto ifBodyStatements = ifStmt->body->GetStatements();
+    ASSERT_FALSE(ifBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(ifBodyStatements[0]) != nullptr);
+ 
+
+	// Assert we don't have an else statement
+	ASSERT_EQ(ifStmt->else_, nullptr);
+
+
+	// Assert we have exactly one else if statement and check the body and condition of it
+    ASSERT_EQ(ifStmt->else_ifs.size(), 1);
+
+	auto elseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	ASSERT_NE(elseIfCondition, nullptr);
+	EXPECT_EQ(elseIfCondition->value, false);
+
+
+	auto elseIfBodyStatements = ifStmt->else_ifs[0]->body->GetStatements();
+    ASSERT_FALSE(elseIfBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(elseIfBodyStatements[0]) != nullptr);
+
+
+}
+
+TEST_F(ParserTest, ParseIfStatementWithMultipleElseIfStatement) {
+    auto root = parse("if true\n\tcreate integer a\nelse if false\n\tcreate integer b\nelse if true\n\tcreate integer c\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+
+	// Check the body of if statement
+	auto ifBodyStatements = ifStmt->body->GetStatements();
+    ASSERT_FALSE(ifBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(ifBodyStatements[0]) != nullptr);
+ 
+
+	// Assert we don't have an else statement
+	ASSERT_EQ(ifStmt->else_, nullptr);
+
+
+	// Assert we have exactly two else if statement and check the body their bodies
+
+    ASSERT_EQ(ifStmt->else_ifs.size(), 2);
+
+
+	//Check first else if
+
+
+	auto FirstElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	ASSERT_NE(FirstElseIfCondition, nullptr);
+	EXPECT_EQ(FirstElseIfCondition->value, false);
+
+	auto FirstElseIfBodyStatements = ifStmt->else_ifs[0]->body->GetStatements();
+    ASSERT_FALSE(FirstElseIfBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(FirstElseIfBodyStatements[0]) != nullptr);
+
+	//Check second else if
+
+
+	auto SecondElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[1]->expression);
+	ASSERT_NE(SecondElseIfCondition, nullptr);
+	EXPECT_EQ(SecondElseIfCondition->value, true);
+
+	auto SecondElseIfBodyStatements = ifStmt->else_ifs[1]->body->GetStatements();
+    ASSERT_FALSE(SecondElseIfBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(SecondElseIfBodyStatements[0]) != nullptr);
+
+
+}
+
+TEST_F(ParserTest, ParseIfStatementWithElseAndOneElseIfStatement) {
+    auto root = parse("if true\n\tcreate integer a\nelse if false\n\tcreate integer b\nelse\n\tcreate integer c\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+
+	// Check the condition
+
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+
+	// Check the body of if statement
+	auto ifBodyStatements = ifStmt->body->GetStatements();
+    ASSERT_FALSE(ifBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(ifBodyStatements[0]) != nullptr);
+ 
+
+	// Assert we have an else statement
+	ASSERT_NE(ifStmt->else_, nullptr);
+
+	// Check the body of else statement
+	auto elseStmtBodyStatements = ifStmt->else_->body->GetStatements();
+	ASSERT_FALSE(elseStmtBodyStatements.empty());
+	EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(elseStmtBodyStatements[0]) != nullptr);
+
+	// Assert we have exactly one else if statement and check the body and condition of it
+
+    ASSERT_EQ(ifStmt->else_ifs.size(), 1);
+
+	auto elseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	ASSERT_NE(elseIfCondition, nullptr);
+	EXPECT_EQ(elseIfCondition->value, false);
+
+
+	auto elseIfBodyStatements = ifStmt->else_ifs[0]->body->GetStatements();
+    ASSERT_FALSE(elseIfBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(elseIfBodyStatements[0]) != nullptr);
+
+
+}
+
+
+
+TEST_F(ParserTest, ParseIfStatementWithElseAndMultipleElseIfStatement) {
+    auto root = parse("if true\n\tcreate integer a\nelse if false\n\tcreate integer b\nelse if true\n\tcreate integer c\nelse \tcreate integer d\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+    auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
+    ASSERT_NE(ifStmt, nullptr);
+
+	// Check the condition
+
+    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    ASSERT_NE(condition, nullptr);
+    EXPECT_EQ(condition->value, true);
+
+
+	// Check the body of if statement
+	auto ifBodyStatements = ifStmt->body->GetStatements();
+    ASSERT_FALSE(ifBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(ifBodyStatements[0]) != nullptr);
+ 
+
+	// Assert we have an else statement
+
+	ASSERT_NE(ifStmt->else_, nullptr);
+	auto elseStmtBodyStatements = ifStmt->else_->body->GetStatements();
+	ASSERT_FALSE(elseStmtBodyStatements.empty());
+
+	// Check the body of else statement
+
+	EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(elseStmtBodyStatements[0]) != nullptr);
+
+	// Assert we have exactly two else if statement and check their bodies and conditions
+
+    ASSERT_EQ(ifStmt->else_ifs.size(), 2);
+
+	// Check first else if
+
+	auto FirstElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	ASSERT_NE(FirstElseIfCondition, nullptr);
+	EXPECT_EQ(FirstElseIfCondition->value, false);
+
+
+	auto FirstElseIfBodyStatements = ifStmt->else_ifs[0]->body->GetStatements();
+    ASSERT_FALSE(FirstElseIfBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(FirstElseIfBodyStatements[0]) != nullptr);
+
+	// Check second else if
+
+	auto SecondElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	ASSERT_NE(SecondElseIfCondition, nullptr);
+	EXPECT_EQ(SecondElseIfCondition->value, false);
+
+
+	auto SecondElseIfBodyStatements = ifStmt->else_ifs[0]->body->GetStatements();
+    ASSERT_FALSE(SecondElseIfBodyStatements.empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<VariableDefinitionNode>(SecondElseIfBodyStatements[0]) != nullptr);
+
+}
+
