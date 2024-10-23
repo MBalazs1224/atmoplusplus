@@ -262,6 +262,10 @@ until_statement: UNTIL expression body {$$ = std::make_unique<UntilStatementNode
 if_statement: IF expression body
 else_if_statements else_statement {$$ = std::make_unique<IfStatementNode>(std::move($2),std::move($3),std::move($4),std::move($5),@1); test = $$.get(); }
 
+    /*BUG: else create integer a -> will be parsed as an else statement with empty body not with an else statement with onlly one statement in it's body
+    else always needs the indentations to work correctly and it doesn't even show an error for it
+    */
+
 else_statement: %empty {}
                 | ELSE body {$$ = std::make_unique<ElseStatementNode>(std::move($2),@1);}
 else_if_statements:

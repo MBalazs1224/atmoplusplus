@@ -8,7 +8,7 @@
 class FunctionCall : public OneOperandExpression
 {
     private:
-        std::vector<std::shared_ptr<IExpressionable>> arguments;
+        // It also has an expression that can be an identifier or a member access 
 
         // The function that will be called if the expression passed in was correct (used for type checking)
         std::shared_ptr<FunctionSymbol> function;
@@ -21,6 +21,9 @@ class FunctionCall : public OneOperandExpression
         // Will return the function element from the identifier or the member access
         std::shared_ptr<SymbolTableElement> GetElementFromExpression();
     public:
+
+        std::vector<std::shared_ptr<IExpressionable>> arguments;
+
         FunctionCall(std::shared_ptr<IExpressionable> func_in, std::vector<std::shared_ptr<IExpressionable>> args_in,yy::location loc);
 
         std::shared_ptr<Type> GetType() override;
