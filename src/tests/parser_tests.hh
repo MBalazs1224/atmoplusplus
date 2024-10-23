@@ -21,6 +21,7 @@ protected:
  		driver.parse_only(stream);
 		return driver.ast_root;
 	}
+	friend class ClassDefinitionNode;
 };
 
 // Expressions
@@ -1442,4 +1443,85 @@ TEST_F(ParserTest, ParseFunctionCallWithArguments) {
     EXPECT_EQ(arg1->value, 5);
     EXPECT_DOUBLE_EQ(arg2->value, 3.2);
     EXPECT_EQ(arg3->value, 'a');
+}
+
+// Class declaration
+
+TEST_F(ParserTest, ParseClassDeclarationWithNoAttributesOneVariableAndNoMethods) {
+    auto root = parse("create class my_class\n\tcreate private integer a\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+
+	auto class_dec = std::dynamic_pointer_cast<ClassDefinitionNode>(statements[0]);
+	ASSERT_NE(class_dec, nullptr);
+
+	auto class_symbol = class_dec->GetClass();
+	ASSERT_NE(class_symbol, nullptr);
+
+
+	EXPECT_EQ(class_symbol->name, "my_class");
+	auto body = class_symbol->body;
+	ASSERT_EQ(body.size(), 1);
+	auto varDec = std::dynamic_pointer_cast<VariableDefinitionNode>(body[0]);
+	ASSERT_NE(varDec, nullptr);
+
+	auto varSymbol = varDec->GetVariable();
+	ASSERT_NE(varSymbol, nullptr);
+
+	auto attribute = varSymbol->GetAttribute();
+	auto type = varSymbol->GetType();
+
+	EXPECT_EQ(varSymbol->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePrivate>(attribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(type) != nullptr);
+}
+
+TEST_F(ParserTest, ParseClassDeclarationWithNoAttributesMultipleVariablesAndNoMethods) {
+    auto root = parse("create class my_class\n\tcreate private integer a\n\tcreate public string s\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_NE(statements.size(), 0);
+
+	auto class_dec = std::dynamic_pointer_cast<ClassDefinitionNode>(statements[0]);
+	ASSERT_NE(class_dec, nullptr);
+
+	auto class_symbol = class_dec->GetClass();
+	ASSERT_NE(class_symbol, nullptr);
+
+
+	EXPECT_EQ(class_symbol->name, "my_class");
+	auto body = class_symbol->body;
+	ASSERT_EQ(body.size(), 2);
+
+	// Check first variable
+
+	auto FristVarDec = std::dynamic_pointer_cast<VariableDefinitionNode>(body[0]);
+	ASSERT_NE(FristVarDec, nullptr);
+
+	auto FirstVarSymbol = FristVarDec->GetVariable();
+	ASSERT_NE(FirstVarSymbol, nullptr);
+
+	auto FirstAttribute = FirstVarSymbol->GetAttribute();
+	auto FirstType = FirstVarSymbol->GetType();
+
+	EXPECT_EQ(FirstVarSymbol->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePrivate>(FirstAttribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(FirstType) != nullptr);
+
+	// Check second variable
+
+
+	auto SecondVarDec = std::dynamic_pointer_cast<VariableDefinitionNode>(body[1]);
+	ASSERT_NE(SecondVarDec, nullptr);
+
+	auto SecondVarSymbol = FristVarDec->GetVariable();
+	ASSERT_NE(SecondVarSymbol, nullptr);
+
+	auto SecondAttribute = SecondVarSymbol->GetAttribute();
+	auto SecondType = SecondVarSymbol->GetType();
+
+	EXPECT_EQ(SecondVarSymbol->name, "b");
+	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePublic>(SecondAttribute) != nullptr);
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(SecondType) != nullptr);
 }

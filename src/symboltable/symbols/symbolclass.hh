@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 
+
 // We have to pre-define the VariableDefinitionNode because they both include each other so it ends up in a loop
 class VariableDefinitionNode;
 
@@ -26,7 +27,6 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         bool checkedResult;
 
         std::vector<std::shared_ptr<Identifier>> parents;
-        std::vector<std::shared_ptr<Node>> body;
 
         // The constructors of the class
         std::vector<std::shared_ptr<ConstructorDefinitionNode>> constructors;
@@ -59,10 +59,13 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> GetVariables();
 
         // WIll return all the functions in this class
-        std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>>
-        GetFunctions();
+        std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> GetFunctions();
+
     public:
     ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in);
+        std::vector<std::shared_ptr<Node>> body;
+
+
 
     std::shared_ptr<Type> GetType() override;
 
