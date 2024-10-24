@@ -3,13 +3,13 @@
 #include "../lexer/AtmoLexer.hh"
 #include "../parser/parser.tab.hh"
 #include <sstream>
-
+#include <memory>
 
 using ::testing::HasSubstr;
 
 class LexerTest : public ::testing::Test {
 protected:
-	AtmoLexer lexer;
+	std::unique_ptr<AtmoLexer> lexer;
 	yy::parser::semantic_type yylval;
 	yy::parser::location_type loc;
 
@@ -17,16 +17,18 @@ protected:
 	std::stringstream error_buffer;
 
 	void SetUp() override {
+		lexer = std::make_unique<AtmoLexer>();
 		loc.initialize();
 		Error::InTest = true;
 		// Redirect cerr to the error_buffer
 		std::cerr.rdbuf(error_buffer.rdbuf());
 	}
+	~LexerTest() = default;
 
 	int lex(const std::string& input) {
 		std::istringstream iss(input);
-		lexer.switch_streams(&iss, nullptr);
-		return static_cast<yy::parser::token::yytokentype>(lexer.yylex(&yylval, &loc));
+		lexer->switch_streams(&iss, nullptr);
+		return static_cast<yy::parser::token::yytokentype>(lexer->yylex(&yylval, &loc));
 	}
 };
 
@@ -168,11 +170,11 @@ TEST_F(LexerTest,NegativeIntegerLiteral)
 
 	std::string input = "-5";
 	std::istringstream iss(input);
-	lexer.switch_streams(&iss, nullptr);
+	lexer->switch_streams(&iss, nullptr);
 
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::MINUS);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::MINUS);
 
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::NUMBER);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::NUMBER);
 	EXPECT_EQ(yylval.as<int>(), 5);
 }
 
@@ -208,11 +210,11 @@ TEST_F(LexerTest,NegativeFloatIntegerLiteral)
 	
 	std::string input = "-5.2";
 	std::istringstream iss(input);
-	lexer.switch_streams(&iss, nullptr);
+	lexer->switch_streams(&iss, nullptr);
 
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::MINUS);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::MINUS);
 
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::NUMBER_FLOAT);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::NUMBER_FLOAT);
 	EXPECT_EQ(yylval.as<double>(), 5.2);
 }
 
@@ -433,16 +435,16 @@ TEST_F(LexerTest,OperatorEqualsWithWOperator) {
 TEST_F(LexerTest,IndentationHandling) {
 	std::string input = "create class\n\tcreate function\n\t\treturn 5\n";
 	std::istringstream iss(input);
-	lexer.switch_streams(&iss, nullptr);
+	lexer->switch_streams(&iss, nullptr);
 
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::CREATE);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::CLASS);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::INDENT);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::CREATE);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::FUNCTION);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::INDENT);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::RETURN);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::NUMBER);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::DEDENT);
-	EXPECT_EQ(lexer.yylex(&yylval, &loc), yy::parser::token::DEDENT);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::CREATE);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::CLASS);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::INDENT);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::CREATE);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::FUNCTION);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::INDENT);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::RETURN);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::NUMBER);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::DEDENT);
+	EXPECT_EQ(lexer->yylex(&yylval, &loc), yy::parser::token::DEDENT);
 }
