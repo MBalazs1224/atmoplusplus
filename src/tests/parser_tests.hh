@@ -11,15 +11,18 @@
 
 class ParserTest : public ::testing::Test {
 protected:
-	AtmoDriver driver;
+	std::unique_ptr<AtmoDriver> driver;
 	void SetUp() override {
+		driver = std::make_unique<AtmoDriver>();
 		Error::InTest = true;
 	}
 
+	~ParserTest() = default;
+
 	std::shared_ptr<StatementListNode> parse(const std::string& input) {
 		std::istringstream stream(input);
- 		driver.parse_only(stream);
-		return driver.ast_root;
+ 		driver->parse_only(stream);
+		return driver->ast_root;
 	}
 	friend class ClassDefinitionNode;
 };
@@ -1427,16 +1430,15 @@ TEST_F(ParserTest, ParseFunctionCallWithArguments) {
     ASSERT_NE(funcName, nullptr);
     EXPECT_EQ(funcName->name, "myFunc");
 	
-	std::cout << "Arguments size: " << funcCall->arguments.size() << std::endl;
 
 	auto args = funcCall->arguments;
    
 	
-   	ASSERT_EQ(funcCall->arguments.size(), 3);
+   	ASSERT_EQ(args.size(), 3);
 
-    auto arg1 = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(funcCall->arguments[0]);
-    auto arg2 = std::dynamic_pointer_cast<Literal<double, TypeFloat>>(funcCall->arguments[1]);
-    auto arg3 = std::dynamic_pointer_cast<Literal<char, TypeChar>>(funcCall->arguments[2]);
+    auto arg1 = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(args[0]);
+    auto arg2 = std::dynamic_pointer_cast<Literal<double, TypeFloat>>(args[1]);
+    auto arg3 = std::dynamic_pointer_cast<Literal<char, TypeChar>>(args[2]);
     ASSERT_NE(arg1, nullptr);
     ASSERT_NE(arg2, nullptr);
     ASSERT_NE(arg3, nullptr);
@@ -1515,13 +1517,13 @@ TEST_F(ParserTest, ParseClassDeclarationWithNoAttributesMultipleVariablesAndNoMe
 	auto SecondVarDec = std::dynamic_pointer_cast<VariableDefinitionNode>(body[1]);
 	ASSERT_NE(SecondVarDec, nullptr);
 
-	auto SecondVarSymbol = FristVarDec->GetVariable();
+	auto SecondVarSymbol = SecondVarDec->GetVariable();
 	ASSERT_NE(SecondVarSymbol, nullptr);
 
 	auto SecondAttribute = SecondVarSymbol->GetAttribute();
 	auto SecondType = SecondVarSymbol->GetType();
 
-	EXPECT_EQ(SecondVarSymbol->name, "b");
+	EXPECT_EQ(SecondVarSymbol->name, "s");
 	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePublic>(SecondAttribute) != nullptr);
 	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(SecondType) != nullptr);
 }
