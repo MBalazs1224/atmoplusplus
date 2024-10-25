@@ -1527,3 +1527,423 @@ TEST_F(ParserTest, ParseClassDeclarationWithNoAttributesMultipleVariablesAndNoMe
 	EXPECT_TRUE(std::dynamic_pointer_cast<AttributePublic>(SecondAttribute) != nullptr);
 	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(SecondType) != nullptr);
 }
+
+TEST_F(ParserTest, ParseConstructorWithEmptyBodyNoParametersAndNoParentConstructorCall) {
+    auto root = parse("create public constructor");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	// Expect no arguments to parent
+	EXPECT_EQ(constructorNode->GetArgumentsForParentConstructor().size(),0);
+
+
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect empty body
+	EXPECT_TRUE(functionSymbol->body->isEmpty());
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyNoParametersAndNoParentConstructorCall) {
+    auto root = parse("create public constructor\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	// Expect no arguments to parent
+	EXPECT_EQ(constructorNode->GetArgumentsForParentConstructor().size(),0);
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndNoParentConstructorCall) {
+    auto root = parse("create public constructor with integer a\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	
+	// Expect no arguments for parent
+	EXPECT_EQ(constructorNode->GetArgumentsForParentConstructor().size(),0);
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect correct number of parameters
+	auto params = functionSymbol->GetArguments();
+	EXPECT_EQ(params.size(),1);
+
+	auto firstParam = params[0];
+
+	// Expect correct name and type
+	EXPECT_EQ(firstParam->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(firstParam->GetType()) != nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndParentConstructorCall) {
+    auto root = parse("create public constructor with integer a and call parent with 3425\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	
+	auto argsForParent = constructorNode->GetArgumentsForParentConstructor();
+
+	// Expect one argument to parent
+	EXPECT_EQ(argsForParent.size(),1);
+
+	auto firstArgument = argsForParent[0];
+	auto literalForParent = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(firstArgument);
+	ASSERT_NE(literalForParent, nullptr);
+
+
+	EXPECT_EQ(literalForParent->value, 3425);
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect correct number of parameters
+	auto params = functionSymbol->GetArguments();
+	EXPECT_EQ(params.size(),1);
+
+	auto firstParam = params[0];
+
+	// Expect correct name and type
+	EXPECT_EQ(firstParam->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(firstParam->GetType()) != nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndParentConstructorCallWithMultipleArguments) {
+    auto root = parse("create public constructor with integer a and call parent with 3425, 'c'\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	
+	auto argsForParent = constructorNode->GetArgumentsForParentConstructor();
+
+	// Expect two arguments to parent
+	EXPECT_EQ(argsForParent.size(),2);
+
+	auto firstArgument = argsForParent[0];
+	auto firstLiteralForParent = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(firstArgument);
+	ASSERT_NE(firstLiteralForParent, nullptr);
+
+	EXPECT_EQ(firstLiteralForParent->value, 3425);
+
+	auto secondArgument = argsForParent[1];
+	auto secondLiteralForParent = std::dynamic_pointer_cast<Literal<char,TypeChar>>(secondArgument);
+	ASSERT_NE(secondLiteralForParent, nullptr);
+
+	EXPECT_EQ(secondLiteralForParent->value,'c');
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect correct number of parameters
+	auto params = functionSymbol->GetArguments();
+	EXPECT_EQ(params.size(),1);
+
+	auto firstParam = params[0];
+
+	// Expect correct name and type
+	EXPECT_EQ(firstParam->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(firstParam->GetType()) != nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndNoParentConstructorCall) {
+    auto root = parse("create public constructor with integer a, string s\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	
+	// Expect no arguments for parent
+	EXPECT_EQ(constructorNode->GetArgumentsForParentConstructor().size(),0);
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect correct number of parameters
+	auto params = functionSymbol->GetArguments();
+	EXPECT_EQ(params.size(),2);
+
+	auto firstParam = params[0];
+
+	// Expect correct name and type
+	EXPECT_EQ(firstParam->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(firstParam->GetType()) != nullptr);
+
+	auto secondParam = params[1];
+
+	// Expect correct name and type
+	EXPECT_EQ(secondParam->name, "s");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(secondParam->GetType()) != nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentConstructorCallWithOneArgument) {
+    auto root = parse("create public constructor with integer a, string s and call parent with \"test_string\"\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	
+	auto args = constructorNode->GetArgumentsForParentConstructor();
+
+	// Expect correct number of arguments for parent
+	EXPECT_EQ(args.size(),1);
+
+	auto firstArgumentForParent = args[0];
+	ASSERT_NE(firstArgumentForParent,nullptr);
+
+	auto firstArgumentLiteral = std::dynamic_pointer_cast<Literal<std::string,TypeString>>(firstArgumentForParent);
+	ASSERT_NE(firstArgumentLiteral,nullptr);
+
+	//Expect correct value for literal
+	EXPECT_EQ(firstArgumentLiteral->value, "test_string");
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect correct number of parameters
+	auto params = functionSymbol->GetArguments();
+	EXPECT_EQ(params.size(),2);
+
+	auto firstParam = params[0];
+
+	// Expect correct name and type
+	EXPECT_EQ(firstParam->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(firstParam->GetType()) != nullptr);
+
+	auto secondParam = params[1];
+
+	// Expect correct name and type
+	EXPECT_EQ(secondParam->name, "s");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(secondParam->GetType()) != nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+}
+
+TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentConstructorCallWithMultipleArguments) {
+    auto root = parse("create public constructor with integer a, string s and call parent with \"test_string\", 3.2\n\ta = 5\n");
+    ASSERT_NE(root, nullptr);
+    auto statements = root->GetStatements();
+    ASSERT_EQ(statements.size(), 1);
+
+	auto constructorNode = std::dynamic_pointer_cast<ConstructorDefinitionNode>(statements[0]);
+	ASSERT_NE(constructorNode,nullptr);
+
+	
+	auto args = constructorNode->GetArgumentsForParentConstructor();
+
+	// Expect correct number of arguments for parent
+	EXPECT_EQ(args.size(),2);
+
+	auto firstArgumentForParent = args[0];
+	ASSERT_NE(firstArgumentForParent,nullptr);
+
+	auto firstArgumentLiteral = std::dynamic_pointer_cast<Literal<std::string,TypeString>>(firstArgumentForParent);
+	ASSERT_NE(firstArgumentLiteral,nullptr);
+
+	//Expect correct value for literal
+	EXPECT_EQ(firstArgumentLiteral->value, "test_string");
+
+	auto secondArgumentForParent = args[1];
+	ASSERT_NE(secondArgumentForParent,nullptr);
+
+	auto secondArgumentLiteral = std::dynamic_pointer_cast<Literal<double,TypeFloat>>(secondArgumentForParent);
+	ASSERT_NE(secondArgumentLiteral,nullptr);
+
+	//Expect correct value for literal
+	EXPECT_DOUBLE_EQ(secondArgumentLiteral->value, 3.2);
+
+	
+	auto functionSymbol = constructorNode->GetFunction();
+	ASSERT_NE(functionSymbol,nullptr);
+
+	// Expect correct number of parameters
+	auto params = functionSymbol->GetArguments();
+	EXPECT_EQ(params.size(),2);
+
+	auto firstParam = params[0];
+
+	// Expect correct name and type
+	EXPECT_EQ(firstParam->name, "a");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeInteger>(firstParam->GetType()) != nullptr);
+
+	auto secondParam = params[1];
+
+	// Expect correct name and type
+	EXPECT_EQ(secondParam->name, "s");
+	EXPECT_TRUE(std::dynamic_pointer_cast<TypeString>(secondParam->GetType()) != nullptr);
+
+	// Expect non-empty body
+	EXPECT_FALSE(functionSymbol->body->isEmpty());
+
+	auto stmts = functionSymbol->body->GetStatements();
+
+	auto assignmentExpression = std::dynamic_pointer_cast<AssignmentExpression>(stmts[0]);
+	ASSERT_NE(assignmentExpression,nullptr);
+
+	auto identifier = std::dynamic_pointer_cast<Identifier>( assignmentExpression->GetLeft());
+	ASSERT_NE(identifier,nullptr);
+
+	// Expect correct identifier name
+	EXPECT_EQ(identifier->name,"a");
+
+	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	ASSERT_NE(literal,nullptr);
+
+	// Expect literal value to equal to 5
+	EXPECT_EQ(literal->value, 5);
+}
