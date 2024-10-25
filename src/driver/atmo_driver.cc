@@ -82,7 +82,7 @@ void AtmoDriver::SemanticAnalyze()
 {
     for (auto statement : ast_root->GetStatementsRef())
     {
-        if(StatementNotValid(statement))
+        if(!StatementValid(statement))
         {
             Error::ShowError("Invalid statement!",statement->location);
             continue;
@@ -92,18 +92,18 @@ void AtmoDriver::SemanticAnalyze()
     
 }
 
-bool AtmoDriver::StatementNotValid(const std::shared_ptr<Node> node)
+bool AtmoDriver::StatementValid(const std::shared_ptr<Node> node)
 {
     if(auto expression = std::dynamic_pointer_cast<IExpressionable>(node))
     {
         // Only assignment expressions and function calls can be used as a statement 
 
-        return std::dynamic_pointer_cast<AssignmentExpression>(expression) != nullptr && std::dynamic_pointer_cast<FunctionCall>(expression) != nullptr;
+        return std::dynamic_pointer_cast<AssignmentExpression>(expression) != nullptr || std::dynamic_pointer_cast<FunctionCall>(expression) != nullptr;
     }
 
-    // The only node not legal as a statement is constructior definition
+    // The only node not legal as a statement is constructor definition
 
-    return std::dynamic_pointer_cast<ConstructorDefinitionNode>(node) != nullptr;
+    return std::dynamic_pointer_cast<ConstructorDefinitionNode>(node) == nullptr;
 }
 
 void AtmoDriver::set_parser_debug_level(int level)
