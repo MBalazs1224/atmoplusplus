@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 
+class ClassSymbol;
+
 class ClassDefinitionNode : public Node
 {
     // Pointer to the created class

@@ -5,6 +5,10 @@
 #include "../../symboltable/symbols/symbolfunction.hh"
 #include <vector>
 #include <memory>
+
+class FunctionSymbol;
+
+
 class FunctionCall : public OneOperandExpression
 {
     private:

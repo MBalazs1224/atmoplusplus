@@ -17,6 +17,10 @@
 // We have to pre-define the VariableDefinitionNode because they both include each other so it ends up in a loop
 class VariableDefinitionNode;
 
+class ConstructorDefinitionNode;
+
+class BodyNode;
+
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
     private:

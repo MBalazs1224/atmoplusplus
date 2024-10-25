@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+class FunctionSymbol;
+
 class VariableDefinitionNode : public Node
 {
     private:

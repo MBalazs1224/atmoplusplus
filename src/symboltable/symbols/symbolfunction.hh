@@ -6,6 +6,9 @@
 #include "../../ast/attributes/attributepublic.hh"
 #include <memory>
 #include <vector>
+
+class BodyNode;
+
 class FunctionSymbol : public SymbolTableElement
 {
     private:
