@@ -21,6 +21,8 @@ class ConstructorDefinitionNode;
 
 class BodyNode;
 
+class FunctionDefinitionNode;
+
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
     private:
