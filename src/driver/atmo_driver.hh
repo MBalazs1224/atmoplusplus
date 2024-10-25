@@ -22,6 +22,8 @@ class AtmoDriver
     private:
     void SemanticAnalyze();
     
+    // Will return tru if the given node cannot be used as a statement
+    bool StatementNotValid(const std::shared_ptr<Node>);
     int lexer_debug_level = 0;
     int parser_debug_level = 0;
     
