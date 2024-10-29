@@ -9,6 +9,7 @@
 #include "../../ast/nodes/variable_definition_node.hh"
 #include "../../ast/nodes/function_definition_node.hh"
 #include "../../ast/nodes/constructor_definition_node.hh"
+#include "../../ast/nodes/destructor_definition_node.hh"
 #include "../../ast/expressions/identifier.hh"
 #include <unordered_map>
 
@@ -37,6 +38,9 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // The constructors of the class
         std::vector<std::shared_ptr<ConstructorDefinitionNode>> constructors;
 
+        // A class can only have one destructor so a pointer is enough
+        std::shared_ptr<DestructorDefinitionNode> destructor = nullptr;
+
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> variables;
 
@@ -49,8 +53,8 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // Will check if the body is valid and process the variables and functions
         bool ProcessBody();
 
-        // Will verify the constructors
-        bool CheckConstructors();
+        // Will verify the constructors and destructor
+        bool CheckConstructorsAndDestructor();
 
         // Will check if the identifier is already declared in the class (either as a variable or a function)
         bool IdentifierAlreadyDeclared(const std::string& id);

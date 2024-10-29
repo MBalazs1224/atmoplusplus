@@ -227,17 +227,45 @@ bool ClassSymbol::ProcessBody()
             // TODO: Implement constructor checking
             constructors.push_back(constructorDefinition);
         }
+        else if(auto destructorDefinition = std::dynamic_pointer_cast<DestructorDefinitionNode>(node))
+        {
+            // We need to check if the destructor was defined correctly
+
+            if (!destructorDefinition->Check())
+            {
+                return false;
+            }
+
+            if (destructor)
+            {
+                Error::ShowError("A class can only have one destructor!", destructorDefinition->location);
+                return false;
+            }
+
+            destructor = destructorDefinition;
+
+        }
         else
         {
-            Error::ShowError("Only variable and/or function definitions can appear at the top level of a class!", node->location);
+            Error::ShowError("Invalid top-level statement inside class!", node->location);
             return false;
         }
     }
     return true;
 }
 
-bool ClassSymbol::CheckConstructors()
+bool ClassSymbol::CheckConstructorsAndDestructor()
 {
+    // Generate empty destructor if no destructor is defined
+    if(!destructor)
+    {
+         auto empty_destructor = std::make_shared<DestructorDefinitionNode>(this->location);
+        destructor = empty_destructor;
+
+        Error::ShowWarning("No destructor defined for class, generating default one!", this->location);
+    }
+
+
     // Generate empty constructor if no constructor is defined
     if (constructors.empty())
     {
@@ -304,7 +332,7 @@ bool ClassSymbol::Check()
         return false;
     }
 
-    if (!CheckConstructors())
+    if (!CheckConstructorsAndDestructor())
     {
         checkedResult = false;
         return false;

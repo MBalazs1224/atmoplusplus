@@ -149,15 +149,15 @@ main: $(objects)
 
 # Symbols
 
-./build/symbols/symbolvariable.o : ./src/symboltable/symbols/symbolvariable.cc ./src/symboltable/symbols/symbolvariable.cc
+./build/symbols/symbolvariable.o : ./src/symboltable/symbols/symbolvariable.cc ./src/symboltable/symbols/symbolvariable.hh
 #	Symbolvariable will be compiled first, so it needs to check if the symbol folder exists
 	@mkdir -p ./build/symbols
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/symbols/symbolfunction.o : ./src/symboltable/symbols/symbolfunction.cc ./src/symboltable/symbols/symbolfunction.cc
+./build/symbols/symbolfunction.o : ./src/symboltable/symbols/symbolfunction.cc ./src/symboltable/symbols/symbolfunction.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/symbols/symbolclass.o : ./src/symboltable/symbols/symbolclass.cc ./src/symboltable/symbols/symbolclass.cc
+./build/symbols/symbolclass.o : ./src/symboltable/symbols/symbolclass.cc ./src/symboltable/symbols/symbolclass.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 
