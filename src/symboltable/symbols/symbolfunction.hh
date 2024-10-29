@@ -25,6 +25,9 @@ class FunctionSymbol : public SymbolTableElement
     // Will create an empty public function with no body or parameters 
     FunctionSymbol();
 
+    // Will create an empty function with no parameters or attributes, mainly used to declare destructors
+    FunctionSymbol(std::unique_ptr<BodyNode>);
+
     std::shared_ptr<Type> GetType() override;
     bool Check() override;
 

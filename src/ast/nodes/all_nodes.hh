@@ -9,4 +9,5 @@
 #include "function_definition_node.hh"
 #include "else_if_statement_node.hh"
 #include "constructor_definition_node.hh"
+#include "destructor_definition_node.hh"
 #include "class_definition_node.hh"

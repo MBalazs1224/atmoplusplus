@@ -17,7 +17,7 @@ class SymbolTableElement : public IExpressionable
         }
         SymbolTableElement(std::shared_ptr<Type>,std::shared_ptr<Attribute>);
 
-        // Constructor for a constructor function (that does not have a return type)
+        // Constructor for a constructor/destructor function (that does not have a return type)
         SymbolTableElement(std::shared_ptr<Attribute>);
         virtual ~SymbolTableElement();
         std::shared_ptr<Attribute> GetAttribute();

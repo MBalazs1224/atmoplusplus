@@ -5,6 +5,7 @@ FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<At
 
 FunctionSymbol::FunctionSymbol(std::shared_ptr<Attribute> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : SymbolTableElement(std::move(attr_in)), arguments(std::move(args_in)), body(std::move(body_in)) {}
 
+FunctionSymbol::FunctionSymbol(std::unique_ptr<BodyNode> body_in) : SymbolTableElement(nullptr), arguments(), body(std::move(body_in)) {}
 
 std::shared_ptr<Type> FunctionSymbol::GetType() {
     if (auto id = std::dynamic_pointer_cast<Identifier>(type)) {

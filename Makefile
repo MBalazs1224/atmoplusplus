@@ -1,5 +1,5 @@
 
-nodes := ./build/nodes/statement_list_node.o ./build/nodes/body_node.o ./build/nodes/variable_definition_node.o ./build/nodes/class_definition_node.o ./build/nodes/constructor_definition_node.o ./build/nodes/do_until_statement_node.o ./build/nodes/else_if_statement_node.o  ./build/nodes/else_statement_node.o ./build/nodes/function_definition_node.o ./build/nodes/if_statement_node.o ./build/nodes/return_statement_node.o ./build/nodes/until_statement_node.o
+nodes := ./build/nodes/statement_list_node.o ./build/nodes/body_node.o ./build/nodes/variable_definition_node.o ./build/nodes/class_definition_node.o ./build/nodes/constructor_definition_node.o ./build/nodes/destructor_definition_node.o ./build/nodes/do_until_statement_node.o ./build/nodes/else_if_statement_node.o  ./build/nodes/else_statement_node.o ./build/nodes/function_definition_node.o ./build/nodes/if_statement_node.o ./build/nodes/return_statement_node.o ./build/nodes/until_statement_node.o
 
 symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./build/symbols/symbolclass.o
 
@@ -121,6 +121,9 @@ main: $(objects)
 
 
 ./build/nodes/constructor_definition_node.o: ./src/ast/nodes/constructor_definition_node.cc ./src/ast/nodes/constructor_definition_node.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/nodes/destructor_definition_node.o: ./src/ast/nodes/destructor_definition_node.cc ./src/ast/nodes/destructor_definition_node.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/nodes/do_until_statement_node.o: ./src/ast/nodes/do_until_statement_node.cc ./src/ast/nodes/do_until_statement_node.hh

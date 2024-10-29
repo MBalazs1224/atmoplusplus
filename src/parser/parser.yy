@@ -142,6 +142,7 @@
 %token END_OF_FILE
 %token CONSTRUCTOR
 %token PARENT
+%token DESTRUCTOR
 
 %left MATCHES NOT_MATCHES
 %right NOT
@@ -186,6 +187,8 @@
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_list
 %nterm<std::shared_ptr<ConstructorDefinitionNode>> constructor_definition
+%nterm<std::shared_ptr<DestructorDefinitionNode>> destructor_definition
+
 %nterm<std::shared_ptr<ClassDefinitionNode>> class_create
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
@@ -224,6 +227,7 @@ statement:function_create {$$ = std::move($1);}
         | return_statement {$$ = std::move($1);}
         | expression {$$ = std::move($1);}
         | constructor_definition {$$ = std::move($1);}
+        | destructor_definition {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
 
@@ -356,6 +360,17 @@ constructor_definition: CREATE attribute CONSTRUCTOR argument_list parent_costru
     $$ = std::move(constructor);
     @$ = @1 + @5;
 }
+
+destructor_definition: CREATE DESTRUCTOR body
+                        {
+                            // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too
+                            SymbolTable::DecreaseScope();
+
+                            auto destFunction = std::make_shared<FunctionSymbol>(std::move($3));
+
+                            $$ = std::make_shared<DestructorDefinitionNode>(std::move(destFunction),@1 + @2);
+                        }
+
 
 parent_costructor_call: %empty
                         {

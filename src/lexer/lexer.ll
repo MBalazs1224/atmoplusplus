@@ -58,6 +58,7 @@ static (static)|STATIC
 derives_from (DERIVES[ ]FROM)|(derives[ ]from)|(DERIVED[ ]FROM)|(derived[ ]from)|(DERIVE[ ]FROM)|(derive[ ]from)
 else_if  (ELSE[ ]IF)|(else[ ]if)
 constructor  (constructor)|(CONSTRUCTOR)
+destructor  (destructor)|(DESTRUCTOR)
 parent  (parent)|(PARENT)
 
 float_literal \.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*
@@ -240,6 +241,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{derives_from} {return yy::parser::token::DERIVES_FROM;}
 <NORMAL>{else_if} {return yy::parser::token::ELSE_IF;}
 <NORMAL>{constructor}	{return yy::parser::token::CONSTRUCTOR;}
+<NORMAL>{destructor}	{return yy::parser::token::DESTRUCTOR;}
 <NORMAL>{parent}	{return yy::parser::token::PARENT;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
