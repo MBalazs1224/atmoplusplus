@@ -20,5 +20,5 @@ DivideExpression::DivideExpression(std::shared_ptr<IExpressionable> left_in, std
 }
 std::shared_ptr<Type> DivideExpression::GetType()
 {
-    return std::make_shared<TypeFloat>();
+    return Helper::FloatType;
 }

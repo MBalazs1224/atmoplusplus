@@ -22,7 +22,7 @@ bool DoUntilStatementNode::Check()
     auto exp_type = expression->GetType();
 
     // Ensure the expression is of boolean type
-    if (exp_type->NotCompatible(std::make_shared<TypeBoolean>()))
+    if (exp_type->NotCompatible(Helper::BooleanType))
     {
         Error::ShowError(Helper::FormatString("The expression of a do-until statement must be of type boolean! (received '%s')", exp_type->ToString().c_str()), expression->location);
         return false;

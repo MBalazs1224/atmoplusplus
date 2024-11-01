@@ -5,7 +5,7 @@ MatchesExpression::MatchesExpression(std::shared_ptr<IExpressionable> left_in, s
 
 std::shared_ptr<Type> MatchesExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 bool MatchesExpression::Check() {

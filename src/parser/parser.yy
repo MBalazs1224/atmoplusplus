@@ -427,7 +427,7 @@ more_arguments: COMMA expression
                         
 
 function_return_type: datatype {$$ = std::move($1);}
-                    | VOID {$$ = std::make_shared<TypeVoid>();;}
+                    | VOID {$$ = Helper::VoidType;;}
 
 argument_list: %empty {
     // The function non terminal will decrease the scope no matter what, so we need to increase it here too
@@ -460,11 +460,11 @@ argument_list: %empty {
 
 argument: datatype IDENTIFIER {$$ = std::make_shared<Argument>($2,std::move($1));}
 
-datatype: INT { $$ = std::make_shared<TypeInteger>();}
-          | BOOLEAN  { $$ = std::make_shared<TypeBoolean>();}
-          | STRING  { $$ = std::make_shared<TypeString>();}
-          | FLOAT  { $$ = std::make_shared<TypeFloat>();}
-          | CHAR  { $$ = std::make_shared<TypeChar>();}
+datatype: INT { $$ = Helper::IntegerType;}
+          | BOOLEAN  { $$ = Helper::BooleanType;}
+          | STRING  { $$ = Helper::StringType;}
+          | FLOAT  { $$ = Helper::FloatType;}
+          | CHAR  { $$ = Helper::CharType;}
           | IDENTIFIER
           {
             auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);

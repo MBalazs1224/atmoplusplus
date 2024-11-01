@@ -17,7 +17,7 @@ bool GreaterThanOrEqualExpression::Check()
 
 std::shared_ptr<Type> GreaterThanOrEqualExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 GreaterThanOrEqualExpression::GreaterThanOrEqualExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc) : TwoOperandExpression(left_in,right_in,loc)

@@ -5,7 +5,7 @@ LessThanExpression::LessThanExpression(std::shared_ptr<IExpressionable> left_in,
 
 std::shared_ptr<Type> LessThanExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 bool LessThanExpression::Check() {

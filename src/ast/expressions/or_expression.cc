@@ -5,7 +5,7 @@ OrExpression::OrExpression(std::shared_ptr<IExpressionable> left_in, std::shared
 
 std::shared_ptr<Type> OrExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 bool OrExpression::Check() {
@@ -14,7 +14,7 @@ bool OrExpression::Check() {
         return false;
     }
 
-    auto boolean = std::make_shared<TypeBoolean>();
+    auto boolean = Helper::BooleanType;
     auto left_type = left->GetType();
     auto right_type = right->GetType();
 

@@ -5,7 +5,7 @@ NotMatchesExpression::NotMatchesExpression(std::shared_ptr<IExpressionable> left
 
 std::shared_ptr<Type> NotMatchesExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 bool NotMatchesExpression::Check() 

@@ -5,7 +5,7 @@ NotExpression::NotExpression(std::shared_ptr<IExpressionable> exp_in, yy::locati
 
 std::shared_ptr<Type> NotExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 bool NotExpression::Check()
@@ -17,7 +17,7 @@ bool NotExpression::Check()
 
     auto exp_type = expression->GetType();
 
-    if (exp_type->NotCompatible(std::make_shared<TypeBoolean>())) 
+    if (exp_type->NotCompatible(Helper::BooleanType)) 
     {
         Error::ShowError(Helper::FormatString(
             "The expression of not expression must be of type boolean! (received '%s')",

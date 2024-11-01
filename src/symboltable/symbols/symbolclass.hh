@@ -20,6 +20,8 @@ class VariableDefinitionNode;
 
 class ConstructorDefinitionNode;
 
+class DestructorDefinitionNode;
+
 class BodyNode;
 
 class FunctionDefinitionNode;

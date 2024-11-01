@@ -5,7 +5,7 @@ LessThanOrEqualExpression::LessThanOrEqualExpression(std::shared_ptr<IExpression
 
 std::shared_ptr<Type> LessThanOrEqualExpression::GetType()
 {
-    return std::make_shared<TypeBoolean>();
+    return Helper::BooleanType;
 }
 
 bool LessThanOrEqualExpression::Check() {
