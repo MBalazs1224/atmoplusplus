@@ -15,7 +15,6 @@ std::shared_ptr<Type> FunctionSymbol::GetType() {
 }
 
 bool FunctionSymbol::Check() {
-    // TODO: Implement symbol function checking
     return body->Check();
 }
 

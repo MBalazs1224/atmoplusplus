@@ -11,7 +11,5 @@ std::shared_ptr<Type> VariableSymbol::GetType() {
 }
 
 bool VariableSymbol::Check() {
-    // FIXME: Symbols should'nt be node, i leave it here for now, later i need to redo the class hierarchy
-    // TODO: Implement symbol variable checking
     return true;
 }

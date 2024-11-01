@@ -41,6 +41,9 @@ bool MemberAccessExpression::Check()
             }
             
             id->SetElement(element);
+
+            // Save the identifier for later use
+            this->identifier = id;
         }
         else
         {
@@ -54,14 +57,6 @@ bool MemberAccessExpression::Check()
 
 std::shared_ptr<SymbolTableElement> MemberAccessExpression::GetElement()
 {
-    // This might need a rework if the casted thing doesn't keep it's original type (function or variable etc.)
-
-
-    // TODO: This may needs a rework so we don't have to cast it to identifier (maybe store it in a private variable)
-
-    // The left side of the member access is always an identifier, the Check function made sure it's valid
-    auto identifier = std::dynamic_pointer_cast<Identifier>(left);
-
     return std::dynamic_pointer_cast<SymbolTableElement>(identifier->GetElement());
 }
 

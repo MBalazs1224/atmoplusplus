@@ -6,7 +6,7 @@ bool AndExpression::Check()
     if(!left->Check() || !right->Check())
     {
         return false;
-    }   // FIXME: Fix boolean dynamic memory alloc
+    }
     auto boolean = Helper::BooleanType;
     auto left_type = left->GetType();
     auto right_type = right->GetType();
