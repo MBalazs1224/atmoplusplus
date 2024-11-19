@@ -2,15 +2,21 @@
 #include "type.hh"
 #include <memory>
 #include "../../helper/helper.hh"
+
+class IExpressionable;
+
+// FIXME create array of b inside c itnegers a will segfault (probably the ast is wrong)
+
 class Array : public Type
 {
-    private:
+
+    public:
         // The innter type of the array -> int[], it would be int
         std::shared_ptr<Type> inner_type;
 
-    public:
+        std::shared_ptr<IExpressionable> number_of_elements;
 
-        Array(std::shared_ptr<Type>);
+        Array(std::shared_ptr<Type>, std::shared_ptr<IExpressionable>);
 
         std::string ToString() override;
 

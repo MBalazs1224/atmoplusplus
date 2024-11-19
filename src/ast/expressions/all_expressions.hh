@@ -16,3 +16,4 @@
 #include "assignment_expression.hh"
 #include "member_access_expression.hh"
 #include "identifier.hh"
+#include "array_subscript.hh"

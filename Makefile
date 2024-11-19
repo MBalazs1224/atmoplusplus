@@ -3,7 +3,7 @@ nodes := ./build/nodes/statement_list_node.o ./build/nodes/body_node.o ./build/n
 
 symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./build/symbols/symbolclass.o
 
-expressions := ./build/expressions/add_expression.o ./build/expressions/and_expression.o ./build/expressions/assignment_expression.o ./build/expressions/divide_expression.o ./build/expressions/expressionable.o ./build/expressions/function_call.o ./build/expressions/greater_than_expression.o ./build/expressions/greater_than_or_equal_expression.o ./build/expressions/identifier.o  ./build/expressions/less_than_expression.o ./build/expressions/less_than_or_equal_expression.o ./build/expressions/matches_expression.o ./build/expressions/member_access_expression.o ./build/expressions/multiply_expression.o ./build/expressions/not_expression.o ./build/expressions/not_matches_expression.o ./build/expressions/or_expression.o ./build/expressions/subtract_expression.o ./build/expressions/two_operand_expression.o ./build/expressions/one_operand_expression.o
+expressions := ./build/expressions/add_expression.o ./build/expressions/and_expression.o ./build/expressions/assignment_expression.o ./build/expressions/divide_expression.o ./build/expressions/expressionable.o ./build/expressions/function_call.o ./build/expressions/greater_than_expression.o ./build/expressions/greater_than_or_equal_expression.o ./build/expressions/identifier.o  ./build/expressions/less_than_expression.o ./build/expressions/less_than_or_equal_expression.o ./build/expressions/matches_expression.o ./build/expressions/member_access_expression.o ./build/expressions/multiply_expression.o ./build/expressions/not_expression.o ./build/expressions/not_matches_expression.o ./build/expressions/or_expression.o ./build/expressions/subtract_expression.o ./build/expressions/two_operand_expression.o ./build/expressions/one_operand_expression.o ./build/expressions/array_subscript_expression.o
 
 attributes := ./build/attributes/attribute.o ./build/attributes/attribute_private.o ./build/attributes/attribute_protected.o ./build/attributes/attribute_public.o ./build/attributes/attribute_static.o
 
@@ -228,6 +228,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/expressions/one_operand_expression.o: ./src/ast/expressions/one_operand_expression.cc ./src/ast/expressions/one_operand_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/expressions/array_subscript_expression.o: ./src/ast/expressions/array_subscript.cc ./src/ast/expressions/array_subscript.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Attributes

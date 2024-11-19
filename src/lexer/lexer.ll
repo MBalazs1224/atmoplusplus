@@ -60,6 +60,7 @@ else_if  (ELSE[ ]IF)|(else[ ]if)
 constructor  (constructor)|(CONSTRUCTOR)
 destructor  (destructor)|(DESTRUCTOR)
 parent  (parent)|(PARENT)
+at  (at)|(AT)
 
 float_literal \.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*
 identifier {letter}({letter}|{digit})*
@@ -243,6 +244,7 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{constructor}	{return yy::parser::token::CONSTRUCTOR;}
 <NORMAL>{destructor}	{return yy::parser::token::DESTRUCTOR;}
 <NORMAL>{parent}	{return yy::parser::token::PARENT;}
+<NORMAL>{at}	{return yy::parser::token::AT;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}

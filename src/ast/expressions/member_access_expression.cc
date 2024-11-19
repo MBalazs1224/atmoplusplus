@@ -7,7 +7,7 @@
 
 bool MemberAccessExpression::Check()
 {
-        // Member access can be chained so the right side of the expression can be a member access, so wee need to checked that first, it can also be an identifier (to a variable etc.)
+        // Member access can be chained so the right side of the expression can be a member access, so wee need to checked that first
 
 
         if(!right->Check())

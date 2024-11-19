@@ -143,11 +143,13 @@
 %token CONSTRUCTOR
 %token PARENT
 %token DESTRUCTOR
+%token AT
 
 %left MATCHES NOT_MATCHES
 %right NOT
 %right EQUALS
 %left WITH
+%left AT
 %right CALL
 %right INSIDE
 %left OPEN_BRACKET CLOSE_BRACKET
@@ -470,9 +472,9 @@ datatype: INT { $$ = Helper::IntegerType;}
             auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);
             $$ = std::move(id);
           }
-          | ARRAY_OF datatype
+          | ARRAY_OF expression datatype
           {
-            auto array = std::make_shared<Array>($2);
+            auto array = std::make_shared<Array>($3,$2);
             $$ = std::move(array);
         }
 
@@ -507,6 +509,8 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
                 }
 		| expression INSIDE expression{
 			$$ = std::make_unique<MemberAccessExpression>($1,$3, AddLocations($1,$3));}
+        | expression AT expression{
+			$$ = std::make_unique<ArraySubscriptExpression>($1,$3, AddLocations($1,$3));}
 
 %%
 

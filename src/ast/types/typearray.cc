@@ -2,9 +2,8 @@
 
 
 
-Array::Array(std::shared_ptr<Type> type_in)
+Array::Array(std::shared_ptr<Type> type_in, std::shared_ptr<IExpressionable> number_of_elements_in) : inner_type(type_in), number_of_elements(number_of_elements_in)
 {
-    inner_type = std::move(type_in);
 }
 
 std::string Array::ToString()

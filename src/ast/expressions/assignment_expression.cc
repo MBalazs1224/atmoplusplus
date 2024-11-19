@@ -1,5 +1,6 @@
 #include "assignment_expression.hh"
 #include "identifier.hh"
+#include "array_subscript.hh"
 #include "../../symboltable/symbols/symbolvariable.hh"
 bool AssignmentExpression::Check()
 {
@@ -7,13 +8,28 @@ bool AssignmentExpression::Check()
     {
         return false;
     }
+
+    // Only member containers and array subscripts can be on the left side of an assignment
+
+    if(auto array = std::dynamic_pointer_cast<ArraySubscriptExpression>(left))
+    {
+        auto arrayType = array->GetType();
+        auto valueType = right->GetType();
+        if(valueType->NotCompatible(arrayType))
+        {
+            Error::ShowError(Helper::FormatString("Invalid type of expression on the right side of assignment (=) expression! The expression's type ('%s') must be compatible with the array's type ('%s')!",valueType->ToString().c_str(),arrayType->ToString().c_str()),this->location);
+            return false;
+        }
+        return true;
+    }
+
     auto member_container = std::dynamic_pointer_cast<MemberContainer>(left);
 
     // Only direct variables and variables that are members of a class can be on the left side of an assignment
 
     if (!member_container)
     {
-        Error::ShowError("Only member containers can appear on the left side of an assignment (=) expression!",left->location);
+        Error::ShowError("Only member containers and array subscripts can appear on the left side of an assignment (=) expression!",left->location);
         return false;
     }
 

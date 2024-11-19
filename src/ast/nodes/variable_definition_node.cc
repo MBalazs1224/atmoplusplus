@@ -65,6 +65,16 @@ bool VariableDefinitionNode::Check()
         }
         
     }
+    else if(auto array = std::dynamic_pointer_cast<Array>(variable->GetType()))
+    {
+        auto element_expression = array->number_of_elements->GetType();
+        if(!std::dynamic_pointer_cast<TypeInteger>(element_expression))
+        {
+            Error::ShowError(Helper::FormatString("The number of elements in the array must be an integer! (receive '%s')",element_expression->ToString().c_str()), array->number_of_elements->location);
+            return false;
+        }
+    }
+    
     // If the variable is a class and we don't have an initializing value,  we need o theck if it correctly calls the constructor
     else if (VariableIsClass())
     {
