@@ -15,6 +15,11 @@ std::shared_ptr<Type> FunctionSymbol::GetType() {
 }
 
 bool FunctionSymbol::Check() {
+    if(arguments.size() > 6)
+    {
+        Error::ShowError("Functions cannot have  more than 6 arguments!",this->location);
+        return false;
+    }
     return body->Check();
 }
 

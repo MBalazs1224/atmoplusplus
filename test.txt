@@ -1,6 +1,1 @@
-create class class_1
-	create integer b
-
-create class_1 c
-
-create array of 5 integers ints
+create integer function f with integer a, integer b, integer c, integer d, integer f, integer g, integer h
