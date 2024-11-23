@@ -104,5 +104,5 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
     // Will that could be called with the given parameters
     const std::vector<std::shared_ptr<FunctionSymbol>> GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>>&);
 
-    int GetSize() override;
+    DataSize GetSize() override;
 };

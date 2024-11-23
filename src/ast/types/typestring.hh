@@ -7,5 +7,5 @@ class TypeString : public Type
 
     std::string ToString() override;
 
-    int GetSize() override;
+    DataSize GetSize() override;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include "../../frame/datasize.hh"
 class Type
 {
     public:
@@ -21,5 +22,5 @@ class Type
         /*
         * @returns The size of the type in bytes.
         */
-        virtual int GetSize() = 0;
+        virtual DataSize GetSize() = 0;
 };

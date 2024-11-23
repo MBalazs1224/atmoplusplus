@@ -39,5 +39,5 @@ class FunctionSymbol : public SymbolTableElement
     // Const and reference so it can be retrevied fast but cannot be changed by other classes
     const std::vector<std::shared_ptr<VariableSymbol>>& GetArguments();
 
-    int GetSize() override;
+    DataSize GetSize() override;
 };

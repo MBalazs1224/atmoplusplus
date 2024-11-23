@@ -14,6 +14,7 @@ bool VariableSymbol::Check() {
     return true;
 }
 
-int VariableSymbol::GetSize() {
+DataSize VariableSymbol::GetSize()
+{
     return type->GetSize();
 }

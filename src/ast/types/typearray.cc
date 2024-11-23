@@ -17,8 +17,8 @@ bool Array::Compatible(const std::shared_ptr<Type> other)
     return casted && this->inner_type->Compatible(casted->inner_type);
 }
 
-int Array::GetSize()
+DataSize Array::GetSize()
 {
     // The array will be a pointer so it will be 8 bytes
-    return 8;
+    return DataSize::QWord;
 }

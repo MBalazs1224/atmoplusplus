@@ -22,6 +22,6 @@ class Array : public Type
 
         bool Compatible(const std::shared_ptr<Type>) override;
 
-        int GetSize() override;
+        DataSize GetSize() override;
 
 };

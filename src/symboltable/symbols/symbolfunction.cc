@@ -45,6 +45,8 @@ const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments
 FunctionSymbol::FunctionSymbol() : SymbolTableElement(std::make_shared<AttributePublic>()), arguments() , body(nullptr) {}
 
 
-int FunctionSymbol::GetSize() {
-    return size_in_bytes;
+DataSize FunctionSymbol::GetSize()
+{
+    // Functions don't have a size
+    return DataSize::Empty;
 }

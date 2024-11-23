@@ -3,6 +3,7 @@
 #include "../ast/attributes/attribute.hh"
 #include "../ast/attributes/attributeprivate.hh"
 #include "../ast/expressions/expressionable.hh"
+#include "../frame/datasize.hh"
 #include <memory>
 class SymbolTableElement : public IExpressionable
 {
@@ -27,5 +28,5 @@ class SymbolTableElement : public IExpressionable
         /*
         * @return The size of the element in bytes.
         */
-        virtual int GetSize() = 0;
+        virtual DataSize GetSize() = 0;
 };

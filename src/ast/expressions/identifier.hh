@@ -33,6 +33,6 @@ class Identifier : public IExpressionable, public Type, public MemberContainer
 
     std::shared_ptr<SymbolTableElement> GetElement() override; 
 
-    int GetSize() override;
+    DataSize GetSize() override;
 
 };

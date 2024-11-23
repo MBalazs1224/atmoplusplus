@@ -11,8 +11,9 @@ std::string TypeString::ToString()
     return "type string";
 }
 
-int TypeString::GetSize()
+DataSize TypeString::GetSize()
 {
     // String type will be a pointer so it's 8 bytes
-    return 8;
+    
+    return DataSize::QWord;
 }

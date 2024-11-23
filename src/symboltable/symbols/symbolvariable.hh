@@ -8,5 +8,5 @@ class VariableSymbol : public SymbolTableElement
     std::shared_ptr<Type> GetType() override;
     bool Check() override;
 
-    int GetSize() override;
+    DataSize GetSize() override;
 };

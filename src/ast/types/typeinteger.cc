@@ -11,8 +11,8 @@ std::string TypeInteger::ToString()
     return "type integer";
 }
 
-int TypeInteger::GetSize()
+DataSize TypeInteger::GetSize()
 {
     // Integer type is 4 bytes
-    return 4;
+    return DataSize::DWord;
 }

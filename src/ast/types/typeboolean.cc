@@ -11,8 +11,7 @@ std::string TypeBoolean::ToString()
     return "type boolean";
 }
 
-int TypeBoolean::GetSize()
+DataSize TypeBoolean::GetSize()
 {
-    // Boolean type is 1 byte
-    return 1;
+    return DataSize::Byte;
 }

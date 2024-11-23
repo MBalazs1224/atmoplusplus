@@ -368,7 +368,8 @@ std::shared_ptr<SymbolTableElement> ClassSymbol::GetElement(const std::string &i
     return GetFunction(id);
 }
 
-int ClassSymbol::GetSize()
+DataSize ClassSymbol::GetSize()
 {
-    return size_in_bytes;
+    // It will be a pointer to the class
+    return DataSize::QWord;
 }

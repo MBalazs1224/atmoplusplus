@@ -11,8 +11,7 @@ std::string TypeChar::ToString()
     return "type char";
 }
 
-int TypeChar::GetSize()
+DataSize TypeChar::GetSize()
 {
-    // Char type is 1 byte
-    return 1;
+    return DataSize::Byte;
 }

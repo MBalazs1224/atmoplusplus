@@ -38,7 +38,7 @@ std::shared_ptr<Type> Identifier::GetType()
     return element->GetType();
 }
 
-int Identifier::GetSize()
+DataSize Identifier::GetSize()
 {
     return element->GetSize();
 }
