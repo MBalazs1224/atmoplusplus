@@ -37,3 +37,8 @@ std::shared_ptr<Type> Identifier::GetType()
     assert(element);
     return element->GetType();
 }
+
+int Identifier::GetSize()
+{
+    return element->GetSize();
+}

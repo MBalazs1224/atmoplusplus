@@ -182,6 +182,9 @@ bool ClassSymbol::InsertVariable(const std::shared_ptr<VariableDefinitionNode> &
 
     variables[variable->name] = variable;
 
+    // Update the size of the class
+    this->size_in_bytes += variable->GetSize();
+
     return true;
 }
 
@@ -363,4 +366,9 @@ std::shared_ptr<SymbolTableElement> ClassSymbol::GetElement(const std::string &i
         return variable;
     }
     return GetFunction(id);
+}
+
+int ClassSymbol::GetSize()
+{
+    return size_in_bytes;
 }

@@ -16,6 +16,8 @@ class FunctionSymbol : public SymbolTableElement
 
         // Contains all the local variables defined in the function
         std::vector<std::shared_ptr<VariableSymbol>> local_variables;
+
+        int size_in_bytes = 0;
     public: 
 
     std::unique_ptr<BodyNode> body;
@@ -36,4 +38,6 @@ class FunctionSymbol : public SymbolTableElement
 
     // Const and reference so it can be retrevied fast but cannot be changed by other classes
     const std::vector<std::shared_ptr<VariableSymbol>>& GetArguments();
+
+    int GetSize() override;
 };

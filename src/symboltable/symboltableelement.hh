@@ -23,4 +23,9 @@ class SymbolTableElement : public IExpressionable
         std::shared_ptr<Attribute> GetAttribute();
         // Returns true if the element is static or public. (meaning its reachable outside the class)
         virtual bool IsReachableOutside();
+        
+        /*
+        * @return The size of the element in bytes.
+        */
+        virtual int GetSize() = 0;
 };

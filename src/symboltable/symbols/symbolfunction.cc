@@ -25,9 +25,17 @@ bool FunctionSymbol::Check() {
         return false;
     }
 
+    // Get all the variables
     local_variables = body->GetVariables();
 
-    return true;;
+    // Calculate the size of the function
+    for (auto &&variable : local_variables)
+    {
+        this->size_in_bytes += variable->GetSize();
+    }
+    
+
+    return true;
 }
 
 const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments() {
@@ -35,3 +43,8 @@ const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments
 }
 
 FunctionSymbol::FunctionSymbol() : SymbolTableElement(std::make_shared<AttributePublic>()), arguments() , body(nullptr) {}
+
+
+int FunctionSymbol::GetSize() {
+    return size_in_bytes;
+}

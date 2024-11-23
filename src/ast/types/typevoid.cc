@@ -10,3 +10,9 @@ std::string TypeVoid::ToString()
 {
     return "type void";
 }
+
+int TypeVoid::GetSize()
+{
+    // Void type has no size
+    return 0;
+}

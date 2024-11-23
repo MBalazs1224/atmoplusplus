@@ -17,4 +17,9 @@ class Type
         virtual bool NotCompatible(const std::shared_ptr<Type>);
 
         virtual std::string ToString() = 0;
+
+        /*
+        * @returns The size of the type in bytes.
+        */
+        virtual int GetSize() = 0;
 };

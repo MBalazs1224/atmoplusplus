@@ -1,5 +1,12 @@
-create integer function f with integer a
+create class class_1
 	create integer a
+	create string s
+	create float f
+	create char c
+
+create integer function f with integer a
+	create integer d
+	create class_1 classVar
 	until false
 		create char c = 'c'
 	do

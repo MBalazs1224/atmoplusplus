@@ -13,3 +13,7 @@ std::shared_ptr<Type> VariableSymbol::GetType() {
 bool VariableSymbol::Check() {
     return true;
 }
+
+int VariableSymbol::GetSize() {
+    return type->GetSize();
+}

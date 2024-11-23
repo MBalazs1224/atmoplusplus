@@ -10,3 +10,9 @@ std::string TypeInteger::ToString()
 {
     return "type integer";
 }
+
+int TypeInteger::GetSize()
+{
+    // Integer type is 4 bytes
+    return 4;
+}

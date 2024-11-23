@@ -10,3 +10,9 @@ std::string TypeFloat::ToString()
 {
     return "type float";
 }
+
+int TypeFloat::GetSize()
+{
+    // Float type is 8 bytes because it's always double precision
+    return 8;
+}
