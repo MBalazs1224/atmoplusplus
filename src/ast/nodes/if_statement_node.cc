@@ -60,3 +60,25 @@ bool IfStatementNode::Check()
 
     return true;
 }
+
+std::vector<std::shared_ptr<VariableSymbol>> IfStatementNode::GetVariables()
+{
+    // Get the variables from the body
+    auto variables = body->GetVariables();
+
+    // Get the variables from each else-if statement
+    for (auto& else_if : else_ifs)
+    {
+        auto else_if_vars = else_if->GetVariables();
+        variables.insert(variables.end(), else_if_vars.begin(), else_if_vars.end());
+    }
+
+    // Get the variables from the else block if it exists
+    if (else_)
+    {
+        auto else_vars = else_->GetVariables();
+        variables.insert(variables.end(), else_vars.begin(), else_vars.end());
+    }
+
+    return variables;
+}

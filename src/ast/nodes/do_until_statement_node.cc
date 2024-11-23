@@ -37,3 +37,9 @@ bool DoUntilStatementNode::Check()
     // Check the validity of the body
     return body->Check();
 }
+
+std::vector<std::shared_ptr<VariableSymbol>> DoUntilStatementNode::GetVariables()
+{
+    // Get the variables from the body
+    return body->GetVariables();
+}

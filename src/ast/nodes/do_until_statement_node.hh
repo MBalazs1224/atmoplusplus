@@ -1,11 +1,12 @@
 #pragma once
 #include "node.hh"
 #include "../expressions/expressionable.hh"
+#include "variable_container.hh"
 #include "body_node.hh"
 #include <memory>
 #include <iostream>
 
-class DoUntilStatementNode : public Node
+class DoUntilStatementNode : public Node, public VariableContainer
 {
 
     public:
@@ -17,4 +18,5 @@ class DoUntilStatementNode : public Node
         ~DoUntilStatementNode() override;
 
         bool Check() override;
+        std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
 };

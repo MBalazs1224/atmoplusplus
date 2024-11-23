@@ -63,3 +63,25 @@ std::vector<std::shared_ptr<Node>> BodyNode::GetStatements()
 {
     return statements;
 }
+
+std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetVariables()
+{
+    std::vector<std::shared_ptr<VariableSymbol>> variables;
+    for (auto &statement : statements)
+    {
+        // If the statement is a variable definition, add tje variable defined by it to the list of variables
+        if(auto variable_definition = std::dynamic_pointer_cast<VariableDefinitionNode>(statement))
+        {
+            variables.push_back(variable_definition->GetVariable());
+        }
+
+        // If the statement is not a variable but can contain variables (if stmts, loops etc.), get the veriables from it recursively and add it to the vector
+
+        else if (auto variable_container = std::dynamic_pointer_cast<VariableContainer>(statement))
+        {
+            auto vars = variable_container->GetVariables();
+            variables.insert(variables.end(), vars.begin(), vars.end());
+        }
+    }
+    return variables;
+}

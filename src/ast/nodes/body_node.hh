@@ -4,12 +4,13 @@
 #include "../expressions/assignment_expression.hh"
 #include "../expressions/function_call.hh"
 #include "class_definition_node.hh"
+#include "variable_container.hh"
 #include <vector>
 #include <memory>
 
 class ConstructorDefinitionNode;
 
-class BodyNode : public Node
+class BodyNode : public Node, public VariableContainer
 {
     std::vector<std::shared_ptr<Node>> statements;
     public:
@@ -26,5 +27,6 @@ class BodyNode : public Node
 
         // Will return true if the given statement can be used inside a body
         bool StatementIsValid(const std::shared_ptr<Node> statement);
+        std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
 
 };

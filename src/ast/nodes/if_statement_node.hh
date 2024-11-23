@@ -4,8 +4,9 @@
 #include "else_statement_node.hh"
 #include "else_if_statement_node.hh"
 #include "body_node.hh"
+#include "variable_container.hh"
 #include <memory>
-class IfStatementNode : public  Node
+class IfStatementNode : public  Node, public VariableContainer
 {
     
     public:
@@ -17,4 +18,6 @@ class IfStatementNode : public  Node
 
         ~IfStatementNode() override;
         bool Check() override;
+
+        std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
 };

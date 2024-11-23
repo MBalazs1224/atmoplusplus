@@ -20,7 +20,14 @@ bool FunctionSymbol::Check() {
         Error::ShowError("Functions cannot have  more than 6 arguments!",this->location);
         return false;
     }
-    return body->Check();
+    if(!body->Check())
+    {
+        return false;
+    }
+
+    local_variables = body->GetVariables();
+
+    return true;;
 }
 
 const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments() {
