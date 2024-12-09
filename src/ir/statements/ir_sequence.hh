@@ -6,9 +6,9 @@
 // left followed by right immediately
 class IRSequence : IRStatement
 {
-        std::unique_ptr<IRExpression> left;
-        std::unique_ptr<IRExpression> right;
+        std::shared_ptr<IRExpression> left;
+        std::shared_ptr<IRExpression> right;
     public:
        
-        IRSequence(std::unique_ptr<IRExpression>,std::unique_ptr<IRExpression>);
+        IRSequence(std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>);
 };

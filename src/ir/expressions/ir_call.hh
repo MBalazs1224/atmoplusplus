@@ -8,8 +8,8 @@
 // Represents a function call, func is evaluated before args who are evaluated left to right
 class IRCall : IRExpression
 {
-        std::unique_ptr<IRExpression> func;
-        std::unique_ptr<ExpressionList> args;
+        std::shared_ptr<IRExpression> func;
+        std::shared_ptr<ExpressionList> args;
     public:
-        IRCall(std::unique_ptr<IRExpression>, std::unique_ptr<ExpressionList>);
+        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<ExpressionList>);
 };

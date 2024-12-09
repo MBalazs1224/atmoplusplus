@@ -6,7 +6,7 @@
 // Represents wordSize bytes of memory starting at exp location
 class IRMem : IRExpression
 {
-        std::unique_ptr<IRExpression> exp;
+        std::shared_ptr<IRExpression> exp;
     public:
-        IRMem(std::unique_ptr<IRExpression>);
+        IRMem(std::shared_ptr<IRExpression>);
 };

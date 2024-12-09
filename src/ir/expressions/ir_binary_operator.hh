@@ -9,8 +9,8 @@ class IRBinaryOperator
 {
         BinaryOperator binop;
 
-        std::unique_ptr<IRExpression> left;
-        std::unique_ptr<IRExpression> right;
+        std::shared_ptr<IRExpression> left;
+        std::shared_ptr<IRExpression> right;
 
-        IRBinaryOperator(BinaryOperator, std::unique_ptr<IRExpression>,std::unique_ptr<IRExpression>);
+        IRBinaryOperator(BinaryOperator, std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>);
 };

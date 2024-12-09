@@ -6,8 +6,8 @@
 // Evaluate the exoression and discard the result
 class IREvaluateExpression : IRStatement
 {
-        std::unique_ptr<IRExpression> exp;
+        std::shared_ptr<IRExpression> exp;
     public:
        
-        IREvaluateExpression(std::unique_ptr<IRExpression>);
+        IREvaluateExpression(std::shared_ptr<IRExpression>);
 };

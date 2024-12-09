@@ -5,10 +5,10 @@
 
 class IRMove : IRStatement
 {
-        std::unique_ptr<IRExpression> source;
-        std::unique_ptr<IRExpression> destination;
+        std::shared_ptr<IRExpression> source;
+        std::shared_ptr<IRExpression> destination;
     public:
         
 
-        IRMove(std::unique_ptr<IRExpression>, std::unique_ptr<IRExpression>);
+        IRMove(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpression>);
 };

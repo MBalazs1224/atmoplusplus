@@ -7,9 +7,9 @@
 // Transfer control to address exp
 class IRJump : IRStatement
 {
-        std::unique_ptr<IRExpression> exp;
-        std::unique_ptr<LabelList> targets;
+        std::shared_ptr<IRExpression> exp;
+        std::shared_ptr<LabelList> targets;
     public:
         
-        IRJump(std::unique_ptr<IRExpression>, std::unique_ptr<LabelList>);
+        IRJump(std::shared_ptr<IRExpression>, std::shared_ptr<LabelList>);
 };

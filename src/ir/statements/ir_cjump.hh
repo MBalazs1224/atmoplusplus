@@ -9,13 +9,13 @@
 class IRCJump : IRStatement
 {
         RelationalOperator relop;
-        std::unique_ptr<IRExpression> left;
-        std::unique_ptr<IRExpression> right;
+        std::shared_ptr<IRExpression> left;
+        std::shared_ptr<IRExpression> right;
 
         IRLabel iftrue;
         IRLabel iffalse;
     public:
        
 
-        IRCJump(std::unique_ptr<IRExpression>,std::unique_ptr<IRExpression>,IRLabel,IRLabel);
+        IRCJump(std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,IRLabel,IRLabel);
 };

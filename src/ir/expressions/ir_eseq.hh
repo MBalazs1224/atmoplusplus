@@ -6,8 +6,8 @@
 // stmt is evaluated for side effects, then exp is evaluated for a result
 class IREseq : IRExpression
 {
-        std::unique_ptr<IRExpression> exp;
-        std::unique_ptr<IRStatement> stmt;
+        std::shared_ptr<IRExpression> exp;
+        std::shared_ptr<IRStatement> stmt;
     public:
-        IREseq(std::unique_ptr<IRExpression>, std::unique_ptr<IRStatement>);
+        IREseq(std::shared_ptr<IRExpression>, std::shared_ptr<IRStatement>);
 };
