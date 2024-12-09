@@ -96,3 +96,10 @@ std::shared_ptr<VariableSymbol> VariableDefinitionNode::GetVariable()
 {
     return variable;
 }
+
+std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
+{
+    //TODO: Implement VariableDefinitionNode TranslateToIR
+
+    return nullptr;
+}

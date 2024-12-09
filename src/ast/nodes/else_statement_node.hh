@@ -13,4 +13,6 @@ class ElseStatementNode : public  Node, public VariableContainer
         ~ElseStatementNode() override;
         bool Check() override;
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
+
+        std::shared_ptr<IRStatement> TranslateToIR() override;
 };

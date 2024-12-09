@@ -16,3 +16,10 @@ std::shared_ptr<FunctionSymbol> FunctionDefinitionNode::GetFunction()
 {
     return function;
 }
+
+std::shared_ptr<IRStatement> FunctionDefinitionNode::TranslateToIR()
+{
+    //TODO: Implement FunctionDefinition TranslateToIR
+
+    return nullptr;
+}

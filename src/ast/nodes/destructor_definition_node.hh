@@ -17,4 +17,6 @@ class DestructorDefinitionNode : public Node
     ~DestructorDefinitionNode() override;
     bool Check() override;
     std::shared_ptr<FunctionSymbol> GetFunction();
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

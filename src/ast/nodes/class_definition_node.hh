@@ -19,4 +19,6 @@ class ClassDefinitionNode : public Node
         bool Check() override;
 
         std::shared_ptr<ClassSymbol> GetClass();
+
+        std::shared_ptr<IRStatement> TranslateToIR() override;
 };

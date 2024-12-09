@@ -20,3 +20,9 @@ std::shared_ptr<ClassSymbol> ClassDefinitionNode::GetClass()
 {
     return class_;
 }
+
+std::shared_ptr<IRStatement> ClassDefinitionNode::TranslateToIR()
+{
+    // TODO: Implement ClassDefinitionNode::TranslateToIR 
+    return nullptr;
+}

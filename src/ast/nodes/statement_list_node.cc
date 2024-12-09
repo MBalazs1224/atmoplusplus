@@ -31,3 +31,10 @@ bool StatementListNode::Check()
     //TODO: Implement statementlist node checking
     return true;
 }
+
+std::shared_ptr<IRStatement> StatementListNode::TranslateToIR()
+{
+    //TODO: Implement StatementListNode TranslateToIR
+
+    return nullptr;
+}

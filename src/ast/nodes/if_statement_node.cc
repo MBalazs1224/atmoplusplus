@@ -88,3 +88,11 @@ std::vector<std::shared_ptr<VariableSymbol>> IfStatementNode::GetVariables()
 
     return variables;
 }
+
+
+std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
+{
+    //TODO: Implement IfStatementNode TranslateToIR
+
+    return nullptr;
+}

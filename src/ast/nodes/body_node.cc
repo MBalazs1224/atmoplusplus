@@ -85,3 +85,20 @@ std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetVariables()
     }
     return variables;
 }
+
+std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
+{
+    // std::vector<std::shared_ptr<IRStatement>> irStatements;
+    // for (auto &statement : statements)
+    // {
+    //     auto irStatement = statement->TranslateToIR();
+    //     if(irStatement != nullptr)
+    //     {
+    //         irStatements.push_back(irStatement);
+    //     }
+    // }
+    // return std::make_shared<IRSeq>(irStatements);
+
+    //TODO: Implement BodyNode TranslateToIR
+    return nullptr;
+}

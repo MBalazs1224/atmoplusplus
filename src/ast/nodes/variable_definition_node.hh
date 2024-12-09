@@ -41,4 +41,6 @@ class VariableDefinitionNode : public Node
 
         std::shared_ptr<VariableSymbol> GetVariable();
 
+        std::shared_ptr<IRStatement> TranslateToIR() override;
+
 };

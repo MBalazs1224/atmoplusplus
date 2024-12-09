@@ -29,3 +29,9 @@ const std::vector<std::shared_ptr<IExpressionable>>& ConstructorDefinitionNode::
 {
     return arguments_to_parent;
 }
+
+std::shared_ptr<IRStatement> ConstructorDefinitionNode::TranslateToIR()
+{
+    // TODO: Implement ConstructorDefinitionNode::TranslateToIR
+    return nullptr;
+}

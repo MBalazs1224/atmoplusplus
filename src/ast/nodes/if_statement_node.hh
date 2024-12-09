@@ -22,4 +22,6 @@ class IfStatementNode : public  Node, public VariableContainer
         bool Check() override;
 
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
+
+        std::shared_ptr<IRStatement> TranslateToIR() override;
 };

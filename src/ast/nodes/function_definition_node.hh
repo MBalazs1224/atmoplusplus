@@ -17,4 +17,6 @@ class FunctionDefinitionNode : public Node
         bool Check() override;
 
     std::shared_ptr<FunctionSymbol> GetFunction();
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

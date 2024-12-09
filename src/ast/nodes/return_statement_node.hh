@@ -9,4 +9,7 @@ class ReturnStatementNode : public  Node
         ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc);
         ~ReturnStatementNode() override;
         bool Check() override;
+        
+        std::shared_ptr<IRStatement> TranslateToIR() override;
+
 };

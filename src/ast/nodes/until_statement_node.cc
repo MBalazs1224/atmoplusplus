@@ -41,3 +41,10 @@ std::vector<std::shared_ptr<VariableSymbol>> UntilStatementNode::GetVariables()
     // Get the variables from the body
     return body->GetVariables();
 }
+
+std::shared_ptr<IRStatement> UntilStatementNode::TranslateToIR()
+{
+    //TODO: Implement UntilStatementNode TranslateToIR
+
+    return nullptr;
+}

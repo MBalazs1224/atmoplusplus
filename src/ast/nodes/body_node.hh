@@ -29,4 +29,6 @@ class BodyNode : public Node, public VariableContainer
         bool StatementIsValid(const std::shared_ptr<Node> statement);
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
 
+        std::shared_ptr<IRStatement> TranslateToIR() override;
+
 };

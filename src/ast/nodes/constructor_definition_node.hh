@@ -21,4 +21,6 @@ class ConstructorDefinitionNode : public Node
     bool Check() override;
     const std::vector<std::shared_ptr<IExpressionable>>& GetArgumentsForParentConstructor();
     std::shared_ptr<FunctionSymbol> GetFunction();
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

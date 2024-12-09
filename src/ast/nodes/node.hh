@@ -1,5 +1,8 @@
 #pragma once
 #include "../../location/ilocation.hh"
+
+#include "../../ir/statements/ir_statement.hh"
+
 class Node : public ILocation
 {
     protected:
@@ -15,4 +18,6 @@ class Node : public ILocation
     public:
         virtual ~Node() = default;
         virtual bool Check() = 0;
+
+        virtual std::shared_ptr<IRStatement> TranslateToIR() = 0;
 };

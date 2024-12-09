@@ -21,3 +21,11 @@ bool DestructorDefinitionNode::Check() {
     // TODO: Implement DestructorDefinitionNode::Check
     return true;
 }
+
+
+std::shared_ptr<IRStatement> DestructorDefinitionNode::TranslateToIR()
+{
+    //TODO: Implement DestructorDefinitionNode::TranslateToIR
+
+    return nullptr;
+}

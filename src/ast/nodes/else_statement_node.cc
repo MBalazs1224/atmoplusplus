@@ -20,3 +20,10 @@ std::vector<std::shared_ptr<VariableSymbol>> ElseStatementNode::GetVariables()
     // Get the variables from the body
     return body->GetVariables();
 }
+
+std::shared_ptr<IRStatement> ElseStatementNode::TranslateToIR()
+{
+    //TODO: Implement ElseStatementNode::TranslateToIR
+
+    return nullptr;
+}

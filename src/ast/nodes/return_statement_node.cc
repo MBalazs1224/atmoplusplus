@@ -12,3 +12,11 @@ bool ReturnStatementNode::Check()
     // TODO: Implement return node checking logic as needed
     return true;
 }
+
+
+std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
+{
+    //TODO: Implement ReturnStatementNode TranslateToIR
+
+    return nullptr;
+}

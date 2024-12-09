@@ -15,4 +15,6 @@ class StatementListNode : public Node
         // Will not move the vector
         std::vector<std::shared_ptr<Node>> GetStatementsRef();
         bool Check() override;
+
+        std::shared_ptr<IRStatement> TranslateToIR() override;
 };
