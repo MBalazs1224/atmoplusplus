@@ -5,6 +5,8 @@
 #include "else_if_statement_node.hh"
 #include "body_node.hh"
 #include "variable_container.hh"
+#include "../expressions/assignment_expression.hh"
+
 #include <memory>
 class IfStatementNode : public  Node, public VariableContainer
 {

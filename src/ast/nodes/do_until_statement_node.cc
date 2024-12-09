@@ -28,6 +28,12 @@ bool DoUntilStatementNode::Check()
         return false;
     }
 
+    if (std::dynamic_pointer_cast<AssignmentExpression>(expression))
+    {
+        Error::ShowError("Cannot use assignment expression as a condition to a do-until statement!", expression->location);
+        return false;
+    }
+
     // Check if the body is empty and show a warning if so
     if (body->isEmpty())
     {

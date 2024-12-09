@@ -22,6 +22,12 @@ bool UntilStatementNode::Check()
         return false;
     }
 
+    if (std::dynamic_pointer_cast<AssignmentExpression>(expression))
+    {
+        Error::ShowError("Cannot use assignment expression as a condition to an until statement!", expression->location);
+        return false;
+    }
+
     if (body->isEmpty())
     {
         Error::ShowWarning("Empty body of until statement!", location);

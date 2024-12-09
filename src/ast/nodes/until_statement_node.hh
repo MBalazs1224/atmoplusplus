@@ -3,6 +3,8 @@
 #include "node.hh"
 #include "../expressions/expressionable.hh"
 #include "variable_container.hh"
+#include "../expressions/assignment_expression.hh"
+
 #include <memory>
 #include <iostream>
 

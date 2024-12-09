@@ -28,6 +28,12 @@ bool IfStatementNode::Check()
         return false;
     }
 
+    if(std::dynamic_pointer_cast<AssignmentExpression>(expression))
+    {
+       Error::ShowError("Cannot use assignment expression as a condition to an if statement!", expression->location);
+       return false;
+    }
+
     // Check if the body is empty, show a warning if so
     if (body->isEmpty())
     {
