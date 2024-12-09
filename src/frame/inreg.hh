@@ -12,4 +12,6 @@ class InReg : public Access
         ~InReg() = default;
         std::string ToString();
 
+        std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> framePointer) override;
+
 };

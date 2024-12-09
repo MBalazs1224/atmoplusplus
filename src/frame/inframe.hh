@@ -1,6 +1,8 @@
 #pragma once
 #include "access.hh"
+#include "../ir/expressions/all_ir_expressions.hh"
 #include <string>
+#include <memory>
 class InFrame : public Access
 {
     public:
@@ -12,4 +14,6 @@ class InFrame : public Access
         ~InFrame() = default;
         
         std::string ToString();
+
+        std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> framePointer) override;
 };

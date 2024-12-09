@@ -4,6 +4,19 @@ create class class_1
 	create float f
 	create char c
 
+create boolean a
+
+if a
+	return 5
+
+until not a
+	return 4
+
+do 
+	return 4
+until 5 greater than 6
+
+
 create integer function f with integer a
 	create integer d
 	create class_1 classVar

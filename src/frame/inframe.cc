@@ -8,3 +8,15 @@ std::string InFrame::ToString()
 {
     return std::to_string(offset) + "(fp)";
 }
+
+std::shared_ptr<IRExpression> InFrame::AsExpression(std::shared_ptr<IRExpression> framePointer)
+{
+    // Returns the memory address at FramePointer + offset
+
+    return std::make_shared<IRMem>(
+        std::make_shared<IRBinaryOperator>(
+            BinaryOperator::PLUS,
+            framePointer,
+            std::make_shared<IRConst>(offset)
+        ));
+}
