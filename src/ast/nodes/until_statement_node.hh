@@ -4,7 +4,9 @@
 #include "../expressions/expressionable.hh"
 #include "variable_container.hh"
 #include "../expressions/assignment_expression.hh"
-
+#include "../../ir/statements/all_ir_statements.hh"
+#include "../../frame/label.hh"
+#include "../../translate/all_translate_expressions.hh"
 #include <memory>
 #include <iostream>
 

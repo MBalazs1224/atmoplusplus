@@ -44,7 +44,38 @@ std::vector<std::shared_ptr<VariableSymbol>> UntilStatementNode::GetVariables()
 
 std::shared_ptr<IRStatement> UntilStatementNode::TranslateToIR()
 {
-    //TODO: Implement UntilStatementNode TranslateToIR
+    // Label to indicate the start of the loop
+    std::shared_ptr<Label> start_label = std::make_shared<Label>();
+    std::shared_ptr<Label> end_label = std::make_shared<Label>();
 
-    return nullptr;
+    // Vector containing all statements needed for this until-statement
+    std::vector<std::shared_ptr<IRStatement>> statements;
+
+    std::shared_ptr<TranslateExpression> conditionalExpression = expression->TranslateExpressionToIr();
+
+    // FIXME:The condition might only need to just jump to the end if it's true and at the end of the body there should be a condition that jumps back to the start
+
+    // The until-statement works the other way around compared to the generic while statement that's why it needs to jump to the end if the expression is true, otherwise jump back to the start and repeat the instructions
+    auto conditionStatement = conditionalExpression->ToConditionExpression(end_label,start_label);
+
+
+    // Generate the asm label for the start of the loop
+    statements.push_back(std::make_shared<IRLabel>(start_label));
+
+    // Execute the condition statements
+    statements.push_back(conditionStatement);
+    
+    // Insert all the statements of the body
+    statements.push_back(body->TranslateToIR());
+
+    // Jump back to the start of the loop, so we can check the expression again
+    statements.push_back(std::make_shared<IRJump>(start_label));
+
+    // Generate the asm label for the end so the condition can jump out of the loop
+    statements.push_back(std::make_shared<IRLabel>(end_label));
+
+    // Convert the elements into a sequence tree
+    return std::make_shared<IRSequence>(statements);
+
+
 }
