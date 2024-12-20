@@ -29,3 +29,13 @@ bool MultiplyExpression::Check() {
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> MultiplyExpression::TranslateExpressionToIr()
+{
+    auto leftIR = left->TranslateExpressionToIr()->ToValueExpression();
+    auto rightIR = right->TranslateExpressionToIr()->ToValueExpression();
+
+    auto mulExpression = std::make_shared<IRBinaryOperator>(BinaryOperator::MULTIPLY, leftIR, rightIR);
+
+    return std::make_shared<TranslateValueExpression>(mulExpression);
+}

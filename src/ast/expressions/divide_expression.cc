@@ -18,6 +18,18 @@ bool DivideExpression::Check()
 DivideExpression::DivideExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc) : TwoOperandExpression(left_in,right_in,loc)
 {
 }
+
+std::shared_ptr<TranslateExpression> DivideExpression::TranslateExpressionToIr()
+{
+    auto leftExpression = left->TranslateExpressionToIr()->ToValueExpression();
+    auto rightExpression = left->TranslateExpressionToIr()->ToValueExpression();
+
+    auto divideExpression = std::make_shared<IRBinaryOperator>(BinaryOperator::DIVIDE, leftExpression, rightExpression);
+
+    return std::make_shared<TranslateValueExpression>(divideExpression);
+}
+
+
 std::shared_ptr<Type> DivideExpression::GetType()
 {
     return Helper::FloatType;

@@ -25,3 +25,16 @@ std::shared_ptr<Type> AddExpression::GetType()
 {
     return left->GetType();
 }
+
+std::shared_ptr<TranslateExpression> AddExpression::TranslateExpressionToIr()
+{
+    // Generate both sides into an IR expression
+    auto leftIR = left->TranslateExpressionToIr()->ToValueExpression(); 
+    auto rightIR = right->TranslateExpressionToIr()->ToValueExpression();
+
+    // Create the binary plus from the left and right
+    auto addExpression = std::make_shared<IRBinaryOperator>(BinaryOperator::PLUS,leftIR,rightIR);
+
+    // Wrap it in a translate to value epxression, so other expressions can use it
+    return std::make_shared<TranslateValueExpression>(addExpression);
+}

@@ -2,6 +2,7 @@
 #include <memory>
 #include "../nodes/node.hh"
 #include "../types/all_types.hh"
+#include "../../translate/all_translate_expressions.hh"
 // For showing eroor messages 
 #include "../../helper/helper.hh"
 #include "../../error/error.hh"

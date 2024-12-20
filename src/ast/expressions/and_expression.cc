@@ -27,5 +27,10 @@ AndExpression::AndExpression(std::shared_ptr<IExpressionable> left_in, std::shar
 {
 }
 
+std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
+{
+    
+}
+
 
 AndExpression::~AndExpression() = default;

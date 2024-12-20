@@ -10,4 +10,6 @@ class MultiplyExpression : public TwoOperandExpression
     ~MultiplyExpression() override = default;
     
     bool Check() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
 };

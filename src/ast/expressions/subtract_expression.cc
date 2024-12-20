@@ -30,3 +30,13 @@ bool SubtractExpression::Check()
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> SubtractExpression::TranslateExpressionToIr()
+{
+    auto leftIR = left->TranslateExpressionToIr()->ToValueExpression();
+    auto rightIR = right->TranslateExpressionToIr()->ToValueExpression();
+
+    auto subtractExpression = std::make_shared<IRBinaryOperator>(BinaryOperator::MINUS, leftIR,rightIR);
+
+    return std::make_shared<TranslateValueExpression>(subtractExpression);
+}

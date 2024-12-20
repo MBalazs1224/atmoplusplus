@@ -8,4 +8,6 @@ class SubtractExpression : public TwoOperandExpression
     ~SubtractExpression() override = default;
 
     bool Check() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
 };
