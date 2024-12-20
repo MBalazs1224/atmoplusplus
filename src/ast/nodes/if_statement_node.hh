@@ -6,7 +6,9 @@
 #include "body_node.hh"
 #include "variable_container.hh"
 #include "../expressions/assignment_expression.hh"
-
+#include "../../ir/statements/all_ir_statements.hh"
+#include "../../translate/all_translate_expressions.hh"
+#include "../../frame/label.hh"
 #include <memory>
 class IfStatementNode : public  Node, public VariableContainer
 {

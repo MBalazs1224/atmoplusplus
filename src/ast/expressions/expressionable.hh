@@ -20,4 +20,6 @@ class IExpressionable : public Node
         virtual ~IExpressionable() = 0;
         virtual std::shared_ptr<Type> GetType() = 0;
         
+        // Will return an TranslateExpression type object that will represent the type of the  expression
+        virtual std::shared_ptr<TranslateExpression> TranslateExpressionToIr() = 0;
 };

@@ -92,7 +92,92 @@ std::vector<std::shared_ptr<VariableSymbol>> IfStatementNode::GetVariables()
 
 std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
 {
-    //TODO: Implement IfStatementNode TranslateToIR
+    // The label that will point to the statements that needs to be executed if the statement is true
+    std::shared_ptr<Label> if_true = std::make_shared<Label>();
 
-    return nullptr;
+    // The label for the else-if or else branch 
+    std::shared_ptr<Label> if_false = std::make_shared<Label>();
+
+    // Label for joining together all branches
+    std::shared_ptr<Label> if_end = std::make_shared<Label>();
+
+
+    // Generate IR for the condition expression
+    std::shared_ptr<TranslateExpression> conditionExpression = expression->TranslateExpressionToIr();
+
+    // Will convert the condition expression into a condition jump
+    std::shared_ptr<IRStatement> conditionStatement = conditionExpression->ToConditionExpression(if_true,if_false);
+
+    // Will contain all the IR statements for this if-statement
+    std::vector<std::shared_ptr<IRStatement>> statements;
+
+    // Push the condition statement to the statements
+    statements.push_back(conditionStatement);
+
+
+
+
+    // -------- Translate the main if
+
+    // Create asm label for the "true" path
+    statements.push_back(std::make_shared<IRLabel>(if_true));
+
+    // Statements inside the body of the "true" path
+    statements.push_back(body->TranslateToIR());
+
+    // Jump to the joining end label at the end of the body
+    statements.push_back(std::make_shared<IRJump>(if_end));
+
+    // Generate the false label so it can jump to the else-ifs if the main if is false
+
+    statements.push_back(std::make_shared<IRLabel>(if_false));
+
+    // -------- Translate the else-ifs
+
+    for (auto &&elseIf : else_ifs)
+    {
+        
+
+
+        // Create a new label for the "true" and "false" parts
+        if_true = std::make_shared<Label>();
+        if_false = std::make_shared<Label>();
+
+        // Translate the else-if's condition
+        std::shared_ptr<TranslateExpression> elseIfConditionalExpression = elseIf->expression->TranslateExpressionToIr();
+
+        std::shared_ptr<IRStatement> elseIfConditionalStatement = elseIfConditionalExpression->ToConditionExpression(if_true,if_false);
+
+        // Asm label and body for this else-if branch
+
+        statements.push_back(std::make_shared<IRLabel>(if_true));
+        statements.push_back(elseIf->body->TranslateToIR());
+
+        // Jump to the joining end label
+        statements.push_back(std::make_shared<IRJump>(if_end));
+
+        // Jump to the next else-if
+        statements.push_back(std::make_shared<IRJump>(if_false));
+    }
+
+    // -------- Translate the else
+
+    // Create label for the final "false" aprt
+    statements.push_back(std::make_shared<IRLabel>(if_false));
+
+    // Translate the else body if exists
+
+    if(else_)
+    {
+        statements.push_back(else_->body->TranslateToIR());
+    }
+
+    
+    // Translate the final joining label
+
+    statements.push_back(std::make_shared<IRLabel>(if_end));
+
+    return std::make_shared<IRSequence>(statements);
+
+
 }
