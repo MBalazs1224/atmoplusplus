@@ -46,6 +46,12 @@ std::shared_ptr<IRStatement> UntilStatementNode::TranslateToIR()
 {
     // Label to indicate the start of the loop
     std::shared_ptr<Label> start_label = std::make_shared<Label>();
+
+    // FIXME: Until-statement node might could be implemented with only 2 labels
+    // Label indicating the start of the instructions
+    std::shared_ptr<Label> instruction_label = std::make_shared<Label>();
+
+    // Label pointing to the next instruction after the loop
     std::shared_ptr<Label> end_label = std::make_shared<Label>();
 
     // Vector containing all statements needed for this until-statement
@@ -56,7 +62,9 @@ std::shared_ptr<IRStatement> UntilStatementNode::TranslateToIR()
     // FIXME:The condition might only need to just jump to the end if it's true and at the end of the body there should be a condition that jumps back to the start
 
     // The until-statement works the other way around compared to the generic while statement that's why it needs to jump to the end if the expression is true, otherwise jump back to the start and repeat the instructions
-    auto conditionStatement = conditionalExpression->ToConditionExpression(end_label,start_label);
+
+
+    auto conditionStatement = conditionalExpression->ToConditionExpression(end_label,instruction_label);
 
 
     // Generate the asm label for the start of the loop
@@ -65,6 +73,9 @@ std::shared_ptr<IRStatement> UntilStatementNode::TranslateToIR()
     // Execute the condition statements
     statements.push_back(conditionStatement);
     
+    // Generate the asm label for the start of the instructions
+    statements.push_back(std::make_shared<IRLabel>(instruction_label));
+
     // Insert all the statements of the body
     statements.push_back(body->TranslateToIR());
 

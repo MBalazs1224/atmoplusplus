@@ -1,5 +1,6 @@
 #include "ir_expression.hh"
 #include "binary_operators.hh"
+#include "relational_operators.hh"
 #include "ir_binary_operator.hh"
 #include "ir_call.hh"
 #include "ir_const.hh"
