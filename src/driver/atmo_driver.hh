@@ -3,6 +3,8 @@
 #include <iostream>
 #include "../lexer/AtmoLexer.hh"
 #include "../parser/parser.tab.hh"
+
+#include "../ir/statements/ir_statement_list.hh"
 class AtmoDriver
 {
     public:
@@ -20,7 +22,12 @@ class AtmoDriver
     void parse_only(std::istream&);
 
     private:
+
+    std::shared_ptr<IRStatementList> ir_root;;
+
     void SemanticAnalyze();
+
+    void TranslateToIR();
     
     // Will return tru if the given node can be used as a statement
     bool StatementValid(const std::shared_ptr<Node>);

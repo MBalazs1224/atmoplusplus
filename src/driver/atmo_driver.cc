@@ -20,7 +20,9 @@ void AtmoDriver::StartCompilation(std::istream &stream)
          ba.what() << ")" << std::endl;
         exit(EXIT_FAILURE);
     }
+
     //TODO: Let the user choose input file, currently defaults to test.txt
+
     Error::Initialize();
     SymbolTable::Initialize();
     parser->parse();
@@ -30,6 +32,13 @@ void AtmoDriver::StartCompilation(std::istream &stream)
         exit(EXIT_FAILURE);
     }
     SemanticAnalyze();
+
+    if(!Error::CanContinue())
+    {
+        return;
+    }
+
+    TranslateToIR();
 
 }
 
@@ -50,6 +59,37 @@ std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
     return  nullptr;    
     
 }
+
+void AtmoDriver::TranslateToIR()
+{
+    auto nodes = ast_root->GetStatementsRef();
+
+    std::shared_ptr<IRStatementList> temp = nullptr;
+
+    for (auto &&node : nodes)
+    {
+        auto ir = node->TranslateToIR();
+
+        // FIXME: This is only needed until all IR translation is implemented
+        if(ir == nullptr)
+        {
+            continue;
+        }
+
+        auto ir_list = std::make_shared<IRStatementList>(ir, nullptr);
+        if(ir_root == nullptr)
+        {
+            ir_root = ir_list;
+            temp = ir_root;
+        }
+        else
+        {
+            temp->tail = ir_list;
+            temp = ir_list;
+        }
+    }
+}
+
 
 std::unique_ptr<yy::parser> AtmoDriver::CreateParser(const std::unique_ptr<AtmoLexer> &lexer)
 {

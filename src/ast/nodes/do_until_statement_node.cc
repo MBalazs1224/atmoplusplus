@@ -52,7 +52,43 @@ std::vector<std::shared_ptr<VariableSymbol>> DoUntilStatementNode::GetVariables(
 
 std::shared_ptr<IRStatement> DoUntilStatementNode::TranslateToIR()
 {
-    //TODO: Implement DoUntilStatementNode::TranslateToIR
-    return nullptr;
+
+    // The do-until statement will execute the body at least once (just like a do-while in a regular language)
+
+    // Label for the start of the do-until statement
+    std::shared_ptr<Label> do_until_start = std::make_shared<Label>();
+
+    // Label for the end of the instructions
+    std::shared_ptr<Label> do_until_end = std::make_shared<Label>();
+
+    std::vector<std::shared_ptr<IRStatement>> statements;
+
+    // Generate IR for the body of the do-until statement
+    std::shared_ptr<IRStatement> body_statements = body->TranslateToIR();
+
+
+    // Generate IR for the condition expression
+
+    auto condition_expression = expression->TranslateExpressionToIr();
+
+    // Jump to the start of the do-until statement if the given expression is false, otherwise jump out the loop
+    auto condition_statement = condition_expression->ToConditionExpression(do_until_end,do_until_start);
+
+
+    // Generate the asm label for the start of the do-until statement
+    statements.push_back(std::make_shared<IRLabel>(do_until_start));
+
+    // Execute the IR for the body
+    statements.push_back(body_statements);
+
+    // Execute the condition
+    statements.push_back(condition_statement);
+
+    // Generate label for the end of the do-until statement
+    statements.push_back(std::make_shared<IRLabel>(do_until_end));
+
+
+    return std::make_shared<IRSeq>(statements);
+
 }
 
