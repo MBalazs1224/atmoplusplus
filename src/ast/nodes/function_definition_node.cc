@@ -19,7 +19,15 @@ std::shared_ptr<FunctionSymbol> FunctionDefinitionNode::GetFunction()
 
 std::shared_ptr<IRStatement> FunctionDefinitionNode::TranslateToIR()
 {
-    //TODO: Implement FunctionDefinition TranslateToIR
+    auto function_label = std::make_shared<Label>(function->name);
+
+    std::vector<std::shared_ptr<IRStatement>> statements;
+
+    // Create a label for the function
+    statements.push_back(std::make_shared<IRLabel>(function_label));
+
+    // Execute the body of the function
+    statements.push_back(function->body->TranslateToIR());
 
     return nullptr;
 }

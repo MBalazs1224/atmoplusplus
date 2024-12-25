@@ -43,7 +43,6 @@ std::vector<std::shared_ptr<VariableSymbol>> ElseIfStatementNode::GetVariables()
 
 std::shared_ptr<IRStatement> ElseIfStatementNode::TranslateToIR()
 {
-    //TODO: Implement ElseIfStatementNode::TranslateToIR
-
-    return nullptr;
+    assert(false);
+    throw std::logic_error("Else-if-statements should be translated in the IfStatementNode::TranslateToIR function!");
 }
