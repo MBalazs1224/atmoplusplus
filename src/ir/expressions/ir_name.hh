@@ -3,7 +3,7 @@
 #include "../../frame/label.hh"
 
 // Represents an assembly label
-class IRName : IRExpression
+class IRName : public IRExpression
 {
         Label label;
     public:

@@ -6,7 +6,7 @@
 
 
 // Represents a function call, func is evaluated before args who are evaluated left to right
-class IRCall : IRExpression
+class IRCall : public IRExpression
 {
         std::shared_ptr<IRExpression> func;
         std::shared_ptr<ExpressionList> args;

@@ -88,7 +88,7 @@ std::shared_ptr<IRStatement> DoUntilStatementNode::TranslateToIR()
     statements.push_back(std::make_shared<IRLabel>(do_until_end));
 
 
-    return std::make_shared<IRSeq>(statements);
+    return std::make_shared<IRSequence>(statements);
 
 }
 

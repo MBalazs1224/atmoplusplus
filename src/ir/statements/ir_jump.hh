@@ -5,7 +5,7 @@
 #include "../../frame/labellist.hh"
 
 // Transfer control to address exp
-class IRJump : IRStatement
+class IRJump : public IRStatement
 {
         std::shared_ptr<IRExpression> exp;
         std::shared_ptr<LabelList> targets;

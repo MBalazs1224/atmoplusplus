@@ -5,7 +5,7 @@
 #include <vector>
 #include <assert.h>
 // left followed by right immediately
-class IRSequence : IRStatement
+class IRSequence : public IRStatement
 {
         std::shared_ptr<IRStatement> left;
         std::shared_ptr<IRStatement> right;

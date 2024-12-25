@@ -3,7 +3,7 @@
 #include "../../frame/temp.hh"
 
 // Similiar to a register, but we have unlimited of this
-class IRTemp : IRExpression
+class IRTemp : public IRExpression
 {
         Temp temp;
     public:

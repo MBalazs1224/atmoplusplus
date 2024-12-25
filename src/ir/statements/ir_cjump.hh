@@ -6,7 +6,7 @@
 #include "ir_label.hh"
 
 // Evaluate left and right in that order and compare their results using relop, if the result is true jump to iftrue, otherwise iffalse
-class IRCJump : IRStatement
+class IRCJump : public IRStatement
 {
         RelationalOperator relop;
         std::shared_ptr<IRExpression> left;

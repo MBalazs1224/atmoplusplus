@@ -2,7 +2,7 @@
 #include "ir_expression.hh"
 
 // Integer constant
-class IRConst : IRExpression
+class IRConst : public IRExpression
 {
         int value;
     public:

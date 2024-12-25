@@ -3,7 +3,7 @@
 #include "ir_statement.hh"
 #include "../expressions/ir_expression.hh"
 
-class IRMove : IRStatement
+class IRMove : public IRStatement
 {
         std::shared_ptr<IRExpression> source;
         std::shared_ptr<IRExpression> destination;

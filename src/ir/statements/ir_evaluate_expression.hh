@@ -4,7 +4,7 @@
 #include "../expressions/ir_expression.hh"
 
 // Evaluate the exoression and discard the result
-class IREvaluateExpression : IRStatement
+class IREvaluateExpression : public IRStatement
 {
         std::shared_ptr<IRExpression> exp;
     public:
