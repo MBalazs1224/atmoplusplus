@@ -5,6 +5,7 @@
 #include "../expressions/function_call.hh"
 #include "class_definition_node.hh"
 #include "variable_container.hh"
+#include "../../ir/statements/all_ir_statements.hh"
 #include <vector>
 #include <memory>
 
