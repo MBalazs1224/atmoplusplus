@@ -21,7 +21,12 @@ DataSize VariableSymbol::GetSize()
 
 std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
 {
-    throw std::runtime_error("VariableSymbol should not be translated to IR as expression");
+    // Use the access object to retreive this variable's location
+
+    auto fp_exp = std::make_shared<IRTemp>(frame_pointer);
+    auto access_exp = access->AsExpression(fp_exp);
+    
+    return std::make_shared<TranslateValueExpression>(access_exp);
 }
 
 std::shared_ptr<IRStatement> VariableSymbol::TranslateToIR()

@@ -1,11 +1,12 @@
 #pragma once
 #include "ir_expression.hh"
 #include "../../frame/temp.hh"
+#include <memory>
 
 // Similiar to a register, but we have unlimited of this
 class IRTemp : public IRExpression
 {
-        Temp temp;
+        std::shared_ptr<Temp> temp;
     public:
-        IRTemp(Temp);
+        IRTemp(std::shared_ptr<Temp>);
 };

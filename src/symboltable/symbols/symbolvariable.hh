@@ -14,6 +14,9 @@ class VariableSymbol : public SymbolTableElement
     // Will contain the Access object to this variable (wether it's in reg or frame)
     std::shared_ptr<Access> access;
 
+    // The register of the frame pointer in the machine's architecture
+    std::shared_ptr<Temp> frame_pointer;
+
     std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
     std::shared_ptr<IRStatement> TranslateToIR() override;
 };

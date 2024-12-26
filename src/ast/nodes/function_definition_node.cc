@@ -28,6 +28,10 @@ std::shared_ptr<IRStatement> FunctionDefinitionNode::TranslateToIR()
     {
         // true means that the variable escapes, meaning it should be in frame not in register
         var->access = current_frame.allocLocal(true);
+        
+
+        // Give the variable the frame pointer
+        var->frame_pointer = current_frame.FramePointer();
     }
     
 
