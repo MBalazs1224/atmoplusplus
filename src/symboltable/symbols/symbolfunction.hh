@@ -14,11 +14,13 @@ class FunctionSymbol : public SymbolTableElement
     private:
         std::vector<std::shared_ptr<VariableSymbol>> arguments;
 
-        // Contains all the local variables defined in the function
-        std::vector<std::shared_ptr<VariableSymbol>> local_variables;
 
         int size_in_bytes = 0;
-    public: 
+    public:
+
+
+    // Contains all the local variables defined in the function
+    std::vector<std::shared_ptr<VariableSymbol>> local_variables;
 
     std::unique_ptr<BodyNode> body;
     

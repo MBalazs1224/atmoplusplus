@@ -3,6 +3,7 @@
 #include "../../symboltable/symbols/symbolfunction.hh"
 #include "../attributes/attribute.hh"
 #include "../types/type.hh"
+#include "../../frame/x86_frame.hh"
 #include <memory>
 #include <vector>
 

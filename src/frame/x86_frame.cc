@@ -18,6 +18,7 @@ std::shared_ptr<Frame> x86Frame::newFrame(Label name_in, std::shared_ptr<BoolLis
 
 std::shared_ptr<Access> x86Frame::allocLocal(bool escapes)
 {
+    //TODO: Implement that not all variables are the same size
     if(escapes)
     {
         auto ret = std::make_shared<InFrame>(allocated);

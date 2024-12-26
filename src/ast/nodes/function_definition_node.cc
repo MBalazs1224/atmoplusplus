@@ -19,6 +19,19 @@ std::shared_ptr<FunctionSymbol> FunctionDefinitionNode::GetFunction()
 
 std::shared_ptr<IRStatement> FunctionDefinitionNode::TranslateToIR()
 {
+    //TODO: Implement that not all variables are the same size
+
+    x86Frame current_frame;
+
+    // Allocate space for the local variables
+    for (auto &&var : function->local_variables)
+    {
+        // true means that the variable escapes, meaning it should be in frame not in register
+        var->access = current_frame.allocLocal(true);
+    }
+    
+
+
     auto function_label = std::make_shared<Label>(function->name);
 
     std::vector<std::shared_ptr<IRStatement>> statements;
