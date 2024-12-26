@@ -25,7 +25,5 @@ bool DestructorDefinitionNode::Check() {
 
 std::shared_ptr<IRStatement> DestructorDefinitionNode::TranslateToIR()
 {
-    //TODO: Implement DestructorDefinitionNode::TranslateToIR
-
-    return nullptr;
+    throw std::logic_error("Destructor definitions shouldn't be translated to IR!");
 }

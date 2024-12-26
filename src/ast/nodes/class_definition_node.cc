@@ -23,6 +23,5 @@ std::shared_ptr<ClassSymbol> ClassDefinitionNode::GetClass()
 
 std::shared_ptr<IRStatement> ClassDefinitionNode::TranslateToIR()
 {
-    // TODO: Implement ClassDefinitionNode::TranslateToIR 
-    return nullptr;
+    throw std::logic_error("Class definitions shouldn't be translated to IR!");
 }

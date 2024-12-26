@@ -34,7 +34,5 @@ bool StatementListNode::Check()
 
 std::shared_ptr<IRStatement> StatementListNode::TranslateToIR()
 {
-    //TODO: Implement StatementListNode TranslateToIR
-
-    return nullptr;
+    throw std::logic_error("Statement lists shouldn't be translated to IR!");
 }

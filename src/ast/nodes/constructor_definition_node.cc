@@ -32,6 +32,5 @@ const std::vector<std::shared_ptr<IExpressionable>>& ConstructorDefinitionNode::
 
 std::shared_ptr<IRStatement> ConstructorDefinitionNode::TranslateToIR()
 {
-    // TODO: Implement ConstructorDefinitionNode::TranslateToIR
-    return nullptr;
+    throw std::logic_error("Constructor definitions shouldn't be translated to IR!");
 }
