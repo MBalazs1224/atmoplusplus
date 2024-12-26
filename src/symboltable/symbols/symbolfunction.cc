@@ -50,3 +50,13 @@ DataSize FunctionSymbol::GetSize()
     // Functions don't have a size
     return DataSize::Empty;
 }
+
+std::shared_ptr<TranslateExpression> FunctionSymbol::TranslateExpressionToIr()
+{
+    throw std::runtime_error("FunctionSymbol should not be translated to IR as expression");
+}
+
+std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
+{
+    throw std::runtime_error("FunctionSymbol should not be translated to IR");
+}

@@ -40,4 +40,7 @@ class FunctionSymbol : public SymbolTableElement
     const std::vector<std::shared_ptr<VariableSymbol>>& GetArguments();
 
     DataSize GetSize() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

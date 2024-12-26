@@ -18,3 +18,13 @@ DataSize VariableSymbol::GetSize()
 {
     return type->GetSize();
 }
+
+std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
+{
+    throw std::runtime_error("VariableSymbol should not be translated to IR as expression");
+}
+
+std::shared_ptr<IRStatement> VariableSymbol::TranslateToIR()
+{
+    throw std::runtime_error("VariableSymbol should not be translated to IR");
+}

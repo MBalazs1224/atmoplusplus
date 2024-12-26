@@ -105,4 +105,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
     const std::vector<std::shared_ptr<FunctionSymbol>> GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>>&);
 
     DataSize GetSize() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

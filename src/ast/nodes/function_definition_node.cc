@@ -29,5 +29,5 @@ std::shared_ptr<IRStatement> FunctionDefinitionNode::TranslateToIR()
     // Execute the body of the function
     statements.push_back(function->body->TranslateToIR());
 
-    return nullptr;
+    return std::make_shared<IRSequence>(statements);
 }

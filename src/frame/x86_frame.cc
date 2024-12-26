@@ -31,3 +31,9 @@ std::shared_ptr<Access> x86Frame::allocLocal(bool escapes)
         return std::make_shared<InReg>();
     }
 }
+
+std::shared_ptr<Temp> x86Frame::FramePointer()
+{
+    // rbp acts as the frame pointer on 64bit machines
+    return std::make_shared<Temp>("rbp");
+}

@@ -9,4 +9,7 @@ class VariableSymbol : public SymbolTableElement
     bool Check() override;
 
     DataSize GetSize() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

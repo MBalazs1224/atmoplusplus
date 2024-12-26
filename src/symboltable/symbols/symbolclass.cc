@@ -373,3 +373,13 @@ DataSize ClassSymbol::GetSize()
     // It will be a pointer to the class
     return DataSize::QWord;
 }
+
+std::shared_ptr<TranslateExpression> ClassSymbol::TranslateExpressionToIr()
+{
+    throw std::runtime_error("ClassSymbol should not be translated to IR as expression");
+}
+
+std::shared_ptr<IRStatement> ClassSymbol::TranslateToIR()
+{
+    throw std::runtime_error("ClassSymbol should not be translated to IR");
+}
