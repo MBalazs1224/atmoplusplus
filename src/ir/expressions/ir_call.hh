@@ -9,7 +9,7 @@
 class IRCall : public IRExpression
 {
         std::shared_ptr<IRExpression> func;
-        std::shared_ptr<ExpressionList> args;
+        std::shared_ptr<IRExpressionList> args;
     public:
-        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<ExpressionList>);
+        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>);
 };

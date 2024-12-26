@@ -3,6 +3,8 @@
 #include "identifier.hh"
 #include "member_access_expression.hh"
 #include "../../symboltable/symbols/symbolfunction.hh"
+#include "../../ir/statements/all_ir_statements.hh"
+#include "../../ir/expressions/all_ir_expressions.hh"
 #include <vector>
 #include <memory>
 
@@ -35,4 +37,8 @@ class FunctionCall : public OneOperandExpression
 
         // Check if the function and arguments are valid
         bool Check() override;
+
+        std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+
+        std::shared_ptr<IRStatement> TranslateToIR() override;
 };

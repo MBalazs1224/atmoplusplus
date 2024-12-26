@@ -80,3 +80,47 @@ std::shared_ptr<SymbolTableElement> FunctionCall::GetElementFromExpression()
     }
     return nullptr;
 }
+
+std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
+{
+    std::shared_ptr<IRExpressionList> argumentsList = std::make_shared<IRExpressionList>();
+
+    // Generate the arguments
+    for (auto &&arg : arguments)
+    {
+        argumentsList->expression = arg->TranslateExpressionToIr()->ToValueExpression();
+        argumentsList->next = std::make_shared<IRExpressionList>();
+        argumentsList = argumentsList->next;
+    }
+    // Evaluate the function expression
+    auto func_evaluated = expression->TranslateExpressionToIr()->ToValueExpression();
+
+    // Generate the function call
+    auto functionCall = std::make_shared<IRCall>(func_evaluated, argumentsList);
+
+    // Wrap it in a translate to value expression, so other expressions can use it
+    return std::make_shared<TranslateValueExpression>(functionCall);
+}
+
+std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
+{
+    std::shared_ptr<IRExpressionList> argumentsList = std::make_shared<IRExpressionList>();
+
+    // Generate the arguments
+    for (auto &&arg : arguments)
+    {
+        argumentsList->expression = arg->TranslateExpressionToIr()->ToValueExpression();
+        argumentsList->next = std::make_shared<IRExpressionList>();
+        argumentsList = argumentsList->next;
+    }
+    // Evaluate the function expression
+    auto func_evaluated = expression->TranslateExpressionToIr()->ToValueExpression();
+
+    // Generate the function call
+    auto functionCall = std::make_shared<IRCall>(std::make_shared<IRName>(func_evaluated), argumentsList);
+
+    //TODO:  Might be a wrong implementation of function call in IR
+
+    // We only need to evaluate the function call
+    return std::make_shared<IREvaluateExpression>(functionCall);
+}

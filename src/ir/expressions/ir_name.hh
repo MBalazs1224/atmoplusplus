@@ -1,11 +1,12 @@
 #pragma once
 #include "ir_expression.hh"
 #include "../../frame/label.hh"
+#include <memory>
 
 // Represents an assembly label
 class IRName : public IRExpression
 {
-        Label label;
+        std::shared_ptr<Label> label;
     public:
-        IRName(Label);
+        IRName(std::shared_ptr<Label>);
 };

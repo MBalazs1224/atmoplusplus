@@ -1,6 +1,11 @@
 #pragma once
 
-class ExpressionList
+class IRExpressionList
 {
-    // TODO: Implement ExpressionList
+
+    public:
+        std::shared_ptr<IRExpression> expression;
+        std::shared_ptr<IRExpressionList> next;
+
+        
 };
