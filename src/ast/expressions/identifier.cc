@@ -42,3 +42,8 @@ DataSize Identifier::GetSize()
 {
     return element->GetSize();
 }
+
+std::shared_ptr<TranslateExpression> Identifier::TranslateExpressionToIr()
+{
+    return element->TranslateExpressionToIr();
+}

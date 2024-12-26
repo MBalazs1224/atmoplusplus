@@ -52,8 +52,14 @@ DataSize FunctionSymbol::GetSize()
 }
 
 std::shared_ptr<TranslateExpression> FunctionSymbol::TranslateExpressionToIr()
-{
-    throw std::runtime_error("FunctionSymbol should not be translated to IR as expression");
+{   
+    // Generate a label with the function's name
+    std::shared_ptr<Label> label = std::make_shared<Label>(this->name);
+
+    // Return the label as a value expression
+
+    return std::make_shared<TranslateValueExpression>
+    (std::make_shared<IRName>(label));
 }
 
 std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
