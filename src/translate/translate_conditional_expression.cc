@@ -55,8 +55,8 @@ std::shared_ptr<IRExpression> TranslateConditionalExpression::ToValueExpression(
     // Executes all the instructions above, then gets the value of the register.
 
     auto finalIR = std::make_shared<IREseq>(
-        conditionThenFalseThenMove1,
-        std::make_shared<IRTemp>(reg)
+        std::make_shared<IRTemp>(reg),
+        conditionThenFalseThenMove1 
     );
 
     return finalIR;

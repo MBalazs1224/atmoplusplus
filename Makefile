@@ -1,6 +1,8 @@
 
 nodes := ./build/nodes/statement_list_node.o ./build/nodes/body_node.o ./build/nodes/variable_definition_node.o ./build/nodes/class_definition_node.o ./build/nodes/constructor_definition_node.o ./build/nodes/destructor_definition_node.o ./build/nodes/do_until_statement_node.o ./build/nodes/else_if_statement_node.o  ./build/nodes/else_statement_node.o ./build/nodes/function_definition_node.o ./build/nodes/if_statement_node.o ./build/nodes/return_statement_node.o ./build/nodes/until_statement_node.o
 
+literals := ./build/literals/literal.o ./build/literals/bool_literal.o ./build/literals/char_literal.o ./build/literals/integer_literal.o ./build/literals/float_literal.o ./build/literals/string_literal.o
+
 symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./build/symbols/symbolclass.o
 
 expressions := ./build/expressions/add_expression.o ./build/expressions/and_expression.o ./build/expressions/assignment_expression.o ./build/expressions/divide_expression.o ./build/expressions/expressionable.o ./build/expressions/function_call.o ./build/expressions/greater_than_expression.o ./build/expressions/greater_than_or_equal_expression.o ./build/expressions/identifier.o  ./build/expressions/less_than_expression.o ./build/expressions/less_than_or_equal_expression.o ./build/expressions/matches_expression.o ./build/expressions/member_access_expression.o ./build/expressions/multiply_expression.o ./build/expressions/not_expression.o ./build/expressions/not_matches_expression.o ./build/expressions/or_expression.o ./build/expressions/subtract_expression.o ./build/expressions/two_operand_expression.o ./build/expressions/one_operand_expression.o ./build/expressions/array_subscript_expression.o
@@ -9,9 +11,13 @@ attributes := ./build/attributes/attribute.o ./build/attributes/attribute_privat
 
 types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboolean.o  ./build/types/typeinteger.o ./build/types/typefloat.o ./build/types/typestring.o ./build/types/typevoid.o ./build/types/typechar.o
 
-ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o
+ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o
 
-ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o
+ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o
+
+frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o
+
+translate := ./build/translate/translate_conditional_expression.o ./build/translate/translate_value_expression.o ./build/translate/translate_no_value_expression.o
 
 
 helper := ./build/helper/helper.o
@@ -32,10 +38,10 @@ ilocation := ./build/location/ilocation.o
 
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(frame) $(translate)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
-CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual
+CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
 #LDFLAGS = -static-libasan
 
 
@@ -301,7 +307,7 @@ main: $(objects)
 ./build/literals/char_literal.o: ./src/ast/literals/char_literal.cc ./src/ast/literals/char_literal.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/literals/int_literal.o: ./src/ast/literals/int_literal.cc ./src/ast/literals/int_literal.hh
+./build/literals/integer_literal.o: ./src/ast/literals/integer_literal.cc ./src/ast/literals/integer_literal.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/literals/float_literal.o: ./src/ast/literals/float_literal.cc ./src/ast/literals/float_literal.hh
@@ -335,6 +341,9 @@ main: $(objects)
 ./build/ir/statements/ir_statement_list.o: ./src/ir/statements/ir_statement_list.cc ./src/ir/statements/ir_statement_list.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
+./build/ir/statements/ir_statement.o: ./src/ir/statements/ir_statement.cc ./src/ir/statements/ir_statement.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
 # IR Expressions
 
 ./build/ir/expressions/ir_binary_operator.o: ./src/ir/expressions/ir_binary_operator.cc ./src/ir/expressions/ir_binary_operator.hh
@@ -358,6 +367,46 @@ main: $(objects)
 
 ./build/ir/expressions/ir_temp.o: ./src/ir/expressions/ir_temp.cc ./src/ir/expressions/ir_temp.hh
 	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_expression.o: ./src/ir/expressions/ir_expression.cc ./src/ir/expressions/ir_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+# Frame
+
+./build/frame/x86_frame.o: ./src/frame/x86_frame.cc ./src/frame/x86_frame.hh
+	@mkdir -p ./build/frame
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/boollist.o: ./src/frame/boollist.cc ./src/frame/boollist.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/inframe.o: ./src/frame/inframe.cc ./src/frame/inframe.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/inreg.o: ./src/frame/inreg.cc ./src/frame/inreg.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/label.o: ./src/frame/label.cc ./src/frame/label.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/temp.o: ./src/frame/temp.cc ./src/frame/temp.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/accesslist.o: ./src/frame/accesslist.cc ./src/frame/accesslist.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+# Translate
+
+./build/translate/translate_conditional_expression.o: ./src/translate/translate_conditional_expression.cc ./src/translate/translate_conditional_expression.hh
+	@mkdir -p ./build/translate
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/translate/translate_value_expression.o: ./src/translate/translate_value_expression.cc ./src/translate/translate_value_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/translate/translate_no_value_expression.o: ./src/translate/translate_no_value_expression.cc ./src/translate/translate_no_value_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
 
 # Parser
 	

@@ -15,4 +15,6 @@ class IRSequence : public IRStatement
 
         // Will convert the vector elements into a IRSequence tree
         IRSequence(const std::vector<std::shared_ptr<IRStatement>>&);
+
+        ~IRSequence() override = default;    
 };

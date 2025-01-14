@@ -3,6 +3,7 @@
 #include "boollist.hh"
 #include "access.hh"
 #include "accesslist.hh"
+#include "temp.hh"
 #include <memory>
 
 // Represents a frame in the architecture

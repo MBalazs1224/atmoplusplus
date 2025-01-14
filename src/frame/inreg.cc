@@ -2,12 +2,12 @@
 #include "../ir/expressions/ir_temp.hh"
 InReg::InReg()
 {
-    temp = Temp();
+    temp = std::make_shared<Temp>();
 }
 
 std::string InReg::ToString()
 {
-    return temp.ToString();
+    return temp->ToString();
 }
 
 std::shared_ptr<IRExpression> InReg::AsExpression(std::shared_ptr<IRExpression> framePointer)

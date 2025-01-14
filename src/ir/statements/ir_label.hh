@@ -11,4 +11,6 @@ class IRLabel : public IRStatement
     public:
         
         IRLabel(std::shared_ptr<Label> l);
+
+        ~IRLabel() override = default;
 };

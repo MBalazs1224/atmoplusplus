@@ -2,11 +2,12 @@
 #include <string>
 #include "access.hh"
 #include "temp.hh"
+#include <memory>
 // Represents a temporary storage location (register)
 class InReg : public Access
 {  
     private:
-        Temp temp;
+        std::shared_ptr<Temp> temp;
     public:
         InReg();
         ~InReg() = default;

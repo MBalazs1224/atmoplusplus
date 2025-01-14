@@ -38,8 +38,6 @@ void AtmoDriver::StartCompilation(std::istream &stream)
         return;
     }
 
-    TranslateToIR();
-
 }
 
 std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)

@@ -36,5 +36,7 @@ std::shared_ptr<Access> x86Frame::allocLocal(bool escapes)
 std::shared_ptr<Temp> x86Frame::FramePointer()
 {
     // rbp acts as the frame pointer on 64bit machines
-    return std::make_shared<Temp>("rbp");
+
+    // FIXME: This is a temporary solution, we should have a way to get the frame pointer (rbp)
+    return std::make_shared<Temp>();
 }
