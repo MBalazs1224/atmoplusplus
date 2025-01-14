@@ -13,6 +13,7 @@ bool FloatLiteral::Check()
 
 std::shared_ptr<TranslateExpression> FloatLiteral::TranslateExpressionToIr()
 {
-    //TODO: "Implement floatliteral to ir"
-    return nullptr;
+    auto exp = std::make_shared<IRConstFloat>(value);
+
+    return std::make_shared<TranslateValueExpression>(exp);
 }

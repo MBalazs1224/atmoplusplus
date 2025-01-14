@@ -15,6 +15,8 @@ bool CharLiteral::Check()
 
 std::shared_ptr<TranslateExpression> CharLiteral::TranslateExpressionToIr()
 {
-    //TODO: "Implement charliteral to ir"
-    return nullptr;
+    int charasint = value;
+
+    auto exp = std::make_shared<IRConst>(charasint);
+    return std::make_shared<TranslateValueExpression>(exp);
 }

@@ -15,6 +15,8 @@ bool BooleanLiteral::Check()
 
 std::shared_ptr<TranslateExpression> BooleanLiteral::TranslateExpressionToIr()
 {
-    //TODO: "Implement booleanliteral to ir"
-    return nullptr;
+    int boolasint = value;
+
+    auto exp = std::make_shared<IRConst>(boolasint);
+    return std::make_shared<TranslateValueExpression>(exp);
 }

@@ -15,6 +15,6 @@ bool IntegerLiteral::Check()
 
 std::shared_ptr<TranslateExpression> IntegerLiteral::TranslateExpressionToIr()
 {
-    //TODO: "Implement integer literal to ir"
-    return nullptr;
+    auto exp = std::make_shared<IRConst>(value);
+    return std::make_shared<TranslateValueExpression>(exp);
 }

@@ -1,6 +1,7 @@
 #include <istream>
 #include <memory>
 #include <iostream>
+#include <utility>
 #include "../lexer/AtmoLexer.hh"
 #include "../parser/parser.tab.hh"
 
@@ -17,6 +18,8 @@ class AtmoDriver
     std::unique_ptr<AtmoLexer> CreateLexer(std::istream&);
     std::unique_ptr<yy::parser> CreateParser(const std::unique_ptr<AtmoLexer>&);
 
+    // A vector that will hold the labels and values to all strings in the program
+    static std::vector<std::pair<std::shared_ptr<Label>,std::string>> global_strings;
     
     // Will only build the AST based on the given stream (used during testing)
     void parse_only(std::istream&);
