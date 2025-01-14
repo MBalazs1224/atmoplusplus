@@ -39,7 +39,7 @@ TEST_F(ParserTest, ParseIntegerLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -63,7 +63,7 @@ TEST_F(ParserTest, ParseFloatLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<Literal<double,TypeFloat>>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<FloatLiteral>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -87,7 +87,7 @@ TEST_F(ParserTest, ParseAbbreviatedFloatLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<Literal<double,TypeFloat>>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<FloatLiteral>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -111,7 +111,7 @@ TEST_F(ParserTest, ParseCharLiteralExpression)
 
 	ASSERT_NE(statements.size(), 0);
 
-	auto literal = std::dynamic_pointer_cast<Literal<char,TypeChar>>(statements[0]);
+	auto literal = std::dynamic_pointer_cast<CharLiteral>(statements[0]);
 
 	
 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -137,7 +137,7 @@ TEST_F(ParserTest, ParseCharLiteralExpression)
 
 // 	ASSERT_NE(statements.size(), 0);
 
-// 	auto literal = std::dynamic_pointer_cast<Literal<std::string,TypeString>>(statements[0]);
+// 	auto literal = std::dynamic_pointer_cast<StringLiteral>(statements[0]);
 
 	
 // 	//If the cast didn't return a nullptr means that the class was csted successfully
@@ -169,8 +169,8 @@ TEST_F(ParserTest, ParseAdditionExpression) {
     ASSERT_NE(statements.size(), 0);
     auto addExpr = std::dynamic_pointer_cast<AddExpression>(statements[0]);
     ASSERT_NE(addExpr, nullptr);
-    auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(addExpr->GetLeft());
-    auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(addExpr->GetRight());
+    auto left = std::dynamic_pointer_cast<IntegerLiteral>(addExpr->GetLeft());
+    auto right = std::dynamic_pointer_cast<IntegerLiteral>(addExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(right, nullptr);
     EXPECT_EQ(left->value, 5);
@@ -185,8 +185,8 @@ TEST_F(ParserTest, ParseAndExpression) {
     ASSERT_NE(statements.size(), 0);
     auto andExpr = std::dynamic_pointer_cast<AndExpression>(statements[0]);
     ASSERT_NE(andExpr, nullptr);
-    auto left = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(andExpr->GetLeft());
-    auto right = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(andExpr->GetRight());
+    auto left = std::dynamic_pointer_cast<BooleanLiteral>(andExpr->GetLeft());
+    auto right = std::dynamic_pointer_cast<BooleanLiteral>(andExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(right, nullptr);
     EXPECT_EQ(left->value, true);
@@ -200,8 +200,8 @@ TEST_F(ParserTest, ParseSubtractionExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto subExpr = std::dynamic_pointer_cast<SubtractExpression>(statements[0]);
 	ASSERT_NE(subExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(subExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(subExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(subExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(subExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 5);
@@ -215,8 +215,8 @@ TEST_F(ParserTest, ParseMultiplicationExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto mulExpr = std::dynamic_pointer_cast<MultiplyExpression>(statements[0]);
 	ASSERT_NE(mulExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(mulExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(mulExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(mulExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(mulExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 5);
@@ -230,8 +230,8 @@ TEST_F(ParserTest, ParseDivisionExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto divExpr = std::dynamic_pointer_cast<DivideExpression>(statements[0]);
 	ASSERT_NE(divExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(divExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(divExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(divExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(divExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 6);
@@ -245,8 +245,8 @@ TEST_F(ParserTest, ParseOrExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto orExpr = std::dynamic_pointer_cast<OrExpression>(statements[0]);
 	ASSERT_NE(orExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(orExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(orExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<BooleanLiteral>(orExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<BooleanLiteral>(orExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, true);
@@ -260,7 +260,7 @@ TEST_F(ParserTest, ParseNotExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto notExpr = std::dynamic_pointer_cast<NotExpression>(statements[0]);
 	ASSERT_NE(notExpr, nullptr);
-	auto operand = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(notExpr->GetExpression());
+	auto operand = std::dynamic_pointer_cast<BooleanLiteral>(notExpr->GetExpression());
 	ASSERT_NE(operand, nullptr);
 	EXPECT_EQ(operand->value, true);
 }
@@ -272,8 +272,8 @@ TEST_F(ParserTest, ParseMatchesExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto eqExpr = std::dynamic_pointer_cast<MatchesExpression>(statements[0]);
 	ASSERT_NE(eqExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(eqExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(eqExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(eqExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(eqExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 5);
@@ -287,8 +287,8 @@ TEST_F(ParserTest, ParseNotMatchesExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto neqExpr = std::dynamic_pointer_cast<NotMatchesExpression>(statements[0]);
 	ASSERT_NE(neqExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(neqExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(neqExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(neqExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(neqExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 5);
@@ -302,8 +302,8 @@ TEST_F(ParserTest, ParseGreaterThanExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto gtExpr = std::dynamic_pointer_cast<GreaterThanExpression>(statements[0]);
 	ASSERT_NE(gtExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(gtExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(gtExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(gtExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(gtExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 5);
@@ -318,8 +318,8 @@ TEST_F(ParserTest, ParseGreaterThanOrEqualExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto gteExpr = std::dynamic_pointer_cast<GreaterThanOrEqualExpression>(statements[0]);
 	ASSERT_NE(gteExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(gteExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(gteExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(gteExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(gteExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 5);
@@ -333,8 +333,8 @@ TEST_F(ParserTest, ParseLessThanExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto ltExpr = std::dynamic_pointer_cast<LessThanExpression>(statements[0]);
 	ASSERT_NE(ltExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(ltExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(ltExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(ltExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(ltExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 3);
@@ -348,8 +348,8 @@ TEST_F(ParserTest, ParseLessThanOrEqualExpression) {
 	ASSERT_NE(statements.size(), 0);
 	auto ltExpr = std::dynamic_pointer_cast<LessThanOrEqualExpression>(statements[0]);
 	ASSERT_NE(ltExpr, nullptr);
-	auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(ltExpr->GetLeft());
-	auto right = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(ltExpr->GetRight());
+	auto left = std::dynamic_pointer_cast<IntegerLiteral>(ltExpr->GetLeft());
+	auto right = std::dynamic_pointer_cast<IntegerLiteral>(ltExpr->GetRight());
 	ASSERT_NE(left, nullptr);
 	ASSERT_NE(right, nullptr);
 	EXPECT_EQ(left->value, 3);
@@ -366,13 +366,13 @@ TEST_F(ParserTest, ParseNestedAdditionAndMultiplicationExpression) {
     ASSERT_NE(statements.size(), 0);
     auto addExpr = std::dynamic_pointer_cast<AddExpression>(statements[0]);
     ASSERT_NE(addExpr, nullptr);
-    auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(addExpr->GetLeft());
+    auto left = std::dynamic_pointer_cast<IntegerLiteral>(addExpr->GetLeft());
     auto right = std::dynamic_pointer_cast<MultiplyExpression>(addExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(right, nullptr);
     EXPECT_EQ(left->value, 5);
-    auto rightLeft = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetLeft());
-    auto rightRight = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetRight());
+    auto rightLeft = std::dynamic_pointer_cast<IntegerLiteral>(right->GetLeft());
+    auto rightRight = std::dynamic_pointer_cast<IntegerLiteral>(right->GetRight());
     ASSERT_NE(rightLeft, nullptr);
     ASSERT_NE(rightRight, nullptr);
     EXPECT_EQ(rightLeft->value, 3);
@@ -386,13 +386,13 @@ TEST_F(ParserTest, ParseNestedLogicalAndComparisonExpression) {
     ASSERT_NE(statements.size(), 0);
     auto andExpr = std::dynamic_pointer_cast<AndExpression>(statements[0]);
     ASSERT_NE(andExpr, nullptr);
-    auto left = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(andExpr->GetLeft());
+    auto left = std::dynamic_pointer_cast<BooleanLiteral>(andExpr->GetLeft());
     auto right = std::dynamic_pointer_cast<GreaterThanExpression>(andExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(right, nullptr);
     EXPECT_EQ(left->value, true);
-    auto rightLeft = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetLeft());
-    auto rightRight = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(right->GetRight());
+    auto rightLeft = std::dynamic_pointer_cast<IntegerLiteral>(right->GetLeft());
+    auto rightRight = std::dynamic_pointer_cast<IntegerLiteral>(right->GetRight());
     ASSERT_NE(rightLeft, nullptr);
     ASSERT_NE(rightRight, nullptr);
     EXPECT_EQ(rightLeft->value, 5);
@@ -409,11 +409,11 @@ TEST_F(ParserTest, ParseComplexLogicalExpression) {
     auto orExpr = std::dynamic_pointer_cast<OrExpression>(statements[0]);
     ASSERT_NE(orExpr, nullptr);
     auto left = std::dynamic_pointer_cast<AndExpression>(orExpr->GetLeft());
-    auto right = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(orExpr->GetRight());
+    auto right = std::dynamic_pointer_cast<BooleanLiteral>(orExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(right, nullptr);
-    auto leftLeft = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(left->GetLeft());
-    auto leftRight = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(left->GetRight());
+    auto leftLeft = std::dynamic_pointer_cast<BooleanLiteral>(left->GetLeft());
+    auto leftRight = std::dynamic_pointer_cast<BooleanLiteral>(left->GetRight());
     ASSERT_NE(leftLeft, nullptr);
     ASSERT_NE(leftRight, nullptr);
     EXPECT_EQ(leftLeft->value, true);
@@ -434,19 +434,19 @@ TEST_F(ParserTest, ParseNestedMixedExpression) {
     auto divExpr = std::dynamic_pointer_cast<DivideExpression>(subExpr->GetRight());
     ASSERT_NE(addExpr, nullptr);
     ASSERT_NE(divExpr, nullptr);
-    auto left = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(addExpr->GetLeft());
+    auto left = std::dynamic_pointer_cast<IntegerLiteral>(addExpr->GetLeft());
     auto mulExpr = std::dynamic_pointer_cast<MultiplyExpression>(addExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(mulExpr, nullptr);
     EXPECT_EQ(left->value, 5);
-    auto mulLeft = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(mulExpr->GetLeft());
-    auto mulRight = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(mulExpr->GetRight());
+    auto mulLeft = std::dynamic_pointer_cast<IntegerLiteral>(mulExpr->GetLeft());
+    auto mulRight = std::dynamic_pointer_cast<IntegerLiteral>(mulExpr->GetRight());
     ASSERT_NE(mulLeft, nullptr);
     ASSERT_NE(mulRight, nullptr);
     EXPECT_EQ(mulLeft->value, 3);
     EXPECT_EQ(mulRight->value, 2);
-    auto divLeft = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(divExpr->GetLeft());
-    auto divRight = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(divExpr->GetRight());
+    auto divLeft = std::dynamic_pointer_cast<IntegerLiteral>(divExpr->GetLeft());
+    auto divRight = std::dynamic_pointer_cast<IntegerLiteral>(divExpr->GetRight());
     ASSERT_NE(divLeft, nullptr);
     ASSERT_NE(divRight, nullptr);
     EXPECT_EQ(divLeft->value, 4);
@@ -464,10 +464,10 @@ TEST_F(ParserTest, ParseComplexLogicalExpressionWithParentheses) {
     auto right = std::dynamic_pointer_cast<AndExpression>(orExpr->GetRight());
     ASSERT_NE(left, nullptr);
     ASSERT_NE(right, nullptr);
-    auto leftLeft = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(left->GetLeft());
-    auto leftRight = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(left->GetRight());
-    auto rightLeft = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(right->GetLeft());
-    auto rightRight = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(right->GetRight());
+    auto leftLeft = std::dynamic_pointer_cast<BooleanLiteral>(left->GetLeft());
+    auto leftRight = std::dynamic_pointer_cast<BooleanLiteral>(left->GetRight());
+    auto rightLeft = std::dynamic_pointer_cast<BooleanLiteral>(right->GetLeft());
+    auto rightRight = std::dynamic_pointer_cast<BooleanLiteral>(right->GetRight());
     ASSERT_NE(leftLeft, nullptr);
     ASSERT_NE(leftRight, nullptr);
     ASSERT_NE(rightLeft, nullptr);
@@ -731,7 +731,7 @@ TEST_F(ParserTest, ParseVariableDeclarationWithInitializationValue)
 
 	// Check that the expression was set correctly
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(varDef->expression);
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(varDef->expression);
 	ASSERT_NE(literal, nullptr);
 
 
@@ -1046,7 +1046,7 @@ TEST_F(ParserTest, ParseIfStatementWithNonEmptyBody) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1067,7 +1067,7 @@ TEST_F(ParserTest, ParseIfStatementWithEmptyBody) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1088,7 +1088,7 @@ TEST_F(ParserTest, ParseIfStatementWithElseStatement) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1118,7 +1118,7 @@ TEST_F(ParserTest, ParseIfStatementWithOneElseIfStatement) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1137,7 +1137,7 @@ TEST_F(ParserTest, ParseIfStatementWithOneElseIfStatement) {
 	// Assert we have exactly one else if statement and check the body and condition of it
     ASSERT_EQ(ifStmt->else_ifs.size(), 1);
 
-	auto elseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	auto elseIfCondition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->else_ifs[0]->expression);
 	ASSERT_NE(elseIfCondition, nullptr);
 	EXPECT_EQ(elseIfCondition->value, false);
 
@@ -1156,7 +1156,7 @@ TEST_F(ParserTest, ParseIfStatementWithMultipleElseIfStatement) {
     ASSERT_NE(statements.size(), 0);
     auto ifStmt = std::dynamic_pointer_cast<IfStatementNode>(statements[0]);
     ASSERT_NE(ifStmt, nullptr);
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1179,7 +1179,7 @@ TEST_F(ParserTest, ParseIfStatementWithMultipleElseIfStatement) {
 	//Check first else if
 
 
-	auto FirstElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	auto FirstElseIfCondition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->else_ifs[0]->expression);
 	ASSERT_NE(FirstElseIfCondition, nullptr);
 	EXPECT_EQ(FirstElseIfCondition->value, false);
 
@@ -1190,7 +1190,7 @@ TEST_F(ParserTest, ParseIfStatementWithMultipleElseIfStatement) {
 	//Check second else if
 
 
-	auto SecondElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[1]->expression);
+	auto SecondElseIfCondition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->else_ifs[1]->expression);
 	ASSERT_NE(SecondElseIfCondition, nullptr);
 	EXPECT_EQ(SecondElseIfCondition->value, true);
 
@@ -1211,7 +1211,7 @@ TEST_F(ParserTest, ParseIfStatementWithElseAndOneElseIfStatement) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1234,7 +1234,7 @@ TEST_F(ParserTest, ParseIfStatementWithElseAndOneElseIfStatement) {
 
     ASSERT_EQ(ifStmt->else_ifs.size(), 1);
 
-	auto elseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	auto elseIfCondition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->else_ifs[0]->expression);
 	ASSERT_NE(elseIfCondition, nullptr);
 	EXPECT_EQ(elseIfCondition->value, false);
 
@@ -1258,7 +1258,7 @@ TEST_F(ParserTest, ParseIfStatementWithElseAndMultipleElseIfStatement) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1285,7 +1285,7 @@ TEST_F(ParserTest, ParseIfStatementWithElseAndMultipleElseIfStatement) {
 
 	// Check first else if
 
-	auto FirstElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	auto FirstElseIfCondition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->else_ifs[0]->expression);
 	ASSERT_NE(FirstElseIfCondition, nullptr);
 	EXPECT_EQ(FirstElseIfCondition->value, false);
 
@@ -1296,7 +1296,7 @@ TEST_F(ParserTest, ParseIfStatementWithElseAndMultipleElseIfStatement) {
 
 	// Check second else if
 
-	auto SecondElseIfCondition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(ifStmt->else_ifs[0]->expression);
+	auto SecondElseIfCondition = std::dynamic_pointer_cast<BooleanLiteral>(ifStmt->else_ifs[0]->expression);
 	ASSERT_NE(SecondElseIfCondition, nullptr);
 	EXPECT_EQ(SecondElseIfCondition->value, false);
 
@@ -1319,7 +1319,7 @@ TEST_F(ParserTest, ParseUntilStatementWithNEmptyBody) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(untilStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(untilStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1343,7 +1343,7 @@ TEST_F(ParserTest, ParseUntilStatementWithNonEmptyBody) {
 
 	// Check the condition
 
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(untilStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(untilStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, false);
 
@@ -1368,7 +1368,7 @@ TEST_F(ParserTest, ParseDoUntilStatementWithNonEmptyBody) {
     ASSERT_NE(doUntilStmt, nullptr);
 
     // Check the condition
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(doUntilStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(doUntilStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, false);
 
@@ -1388,7 +1388,7 @@ TEST_F(ParserTest, ParseDoUntilStatementWithEmptyBody) {
     ASSERT_NE(doUntilStmt, nullptr);
 
     // Check the condition
-    auto condition = std::dynamic_pointer_cast<Literal<bool, TypeBoolean>>(doUntilStmt->expression);
+    auto condition = std::dynamic_pointer_cast<BooleanLiteral>(doUntilStmt->expression);
     ASSERT_NE(condition, nullptr);
     EXPECT_EQ(condition->value, true);
 
@@ -1436,9 +1436,9 @@ TEST_F(ParserTest, ParseFunctionCallWithArguments) {
 	
    	ASSERT_EQ(args.size(), 3);
 
-    auto arg1 = std::dynamic_pointer_cast<Literal<int, TypeInteger>>(args[0]);
-    auto arg2 = std::dynamic_pointer_cast<Literal<double, TypeFloat>>(args[1]);
-    auto arg3 = std::dynamic_pointer_cast<Literal<char, TypeChar>>(args[2]);
+    auto arg1 = std::dynamic_pointer_cast<IntegerLiteral>(args[0]);
+    auto arg2 = std::dynamic_pointer_cast<FloatLiteral>(args[1]);
+    auto arg3 = std::dynamic_pointer_cast<CharLiteral>(args[2]);
     ASSERT_NE(arg1, nullptr);
     ASSERT_NE(arg2, nullptr);
     ASSERT_NE(arg3, nullptr);
@@ -1578,7 +1578,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyNoParametersAndNoParentConstr
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
@@ -1626,7 +1626,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndNoParentConst
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
@@ -1650,7 +1650,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndParentConstru
 	EXPECT_EQ(argsForParent.size(),1);
 
 	auto firstArgument = argsForParent[0];
-	auto literalForParent = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(firstArgument);
+	auto literalForParent = std::dynamic_pointer_cast<IntegerLiteral>(firstArgument);
 	ASSERT_NE(literalForParent, nullptr);
 
 
@@ -1684,7 +1684,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndParentConstru
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
@@ -1708,13 +1708,13 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndParentConstru
 	EXPECT_EQ(argsForParent.size(),2);
 
 	auto firstArgument = argsForParent[0];
-	auto firstLiteralForParent = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(firstArgument);
+	auto firstLiteralForParent = std::dynamic_pointer_cast<IntegerLiteral>(firstArgument);
 	ASSERT_NE(firstLiteralForParent, nullptr);
 
 	EXPECT_EQ(firstLiteralForParent->value, 3425);
 
 	auto secondArgument = argsForParent[1];
-	auto secondLiteralForParent = std::dynamic_pointer_cast<Literal<char,TypeChar>>(secondArgument);
+	auto secondLiteralForParent = std::dynamic_pointer_cast<CharLiteral>(secondArgument);
 	ASSERT_NE(secondLiteralForParent, nullptr);
 
 	EXPECT_EQ(secondLiteralForParent->value,'c');
@@ -1747,7 +1747,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyOneParametersAndParentConstru
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
@@ -1802,7 +1802,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndNoParent
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
@@ -1827,7 +1827,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentCo
 	auto firstArgumentForParent = args[0];
 	ASSERT_NE(firstArgumentForParent,nullptr);
 
-	auto firstArgumentLiteral = std::dynamic_pointer_cast<Literal<std::string,TypeString>>(firstArgumentForParent);
+	auto firstArgumentLiteral = std::dynamic_pointer_cast<StringLiteral>(firstArgumentForParent);
 	ASSERT_NE(firstArgumentLiteral,nullptr);
 
 	//Expect correct value for literal
@@ -1867,7 +1867,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentCo
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
@@ -1892,7 +1892,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentCo
 	auto firstArgumentForParent = args[0];
 	ASSERT_NE(firstArgumentForParent,nullptr);
 
-	auto firstArgumentLiteral = std::dynamic_pointer_cast<Literal<std::string,TypeString>>(firstArgumentForParent);
+	auto firstArgumentLiteral = std::dynamic_pointer_cast<StringLiteral>(firstArgumentForParent);
 	ASSERT_NE(firstArgumentLiteral,nullptr);
 
 	//Expect correct value for literal
@@ -1901,7 +1901,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentCo
 	auto secondArgumentForParent = args[1];
 	ASSERT_NE(secondArgumentForParent,nullptr);
 
-	auto secondArgumentLiteral = std::dynamic_pointer_cast<Literal<double,TypeFloat>>(secondArgumentForParent);
+	auto secondArgumentLiteral = std::dynamic_pointer_cast<FloatLiteral>(secondArgumentForParent);
 	ASSERT_NE(secondArgumentLiteral,nullptr);
 
 	//Expect correct value for literal
@@ -1941,7 +1941,7 @@ TEST_F(ParserTest, ParseConstructorWithNonEmptyBodyMultipleParametersAndParentCo
 	// Expect correct identifier name
 	EXPECT_EQ(identifier->name,"a");
 
-	auto literal = std::dynamic_pointer_cast<Literal<int,TypeInteger>>(assignmentExpression->GetRight());
+	auto literal = std::dynamic_pointer_cast<IntegerLiteral>(assignmentExpression->GetRight());
 	ASSERT_NE(literal,nullptr);
 
 	// Expect literal value to equal to 5
