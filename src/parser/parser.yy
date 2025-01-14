@@ -496,12 +496,12 @@ expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $
                 auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);
                 $$ = std::move(id);
                 }
-            | NUMBER {$$ = std::make_unique<Literal<int,TypeInteger>>($1); $$->location = @1;}
-            | NUMBER_FLOAT {$$ = std::make_unique<Literal<double,TypeFloat>>($1); $$->location = @1;}
-            | CHAR_LITERAL {$$ = std::make_unique<Literal<char,TypeChar>>($1); $$->location = @1;}
-            | STRING_LITERAL {$$ = std::make_unique<Literal<std::string, TypeString>>($1); $$->location = @1;}
-            | TRUE {$$ = std::make_unique<Literal<bool,TypeBoolean>>($1); $$->location = @1;}
-            | FALSE {$$ = std::make_unique<Literal<bool,TypeBoolean>>($1); $$->location = @1;}
+            | NUMBER {$$ = std::make_unique<IntegerLiteral>($1); $$->location = @1;}
+            | NUMBER_FLOAT {$$ = std::make_unique<FloatLiteral>($1); $$->location = @1;}
+            | CHAR_LITERAL {$$ = std::make_unique<CharLiteral>($1); $$->location = @1;}
+            | STRING_LITERAL {$$ = std::make_unique<StringLiteral>($1); $$->location = @1;}
+            | TRUE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
+            | FALSE {$$ = std::make_unique<BooleanLiteral>($1); $$->location = @1;}
             | function_call {$$ = $1;}
             | expression EQUALS expression
                 {

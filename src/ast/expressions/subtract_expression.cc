@@ -40,3 +40,8 @@ std::shared_ptr<TranslateExpression> SubtractExpression::TranslateExpressionToIr
 
     return std::make_shared<TranslateValueExpression>(subtractExpression);
 }
+
+std::shared_ptr<IRStatement> SubtractExpression::TranslateToIR()
+{
+    throw std::runtime_error("SubtractExpression should not be translated to IR as nodes");
+}

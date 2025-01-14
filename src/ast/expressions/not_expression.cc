@@ -28,3 +28,15 @@ bool NotExpression::Check()
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> NotExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement not expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> NotExpression::TranslateToIR()
+{
+    //TODO: "Implement NotExpression to ir"
+    return nullptr;
+}

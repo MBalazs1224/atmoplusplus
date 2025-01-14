@@ -30,3 +30,15 @@ bool OrExpression::Check() {
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement or expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> OrExpression::TranslateToIR()
+{
+    //TODO: "Implement OrExpression to ir"
+    return nullptr;
+}

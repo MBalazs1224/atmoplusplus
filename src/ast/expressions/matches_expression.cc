@@ -29,3 +29,15 @@ bool MatchesExpression::Check() {
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> MatchesExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement matches expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> MatchesExpression::TranslateToIR()
+{
+    //TODO: "Implement MatchesExpression to ir"
+    return nullptr;
+}

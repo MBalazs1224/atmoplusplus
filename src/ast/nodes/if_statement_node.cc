@@ -126,7 +126,7 @@ std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
     statements.push_back(body->TranslateToIR());
 
     // Jump to the joining end label at the end of the body
-    statements.push_back(std::make_shared<IRJump>(if_end));
+    statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(if_end)));
 
     // Generate the false label so it can jump to the else-ifs if the main if is false
 
@@ -154,10 +154,10 @@ std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
         statements.push_back(elseIf->body->TranslateToIR());
 
         // Jump to the joining end label
-        statements.push_back(std::make_shared<IRJump>(if_end));
+        statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(if_end)));
 
         // Jump to the next else-if
-        statements.push_back(std::make_shared<IRJump>(if_false));
+        statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(if_false)));
     }
 
     // -------- Translate the else

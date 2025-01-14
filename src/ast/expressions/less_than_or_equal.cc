@@ -29,3 +29,15 @@ bool LessThanOrEqualExpression::Check() {
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> LessThanOrEqualExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement less than  or equal expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> LessThanOrEqualExpression::TranslateToIR()
+{
+    //TODO: "Implement LessThanOrEqualExpression to ir"
+    return nullptr;
+}

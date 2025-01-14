@@ -7,7 +7,11 @@ expressions := ./build/expressions/add_expression.o ./build/expressions/and_expr
 
 attributes := ./build/attributes/attribute.o ./build/attributes/attribute_private.o ./build/attributes/attribute_protected.o ./build/attributes/attribute_public.o ./build/attributes/attribute_static.o
 
-types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboolean.o  ./build/types/typeinteger.o ./build/types/typefloat.o ./build/types/typestring.o ./build/types/typevoid.o ./build/types/typechar.o  
+types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboolean.o  ./build/types/typeinteger.o ./build/types/typefloat.o ./build/types/typestring.o ./build/types/typevoid.o ./build/types/typechar.o
+
+ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o
+
+ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o
 
 
 helper := ./build/helper/helper.o
@@ -26,9 +30,9 @@ error := ./build/error/error.o
 
 ilocation := ./build/location/ilocation.o
 
-symboltable:= ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
+symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
-objects :=   $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual
@@ -304,6 +308,55 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/literals/string_literal.o: ./src/ast/literals/string_literal.cc ./src/ast/literals/string_literal.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+# IR Statements
+
+./build/ir/statements/ir_cjump.o: ./src/ir/statements/ir_cjump.cc ./src/ir/statements/ir_cjump.hh
+	@mkdir -p ./build/ir/statements
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/statements/ir_evaluate_expression.o: ./src/ir/statements/ir_evaluate_expression.cc ./src/ir/statements/ir_evaluate_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/statements/ir_jump.o: ./src/ir/statements/ir_jump.cc ./src/ir/statements/ir_jump.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/statements/ir_label.o: ./src/ir/statements/ir_label.cc ./src/ir/statements/ir_label.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/statements/ir_move.o: ./src/ir/statements/ir_move.cc ./src/ir/statements/ir_move.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/statements/ir_sequence.o: ./src/ir/statements/ir_sequence.cc ./src/ir/statements/ir_sequence.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/statements/ir_statement_list.o: ./src/ir/statements/ir_statement_list.cc ./src/ir/statements/ir_statement_list.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+# IR Expressions
+
+./build/ir/expressions/ir_binary_operator.o: ./src/ir/expressions/ir_binary_operator.cc ./src/ir/expressions/ir_binary_operator.hh
+	@mkdir -p ./build/ir/expressions
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_call.o: ./src/ir/expressions/ir_call.cc ./src/ir/expressions/ir_call.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_const.o: ./src/ir/expressions/ir_const.cc ./src/ir/expressions/ir_const.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_eseq.o: ./src/ir/expressions/ir_eseq.cc ./src/ir/expressions/ir_eseq.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_mem.o: ./src/ir/expressions/ir_mem.cc ./src/ir/expressions/ir_mem.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_name.o: ./src/ir/expressions/ir_name.cc ./src/ir/expressions/ir_name.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_temp.o: ./src/ir/expressions/ir_temp.cc ./src/ir/expressions/ir_temp.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Parser

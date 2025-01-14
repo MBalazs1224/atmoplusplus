@@ -71,3 +71,15 @@ std::shared_ptr<Type> MemberAccessExpression::GetType()
     // FIXME: Member access might needs it's unique type
     return left->GetType();
 }
+
+std::shared_ptr<TranslateExpression> MemberAccessExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement member access expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> MemberAccessExpression::TranslateToIR()
+{
+    //TODO: "Implement MemberAccessExpression to ir"
+    return nullptr;
+}

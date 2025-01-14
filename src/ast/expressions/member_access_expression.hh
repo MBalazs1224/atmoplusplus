@@ -18,4 +18,9 @@ class MemberAccessExpression : public TwoOperandExpression, public MemberContain
 
     bool Check() override;
     std::shared_ptr<SymbolTableElement> GetElement() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
+
 };

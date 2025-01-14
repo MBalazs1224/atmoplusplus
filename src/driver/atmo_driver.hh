@@ -23,7 +23,7 @@ class AtmoDriver
 
     private:
 
-    std::shared_ptr<IRStatementList> ir_root;;
+    std::shared_ptr<IRStatementList> ir_root;
 
     void SemanticAnalyze();
 

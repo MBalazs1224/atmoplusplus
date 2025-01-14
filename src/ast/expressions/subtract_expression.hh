@@ -10,4 +10,6 @@ class SubtractExpression : public TwoOperandExpression
     bool Check() override;
 
     std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

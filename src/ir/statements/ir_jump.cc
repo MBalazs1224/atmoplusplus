@@ -3,3 +3,8 @@
 IRJump::IRJump(std::shared_ptr<IRExpression> e, std::shared_ptr<LabelList> l) : exp(std::move(e)), targets(std::move(l))
 {
 }
+
+
+IRJump::IRJump(std::shared_ptr<IRExpression> e) : IRJump(std::move(e),nullptr)
+{
+}

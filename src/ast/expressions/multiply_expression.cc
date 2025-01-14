@@ -39,3 +39,8 @@ std::shared_ptr<TranslateExpression> MultiplyExpression::TranslateExpressionToIr
 
     return std::make_shared<TranslateValueExpression>(mulExpression);
 }
+
+std::shared_ptr<IRStatement> MultiplyExpression::TranslateToIR()
+{
+    throw std::runtime_error("MultiplyExpression should not be translated to IR as nodes");
+}

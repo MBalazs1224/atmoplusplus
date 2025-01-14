@@ -29,3 +29,16 @@ bool LessThanExpression::Check() {
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> LessThanExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement less than expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> LessThanExpression::TranslateToIR()
+{
+    //TODO: "Implement LessThanExpression to ir"
+    return nullptr;
+}
+

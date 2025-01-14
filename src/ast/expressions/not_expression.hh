@@ -7,4 +7,9 @@ class NotExpression : public OneOperandExpression
     std::shared_ptr<Type> GetType() override;
     ~NotExpression() override = default;
     bool Check() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
+
 };

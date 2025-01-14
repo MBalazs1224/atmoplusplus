@@ -8,4 +8,9 @@ class NotMatchesExpression : public TwoOperandExpression
     ~NotMatchesExpression() override = default;
 
     bool Check() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+
+    std::shared_ptr<IRStatement> TranslateToIR() override;
+
 };

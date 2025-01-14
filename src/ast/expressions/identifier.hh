@@ -37,4 +37,5 @@ class Identifier : public IExpressionable, public Type, public MemberContainer
 
     std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
 
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };

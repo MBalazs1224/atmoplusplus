@@ -1,3 +1,4 @@
+#pragma once
 #include "../ir/statements/ir_statement.hh"
 #include "../ir/expressions/ir_expression.hh"
 

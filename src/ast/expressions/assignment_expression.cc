@@ -61,3 +61,15 @@ std::shared_ptr<Type> AssignmentExpression::GetType()
 {
     return left->GetType();
 }
+
+std::shared_ptr<TranslateExpression> AssignmentExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement assignment expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> AssignmentExpression::TranslateToIR()
+{
+    //TODO: "Implement AssignmentExpression to ir"
+    return nullptr;
+}

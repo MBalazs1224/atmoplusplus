@@ -113,11 +113,13 @@ std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
         argumentsList->next = std::make_shared<IRExpressionList>();
         argumentsList = argumentsList->next;
     }
-    // Evaluate the function expression
-    auto func_evaluated = expression->TranslateExpressionToIr()->ToValueExpression();
+    // // Evaluate the function expression
+    // auto func_evaluated = expression->TranslateExpressionToIr()->ToValueExpression();
+
+    // FIXME: Function call to a label of the function name might be a wrong implementation
 
     // Generate the function call
-    auto functionCall = std::make_shared<IRCall>(std::make_shared<IRName>(func_evaluated), argumentsList);
+    auto functionCall = std::make_shared<IRCall>(std::make_shared<IRName>(std::make_shared<Label>(function->name)), argumentsList);
 
     //TODO:  Might be a wrong implementation of function call in IR
 

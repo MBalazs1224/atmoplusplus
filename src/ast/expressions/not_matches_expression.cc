@@ -25,3 +25,15 @@ bool NotMatchesExpression::Check()
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> NotMatchesExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement not matches expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> NotMatchesExpression::TranslateToIR()
+{
+    //TODO: "Implement NotMatchesExpression to ir"
+    return nullptr;
+}

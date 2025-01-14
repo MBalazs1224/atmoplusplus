@@ -41,3 +41,15 @@ bool ArraySubscriptExpression::Check()
 
     return true;
 }
+
+std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement array subscript to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> ArraySubscriptExpression::TranslateToIR()
+{
+    //TODO: "Implement array subscript to ir"
+    return nullptr;
+}

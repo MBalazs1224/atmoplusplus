@@ -1,3 +1,4 @@
+#pragma once
 #include "translate_expression.hh"
 
 class TranslateConditionalExpression : TranslateExpression

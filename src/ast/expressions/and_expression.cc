@@ -29,7 +29,13 @@ AndExpression::AndExpression(std::shared_ptr<IExpressionable> left_in, std::shar
 
 std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
 {
-    
+    //TODO: "Implement And Expression to IR"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> AndExpression::TranslateToIR()
+{
+    throw std::runtime_error("AndExpression should not be translated to IR as nodes");
 }
 
 

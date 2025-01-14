@@ -38,3 +38,9 @@ std::shared_ptr<TranslateExpression> AddExpression::TranslateExpressionToIr()
     // Wrap it in a translate to value epxression, so other expressions can use it
     return std::make_shared<TranslateValueExpression>(addExpression);
 }
+
+
+std::shared_ptr<IRStatement> AddExpression::TranslateToIR()
+{
+    throw std::runtime_error("AddExpression should not be translated to IR as nodes");
+}

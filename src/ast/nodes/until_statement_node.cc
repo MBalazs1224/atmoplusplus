@@ -80,7 +80,7 @@ std::shared_ptr<IRStatement> UntilStatementNode::TranslateToIR()
     statements.push_back(body->TranslateToIR());
 
     // Jump back to the start of the loop, so we can check the expression again
-    statements.push_back(std::make_shared<IRJump>(start_label));
+    statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(start_label)));
 
     // Generate the asm label for the end so the condition can jump out of the loop
     statements.push_back(std::make_shared<IRLabel>(end_label));

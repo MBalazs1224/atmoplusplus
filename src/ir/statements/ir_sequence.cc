@@ -1,6 +1,6 @@
 #include "ir_sequence.hh"
 
-IRSequence::IRSequence(std::shared_ptr<IRExpression> l, std::shared_ptr<IRExpression> r) : left(std::move(l)),right(std::move(r))
+IRSequence::IRSequence(std::shared_ptr<IRStatement> l, std::shared_ptr<IRStatement> r) : left(std::move(l)),right(std::move(r))
 {
 
 }

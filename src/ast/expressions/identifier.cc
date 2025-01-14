@@ -47,3 +47,8 @@ std::shared_ptr<TranslateExpression> Identifier::TranslateExpressionToIr()
 {
     return element->TranslateExpressionToIr();
 }
+
+std::shared_ptr<IRStatement> Identifier::TranslateToIR()
+{
+    throw std::runtime_error("Identifier should not be translated to IR");
+}

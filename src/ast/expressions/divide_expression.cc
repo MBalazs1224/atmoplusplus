@@ -29,6 +29,11 @@ std::shared_ptr<TranslateExpression> DivideExpression::TranslateExpressionToIr()
     return std::make_shared<TranslateValueExpression>(divideExpression);
 }
 
+std::shared_ptr<IRStatement> DivideExpression::TranslateToIR()
+{
+    throw std::runtime_error("DivideExpression should not be translated to IR as nodes");
+}
+
 
 std::shared_ptr<Type> DivideExpression::GetType()
 {

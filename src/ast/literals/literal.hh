@@ -9,30 +9,25 @@
 
 */
 
-template <typename T_value, typename T_type>
 class Literal : public IExpressionable
 {
+    protected:
+        Literal() = default;
     public:
-
-        T_value value;
     
         virtual ~Literal() = default;
     
     
-        Literal(T_value value_in)
-        {
-            value = value_in;
-        }
+        
     
         bool Check() override
         {
             // FIXME: Literals shouldn't be nodes
             return true;
         }
-        std::shared_ptr<Type> GetType() override
-        {
-            return std::make_shared<T_type>();
-        } 
+
+        // FIXME: Literals should'nt have TranslateToIR methods
+        std::shared_ptr<IRStatement> TranslateToIR() override;
 
 
 };

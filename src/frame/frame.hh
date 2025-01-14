@@ -32,7 +32,7 @@ class Frame
         virtual std::shared_ptr<Access> allocLocal(bool escape) = 0;
 
 
-        std::shared_ptr<Temp> FramePointer();
+        virtual std::shared_ptr<Temp> FramePointer() = 0;
 
 
 };

@@ -23,3 +23,15 @@ std::shared_ptr<Type> GreaterThanExpression::GetType()
 GreaterThanExpression::GreaterThanExpression(std::shared_ptr<IExpressionable> left_in, std::shared_ptr<IExpressionable> right_in,yy::location loc) : TwoOperandExpression(left_in,right_in,loc)
 {
 }
+
+std::shared_ptr<TranslateExpression> GreaterThanExpression::TranslateExpressionToIr()
+{
+    //TODO: "Implement greater than expression to ir"
+    return nullptr;
+}
+
+std::shared_ptr<IRStatement> GreaterThanExpression::TranslateToIR()
+{
+    //TODO: "Implement GreaterThanExpression to ir"
+    return nullptr;
+}

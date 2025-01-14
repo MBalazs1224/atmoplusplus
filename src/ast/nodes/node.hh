@@ -3,6 +3,8 @@
 
 #include "../../ir/statements/ir_statement.hh"
 
+#include <memory>
+
 class Node : public ILocation
 {
     protected:

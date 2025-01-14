@@ -10,4 +10,7 @@ class ArraySubscriptExpression : public TwoOperandExpression
     std::shared_ptr<Type> GetType() override;
 
     bool Check() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+    std::shared_ptr<IRStatement> TranslateToIR() override;
 };
