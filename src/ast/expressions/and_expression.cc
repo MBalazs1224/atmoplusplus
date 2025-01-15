@@ -29,12 +29,86 @@ AndExpression::AndExpression(std::shared_ptr<IExpressionable> left_in, std::shar
 
 std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
 {
-    //TODO: "Implement And Expression to IR"
-    return nullptr;
+    // Logical operators need to be translated as value expressions, because their values would regardless be evaluated inside a condition and be compared to either 0 or 1
+
+    // Need to put the end value inside a register
+
+    auto reg = std::make_shared<Temp>();
+
+    // The true, false and joining labels
+
+    auto trueLabel = std::make_shared<Label>();
+    auto falseLabel = std::make_shared<Label>();
+    auto joinLabel = std::make_shared<Label>();
+
+    // Translate left and right expressions into IR
+
+    auto leftExp = left->TranslateExpressionToIr()->ToConditionExpression(trueLabel,falseLabel);
+
+    auto rightExp = right->TranslateExpressionToIr()->ToConditionExpression(trueLabel,falseLabel);
+
+    // Statements to move 0 and 1 into the end register
+
+    auto move0IntoReg = std::make_shared<IRMove>(
+        std::make_shared<IRTemp>(reg),
+        std::make_shared<IRConst>(0)
+    );
+
+    auto move1IntoReg = std::make_shared<IRMove>(
+        std::make_shared<IRTemp>(reg),
+        std::make_shared<IRConst>(1)
+    );
+
+    // The sequence for the true path
+
+    auto trueSequence = std::make_shared<IRSequence>(
+        leftExp,
+        std::make_shared<IRSequence>(
+            std::make_shared<IRLabel>(trueLabel),
+            std::make_shared<IRSequence>(
+                move1IntoReg,
+                std::make_shared<IRJump>(joinLabel)
+            )
+        )
+    );
+
+    // The sequence for the false path
+
+    auto falseSequence = std::make_shared<IRSequence>(
+        std::make_shared<IRLabel>(falseLabel),
+        std::make_shared<IRSequence>(
+            move0IntoReg,
+            std::make_shared<IRJump>(joinLabel)
+        )
+    );
+
+    // Combine the true and false paths
+
+    auto finalSequence = std::make_shared<IRSequence>(
+        trueSequence,
+        std::make_shared<IRSequence>(
+            falseSequence,
+            std::make_shared<IRLabel>(joinLabel)
+        )
+    );
+
+    // Evaluate the final sequence and get the result inside the end register
+
+    auto finalEseq = std::make_shared<IREseq>(
+        std::make_shared<IRTemp>(reg),
+        finalSequence
+    );
+
+
+
+
+
+    return std::make_shared<TranslateValueExpression>(finalEseq);
 }
 
 std::shared_ptr<IRStatement> AndExpression::TranslateToIR()
 {
+    
     throw std::runtime_error("AndExpression should not be translated to IR as nodes");
 }
 
