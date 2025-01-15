@@ -100,7 +100,7 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
     );
 
     // Execute the final sequence and get the reg as the final value
-    auto finalSeq = std::make_shared<IREseq>(finalSequence, reg);
+    auto finalSeq = std::make_shared<IREseq>(std::make_shared<IRTemp>(reg), finalSequence);
 
     return std::make_shared<TranslateExpression>(finalSeq);
     
