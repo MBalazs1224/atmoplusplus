@@ -69,5 +69,11 @@ std::shared_ptr<IRStatement> TranslateConditionalExpression::ToNoValueExpression
 
 std::shared_ptr<IRStatement> TranslateConditionalExpression::ToConditionExpression(std::shared_ptr<Label> trueLabel, std::shared_ptr<Label> falseLabel)
 {
-    throw std::logic_error("Will be implemented in the future");
+    // Need to check if the expression equals to 1, if it does jump to the true label, otherwise jump to false
+
+    auto oneExpression = std::make_shared<IRConst>(1);
+
+    auto condition = std::make_shared<IRCJump>(RelationalOperator::EQUALS, exp, oneExpression, trueLabel, falseLabel);
+
+    return condition;
 }

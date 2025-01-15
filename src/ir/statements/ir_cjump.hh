@@ -17,7 +17,7 @@ class IRCJump : public IRStatement
     public:
        
 
-        IRCJump(std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,IRLabel,IRLabel);
+        IRCJump(RelationalOperator,std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,IRLabel,IRLabel);
 
         ~IRCJump() override = default;
 };

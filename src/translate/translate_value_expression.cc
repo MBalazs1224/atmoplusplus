@@ -19,9 +19,13 @@ std::shared_ptr<IRStatement> TranslateValueExpression::ToNoValueExpression()
 
 std::shared_ptr<IRStatement> TranslateValueExpression::ToConditionExpression(std::shared_ptr<Label> trueLabel, std::shared_ptr<Label> flaseLabel)
 {
-    // a = 5 or a + 3 for example cannot be used as a condition expression
+    // To convert a value expression to a condition expression we need to compare it to 0 (if it not equals no 0, than it means the value is true, otherwise false)
 
-    throw std::logic_error("Cannot convert value expression to condition expression, this should not happen");
+    auto zeroExpression = std::make_shared<IRConst>(0);
+
+    auto condition = std::make_shared<IRCJump>(RelationalOperator::NOTEQUALS, exp, zeroExpression, trueLabel, flaseLabel);
+
+    return condition;
 }
 
 
