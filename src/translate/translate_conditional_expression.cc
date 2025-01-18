@@ -73,7 +73,12 @@ std::shared_ptr<IRStatement> TranslateConditionalExpression::ToConditionExpressi
 
     auto oneExpression = std::make_shared<IRConst>(1);
 
-    auto condition = std::make_shared<IRCJump>(RelationalOperator::EQUALS, exp, oneExpression, trueLabel, falseLabel);
+    auto condition = std::make_shared<IRCJump>(
+        RelationalOperator::Matches, 
+        exp, oneExpression, 
+        trueLabel, 
+        falseLabel
+        );
 
     return condition;
 }

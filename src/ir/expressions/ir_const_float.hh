@@ -5,7 +5,7 @@
 // Integer constant
 class IRConstFloat : public IRExpression
 {
-        int value;
+        double value;
     public:
-        IRConstFloat(int);
+        IRConstFloat(double);
 };

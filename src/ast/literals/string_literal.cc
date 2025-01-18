@@ -18,8 +18,7 @@ std::shared_ptr<TranslateExpression> StringLiteral::TranslateExpressionToIr()
 
     auto pair_ = std::make_pair(label,value);
 
-    // Push the pair into the global par list
-    AtmoDriver::global_strings.push_back(pair_);
+   // TODO: Strings need to be added to a list of all global strings, so that they can be emitted by the code generator into the data section of the assembly file
 
     // Create an IRName that points to the created label
     auto exp = std::make_shared<IRName>(label);

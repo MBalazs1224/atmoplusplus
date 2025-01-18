@@ -23,7 +23,12 @@ std::shared_ptr<IRStatement> TranslateValueExpression::ToConditionExpression(std
 
     auto zeroExpression = std::make_shared<IRConst>(0);
 
-    auto condition = std::make_shared<IRCJump>(RelationalOperator::NOTEQUALS, exp, zeroExpression, trueLabel, flaseLabel);
+    auto condition = std::make_shared<IRCJump>(RelationalOperator::NotMatches, 
+        exp, 
+        zeroExpression, 
+        trueLabel, 
+        flaseLabel
+    );
 
     return condition;
 }

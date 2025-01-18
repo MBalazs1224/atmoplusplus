@@ -66,8 +66,10 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
 
     auto trueSequence = std::make_shared<IRSequence>(
         std::make_shared<IRLabel>(trueLabel),
-        move1IntoReg,
-        std::make_shared<IRJump>(joinLabel)
+        std::make_shared<IRSequence>(
+            move1IntoReg,
+            std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
+        )
     );
 
 
@@ -81,7 +83,7 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
             rightExp,
             std::make_shared<IRSequence>(
                 move0IntoReg,
-                std::make_shared<IRJump>(joinLabel)
+                std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
             )
         )
     );
@@ -102,7 +104,7 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
     // Execute the final sequence and get the reg as the final value
     auto finalSeq = std::make_shared<IREseq>(std::make_shared<IRTemp>(reg), finalSequence);
 
-    return std::make_shared<TranslateExpression>(finalSeq);
+    return std::make_shared<TranslateValueExpression>(finalSeq);
     
 }
 

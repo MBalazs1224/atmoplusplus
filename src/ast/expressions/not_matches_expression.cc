@@ -62,7 +62,7 @@ std::shared_ptr<TranslateExpression> NotMatchesExpression::TranslateExpressionTo
                 std::make_shared<IRTemp>(reg),
                 std::make_shared<IRConst>(1)
             ),
-            std::make_shared<IRJump>(joinLabel)
+            std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
         )
     );
 
@@ -75,7 +75,7 @@ std::shared_ptr<TranslateExpression> NotMatchesExpression::TranslateExpressionTo
                 std::make_shared<IRTemp>(reg),
                 std::make_shared<IRConst>(0)
             ),
-            std::make_shared<IRLabel>(joinLabel)
+            std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
         )
     );
 

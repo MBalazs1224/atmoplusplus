@@ -13,7 +13,7 @@ types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboole
 
 ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o
 
-ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o
+ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o
 
 frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o
 
@@ -354,6 +354,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/ir/expressions/ir_const.o: ./src/ir/expressions/ir_const.cc ./src/ir/expressions/ir_const.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_const_float.o: ./src/ir/expressions/ir_const_float.cc ./src/ir/expressions/ir_const_float.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/ir/expressions/ir_eseq.o: ./src/ir/expressions/ir_eseq.cc ./src/ir/expressions/ir_eseq.hh

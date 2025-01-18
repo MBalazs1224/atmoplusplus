@@ -5,4 +5,4 @@
 #include "ir_label.hh"
 #include "ir_move.hh"
 #include "ir_sequence.hh"
-#include "relational_operators.hh"
+#include "../expressions/relational_operators.hh"

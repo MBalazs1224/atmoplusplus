@@ -60,7 +60,7 @@ std::shared_ptr<TranslateExpression> GreaterThanOrEqualExpression::TranslateExpr
                 std::make_shared<IRTemp>(reg),
                 std::make_shared<IRConst>(1)
             ),
-            std::make_shared<IRJump>(joinLabel)
+            std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
         )
     );
 

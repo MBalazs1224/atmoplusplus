@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "ir_statement.hh"
-#include "relational_operators.hh"
+#include "../expressions/relational_operators.hh"
 #include "../expressions/ir_expression.hh"
 #include "ir_label.hh"
 

@@ -67,7 +67,7 @@ std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
             std::make_shared<IRLabel>(trueLabel),
             std::make_shared<IRSequence>(
                 move1IntoReg,
-                std::make_shared<IRJump>(joinLabel)
+                std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
             )
         )
     );
@@ -78,7 +78,7 @@ std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
         std::make_shared<IRLabel>(falseLabel),
         std::make_shared<IRSequence>(
             move0IntoReg,
-            std::make_shared<IRJump>(joinLabel)
+            std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
         )
     );
 
