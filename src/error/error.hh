@@ -29,6 +29,9 @@ class Error
         // During testing there is no source code, so it will segfault if it tries to print it,that's why there is this flag, that tells the functions to behave diferently inside tests
         static bool InTest;
 
+        // Only prints warnings if this is true
+        static bool ShouldShowWarnings;
+
         static void ShowError(const std::string&,const yy::location&);
         static void ShowWarning(const std::string&,const yy::location&);
         static void Initialize();

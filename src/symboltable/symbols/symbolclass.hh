@@ -63,11 +63,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // Will check if the identifier is already declared in the class (either as a variable or a function)
         bool IdentifierAlreadyDeclared(const std::string& id);
 
-        // Will insert the variable into the class, returns false if the variable is already declared
-        bool InsertVariable(const std::shared_ptr<VariableDefinitionNode>& node);
-
-        // Will insert the function into the class, returns false if the function is already declared
-        bool InsertFunction(const std::shared_ptr<FunctionDefinitionNode>& node);
+        
 
         // Will return all the variables in this class
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> GetVariables();
@@ -77,7 +73,8 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     public:
     ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in);
-        std::vector<std::shared_ptr<Node>> body;
+    
+    std::vector<std::shared_ptr<Node>> body;
 
 
 
@@ -94,6 +91,12 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     // Will return the variable based on the given ID or null if it wasn't found
     std::shared_ptr<VariableSymbol> GetVariable(const std::string&);
+
+    // Will insert the variable into the class, returns false if the variable is already declared
+    bool InsertVariable(const std::shared_ptr<VariableDefinitionNode>& node);
+
+        // Will insert the function into the class, returns false if the function is already declared
+     bool InsertFunction(const std::shared_ptr<FunctionDefinitionNode>& node);
     
     // Will return the element either if it's a variable or a function
     std::shared_ptr<SymbolTableElement> GetElement(const std::string&);

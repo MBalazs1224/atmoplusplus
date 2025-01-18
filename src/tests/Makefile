@@ -24,7 +24,7 @@ $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
 
 # Compile source files into object files
-../../build/test_main.o: main.cc lexer_tests.hh parser_tests.hh
+../../build/test_main.o: main.cc lexer_tests.hh parser_tests.hh semantic_analyzer_tests.hh
 	@mkdir -p ./build
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 

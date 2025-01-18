@@ -24,7 +24,6 @@ protected:
  		driver->parse_only(stream);
 		return driver->ast_root;
 	}
-	friend class ClassDefinitionNode;
 };
 
 // Expressions

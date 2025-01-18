@@ -6,6 +6,8 @@ std::vector<std::string> Error::source;
 
 bool Error::InTest = false;
 
+bool Error::ShouldShowWarnings = true;
+
 void Error::ShowError(const std::string& message, const yy::location& loc)
 {
 
@@ -40,6 +42,10 @@ void Error::ShowError(const std::string& message, const yy::location& loc)
 
 void Error::ShowWarning(const std::string& message, const yy::location& loc)
 {
+    if(!ShouldShowWarnings)
+    {
+        return;
+    }
     std::cerr << Yellow("Warning:") << " on line " << loc.begin.line << ", column " << loc.begin.column << ": " << message << std::endl;
 
     if(InTest)
