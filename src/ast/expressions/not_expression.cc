@@ -31,12 +31,45 @@ bool NotExpression::Check()
 
 std::shared_ptr<TranslateExpression> NotExpression::TranslateExpressionToIr()
 {
-    //TODO: "Implement not expression to ir"
-    return nullptr;
+
+    // To negate a boolean expression, we need to subtract it from 1 (1 - 1 = 0, 1 - 0 = 1)
+
+    auto exp = expression->TranslateExpressionToIr()->ToValueExpression();
+
+    // Create a register for the final value
+
+    auto reg = std::make_shared<Temp>();
+
+    // Subtract the value from 1
+
+    auto subtraction = std::make_shared<IRBinaryOperator>(
+        BinaryOperator::MINUS,
+        std::make_shared<IRConst>(1),
+        exp
+    );
+
+    // Move the result into the register
+
+    auto move = std::make_shared<IRMove>(
+        std::make_shared<IRTemp>(reg),
+        subtraction
+    );
+
+    // Evaluate the expression and get the register for the value
+
+    auto eseq = std::make_shared<IREseq>(
+        std::make_shared<IRTemp>(reg),
+        move
+    );
+
+    // Return the expressiion as a value expression
+
+    return std::make_shared<TranslateValueExpression>(eseq);
+
+    
 }
 
 std::shared_ptr<IRStatement> NotExpression::TranslateToIR()
 {
-    //TODO: "Implement NotExpression to ir"
-    return nullptr;
+    throw std::logic_error("NotExpression::TranslateToIR() should not be called");
 }

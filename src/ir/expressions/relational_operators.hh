@@ -1,11 +1,12 @@
 #pragma once
 
-enum RelationalOperators
+enum RelationalOperator
 {
-    Equals,
-    NotEquals,
+    Matches, // == operator
+    NotMatches, // != operator
     LessThan,
     GreaterThan,
-    LessThenOrEqual,
-    GreaterThanOrEqual
+    LessThanOrEqual,
+    GreaterThanOrEqual,
+    Not // ! operator
 };

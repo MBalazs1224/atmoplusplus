@@ -6,6 +6,7 @@
 // For showing eroor messages 
 #include "../../helper/helper.hh"
 #include "../../error/error.hh"
+#include "../../ir/expressions/relational_operators.hh"
 class IExpressionable : public Node
 {
     protected:

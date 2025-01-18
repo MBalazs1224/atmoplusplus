@@ -44,7 +44,7 @@ std::shared_ptr<TranslateExpression> GreaterThanExpression::TranslateExpressionT
     // Create the comparison expression
 
     auto comparisonExpression = std::make_shared<IRCJump>(
-        RelationalOperator::GREATERTHAN,
+        RelationalOperator::GreaterThan,
         leftExp,
         rightExp,
         trueLabel,
