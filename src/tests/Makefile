@@ -11,7 +11,7 @@ SRCS = main.cc ../lexer/AtmoLexer.cc ../lexer/lex.yy.cc ../error/error.cc
 BUILD_DIR = ../../build
 
 # Object files
-OBJS = ../../build/test_main.o $(wildcard ../../build/attributes/*.o) $(wildcard ../../build/driver/*.o) $(wildcard ../../build/error/*.o) $(wildcard ../../build/expressions/*.o) $(wildcard ../../build/helper/*.o) $(wildcard ../../build/lexer/*.o) $(wildcard ../../build/literals/*.o) $(wildcard ../../build/location/*.o) $(wildcard ../../build/nodes/*.o) $(wildcard ../../build/parser/*.o) $(wildcard ../../build/scope/*.o) $(wildcard ../../build/symbols/*.o) $(wildcard ../../build/symboltable/*.o) $(wildcard ../../build/types/*.o)
+OBJS = ../../build/test_main.o $(wildcard ../../build/attributes/*.o) $(wildcard ../../build/driver/*.o) $(wildcard ../../build/error/*.o) $(wildcard ../../build/expressions/*.o) $(wildcard ../../build/helper/*.o) $(wildcard ../../build/lexer/*.o) $(wildcard ../../build/literals/*.o) $(wildcard ../../build/location/*.o) $(wildcard ../../build/nodes/*.o) $(wildcard ../../build/parser/*.o) $(wildcard ../../build/scope/*.o) $(wildcard ../../build/symbols/*.o) $(wildcard ../../build/symboltable/*.o) $(wildcard ../../build/types/*.o) $(wildcard ../../build/ir/*/*.o) $(wildcard ../../build/frame/*.o) $(wildcard ../../build/translate/*.o)
 
 # Executable name
 EXEC = ../../runTests
