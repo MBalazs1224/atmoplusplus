@@ -903,7 +903,257 @@ TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithValidTypeOperands) {
     EXPECT_TRUE(error_buffer.str().empty());
 }
 
+// Statements
 
+TEST_F(SemanticAnalyzerTest, CheckDoUntilStatementNodeWithValidExpressionAndNonEmptyBody) {
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    // Create non-empty body
+
+
+
+    auto ret = std::make_shared<ReturnStatementNode>(
+        std::make_shared<IntegerLiteral>(5), 
+        yy::location()
+    );
+
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{ret});
+
+    DoUntilStatementNode doUntilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_TRUE(doUntilStmt.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDoUntilStatementNodeWithInvalidExpression) {
+    auto expression = std::make_shared<IntegerLiteral>(5);
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    DoUntilStatementNode doUntilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_FALSE(doUntilStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The expression of a do-until statement must be of type boolean!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDoUntilStatementNodeWithAssignmentExpressionAsCondition) {
+    auto left = std::make_shared<Identifier>(std::make_shared<VariableSymbol>(
+        std::make_shared<TypeBoolean>(), std::make_shared<AttributePrivate>()),
+    "a",
+    yy::location()
+    );
+
+    auto right = std::make_shared<BooleanLiteral>(true);
+
+    auto expression = std::make_shared<AssignmentExpression>(left, right, yy::location());
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    DoUntilStatementNode doUntilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_FALSE(doUntilStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Cannot use assignment expression as a condition to a do-until statement!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDoUntilStatementNodeWithEmptyBody) {
+
+    Error::ShouldShowWarnings = true;
+
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    DoUntilStatementNode doUntilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_TRUE(doUntilStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Empty body of do-until statement!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckUntilStatementNodeWithValidExpressionAndNonEmptyBody) {
+    
+    Error::ShouldShowWarnings = false;
+
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto ret = std::make_shared<ReturnStatementNode>(
+        std::make_shared<IntegerLiteral>(5), 
+        yy::location()
+    );
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{ret});
+
+    UntilStatementNode untilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_TRUE(untilStmt.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckUntilStatementNodeWithInvalidExpression) {
+    auto expression = std::make_shared<IntegerLiteral>(5);
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    UntilStatementNode untilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_FALSE(untilStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The expression of an until statement must be of type boolean!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckUntilStatementNodeWithAssignmentExpressionAsCondition) {
+    auto left = std::make_shared<Identifier>(std::make_shared<VariableSymbol>(std::make_shared<TypeBoolean>(), std::make_shared<AttributePrivate>()), "a", yy::location());
+
+    auto right = std::make_shared<BooleanLiteral>(false);
+    auto expression = std::make_shared<AssignmentExpression>(left, right, yy::location());
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    UntilStatementNode untilStmt(expression, std::move(body), yy::location());
+    EXPECT_FALSE(untilStmt.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Cannot use assignment expression as a condition to an until statement!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckUntilStatementNodeWithEmptyBody) {
+
+    Error::ShouldShowWarnings = true;
+
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    UntilStatementNode untilStmt(expression, std::move(body), yy::location());
+
+    EXPECT_TRUE(untilStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Empty body of until statement!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithValidExpressionAndNonEmptyBody) {
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto ret = std::make_shared<ReturnStatementNode>(
+        std::make_shared<IntegerLiteral>(5), 
+        yy::location()
+    );
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{ret});
+
+    IfStatementNode ifStmt(expression, std::move(body), std::vector<std::unique_ptr<ElseIfStatementNode>>(), nullptr, yy::location());
+
+    EXPECT_TRUE(ifStmt.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithInvalidExpression) {
+    auto expression = std::make_shared<IntegerLiteral>(5);
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    IfStatementNode ifStmt(expression, std::move(body), std::vector<std::unique_ptr<ElseIfStatementNode>>(), nullptr, yy::location());
+
+    EXPECT_FALSE(ifStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The expression of an if statement must be of type boolean!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithAssignmentExpressionAsCondition) {
+    auto left = std::make_shared<Identifier>(std::make_shared<VariableSymbol>(std::make_shared<TypeBoolean>(), std::make_shared<AttributePrivate>()), "a", yy::location());
+
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    auto expression = std::make_shared<AssignmentExpression>(left, right, yy::location());
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    IfStatementNode ifStmt(expression, std::move(body), std::vector<std::unique_ptr<ElseIfStatementNode>>(), nullptr, yy::location());
+
+    EXPECT_FALSE(ifStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Cannot use assignment expression as a condition to an if statement!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithEmptyBody) {
+
+    Error::ShouldShowWarnings = true;
+
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    IfStatementNode ifStmt(expression, std::move(body), std::vector<std::unique_ptr<ElseIfStatementNode>>(), nullptr, yy::location());
+    EXPECT_TRUE(ifStmt.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Empty body of if statement!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithOneElseIfStatement) {
+
+    Error::ShouldShowWarnings = false;
+
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto ret = std::make_shared<ReturnStatementNode>(
+        std::make_shared<IntegerLiteral>(5), 
+        yy::location()
+    );
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{ret});
+
+    auto elseIfExpression = std::make_shared<BooleanLiteral>(false);
+
+    auto elseIfBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto elseIfStmt = std::make_unique<ElseIfStatementNode>(elseIfExpression, std::move(elseIfBody), yy::location());
+
+    std::vector<std::unique_ptr<ElseIfStatementNode>> elseIfs;
+
+    elseIfs.push_back(std::move(elseIfStmt));
+    IfStatementNode ifStmt(expression, std::move(body), std::move(elseIfs), nullptr, yy::location());
+
+    EXPECT_TRUE(ifStmt.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithMultipleElseIfStatements) {
+    
+    Error::ShouldShowWarnings = false;
+
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto elseIfExpression = std::make_shared<BooleanLiteral>(false);
+
+    auto elseIfBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto elseIfStmt = std::make_unique<ElseIfStatementNode>(elseIfExpression, std::move(elseIfBody), yy::location());
+
+    auto elseIfExpression2 = std::make_shared<BooleanLiteral>(false);
+
+    auto elseIfBody2 = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto elseIfStmt2 = std::make_unique<ElseIfStatementNode>(elseIfExpression2, std::move(elseIfBody2), yy::location());
+
+    std::vector<std::unique_ptr<ElseIfStatementNode>> elseIfs;
+
+    elseIfs.push_back(std::move(elseIfStmt));
+    elseIfs.push_back(std::move(elseIfStmt2));
+
+    IfStatementNode ifStmt(expression, std::move(body), std::move(elseIfs), nullptr, yy::location());
+
+    EXPECT_TRUE(ifStmt.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithElseStatement) {
+    auto expression = std::make_shared<BooleanLiteral>(true);
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto elseBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto elseStmt = std::make_unique<ElseStatementNode>(std::move(elseBody), yy::location());
+
+    IfStatementNode ifStmt(expression, std::move(body), std::vector<std::unique_ptr<ElseIfStatementNode>>(), std::move(elseStmt), yy::location());
+
+    EXPECT_TRUE(ifStmt.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
 
 
 
