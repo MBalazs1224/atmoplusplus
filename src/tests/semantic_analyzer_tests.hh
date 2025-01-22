@@ -53,6 +53,7 @@ TEST_F(SemanticAnalyzerTest, CheckIdentifierWithInvalidElement) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("Unknown identifier 'invalidIdentifier'"));
 }
 
+// Arithmetic expressions
 
 TEST_F(SemanticAnalyzerTest, CheckAddExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
@@ -103,6 +104,40 @@ TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionWithInvalidOperands) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of MULTIPLY (*) expression must be of same type!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckDivideExpressionWithValidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<IntegerLiteral>(5);
+    DivideExpression divExpr(left, right, yy::location());
+    EXPECT_TRUE(divExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDivideExpressionWithInvalidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<FloatLiteral>(3.2);
+    DivideExpression divExpr(left, right, yy::location());
+    EXPECT_FALSE(divExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of DIVIDE (/) expression must be of same type!"));
+}
+
+// Logical expressions
+
+TEST_F(SemanticAnalyzerTest, CheckAndExpressionWithValidOperands) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+    AndExpression andExpr(left, right, yy::location());
+    EXPECT_TRUE(andExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAndExpressionWithInvalidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<BooleanLiteral>(false);
+    AndExpression andExpr(left, right, yy::location());
+    EXPECT_FALSE(andExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Both of the two operands of AND (&&) expression must be of type boolean!"));
+}
+
 TEST_F(SemanticAnalyzerTest, CheckLessThanExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
     auto right = std::make_shared<IntegerLiteral>(5);
@@ -117,6 +152,38 @@ TEST_F(SemanticAnalyzerTest, CheckLessThanExpressionWithInvalidOperands) {
     LessThanExpression ltExpr(left, right, yy::location());
     EXPECT_FALSE(ltExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of LESS THAN (<) expression must be of same type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckLessThanOrEqualExpressionWithValidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<IntegerLiteral>(5);
+    LessThanOrEqualExpression lteExpr(left, right, yy::location());
+    EXPECT_TRUE(lteExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckLessThanOrEqualExpressionWithInvalidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<FloatLiteral>(3.2);
+    LessThanOrEqualExpression lteExpr(left, right, yy::location());
+    EXPECT_FALSE(lteExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of LESS THAN OR EQUAL (<=) expression must be of same type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckGreaterThanExpressionWithValidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<IntegerLiteral>(5);
+    GreaterThanExpression gtExpr(left, right, yy::location());
+    EXPECT_TRUE(gtExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckGreaterThanExpressionWithInvalidOperands) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<FloatLiteral>(3.2);
+    GreaterThanExpression gtExpr(left, right, yy::location());
+    EXPECT_FALSE(gtExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of GREATER THAN (>) expression must be of same type!"));
 }
 
 TEST_F(SemanticAnalyzerTest, CheckGreaterThanOrEqualExpressionWithValidOperands) {
@@ -365,6 +432,488 @@ TEST_F(SemanticAnalyzerTest, CheckMemberAccessExpressionWithInvalidLeftExpressio
     EXPECT_FALSE(memberAccessExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("Only identifiers can appear on the left side of the member access (inside) expression!"));
 }
+
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToVariable) {
+
+    // Create the variable symbol
+
+    auto varSymbol = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePrivate>());
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(varSymbol, "a", yy::location());
+
+    // Create the function call
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>(), yy::location());
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only functions can be called!"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToClass) {
+
+    // Create the class symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(),std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(classSymbol, "a", yy::location());
+
+    // Create the function call
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>(), yy::location());
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only functions can be called!"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToInvalidFunction) {
+
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(nullptr, "a", yy::location());
+
+    // Create the function call
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>(), yy::location());
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Unknown identifier 'a'"));
+}
+
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionWithZeroArguments) {
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(), std::vector<std::shared_ptr<VariableSymbol>>(),std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>(), yy::location());
+
+    EXPECT_TRUE(funcCall.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingOneParameterAndReceivedOneValidArgument) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr = std::make_shared<IntegerLiteral>(5);
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr}, yy::location());
+
+    EXPECT_TRUE(funcCall.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingOneParameterAndReceivedOneInvalidArgument) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    funcSymbol->name = "a";
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr = std::make_shared<CharLiteral>('c');
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr}, yy::location());
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Type mismatch between the 1. parameter to call 'a'!"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingOneParameterAndReceivedMultipleArguments) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr1 = std::make_shared<CharLiteral>('c');
+    auto argExpr2 = std::make_shared<IntegerLiteral>(10);
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr1,argExpr2},
+    yy::location()
+    );
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Wrong number of parameters"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingMultipleParametersAndReceivedZeroArgument) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    auto arg2 = std::make_shared<VariableSymbol>(std::make_shared<TypeFloat>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1,arg2};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>(),
+    yy::location()
+    );
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Wrong number of parameters"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingMultipleParametersAndReceivedOneArgument) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    auto arg2 = std::make_shared<VariableSymbol>(std::make_shared<TypeFloat>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1,arg2};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr1 = std::make_shared<IntegerLiteral>(10);
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr1},
+    yy::location()
+    );
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Wrong number of parameters"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingMultipleParametersAndReceivedCorrectAmountOfArgumentButFirstIsInvalid) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    auto arg2 = std::make_shared<VariableSymbol>(std::make_shared<TypeFloat>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1,arg2};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr1 = std::make_shared<FloatLiteral>(10.6);
+    auto argExpr2 = std::make_shared<FloatLiteral>(.10);
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr1,argExpr2},
+    yy::location()
+    );
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Type mismatch between the 1. parameter"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingMultipleParametersAndReceivedCorrectAmountOfArgumentButSecondIsInvalid) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    auto arg2 = std::make_shared<VariableSymbol>(std::make_shared<TypeFloat>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1,arg2};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr1 = std::make_shared<IntegerLiteral>(10);
+    auto argExpr2 = std::make_shared<IntegerLiteral>(10);
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr1,argExpr2},
+    yy::location()
+    );
+
+    EXPECT_FALSE(funcCall.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Type mismatch between the 2. parameter"));
+}
+
+TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToValidFunctionExpectingMultipleParametersAndReceivedCorrectAmountOfArgumentWithCorrectTypes) {
+
+    // Create argument symbol
+
+    auto arg1 = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+
+    auto arg2 = std::make_shared<VariableSymbol>(std::make_shared<TypeFloat>(), std::make_shared<AttributePublic>());
+
+    // Create arguments vector
+
+    std::vector<std::shared_ptr<VariableSymbol>> args{arg1,arg2};
+
+    // Create the function symbol
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(),
+    args,
+    std::move(body));
+
+    // Create the identifier
+
+    auto id = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    // Create the function call
+
+
+    auto argExpr1 = std::make_shared<IntegerLiteral>(10);
+    auto argExpr2 = std::make_shared<FloatLiteral>(10.5);
+
+    FunctionCall funcCall(id, std::vector<std::shared_ptr<IExpressionable>>{argExpr1,argExpr2},
+    yy::location()
+    );
+
+    EXPECT_TRUE(funcCall.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithLeftOperandIsInvalidIdentifier) {
+
+    auto left = std::make_shared<Identifier>(nullptr, "a", yy::location());
+    auto right = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(left, right, yy::location());
+    EXPECT_FALSE(assignExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Unknown identifier 'a'"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithInvalidRightOperandIsInvalidIdentifier) {
+
+    auto varSymbol = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePrivate>());
+    auto right = std::make_shared<Identifier>(nullptr, "a", yy::location());
+    auto left = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(left, right, yy::location());
+    EXPECT_FALSE(assignExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Unknown identifier 'a'"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithLeftOperandIsNotMemberContainerAndNotArraySubscript) {
+
+    auto varSymbol = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePrivate>());
+
+    auto left = std::make_shared<IntegerLiteral>(10);
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(left, right, yy::location());
+    EXPECT_FALSE(assignExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only member containers and array subscripts can appear on the left side of an assignment (=) expression!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithLeftOperandIsMemberContainerButIsAFunction) {
+
+    auto funcSymbol = std::make_shared<FunctionSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>(), std::vector<std::shared_ptr<VariableSymbol>>(), std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>()));
+
+
+    auto identifier = std::make_shared<Identifier>(funcSymbol, "a", yy::location());
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(identifier, right, yy::location());
+
+    EXPECT_FALSE(assignExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only variables can appear on the left side of an assignment (=) expression!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithLeftOperandIsMemberContainerButIsAClass) {
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>()));
+
+
+    auto identifier = std::make_shared<Identifier>(classSymbol, "a", yy::location());
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(identifier, right, yy::location());
+
+    EXPECT_FALSE(assignExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only variables can appear on the left side of an assignment (=) expression!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithLeftOperandIsMemberContainerButIsAVariable) {
+
+    auto varSymbol = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePrivate>());
+
+
+    auto identifier = std::make_shared<Identifier>(varSymbol, "a", yy::location());
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(identifier, right, yy::location());
+
+    EXPECT_TRUE(assignExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithDifferentTypeOperands) {
+
+    auto varSymbol = std::make_shared<VariableSymbol>(std::make_shared<TypeFloat>(), std::make_shared<AttributePrivate>());
+
+
+    auto identifier = std::make_shared<Identifier>(varSymbol, "a", yy::location());
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+
+    AssignmentExpression assignExpr(identifier, right, yy::location());
+
+    EXPECT_FALSE(assignExpr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Invalid type of expression on the right side of assignment (=) expression!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithValidTypeOperands) {
+
+    auto varSymbol = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePrivate>());
+
+
+    auto identifier = std::make_shared<Identifier>(varSymbol, "a", yy::location());
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+
+    AssignmentExpression assignExpr(identifier, right, yy::location());
+
+    EXPECT_TRUE(assignExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+
+
+
+
+// TODO: Test the type of expressions (add expression returns the type of the operands etc)
+
+
+//TODO: Implement array subscripts on the left side of assignment expression
+
+
+//TODO Implement literals and symbols
 
 
 
