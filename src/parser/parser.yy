@@ -194,6 +194,7 @@
 %nterm<std::shared_ptr<ClassDefinitionNode>> class_create
 %nterm<std::unique_ptr<Node>> function_create
 %nterm<std::unique_ptr<Node>> variable_definition
+%nterm<std::shared_ptr<IExpressionable>> array_initial_size
 
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> parent_costructor_call
 
@@ -472,11 +473,16 @@ datatype: INT { $$ = Helper::IntegerType;}
             auto id = std::make_shared<Identifier>(SymbolTable::LookUp($1),$1,@1);
             $$ = std::move(id);
           }
-          | ARRAY_OF expression datatype
+          | ARRAY_OF array_initial_size datatype
           {
             auto array = std::make_shared<Array>($3,$2);
             $$ = std::move(array);
         }
+
+array_initial_size: %empty {$$ = nullptr;}
+            | expression {
+                $$ = std::move($1);
+            }
 
 expression:  expression PLUS expression {$$ = std::make_unique<AddExpression>( $1, $3, AddLocations($1,$3));  }
             | expression MINUS expression {$$ = std::make_unique<SubtractExpression>( $1, $3, AddLocations($1,$3));  }
