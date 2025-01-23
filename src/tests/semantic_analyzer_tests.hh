@@ -340,6 +340,19 @@ TEST_F(SemanticAnalyzerTest, CheckAndExpressionWithInvalidOperands) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("Both of the two operands of AND (&&) expression must be of type boolean!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckAndExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    AndExpression andExpr(left, right, yy::location());
+
+    auto type = andExpr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
+}
+
 TEST_F(SemanticAnalyzerTest, CheckLessThanExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
     auto right = std::make_shared<IntegerLiteral>(5);
@@ -354,6 +367,19 @@ TEST_F(SemanticAnalyzerTest, CheckLessThanExpressionWithInvalidOperands) {
     LessThanExpression ltExpr(left, right, yy::location());
     EXPECT_FALSE(ltExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of LESS THAN (<) expression must be of same type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckLessThanExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    LessThanExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
 }
 
 TEST_F(SemanticAnalyzerTest, CheckLessThanOrEqualExpressionWithValidOperands) {
@@ -372,6 +398,19 @@ TEST_F(SemanticAnalyzerTest, CheckLessThanOrEqualExpressionWithInvalidOperands) 
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of LESS THAN OR EQUAL (<=) expression must be of same type!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckLessThanOrEqualExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    LessThanOrEqualExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
+}
+
 TEST_F(SemanticAnalyzerTest, CheckGreaterThanExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
     auto right = std::make_shared<IntegerLiteral>(5);
@@ -386,6 +425,19 @@ TEST_F(SemanticAnalyzerTest, CheckGreaterThanExpressionWithInvalidOperands) {
     GreaterThanExpression gtExpr(left, right, yy::location());
     EXPECT_FALSE(gtExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of GREATER THAN (>) expression must be of same type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckGreaterThanExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    GreaterThanExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
 }
 
 TEST_F(SemanticAnalyzerTest, CheckGreaterThanOrEqualExpressionWithValidOperands) {
@@ -404,6 +456,19 @@ TEST_F(SemanticAnalyzerTest, CheckGreaterThanOrEqualExpressionWithInvalidOperand
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of GREATER THAN OR EQUAL (>=) expression must be of same type!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckGreaterThanOrEqualExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    GreaterThanOrEqualExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
+}
+
 TEST_F(SemanticAnalyzerTest, CheckMatchesExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
     auto right = std::make_shared<IntegerLiteral>(5);
@@ -418,6 +483,19 @@ TEST_F(SemanticAnalyzerTest, CheckMatchesExpressionWithInvalidOperands) {
     MatchesExpression matchesExpr(left, right, yy::location());
     EXPECT_FALSE(matchesExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of matches (==) expression must be of same type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckMatchesExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    MatchesExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
 }
 
 TEST_F(SemanticAnalyzerTest, CheckNotMatchesExpressionWithValidOperands) {
@@ -436,6 +514,19 @@ TEST_F(SemanticAnalyzerTest, CheckNotMatchesExpressionWithInvalidOperands) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of NOT MATCHES (!=) expression must be of same type!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckNotMachesExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    NotMatchesExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
+}
+
 TEST_F(SemanticAnalyzerTest, CheckOrExpressionWithValidOperands) {
     auto left = std::make_shared<BooleanLiteral>(true);
     auto right = std::make_shared<BooleanLiteral>(false);
@@ -452,6 +543,19 @@ TEST_F(SemanticAnalyzerTest, CheckOrExpressionWithInvalidOperands) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("Both of the two operands of OR (||) expression must be of type boolean!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckOrExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+    auto right = std::make_shared<BooleanLiteral>(false);
+
+    OrExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
+}
+
 TEST_F(SemanticAnalyzerTest, CheckNotExpressionWithValidOperand) {
     auto exp = std::make_shared<BooleanLiteral>(true);
     NotExpression notExpr(exp, yy::location());
@@ -464,6 +568,18 @@ TEST_F(SemanticAnalyzerTest, CheckNotExpressionWithInvalidOperand) {
     NotExpression notExpr(exp, yy::location());
     EXPECT_FALSE(notExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The expression of not expression must be of type boolean!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckNotExpressionReturnsBooleanAsItsType) {
+    auto left = std::make_shared<BooleanLiteral>(true);
+
+    NotExpression expr(left, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeBoolean>(type);
+
+    EXPECT_NE(casted,nullptr);
 }
 
 TEST_F(SemanticAnalyzerTest, CheckMemberAccessExpressionWithInvalidRightExpressionType) {
