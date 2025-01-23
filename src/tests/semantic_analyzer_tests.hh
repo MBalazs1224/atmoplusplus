@@ -104,10 +104,10 @@ TEST_F(SemanticAnalyzerTest, CheckAddExpressionReturnsFalseForCheckDuringCharAdd
     auto left = std::make_shared<CharLiteral>('a');
     auto right = std::make_shared<CharLiteral>('b');
 
-    SubtractExpression expr(left, right, yy::location());
+    AddExpression expr(left, right, yy::location());
 
     EXPECT_FALSE(expr.Check());
-    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values and strings can be added"));
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values or strings can be added"));
 
 }
 
@@ -1474,8 +1474,6 @@ TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithElseStatement) {
 }
 
 
-
-// TODO: Test the type of expressions (add expression returns the type of the operands etc)
 
 
 //TODO: Implement array subscripts on the left side of assignment expression

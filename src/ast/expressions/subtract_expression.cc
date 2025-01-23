@@ -18,6 +18,14 @@ bool SubtractExpression::Check()
     auto left_type = left->GetType();
     auto right_type = right->GetType();
 
+    // Chars or strings  cannot be subtracted
+
+    if(left_type->Compatible(Helper::CharType) || left_type->Compatible(Helper::StringType))
+    {
+        Error::ShowError("Only numerical values can be subtracted!",this->location);
+        return false;
+    }
+
     if (left_type->NotCompatible(right_type)) 
     {
         Error::ShowError(Helper::FormatString(

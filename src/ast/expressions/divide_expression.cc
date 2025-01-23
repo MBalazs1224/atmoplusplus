@@ -7,6 +7,15 @@ bool DivideExpression::Check()
     }
     auto left_type = left->GetType();
     auto right_type = right->GetType();
+
+    // Chars or strings  cannot be divided
+    
+    if(left_type->Compatible(Helper::CharType) || left_type->Compatible(Helper::StringType))
+    {
+        Error::ShowError("Only numerical values can be divided!",this->location);
+        return false;
+    }
+
     if (left_type->NotCompatible(right_type))
     {
         Error::ShowError(Helper::FormatString("The two operands of DIVIDE (/) expression must be of same type! (received '%s' and '%s')",left_type->ToString().c_str(),right_type->ToString().c_str()),location);
