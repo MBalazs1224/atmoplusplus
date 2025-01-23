@@ -61,6 +61,7 @@ TEST_F(SemanticAnalyzerTest, CheckAddExpressionWithValidOperands) {
     AddExpression addExpr(left, right, yy::location());
     EXPECT_TRUE(addExpr.Check());
     EXPECT_TRUE(error_buffer.str().empty());
+
 }
 
 TEST_F(SemanticAnalyzerTest, CheckAddExpressionWithInvalidOperands) {
@@ -70,6 +71,48 @@ TEST_F(SemanticAnalyzerTest, CheckAddExpressionWithInvalidOperands) {
     EXPECT_FALSE(addExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of ADD (+) expression must be of same type!"));
 }
+
+TEST_F(SemanticAnalyzerTest, CheckAddExpressionReturnsCorrectIntegerType) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<IntegerLiteral>(2);
+    AddExpression addExpr(left, right, yy::location());
+
+    auto type = addExpr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeInteger>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAddExpressionReturnsCorrectFloatType) {
+    auto left = std::make_shared<FloatLiteral>(.5);
+    auto right = std::make_shared<FloatLiteral>(.2);
+    AddExpression addExpr(left, right, yy::location());
+
+    auto type = addExpr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeFloat>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckAddExpressionReturnsFalseForCheckDuringCharAddition) {
+    auto left = std::make_shared<CharLiteral>('a');
+    auto right = std::make_shared<CharLiteral>('b');
+
+    SubtractExpression expr(left, right, yy::location());
+
+    EXPECT_FALSE(expr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values and strings can be added"));
+
+}
+
+// Strings could be added together
+
 
 
 TEST_F(SemanticAnalyzerTest, CheckSubtractExpressionWithValidOperands) {
@@ -88,6 +131,60 @@ TEST_F(SemanticAnalyzerTest, CheckSubtractExpressionWithInvalidOperands) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of SUBTRACT (-) expression must be of same type!"));
 }
 
+
+TEST_F(SemanticAnalyzerTest, CheckSubtractExpressionReturnsCorrectIntegerType) {
+    auto left = std::make_shared<IntegerLiteral>(.5);
+    auto right = std::make_shared<IntegerLiteral>(.2);
+
+    SubtractExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeInteger>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckSubtractExpressionReturnsCorrectFloatType) {
+    auto left = std::make_shared<FloatLiteral>(.5);
+    auto right = std::make_shared<FloatLiteral>(.2);
+
+    SubtractExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeFloat>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+
+TEST_F(SemanticAnalyzerTest, CheckSubtractExpressionReturnsFalseForCheckDuringCharSubtraction) {
+    auto left = std::make_shared<CharLiteral>('a');
+    auto right = std::make_shared<CharLiteral>('b');
+
+    SubtractExpression expr(left, right, yy::location());
+
+    EXPECT_FALSE(expr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values can be subtracted"));
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckSubtractExpressionReturnsFalseForCheckDuringStringSubtraction) {
+    auto left = std::make_shared<StringLiteral>("asd");
+    auto right = std::make_shared<StringLiteral>("asd");
+
+    SubtractExpression expr(left, right, yy::location());
+
+    EXPECT_FALSE(expr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values can be subtracted"));
+
+}
+
 TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
     auto right = std::make_shared<IntegerLiteral>(5);
@@ -104,6 +201,59 @@ TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionWithInvalidOperands) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of MULTIPLY (*) expression must be of same type!"));
 }
 
+
+TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionReturnsCorrectIntegerType) {
+    auto left = std::make_shared<IntegerLiteral>(.5);
+    auto right = std::make_shared<IntegerLiteral>(.2);
+
+    MultiplyExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeInteger>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionReturnsCorrectFloatType) {
+    auto left = std::make_shared<FloatLiteral>(.5);
+    auto right = std::make_shared<FloatLiteral>(.2);
+
+    MultiplyExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeFloat>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionReturnsFalseForCheckDuringCharMultiplication) {
+    auto left = std::make_shared<CharLiteral>('a');
+    auto right = std::make_shared<CharLiteral>('b');
+
+    MultiplyExpression expr(left, right, yy::location());
+
+    EXPECT_FALSE(expr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values can be multiplied"));
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckMultiplyExpressionReturnsFalseForCheckDuringStringMultiplication) {
+    auto left = std::make_shared<StringLiteral>("asd");
+    auto right = std::make_shared<StringLiteral>("asd");
+
+    MultiplyExpression expr(left, right, yy::location());
+
+    EXPECT_FALSE(expr.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values can be multiplied"));
+
+}
+
 TEST_F(SemanticAnalyzerTest, CheckDivideExpressionWithValidOperands) {
     auto left = std::make_shared<IntegerLiteral>(5);
     auto right = std::make_shared<IntegerLiteral>(5);
@@ -118,6 +268,58 @@ TEST_F(SemanticAnalyzerTest, CheckDivideExpressionWithInvalidOperands) {
     DivideExpression divExpr(left, right, yy::location());
     EXPECT_FALSE(divExpr.Check());
     EXPECT_THAT(error_buffer.str(), HasSubstr("The two operands of DIVIDE (/) expression must be of same type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDivideExpressionReturnsCorrectFloatTypeAtFloatDivision) {
+    auto left = std::make_shared<FloatLiteral>(.5);
+    auto right = std::make_shared<FloatLiteral>(.2);
+
+    DivideExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeFloat>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDivideExpressionReturnsCorrectFloatTypeAtIntegerDivision) {
+    auto left = std::make_shared<IntegerLiteral>(5);
+    auto right = std::make_shared<IntegerLiteral>(2);
+
+    DivideExpression expr(left, right, yy::location());
+
+    auto type = expr.GetType();
+
+    auto casted = std::dynamic_pointer_cast<TypeFloat>(type);
+
+    // Expect that the type could be casted, meaning the type was correct
+    EXPECT_NE(casted, nullptr);
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDivideExpressionReturnsFalseForCheckDuringCharDivision) {
+    auto left = std::make_shared<CharLiteral>('a');
+    auto right = std::make_shared<CharLiteral>('b');
+
+    DivideExpression expr(left, right, yy::location());
+
+   EXPECT_FALSE(expr.Check());
+   EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values can be divided"));
+
+}
+
+TEST_F(SemanticAnalyzerTest, CheckDivideExpressionReturnsFalseForCheckDuringStringDivision) {
+    auto left = std::make_shared<StringLiteral>("asd");
+    auto right = std::make_shared<StringLiteral>("asd");
+
+    DivideExpression expr(left, right, yy::location());
+
+   EXPECT_FALSE(expr.Check());
+   EXPECT_THAT(error_buffer.str(), HasSubstr("Only numerical values can be divided"));
+
 }
 
 // Logical expressions
