@@ -1358,6 +1358,31 @@ TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithValidTypeOperands) {
     EXPECT_TRUE(error_buffer.str().empty());
 }
 
+TEST_F(SemanticAnalyzerTest, CheckAssignmentExpressionWithArraySubscriptOnLeftOperand) {
+    
+    auto arrayType = std::make_shared<Array>(
+        std::make_shared<TypeInteger>(), 
+        std::make_shared<IntegerLiteral>(5)
+        );
+
+    auto varSymbol = std::make_shared<VariableSymbol>(
+        arrayType, 
+        std::make_shared<AttributePrivate>()
+        );
+
+    auto arraySubscript = std::make_shared<ArraySubscriptExpression>(
+        std::make_shared<Identifier>(varSymbol, "arr", yy::location()),
+        std::make_shared<IntegerLiteral>(0),
+        yy::location()
+    );
+
+    auto right = std::make_shared<IntegerLiteral>(5);
+    AssignmentExpression assignExpr(arraySubscript, right, yy::location());
+
+    EXPECT_TRUE(assignExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
 // Statements
 
 TEST_F(SemanticAnalyzerTest, CheckDoUntilStatementNodeWithValidExpressionAndNonEmptyBody) {
@@ -1677,14 +1702,7 @@ TEST_F(SemanticAnalyzerTest, CheckFunctionSymbolWithMoreThanSixParameters) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("Functions cannot have  more than 6 arguments!"));
 }
 
-
-//TODO: Implement array subscripts on the left side of assignment expression
-
-
 //TODO Implement literals and symbols
 
-
-
-// TODO: Implement chained member access expressions
 
 // TODO: Check class class as a whole (variable, fucntion insertion (returns false if already isnerted with same name), parent cosntructor chaining, valid parents, ettc)
