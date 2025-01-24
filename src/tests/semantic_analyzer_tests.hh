@@ -1702,6 +1702,549 @@ TEST_F(SemanticAnalyzerTest, CheckFunctionSymbolWithMoreThanSixParameters) {
     EXPECT_THAT(error_buffer.str(), HasSubstr("Functions cannot have  more than 6 arguments!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckClassWithoutParentAndEmptyBody) {
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Empty class definition!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithInvalidParent) {
+
+    auto invalidParent = std::make_shared<Identifier>(
+        nullptr,
+        "InvalidParent",
+        yy::location()
+        );
+
+    std::vector<std::shared_ptr<Identifier>> parents = {
+        invalidParent
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        parents, 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Unknown identifier 'InvalidParent'"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithMultipleParents) {
+
+    auto classParent = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(),
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto classParent2 = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(),
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto parentId1 = std::make_shared<Identifier>(
+        classParent,
+        "ClassParent",
+        yy::location()
+    );
+
+    auto parentId2 = std::make_shared<Identifier>(
+        classParent2,
+        "ClassParent",
+        yy::location()
+    );
+    std::vector<std::shared_ptr<Identifier>> parents = {
+        parentId1,
+        parentId2
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        parents, 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("A class can only have at most one parent!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithParentButNotAClass) {
+
+    auto parentVariable = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(), 
+        std::make_shared<AttributePublic>()
+        );
+
+    auto invalidParent = std::make_shared<Identifier>(
+        parentVariable, 
+        "ParentVar", 
+        yy::location()
+        );
+
+    std::vector<std::shared_ptr<Identifier>> parents = {
+        invalidParent
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        parents, 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Only classes can be used as a parent to another class!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithValidParentClass) {
+
+    auto parentClass = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    auto parentIdentifier = std::make_shared<Identifier>(
+        parentClass,
+        "ParentClass",
+        yy::location()
+    );
+
+    std::vector<std::shared_ptr<Identifier>> parents = {
+        parentIdentifier
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        parents, 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+TEST_F(SemanticAnalyzerTest, CheckClassInsertVariableOnce) {
+
+    auto var = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+
+    auto varDef = std::make_shared<VariableDefinitionNode>(
+        var,
+        nullptr,
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>>()
+    );
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{
+            varDef
+        })
+    );
+
+    EXPECT_TRUE(classSymbol->Check());
+
+    EXPECT_TRUE(classSymbol->GetVariable("parentVar") != nullptr);
+
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassInsertVariableMultipleTimes) {
+
+    auto var = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+    var->name = "TestVar";
+
+    auto varDef = std::make_shared<VariableDefinitionNode>(
+        var,
+        nullptr,
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>>()
+    );
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{
+            varDef,
+            varDef
+        })
+    );
+
+    EXPECT_FALSE(classSymbol->Check());
+    
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Identifier 'TestVar' has already been declared in this scope!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassInsertFunctionOnce) {
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>(),
+        std::vector<std::shared_ptr<VariableSymbol>>(),
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+    func->name = "TestFunc";
+
+    auto funcDef = std::make_shared<FunctionDefinitionNode>(
+        func
+    );
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{
+            funcDef
+        })
+    );
+
+    EXPECT_TRUE(classSymbol->Check());
+
+    EXPECT_TRUE(classSymbol->GetFunction("TestFunc") != nullptr);
+
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassInsertFunctionMultipleTimes) {
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>(),
+        std::vector<std::shared_ptr<VariableSymbol>>(),
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+    func->name = "TestFunc";
+
+    auto funcDef = std::make_shared<FunctionDefinitionNode>(
+        func
+    );
+
+    auto classSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{
+            funcDef,
+            funcDef
+        })
+    );
+
+    EXPECT_FALSE(classSymbol->Check());
+    
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Identifier 'TestFunc' has already been declared in this scope!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithDuplicateVariableAndFunctionName) {
+
+    auto var = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+    var->name = "TestVar";
+
+    auto variableNode = std::make_shared<VariableDefinitionNode>(
+        var,
+        nullptr,
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>>()
+    );
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto functionNode = std::make_shared<FunctionDefinitionNode>(func);
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{variableNode, functionNode};
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Identifier 'duplicateName' has already been declared in this scope!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithMultipleConstructorsButNoParent) {
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto constructorNode1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto constructorNode2 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+        
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{constructorNode1, constructorNode2};
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithValidParentConstructorCall) {
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+
+    auto parentConstructor1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto parentClass = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{
+            parentConstructor1
+            })
+        );
+
+    auto parentIdentifier = std::make_shared<Identifier>(parentClass, "ParentClass", yy::location());
+
+    std::vector<std::shared_ptr<Identifier>> parents = {parentIdentifier};
+
+
+    auto constructorNode = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{constructorNode};
+    auto classSymbol = std::make_shared<ClassSymbol>(parents, std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithParentConstructorCallNotFound) {
+    auto parentClass = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>())
+        );
+
+    auto parentIdentifier = std::make_shared<Identifier>(parentClass, "ParentClass", yy::location());
+
+    std::vector<std::shared_ptr<Identifier>> parents = {parentIdentifier};
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto constructorNode = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{constructorNode};
+    auto classSymbol = std::make_shared<ClassSymbol>(parents, std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithAmbiguousParentConstructorCall) {
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto parentConstructor1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto parentConstructor2= std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto parentClass = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{
+            parentConstructor1,
+            parentConstructor2
+            })
+        );
+
+    auto parentIdentifier = std::make_shared<Identifier>(parentClass, "ParentClass", yy::location());
+
+    std::vector<std::shared_ptr<Identifier>> parents = {parentIdentifier};
+
+
+    auto constructorNode = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{constructorNode};
+    auto classSymbol = std::make_shared<ClassSymbol>(parents, std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Ambiguous parent constructor call for the given parameters!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithMissingConstructorAndDestructor) {
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>()));
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("No destructor defined for class, generating default one!"));
+    EXPECT_THAT(error_buffer.str(), HasSubstr("No constructor defined for class, generating default one!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithOneDestructor) {
+    auto destructorNode1 = std::make_shared<DestructorDefinitionNode>(yy::location());
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{destructorNode1};
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithMultipleDestructors) {
+    auto destructorNode1 = std::make_shared<DestructorDefinitionNode>(yy::location());
+    auto destructorNode2 = std::make_shared<DestructorDefinitionNode>(yy::location());
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{destructorNode1, destructorNode2};
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("A class can only have one destructor!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithInvalidTopLevelStatement) {
+
+    auto ifStatement = std::make_shared<IfStatementNode>(
+        nullptr,
+        nullptr,
+        std::vector<std::unique_ptr<ElseIfStatementNode>>(),
+        nullptr,
+        yy::location()
+    );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{
+        ifStatement
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+    EXPECT_FALSE(classSymbol->Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Invalid top-level statement inside class!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithParentAndInheritedVariables) {
+
+    auto var = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePrivate>()
+
+    );
+
+    auto parentVariable = std::make_shared<VariableDefinitionNode>(
+        var,
+        nullptr,
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>>()
+
+    );
+    auto parentClass = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>{parentVariable}));
+    auto parentIdentifier = std::make_shared<Identifier>(parentClass, "ParentClass", yy::location());
+
+    std::vector<std::shared_ptr<Identifier>> parents = {parentIdentifier};
+    auto classSymbol = std::make_shared<ClassSymbol>(parents, std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>()));
+
+    EXPECT_TRUE(classSymbol->Check());
+    EXPECT_TRUE(classSymbol->GetVariable("parentVar") != nullptr);
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassCompatibleWithSelf) {
+	// Create a class with no parents and an empty body
+	auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+	auto classA = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::move(body));
+	classA->name = "ClassA";
+
+	// A class should be compatible with itself
+	EXPECT_TRUE(classA->Compatible(classA));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassWithParentClass) {
+	// Create the parent class
+	yy::location loc;
+	auto parentBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+	auto parentClass = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::move(parentBody));
+	parentClass->name = "ParentClass";
+
+	// Create an identifier for the parent class
+	auto parentIdentifier = std::make_shared<Identifier>(parentClass, "ParentClass", loc);
+
+	// Create the child class with the parent as its parent
+	auto childBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+	auto childClass = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>{parentIdentifier}, std::move(childBody));
+	childClass->name = "ChildClass";
+
+	// A child class should be compatible with its parent
+	EXPECT_TRUE(childClass->Compatible(parentClass));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassNotCompatibleWithUnrelatedClass) {
+	// Create the first class
+	auto bodyA = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+	auto classA = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::move(bodyA));
+	classA->name = "ClassA";
+
+	// Create the second unrelated class
+	auto bodyB = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+	auto classB = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::move(bodyB));
+	classB->name = "ClassB";
+
+	// Unrelated classes should not be compatible
+	EXPECT_FALSE(classA->Compatible(classB));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckClassNotCompatibleWithNullType) {
+	// Create a class
+	auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+	auto classA = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::move(body));
+	classA->name = "ClassA";
+
+	// A class should not be compatible with a null type
+	std::shared_ptr<Type> nullType = nullptr;
+	EXPECT_FALSE(classA->Compatible(nullType));
+}
+
+
+
 //TODO Implement literals and symbols
 
 
