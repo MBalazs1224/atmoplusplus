@@ -751,6 +751,143 @@ TEST_F(SemanticAnalyzerTest, CheckMemberAccessExpressionWithInvalidLeftExpressio
     EXPECT_THAT(error_buffer.str(), HasSubstr("Only identifiers can appear on the left side of the member access (inside) expression!"));
 }
 
+TEST_F(SemanticAnalyzerTest, CheckMemberAccessExpressionWithChainedAccess) {
+
+    Error::ShouldShowWarnings = false;
+
+    // Create a dummy body for the class
+    auto dummyBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    // Define the main class symbol
+    auto outerClassSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::move(dummyBody)
+        );
+    outerClassSymbol->name = "OuterClass";
+
+    auto dummyBody2 = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    // Define an inner class symbol
+    auto innerClassSymbol = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::move(dummyBody2)
+    );
+    innerClassSymbol->name = "InnerClass";
+
+    // Define a variable in the outer class pointing to the inner class
+    auto innerVar = std::make_shared<VariableSymbol>(
+        innerClassSymbol, 
+        std::make_shared<AttributePublic>()
+        );
+    innerVar->name = "inner";
+
+    auto innerDefinition = std::make_shared<VariableDefinitionNode>(
+        innerVar, 
+        nullptr, 
+        yy::location(), std::vector<std::shared_ptr<IExpressionable>>()
+        );
+    outerClassSymbol->InsertVariable(innerDefinition);
+
+    // Define a variable in the inner class
+    auto innerVar2 = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>()
+        );
+    innerVar2->name = "value";
+
+    auto innerDefinition2 = std::make_shared<VariableDefinitionNode>(
+        innerVar2, 
+        std::make_shared<IntegerLiteral>(10), 
+        yy::location(), std::vector<std::shared_ptr<IExpressionable>>()
+        );
+
+    innerClassSymbol->InsertVariable(innerDefinition2);
+
+    // Create a chained member access expression: obj.inner.value
+    auto innerAccess = std::make_shared<Identifier>(
+        innerVar, 
+        "inner", 
+        yy::location());
+
+    auto outerAccess = std::make_shared<Identifier>(
+        outerClassSymbol, 
+        "OuterClass", 
+        yy::location());
+
+    auto chainedRight = std::make_shared<MemberAccessExpression>(
+        innerAccess, 
+        outerAccess, 
+        yy::location());
+
+    auto valueAccess = std::make_shared<Identifier>(
+        innerVar2, 
+        "value", 
+        yy::location()
+        );
+
+    
+    MemberAccessExpression memberAccessExpr(
+        valueAccess, 
+        chainedRight, 
+        yy::location()
+        );
+
+    
+    EXPECT_TRUE(memberAccessExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckMemberAccessExpressionWithInheritedVariable) {
+    Error::ShouldShowWarnings = false;
+
+    // Create base and derived class symbols
+    auto dummyBody = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto baseClass = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>(), 
+        std::move(dummyBody)
+        );
+
+    baseClass->name = "BaseClass";
+
+    auto identifierToParent = std::make_shared<Identifier>(
+        baseClass,
+        baseClass->name,
+        yy::location()
+    );
+
+
+    // Set the base class a parent to the derived class
+
+    auto dummyBody2 = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    auto derivedClass = std::make_shared<ClassSymbol>(
+        std::vector<std::shared_ptr<Identifier>>{
+            identifierToParent
+        }, 
+        std::move(dummyBody2)
+    );
+    derivedClass->name = "DerivedClass";
+
+    // Define a public variable in the base class
+    auto baseVar = std::make_shared<VariableSymbol>(std::make_shared<TypeInteger>(), std::make_shared<AttributePublic>());
+    baseVar->name = "baseVar";
+
+    auto baseVarDefinition = std::make_shared<VariableDefinitionNode>(baseVar, nullptr, yy::location(), std::vector<std::shared_ptr<IExpressionable>>());
+    baseClass->InsertVariable(baseVarDefinition);
+
+
+    // Create identifiers
+    auto right = std::make_shared<Identifier>(derivedClass, "DerivedClass", yy::location());
+    auto left = std::make_shared<Identifier>(baseVar, "baseVar", yy::location());
+    MemberAccessExpression memberAccessExpr(left, right, yy::location());
+
+    // Check the function and buffer
+    EXPECT_TRUE(memberAccessExpr.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+
+
 
 TEST_F(SemanticAnalyzerTest,CheckFunctionCallWithIdentifierPointingToVariable) {
 
