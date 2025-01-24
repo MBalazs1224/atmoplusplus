@@ -1473,7 +1473,72 @@ TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithElseStatement) {
     EXPECT_TRUE(error_buffer.str().empty());
 }
 
+// TODO: Implement rest of the nodes
 
+// Symbols
+
+TEST_F(SemanticAnalyzerTest, CheckFunctionSymbolWithLessThanSixParameters) {
+
+    auto type = std::make_shared<TypeVoid>();
+    auto attribute = std::make_shared<AttributePublic>();
+
+    std::vector<std::shared_ptr<VariableSymbol>> args_in;
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    // Create the function symbol
+
+    auto func = FunctionSymbol(
+        type,
+        attribute,
+        args_in,
+        std::move(body)
+    );
+
+
+    EXPECT_TRUE(func.Check());
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckFunctionSymbolWithMoreThanSixParameters) {
+
+    auto type = std::make_shared<TypeVoid>();
+    auto attribute = std::make_shared<AttributePublic>();
+
+    auto var1 = std::make_shared<VariableSymbol>(
+        type,
+        attribute
+    );
+
+    // Create more than six parameters
+
+    std::vector<std::shared_ptr<VariableSymbol>> args_in
+    {
+        var1,
+        var1,
+        var1,
+        var1,
+        var1,
+        var1,
+        var1
+    };
+
+
+    auto body = std::make_unique<BodyNode>(std::vector<std::shared_ptr<Node>>());
+
+    // Create the function symbol
+
+    auto func = FunctionSymbol(
+        type,
+        attribute,
+        args_in,
+        std::move(body)
+    );
+
+
+    EXPECT_FALSE(func.Check());
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Functions cannot have  more than 6 arguments!"));
+}
 
 
 //TODO: Implement array subscripts on the left side of assignment expression
