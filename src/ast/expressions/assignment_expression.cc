@@ -64,8 +64,21 @@ std::shared_ptr<Type> AssignmentExpression::GetType()
 
 std::shared_ptr<TranslateExpression> AssignmentExpression::TranslateExpressionToIr()
 {
-    //TODO: "Implement assignment expression to ir"
-    return nullptr;
+
+    // The left hand side will either be a binary plus (framePointer + offset, if the var is in the frame) or an inreg which is just a register, that's why I think it needs to be a value expression
+
+    auto leftExp = left->TranslateExpressionToIr()->ToValueExpression();
+
+    auto rightExp = right->TranslateExpressionToIr()->ToValueExpression();
+
+    // Move the right expression into the left one
+
+    auto moveExp = std::make_shared<IRMove>(
+        leftExp,
+        rightExp
+    );
+
+    return std::make_shared<TranslateNoValueExpression>(moveExp);
 }
 
 std::shared_ptr<IRStatement> AssignmentExpression::TranslateToIR()
