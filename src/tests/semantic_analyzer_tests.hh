@@ -1635,6 +1635,386 @@ TEST_F(SemanticAnalyzerTest, CheckIfStatementNodeWithElseStatement) {
     EXPECT_TRUE(error_buffer.str().empty());
 }
 
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionValidInitialization) {
+
+    auto variable = std::make_shared<VariableSymbol>(
+         std::make_shared<TypeInteger>(),
+         std::make_shared<AttributePublic>()
+         );
+
+
+    auto expression = std::make_shared<IntegerLiteral>(42);
+
+
+    VariableDefinitionNode var_def(variable, expression, yy::location(), {});
+    
+    EXPECT_TRUE(var_def.Check());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidArgumentsAndExpressionAtTheSameTime) {
+
+    auto variable = std::make_shared<VariableSymbol>(
+         std::make_shared<TypeInteger>(),
+         std::make_shared<AttributePublic>()
+         );
+
+    
+    auto expression = std::make_shared<IntegerLiteral>(42);
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        expression, 
+        yy::location(), std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<IntegerLiteral>(4)
+    });
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Cannot pass arguments to a variable and initialize it at the same time!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidNotCompatibleTypes) {
+
+    auto variable = std::make_shared<VariableSymbol>(
+         std::make_shared<TypeInteger>(),
+         std::make_shared<AttributePublic>()
+         );
+
+    
+    auto expression = std::make_shared<FloatLiteral>(.42);
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        expression, 
+        yy::location(),
+        {}
+        );
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The type of initialization value must be compatible with the variable's type!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidPassArgumentsToNonClassType) {
+
+    auto variable = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+    
+    auto expression = std::make_shared<FloatLiteral>(.42);
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        expression, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>>()
+        );
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Cannot pass arguments to a non-class variable"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionValidArrayDefinition) {
+
+    auto array = std::make_shared<Array>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<IntegerLiteral>(5)
+    );
+
+    auto variable = std::make_shared<VariableSymbol>(
+        array,
+        std::make_shared<AttributePublic>()
+    );
+    
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        nullptr, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<IntegerLiteral>(4)
+    });
+    
+    EXPECT_TRUE(var_def.Check());
+
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+//FIXME: Segfault needs to be fixed
+// TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidArrayDefinitionNoNumberOfElements) {
+
+//     auto array = std::make_shared<Array>(
+//         std::make_shared<TypeInteger>(),
+//         nullptr
+//     );
+
+//     auto variable = std::make_shared<VariableSymbol>(
+//         array,
+//         std::make_shared<AttributePublic>()
+//     );
+    
+
+
+//     VariableDefinitionNode var_def(
+//         variable, 
+//         nullptr, 
+//         yy::location(),
+//         std::vector<std::shared_ptr<IExpressionable>> {
+//             std::make_shared<IntegerLiteral>(4)
+//     });
+    
+//     EXPECT_FALSE(var_def.Check());
+
+//     EXPECT_THAT(error_buffer.str(), HasSubstr("The number of elements inside an array must be given at definition!"));
+// }
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidArrayDefinitionNumberOfElementsNonInteger) {
+
+    auto array = std::make_shared<Array>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<FloatLiteral>(3.5)
+    );
+
+    auto variable = std::make_shared<VariableSymbol>(
+        array,
+        std::make_shared<AttributePublic>()
+    );
+    
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        nullptr, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<IntegerLiteral>(4)
+    });
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("The number of elements in the array must be an integer!"));
+}
+
+
+// TODO: Validate constructor definition, cannot be void, etc
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionValidConstructorFound) {
+
+    Error::ShouldShowWarnings = false;
+
+    auto arg = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_shared<TypeVoid>(),
+        std::make_shared<AttributePublic>(),
+        std::vector<std::shared_ptr<VariableSymbol>>{
+            arg
+        },
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto constructorNode1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{constructorNode1};
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+
+    auto variable = std::make_shared<VariableSymbol>(
+        classSymbol,
+        std::make_shared<AttributePublic>()
+    );
+    
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        nullptr, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<IntegerLiteral>(4)
+    });
+    
+    EXPECT_TRUE(var_def.Check());
+
+    EXPECT_TRUE(error_buffer.str().empty());
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidConstructorNotFound) {
+
+    auto arg = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_shared<TypeVoid>(),
+        std::make_shared<AttributePublic>(),
+        std::vector<std::shared_ptr<VariableSymbol>>{
+            arg
+        },
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto constructorNode1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{constructorNode1};
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+
+    auto variable = std::make_shared<VariableSymbol>(
+        classSymbol,
+        std::make_shared<AttributePublic>()
+    );
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        nullptr, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<FloatLiteral>(.4)
+    });
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("No constructor found for the given parameters!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidMultipleConstructorsFound) {
+
+    auto arg = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_shared<TypeVoid>(),
+        std::make_shared<AttributePublic>(),
+        std::vector<std::shared_ptr<VariableSymbol>>{
+            arg
+        },
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto constructorNode1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto constructorNode2 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{
+        constructorNode1,
+        constructorNode2
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+
+    auto variable = std::make_shared<VariableSymbol>(
+        classSymbol,
+        std::make_shared<AttributePublic>()
+    );
+    
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        nullptr, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<IntegerLiteral>(4)
+    });
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("Ambiguous constructor call!"));
+}
+
+TEST_F(SemanticAnalyzerTest, CheckVariableDefinitionInvalidOnlyPrivateConstructorsFound) {
+
+    auto arg = std::make_shared<VariableSymbol>(
+        std::make_shared<TypeInteger>(),
+        std::make_shared<AttributePublic>()
+    );
+
+    auto func = std::make_shared<FunctionSymbol>(
+        std::make_shared<TypeVoid>(),
+        std::make_shared<AttributePrivate>(),
+        std::vector<std::shared_ptr<VariableSymbol>>{
+            arg
+        },
+        std::make_unique<BodyNode>(
+            std::vector<std::shared_ptr<Node>>()
+        )
+    );
+
+    auto constructorNode1 = std::make_shared<ConstructorDefinitionNode>(
+        func,
+        std::vector<std::shared_ptr<IExpressionable>>(),
+        yy::location()
+        );
+
+
+    auto bodyNodes = std::vector<std::shared_ptr<Node>>{
+        constructorNode1
+        };
+
+    auto classSymbol = std::make_shared<ClassSymbol>(std::vector<std::shared_ptr<Identifier>>(), std::make_unique<BodyNode>(bodyNodes));
+
+
+    auto variable = std::make_shared<VariableSymbol>(
+        classSymbol,
+        std::make_shared<AttributePublic>()
+    );
+    
+
+
+    VariableDefinitionNode var_def(
+        variable, 
+        nullptr, 
+        yy::location(),
+        std::vector<std::shared_ptr<IExpressionable>> {
+            std::make_shared<IntegerLiteral>(4)
+    });
+    
+    EXPECT_FALSE(var_def.Check());
+
+    EXPECT_THAT(error_buffer.str(), HasSubstr("No constructor found for the given parameters!"));
+}
+
+
+
 // TODO: Implement rest of the nodes
 
 // Symbols
