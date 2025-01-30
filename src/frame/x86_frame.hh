@@ -22,7 +22,7 @@ class x86Frame : public Frame
 
         std::shared_ptr<Access> allocLocal(bool escape) override;
 
-        std::shared_ptr<Temp> FramePointer() override;
+        std::shared_ptr<Temp> StackPointer() override;
 
         std::shared_ptr<Temp> ReturnLocation() override;
 

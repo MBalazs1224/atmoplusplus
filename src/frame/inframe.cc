@@ -11,7 +11,7 @@ std::string InFrame::ToString()
 
 std::shared_ptr<IRExpression> InFrame::AsExpression(std::shared_ptr<IRExpression> framePointer)
 {
-    // Returns the memory address at FramePointer + offset
+    // Returns the memory address at StackPointer + offset
 
     return std::make_shared<IRMem>(
         std::make_shared<IRBinaryOperator>(

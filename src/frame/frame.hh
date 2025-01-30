@@ -34,7 +34,7 @@ class Frame
         virtual std::shared_ptr<Access> allocLocal(bool escape) = 0;
 
 
-        virtual std::shared_ptr<Temp> FramePointer() = 0;
+        virtual std::shared_ptr<Temp> StackPointer() = 0;
 
         /*
         @brief Returns the frame's return-value register.
