@@ -7,6 +7,7 @@
 #include "access.hh"
 #include "accesslist.hh"
 #include "label.hh"
+#include "../ir/statements/all_ir_statements.hh"
 
 class x86Frame : public Frame
 {
@@ -22,4 +23,9 @@ class x86Frame : public Frame
         std::shared_ptr<Access> allocLocal(bool escape) override;
 
         std::shared_ptr<Temp> FramePointer() override;
+
+        std::shared_ptr<Temp> ReturnLocation() override;
+
+        std::shared_ptr<IRStatement> ProcessFunctionEntryAndExit1(std::shared_ptr<IRStatement> body) override;
+        std::shared_ptr<IRStatement> ProcessFunctionEntryAndExit3(std::string functionName, std::shared_ptr<IRStatement> body) override;
 };

@@ -4,6 +4,7 @@
 #include "access.hh"
 #include "accesslist.hh"
 #include "temp.hh"
+#include "../ir/statements/ir_statement.hh"
 #include <memory>
 
 // Represents a frame in the architecture
@@ -34,6 +35,26 @@ class Frame
 
 
         virtual std::shared_ptr<Temp> FramePointer() = 0;
+
+        /*
+        @brief Returns the frame's return-value register.
+        @return The register that should hold the return value.
+        */
+        virtual std::shared_ptr<Temp> ReturnLocation() = 0;
+        
+        /*
+        @brief Will move incoming formal parameters, save and restore callee-save registers then execute the body.
+        @param body The IRStatement that will execute the body.
+        @return The IRStatement that will point to the start of the instructions.
+        */
+        virtual std::shared_ptr<IRStatement> ProcessFunctionEntryAndExit1(std::shared_ptr<IRStatement> body) = 0;
+
+        /*
+        @brief Generate a label, return instruction, adjust stack pointer, reset stack pointer.
+        @param body The IRStatement that will execute the body.
+        @return The IRStatement that will point to the start of the instructions.
+        */
+        virtual std::shared_ptr<IRStatement> ProcessFunctionEntryAndExit3(std::string functionName, std::shared_ptr<IRStatement> body) = 0;
 
 
 };

@@ -11,6 +11,10 @@ class FunctionDefinitionNode : public Node
 {
     // Pointer to the created funtion
     std::shared_ptr<FunctionSymbol> function;
+
+    // Wil return a list that will indicate wether the local variables escape the frame
+    std::shared_ptr<BoolList> GetWetherVariablesEscape();
+
     
     public:
         FunctionDefinitionNode( std::shared_ptr<FunctionSymbol> func_in);

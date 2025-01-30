@@ -15,8 +15,8 @@ class FunctionSymbol : public SymbolTableElement
         std::vector<std::shared_ptr<VariableSymbol>> arguments;
 
 
-        int size_in_bytes = 0;
     public:
+        int size_in_bytes = 0;
 
 
     // Contains all the local variables defined in the function
