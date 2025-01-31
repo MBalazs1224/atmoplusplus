@@ -38,6 +38,8 @@ void AtmoDriver::StartCompilation(std::istream &stream)
         return;
     }
 
+    TranslateToIR();
+
 }
 
 std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
@@ -58,12 +60,85 @@ std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
     
 }
 
+std::vector<std::shared_ptr<VariableSymbol>> AtmoDriver::GetGlobalVariables(std::vector<std::shared_ptr<Node>>& nodes)
+{
+    std::vector<std::shared_ptr<VariableSymbol>> globalVariables;
+
+    for (auto &&node : nodes)
+    {
+        // If the variable was defined globally
+        if(auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(node))
+        {
+            globalVariables.push_back(varDef->GetVariable());
+        }
+        // If the variable was defined inside a nested scope
+        else if(auto varContainer = std::dynamic_pointer_cast<VariableContainer>(node))
+        {
+            auto variables = varContainer->GetVariables();
+
+            // Insert the variables into the end of the global vars
+            globalVariables.insert(globalVariables.end(), variables.begin(), variables.end());
+        }
+        
+    }
+    
+    return globalVariables;
+}
+
+std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>>& variables)
+{
+    // Global variables should be in the frame, so true will indicate that
+
+    std::shared_ptr<BoolList> boolList = nullptr;
+
+    for (size_t i = 0; i < variables.size(); i++)
+    {
+        boolList = std::make_shared<BoolList>(true, boolList);
+    }
+
+    return boolList;
+    
+}
+
 void AtmoDriver::TranslateToIR()
 {
     //Initialize rsp and rbp
     ReservedIrRegisters::Initialize();
 
+
     auto nodes = ast_root->GetStatementsRef();
+
+    auto global_variables = GetGlobalVariables(nodes);
+
+    x86Frame frame;
+
+    //Create label for main
+
+    auto mainLabel = Label("main");
+
+    auto globalFrame = frame.newFrame(
+        mainLabel,
+        GetWetherGlobalVariablesEscape(global_variables)
+    );
+
+    // Set the variable's access to the access allocated by the frame object
+    
+
+    // FIXME: Variable's access gets allocated backwards (the second variables is offset 0, first is -8)
+    
+    auto accessInsideFrame = globalFrame->formals;
+
+    int varCounter = 0;
+    
+    while (accessInsideFrame != nullptr)
+    {
+        global_variables[varCounter++]->access = accessInsideFrame->head;
+
+        accessInsideFrame = accessInsideFrame->tail;
+    }
+    
+    
+
 
     std::shared_ptr<IRStatementList> temp = nullptr;
 

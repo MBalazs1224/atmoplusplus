@@ -9,6 +9,12 @@
 #include "../ir/reserved_ir_registers.hh"
 class AtmoDriver
 {
+
+    private:
+    std::vector<std::shared_ptr<VariableSymbol>> GetGlobalVariables(std::vector<std::shared_ptr<Node>>&);
+    
+    std::shared_ptr<BoolList> GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>>& );
+    
     public:
     AtmoDriver() = default;
     ~AtmoDriver() = default;
