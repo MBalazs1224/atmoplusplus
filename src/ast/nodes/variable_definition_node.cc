@@ -99,7 +99,22 @@ std::shared_ptr<VariableSymbol> VariableDefinitionNode::GetVariable()
 
 std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 {
-    //TODO: Implement VariableDefinitionNode TranslateToIR
+    // We should move the value of the expression into the variable, if it exists, if there is no initializing value, the value of the varaible will be whatever there is in the memory
 
+    if(expression)
+    {
+        auto varLocation = variable->TranslateExpressionToIr()->ToValueExpression();
+
+        auto initializingValue = expression->TranslateExpressionToIr()->ToValueExpression();
+
+        auto moveValueIntoVariable = std::make_shared<IRMove>(
+            varLocation,
+            initializingValue
+        );
+
+        return moveValueIntoVariable;
+    }
+
+    //FIXME: Do something when there is no initializing value (maybe this shouldn't be allowed)
     return nullptr;
 }
