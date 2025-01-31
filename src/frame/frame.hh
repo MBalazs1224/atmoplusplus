@@ -5,6 +5,7 @@
 #include "accesslist.hh"
 #include "temp.hh"
 #include "../ir/statements/ir_statement.hh"
+#include "../ir/reserved_ir_registers.hh"
 #include <memory>
 
 // Represents a frame in the architecture

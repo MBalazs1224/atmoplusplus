@@ -23,7 +23,7 @@ std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
 {
     // Use the access object to retreive this variable's location
 
-    auto fp_exp = std::make_shared<IRTemp>(frame_pointer);
+    auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
     auto access_exp = access->AsExpression(fp_exp);
     
     return std::make_shared<TranslateValueExpression>(access_exp);

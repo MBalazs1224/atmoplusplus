@@ -19,6 +19,8 @@ frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/infram
 
 translate := ./build/translate/translate_conditional_expression.o ./build/translate/translate_value_expression.o ./build/translate/translate_no_value_expression.o
 
+reserved_ir_registers := ./build/ir/reserved_ir_registers.o
+
 
 helper := ./build/helper/helper.o
 
@@ -38,7 +40,7 @@ ilocation := ./build/location/ilocation.o
 
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(frame) $(translate)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
@@ -372,6 +374,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/ir/expressions/ir_expression.o: ./src/ir/expressions/ir_expression.cc ./src/ir/expressions/ir_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/reserved_ir_registers.o: ./src/ir/reserved_ir_registers.cc ./src/ir/reserved_ir_registers.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Frame

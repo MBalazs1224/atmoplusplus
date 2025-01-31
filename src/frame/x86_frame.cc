@@ -36,16 +36,14 @@ std::shared_ptr<Temp> x86Frame::StackPointer()
 {
     // rsp acts as the frame pointer on 64bit machines
 
-    // FIXME: This is a temporary solution, we should have a way to get the frame pointer (rsp)
-    return std::make_shared<Temp>();
+    return ReservedIrRegisters::StackPointer;
 }
 
 std::shared_ptr<Temp> x86Frame::ReturnLocation()
 {
     // RAX is used for return value
 
-    // FIXME: RAX needs to be returned as the return value
-    return std::make_shared<Temp>();
+    return ReservedIrRegisters::RAX;
 }
 
 std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit1(std::shared_ptr<IRStatement> body)
@@ -70,11 +68,11 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     // Push rbp to stack
 
-    // TODO: Make sure this register ends up as rsp
+    // rsp
     auto stackPointer = this->StackPointer();
-
-    // TODO: Make sure this ends up as rbp
-    auto rbp = std::make_shared<Temp>();
+    
+    //rbp
+    auto rbp = ReservedIrRegisters::FramePointer;
 
     auto decrementSp = std::make_shared<IRBinaryOperator>(
         BinaryOperator::MINUS,

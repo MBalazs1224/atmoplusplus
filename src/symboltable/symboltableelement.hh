@@ -4,6 +4,7 @@
 #include "../ast/attributes/attributeprivate.hh"
 #include "../ast/expressions/expressionable.hh"
 #include "../frame/datasize.hh"
+#include "../ir/reserved_ir_registers.hh"
 #include <memory>
 class SymbolTableElement : public IExpressionable
 {

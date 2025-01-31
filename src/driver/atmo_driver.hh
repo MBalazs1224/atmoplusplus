@@ -6,6 +6,7 @@
 #include "../parser/parser.tab.hh"
 
 #include "../ir/statements/ir_statement_list.hh"
+#include "../ir/reserved_ir_registers.hh"
 class AtmoDriver
 {
     public:

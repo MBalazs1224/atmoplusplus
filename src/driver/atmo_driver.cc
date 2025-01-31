@@ -60,6 +60,9 @@ std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
 
 void AtmoDriver::TranslateToIR()
 {
+    //Initialize rsp and rbp
+    ReservedIrRegisters::Initialize();
+
     auto nodes = ast_root->GetStatementsRef();
 
     std::shared_ptr<IRStatementList> temp = nullptr;
