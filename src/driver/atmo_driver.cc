@@ -132,7 +132,11 @@ void AtmoDriver::TranslateToIR()
     
     while (accessInsideFrame != nullptr)
     {
-        global_variables[varCounter++]->access = accessInsideFrame->head;
+        // The received accessList will be backwards, so I have to iterate the global variables from backwards
+
+        size_t currentIndexFromBackwards = global_variables.size() - 1 - varCounter++;
+        
+        global_variables[currentIndexFromBackwards]->access = accessInsideFrame->head;
 
         accessInsideFrame = accessInsideFrame->tail;
     }

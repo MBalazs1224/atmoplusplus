@@ -1,37 +1,8 @@
-create class class_1
-	create integer a
-	create string s
-	create float f
-	create char c
-
 create boolean a
 
+create integer i
+
 if a
-	return 5
-
-until not a
-	return 4
-
-do 
-	return 4
-until 5 greater than 6
-
-
-create integer function f with integer a
-	create integer d
-	create class_1 classVar
-	until false
-		create char c = 'c'
-	do
-		create float f equals 3.2
-	until d < 4
-
-	if true
-		create string s equals ""
-		return 4
-	else if d greater than 5
-		create integer i
-	else if d less than 3
-		create string s
-	else
-		create float f2
+	create string c
+else
+	create char d
