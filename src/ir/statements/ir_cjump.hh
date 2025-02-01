@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <stdexcept>
 #include "ir_statement.hh"
 #include "../expressions/relational_operators.hh"
 #include "../expressions/ir_expression.hh"
@@ -12,12 +13,16 @@ class IRCJump : public IRStatement
         std::shared_ptr<IRExpression> left;
         std::shared_ptr<IRExpression> right;
 
-        IRLabel iftrue;
-        IRLabel iffalse;
+        std::shared_ptr<Label> iftrue;
+        std::shared_ptr<Label> iffalse;
     public:
        
 
-        IRCJump(RelationalOperator,std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,IRLabel,IRLabel);
+        IRCJump(RelationalOperator,std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,std::shared_ptr<Label>,std::shared_ptr<Label>);
 
         ~IRCJump() override = default;
+
+        std::string ToDotFormat(int&) override;
+
+        std::string OperatorToString();
 };

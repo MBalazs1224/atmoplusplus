@@ -9,4 +9,6 @@ class IRMem : public IRExpression
         std::shared_ptr<IRExpression> exp;
     public:
         IRMem(std::shared_ptr<IRExpression>);
+
+        std::string ToDotFormat(int &nodeCounter) override;
 };

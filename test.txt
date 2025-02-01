@@ -1,8 +1,6 @@
-create boolean a
+create integer a equals 3
 
-create integer i
-
-if a
-	create string c
+if a matches 5
+	return 150
 else
-	create char d
+	return 120

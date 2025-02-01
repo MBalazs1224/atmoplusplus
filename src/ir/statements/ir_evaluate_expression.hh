@@ -10,4 +10,6 @@ class IREvaluateExpression : public IRStatement
     public:
        
         IREvaluateExpression(std::shared_ptr<IRExpression>);
+
+        std::string ToDotFormat(int&) override;
 };

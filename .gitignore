@@ -40,3 +40,6 @@ parser.tab.hh
 main
 runTests
 .*
+
+*.dot
+*.png

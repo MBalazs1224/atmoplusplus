@@ -168,6 +168,15 @@ void AtmoDriver::TranslateToIR()
             temp = ir_list;
         }
     }
+
+    std::ofstream dotFile("ir_tree.dot");
+    int nodeCounter = 0;
+
+    dotFile << "digraph IRTree {\n";
+    dotFile << ir_root->ToDotFormat(nodeCounter);
+    dotFile << "}\n";
+    dotFile.close();
+
 }
 
 

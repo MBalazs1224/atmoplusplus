@@ -1,6 +1,62 @@
 #include "ir_cjump.hh"
 
-IRCJump::IRCJump(RelationalOperator op, std::shared_ptr<IRExpression> l, std::shared_ptr<IRExpression>r, IRLabel t, IRLabel f) : relop(op), left(std::move(l)), right(std::move(r)), iftrue(t), iffalse(f)
+IRCJump::IRCJump(RelationalOperator op, std::shared_ptr<IRExpression> l, std::shared_ptr<IRExpression>r, std::shared_ptr<Label> t, std::shared_ptr<Label> f) : relop(op), left(std::move(l)), right(std::move(r)), iftrue(t), iffalse(f)
 {
 
+}
+
+std::string IRCJump::ToDotFormat(int &nodeCounter)
+{
+    int myId = nodeCounter++;
+    std::string dot = "node" + std::to_string(myId) + " [label=\"CJUMP: " + OperatorToString() + "\"];\n";
+
+    // Connect left operand
+    dot += "node" + std::to_string(myId) + " -> node" + std::to_string(nodeCounter) + ";\n";
+    dot += left->ToDotFormat(nodeCounter);
+
+    // Connect right operand
+    dot += "node" + std::to_string(myId) + " -> node" + std::to_string(nodeCounter) + ";\n";
+    dot += right->ToDotFormat(nodeCounter);
+
+    // Connect true label
+    int trueId = nodeCounter++;
+    dot += "node" + std::to_string(myId) + " -> node" + std::to_string(trueId) + " [label=\"TRUE\"];\n";
+    dot += "node" + std::to_string(trueId) + " [label=\"LABEL: " + iftrue->ToString() + "\"];\n";
+
+    // Connect false label
+    int falseId = nodeCounter++;
+    dot += "node" + std::to_string(myId) + " -> node" + std::to_string(falseId) + " [label=\"FALSE\"];\n";
+    dot += "node" + std::to_string(falseId) + " [label=\"LABEL: " + iffalse->ToString() + "\"];\n";
+
+    return dot;
+}
+
+std::string IRCJump::OperatorToString()
+{
+    switch (relop)
+    {
+    case RelationalOperator::GreaterThan:
+        return "GreaterThan";
+
+    case RelationalOperator::GreaterThanOrEqual:
+        return "GreaterThanOrEqual";
+
+    case RelationalOperator::LessThan:
+        return "LessThan";
+
+    case RelationalOperator::LessThanOrEqual:
+        return "LessThanOrEqual";
+
+    case RelationalOperator::Matches:
+        return "Matches";
+
+    case RelationalOperator::NotMatches:
+        return "NotMatches";
+
+    case RelationalOperator::Not:
+        return "Not";
+    
+    default:
+        throw std::logic_error("Unknown Relop!");
+    }
 }

@@ -9,4 +9,6 @@ class IRTemp : public IRExpression
         std::shared_ptr<Temp> temp;
     public:
         IRTemp(std::shared_ptr<Temp>);
+
+        std::string ToDotFormat(int&) override;
 };

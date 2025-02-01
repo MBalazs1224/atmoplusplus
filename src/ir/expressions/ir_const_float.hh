@@ -8,4 +8,6 @@ class IRConstFloat : public IRExpression
         double value;
     public:
         IRConstFloat(double);
+
+        std::string ToDotFormat(int&) override;
 };

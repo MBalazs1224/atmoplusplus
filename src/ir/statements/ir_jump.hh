@@ -15,4 +15,6 @@ class IRJump : public IRStatement
         IRJump(std::shared_ptr<IRExpression>);
 
         ~IRJump() override = default;
+
+        std::string ToDotFormat(int&) override;
 };

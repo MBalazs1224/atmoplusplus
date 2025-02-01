@@ -27,3 +27,23 @@ IRSequence::IRSequence(const std::vector<std::shared_ptr<IRStatement>>& vec)
     }
     
 }
+
+std::string IRSequence::ToDotFormat(int &nodeCounter)
+{
+    int myId = nodeCounter++;
+    std::string dot = "node" + std::to_string(myId) + " [label=\"SEQ\"];\n";
+
+    if (left)
+    {
+        dot += "node" + std::to_string(myId) + " -> node" + std::to_string(nodeCounter) + ";\n";
+        dot += left->ToDotFormat(nodeCounter);
+    }
+
+    if (right)
+    {
+        dot += "node" + std::to_string(myId) + " -> node" + std::to_string(nodeCounter) + ";\n";
+        dot += right->ToDotFormat(nodeCounter);
+    }
+
+    return dot;
+}

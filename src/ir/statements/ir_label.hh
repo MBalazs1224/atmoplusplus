@@ -13,4 +13,6 @@ class IRLabel : public IRStatement
         IRLabel(std::shared_ptr<Label> l);
 
         ~IRLabel() override = default;
+
+        std::string ToDotFormat(int&) override;
 };

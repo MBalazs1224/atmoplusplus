@@ -11,9 +11,9 @@ attributes := ./build/attributes/attribute.o ./build/attributes/attribute_privat
 
 types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboolean.o  ./build/types/typeinteger.o ./build/types/typefloat.o ./build/types/typestring.o ./build/types/typevoid.o ./build/types/typechar.o
 
-ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o
+ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o ./build/ir/statements/ir_return.o
 
-ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o
+ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o
 
 frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o
 
@@ -346,6 +346,9 @@ main: $(objects)
 ./build/ir/statements/ir_statement.o: ./src/ir/statements/ir_statement.cc ./src/ir/statements/ir_statement.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
+./build/ir/statements/ir_return.o: ./src/ir/statements/ir_return.cc ./src/ir/statements/ir_return.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
 # IR Expressions
 
 ./build/ir/expressions/ir_binary_operator.o: ./src/ir/expressions/ir_binary_operator.cc ./src/ir/expressions/ir_binary_operator.hh
@@ -374,6 +377,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/ir/expressions/ir_expression.o: ./src/ir/expressions/ir_expression.cc ./src/ir/expressions/ir_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/expressions/ir_expression_list.o: ./src/ir/expressions/ir_expression_list.cc ./src/ir/expressions/ir_expression_list.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/ir/reserved_ir_registers.o: ./src/ir/reserved_ir_registers.cc ./src/ir/reserved_ir_registers.hh

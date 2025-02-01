@@ -9,4 +9,6 @@ class IRName : public IRExpression
         std::shared_ptr<Label> label;
     public:
         IRName(std::shared_ptr<Label>);
+
+    std::string ToDotFormat(int&) override;
 };

@@ -1,9 +1,10 @@
 #pragma once
 #include <memory>
 #include "ir_statement.hh"
+#include "../ir_node.hh"
 
 
-class IRStatementList
+class IRStatementList : public IRNode
 {
     public:
         std::shared_ptr<IRStatement> head;
@@ -11,4 +12,5 @@ class IRStatementList
 
         IRStatementList(std::shared_ptr<IRStatement>,std::shared_ptr<IRStatementList>);
 
+        std::string ToDotFormat(int&) override;
 };

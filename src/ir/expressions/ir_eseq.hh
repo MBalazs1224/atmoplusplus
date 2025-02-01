@@ -10,4 +10,6 @@ class IREseq : public IRExpression
         std::shared_ptr<IRStatement> stmt;
     public:
         IREseq(std::shared_ptr<IRExpression>, std::shared_ptr<IRStatement>);
+
+        std::string ToDotFormat(int&) override;
 };

@@ -13,4 +13,6 @@ class IRMove : public IRStatement
         IRMove(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpression>);
 
         ~IRMove() override = default;
+
+        std::string ToDotFormat(int&) override;
 };

@@ -17,4 +17,6 @@ class IRSequence : public IRStatement
         IRSequence(const std::vector<std::shared_ptr<IRStatement>>&);
 
         ~IRSequence() override = default;    
+
+        std::string ToDotFormat(int&) override;
 };
