@@ -94,10 +94,7 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
         std::make_shared<IRLabel>(falseLabel),
         std::make_shared<IRSequence>(
             rightExp,
-            std::make_shared<IRSequence>(
-                printLabelAndMove0,
-                std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
-            )
+            printLabelAndMove0
         )
     );
 

@@ -41,11 +41,12 @@ std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
     auto falseLabel = std::make_shared<Label>();
     auto joinLabel = std::make_shared<Label>();
 
+    auto move1IntoRegLabel = std::make_shared<Label>();
     // Translate left and right expressions into IR
 
     auto leftExp = left->TranslateExpressionToIr()->ToConditionExpression(trueLabel,falseLabel);
 
-    auto rightExp = right->TranslateExpressionToIr()->ToConditionExpression(trueLabel,falseLabel);
+    auto rightExp = right->TranslateExpressionToIr()->ToConditionExpression(move1IntoRegLabel,falseLabel);
 
     // Statements to move 0 and 1 into the end register
 
@@ -59,16 +60,18 @@ std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
         std::make_shared<IRConst>(1)
     );
 
+    auto printMove1LabelAndExecuteMove = std::make_shared<IRSequence>(
+        std::make_shared<IRLabel>(move1IntoRegLabel),
+        move1IntoReg
+    );
+
     // The sequence for the true path
 
     auto trueSequence = std::make_shared<IRSequence>(
         leftExp,
         std::make_shared<IRSequence>(
             std::make_shared<IRLabel>(trueLabel),
-            std::make_shared<IRSequence>(
-                move1IntoReg,
-                std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
-            )
+            rightExp
         )
     );
 
@@ -88,7 +91,11 @@ std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
         trueSequence,
         std::make_shared<IRSequence>(
             falseSequence,
-            std::make_shared<IRLabel>(joinLabel)
+            std::make_shared<IRSequence>(
+                printMove1LabelAndExecuteMove,
+                std::make_shared<IRLabel>(joinLabel)
+            )
+            
         )
     );
 
