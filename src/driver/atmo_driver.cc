@@ -169,13 +169,26 @@ void AtmoDriver::TranslateToIR()
         }
     }
 
-    std::ofstream dotFile("ir_tree.dot");
-    int nodeCounter = 0;
+    if(printIRTree)
+    {
+        // Print DOT Formatinstructions to file
+        std::ofstream dotFile("ir_tree.dot");
+        int nodeCounter = 0;
 
-    dotFile << "digraph IRTree {\n";
-    dotFile << ir_root->ToDotFormat(nodeCounter);
-    dotFile << "}\n";
-    dotFile.close();
+        dotFile << "digraph IRTree {\n";
+        dotFile << ir_root->ToDotFormat(nodeCounter);
+        dotFile << "}\n";
+        dotFile.close();
+
+        // Translate the instructions into png
+
+        system("dot -Tpng ir_tree.dot -o ir_tree.png");
+
+        // Open the png
+
+        system("xdg-open ./ir_tree.png");
+    }
+    
 
 }
 

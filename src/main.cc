@@ -8,13 +8,17 @@ void Process_Args( std::vector<std::string>& params, AtmoDriver& driver)
 {
     for(auto param : params)
     {
-        if (param == "df")
+        if (param == "--debug-lexer")
         {
             driver.set_lexer_debug_level(1);
         }
-        else if(param == "db")
+        else if(param == "--debug-bison")
         {
             driver.set_parser_debug_level(1);
+        }
+        else if (param == "--print-ir-tree")
+        {
+            driver.printIRTree = true;
         }
         
         

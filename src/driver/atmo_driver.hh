@@ -16,6 +16,8 @@ class AtmoDriver
     std::shared_ptr<BoolList> GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>>& );
     
     public:
+
+    bool printIRTree = false;
     AtmoDriver() = default;
     ~AtmoDriver() = default;
     void StartCompilation(std::istream &iss);
