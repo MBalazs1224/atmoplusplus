@@ -1,8 +1,4 @@
-create integer a equals 3
+create boolean b equals true
 
-if a less than 3 + 7
-	return 200
-else if a greater than 40
-	return 400
-else
-	return 600
+if not b
+	return 500
