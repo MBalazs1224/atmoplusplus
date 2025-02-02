@@ -1,6 +1,6 @@
 create integer a equals 3
 
-if a not matches 3 + 7
+if a less than 3 + 7
 	return 200
 else if a greater than 40
 	return 400
