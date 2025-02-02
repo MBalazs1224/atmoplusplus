@@ -6,4 +6,6 @@
 #include "ir_move.hh"
 #include "ir_sequence.hh"
 #include "ir_return.hh"
+#include "ir_push.hh"
+#include "ir_pop.hh"
 #include "../expressions/relational_operators.hh"
