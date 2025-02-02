@@ -31,7 +31,7 @@ DivideExpression::DivideExpression(std::shared_ptr<IExpressionable> left_in, std
 std::shared_ptr<TranslateExpression> DivideExpression::TranslateExpressionToIr()
 {
     auto leftExpression = left->TranslateExpressionToIr()->ToValueExpression();
-    auto rightExpression = left->TranslateExpressionToIr()->ToValueExpression();
+    auto rightExpression = right->TranslateExpressionToIr()->ToValueExpression();
 
     auto divideExpression = std::make_shared<IRBinaryOperator>(BinaryOperator::DIVIDE, leftExpression, rightExpression);
 
