@@ -1,4 +1,6 @@
 create boolean b equals true
 
-if not b
+create boolean a equals false
+
+if a or b
 	return 500

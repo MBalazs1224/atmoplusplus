@@ -38,11 +38,15 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
     auto falseLabel = std::make_shared<Label>();
     auto joinLabel = std::make_shared<Label>();
 
+    // Label for the isntructions of moving 0 into the reg
+    auto move0Label = std::make_shared<Label>();
+
+
     // Translate the left and right expressions into IR
 
     auto leftExp = left->TranslateExpressionToIr()->ToConditionExpression(trueLabel, falseLabel);
 
-    auto rightExp = right->TranslateExpressionToIr()->ToConditionExpression(trueLabel, falseLabel);
+    auto rightExp = right->TranslateExpressionToIr()->ToConditionExpression(trueLabel, move0Label);
 
     // Create the register that will be used to store the final value
 
@@ -62,6 +66,16 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
         std::make_shared<IRConst>(0)
     );
 
+
+    auto printMove0Label = std::make_shared<IRLabel>(
+        move0Label
+    );
+
+    auto printLabelAndMove0 = std::make_shared<IRSequence>(
+        printMove0Label,
+        move0IntoReg
+    );
+
     // If the first expression is true, set the reg to 1 and jump to the join label because of short circuiting
 
     auto trueSequence = std::make_shared<IRSequence>(
@@ -75,14 +89,13 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
 
     // If the first expression is false, check the second expression
 
-    // FIXME: The false label might need to be moved after the rightexp or the tight exp might not need to jump tp the false label because it might create an infinite loop
 
     auto falseSequence = std::make_shared<IRSequence>(
         std::make_shared<IRLabel>(falseLabel),
         std::make_shared<IRSequence>(
             rightExp,
             std::make_shared<IRSequence>(
-                move0IntoReg,
+                printLabelAndMove0,
                 std::make_shared<IRJump>(std::make_shared<IRName>(joinLabel))
             )
         )
