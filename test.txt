@@ -1,6 +1,11 @@
+create integer function func
+	return 69
+
 create integer a equals 3
 
-if a matches 5
+create integer b equals 8
+
+if a plus b matches 5
 	return 150
 else
 	return 120

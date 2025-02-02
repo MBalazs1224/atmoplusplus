@@ -51,20 +51,39 @@ std::shared_ptr<IRStatement> FunctionDefinitionNode::TranslateToIR()
 
     auto currentFrame = frame.newFrame(function->name,escapesForVariables);
 
+    // Set the variables access to the generated accessList (the list is still in reverse)
+
+    int indexOfLocalVar = function->local_variables.size() - 1;
+
+    std::shared_ptr<AccessList> currentAccess = currentFrame->formals;
+
+    while (currentAccess != nullptr)
+    {
+        function->local_variables[indexOfLocalVar]->access = currentAccess->head;
+
+        //Get the next access object
+        currentAccess = currentAccess->tail;
+
+        //Get the previous var
+        indexOfLocalVar--;
+    }
+    
+    
+
     // (1-2-3-6-9-10-11) Use the frame's function to do the neccessary instructions
     auto bodyInstructions = function->body->TranslateToIR();
 
     auto adjustedBody = currentFrame->ProcessFunctionEntryAndExit3(function->name,bodyInstructions);
 
     // (4-5-8) Use the frames function to save registers and return the correct value
-    auto secondAdjustedBody = currentFrame->ProcessFunctionEntryAndExit1(adjustedBody);
+    //TODO: Call  currentFrame->ProcessFunctionEntryAndExit1(adjustedBody) (I took it out because I needed to est the rest of the IR generation and it returned nullptr which messed up the printing)
 
     // (7) Move the return value to the correct regsiter
 
     // TODO: Implement moving the return value
 
 
-    return secondAdjustedBody;
+    return adjustedBody;
 
 
 }
