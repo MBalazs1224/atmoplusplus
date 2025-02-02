@@ -11,7 +11,7 @@ attributes := ./build/attributes/attribute.o ./build/attributes/attribute_privat
 
 types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboolean.o  ./build/types/typeinteger.o ./build/types/typefloat.o ./build/types/typestring.o ./build/types/typevoid.o ./build/types/typechar.o
 
-ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o ./build/ir/statements/ir_return.o ./build/ir/statements/ir_push.o ./build/ir/statements/ir_push.o
+ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o ./build/ir/statements/ir_return.o ./build/ir/statements/ir_pop.o ./build/ir/statements/ir_push.o
 
 ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o
 

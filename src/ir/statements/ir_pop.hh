@@ -9,4 +9,5 @@ class IRPop : public IRStatement
 
     public:
         IRPop(std::shared_ptr<IRExpression>);
+        std::string ToDotFormat(int&) override;
 };
