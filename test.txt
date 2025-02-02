@@ -1,15 +1,8 @@
-create integer function func with integer a, integer b
-	return 69
-
 create integer a equals 3
 
-create integer b equals 8
-
-call func with a, b
-
-
-
-if a matches 5
-	return 150
+if a not matches 3 + 7
+	return 200
+else if a greater than 40
+	return 400
 else
-	return 120
+	return 600
