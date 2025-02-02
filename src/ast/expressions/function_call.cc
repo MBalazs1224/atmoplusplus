@@ -104,15 +104,18 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 
 std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
 {
-    std::shared_ptr<IRExpressionList> argumentsList = std::make_shared<IRExpressionList>();
+    auto dummyHead = std::make_shared<IRExpressionList>(); 
+    auto current = dummyHead; 
 
-    // Generate the arguments
     for (auto &&arg : arguments)
     {
-        argumentsList->expression = arg->TranslateExpressionToIr()->ToValueExpression();
-        argumentsList->next = std::make_shared<IRExpressionList>();
-        argumentsList = argumentsList->next;
+        current->next = std::make_shared<IRExpressionList>();
+        current = current->next;
+        current->expression = arg->TranslateExpressionToIr()->ToValueExpression();
     }
+
+    auto argumentsList = dummyHead->next;
+     
     // // Evaluate the function expression
     // auto func_evaluated = expression->TranslateExpressionToIr()->ToValueExpression();
 

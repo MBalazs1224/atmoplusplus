@@ -2,7 +2,7 @@
 
 std::string IRExpressionList::ToDotFormat(int& nodeCounter)
 {
-    if (expression)
+    if (!expression)
         return ""; // Empty list case
     int myId = nodeCounter++;
     std::string dot = "node" + std::to_string(myId) + " [label=\"ARG\"];\n";
