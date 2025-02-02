@@ -8,7 +8,13 @@ std::string IRExpressionList::ToDotFormat(int& nodeCounter)
     std::string dot = "node" + std::to_string(myId) + " [label=\"ARG\"];\n";
     // Add head node
     dot += "node" + std::to_string(myId) + " -> node" + std::to_string(nodeCounter) + ";\n";
-    dot += expression->ToDotFormat(nodeCounter);
+
+    // There can be full empty expressionLists, like calling a function with no arguments
+    if(expression)
+    {
+        dot += expression->ToDotFormat(nodeCounter);
+
+    }
     // Recursively add the rest of the list
     if (next)
     {
