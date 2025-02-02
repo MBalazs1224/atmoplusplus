@@ -108,8 +108,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         auto initializingValue = expression->TranslateExpressionToIr()->ToValueExpression();
 
         auto moveValueIntoVariable = std::make_shared<IRMove>(
-            varLocation,
-            initializingValue
+            initializingValue,
+            varLocation
         );
 
         return moveValueIntoVariable;
