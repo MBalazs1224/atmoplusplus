@@ -70,38 +70,26 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     // rsp
     auto stackPointer = this->StackPointer();
-    
-    //rbp
-    auto rbp = ReservedIrRegisters::FramePointer;
+    // rbp
+    auto framePointer = ReservedIrRegisters::FramePointer;
 
-    auto decrementSp = std::make_shared<IRBinaryOperator>(
-        BinaryOperator::MINUS,
-        std::make_shared<IRTemp>(stackPointer),
-        std::make_shared<IRConst>(8) // 64 bits is the word size
+    // Push rbp to top of the stack
+    auto pushEBP = std::make_shared<IRPush>(
+        std::make_shared<IRTemp>(framePointer)
     );
 
-    // Update the sp (SP = SP - 8)
-    auto updateSp = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(stackPointer),
-        decrementSp
-        );
+    statements.push_back(pushEBP);
 
-    statements.push_back(updateSp);
+    // move rsp into rbp
 
-    auto storeRbp = std::make_shared<IRMove>(
-        std::make_shared<IRMem>(
-            std::make_shared<IRTemp>(stackPointer)
-            ),
-        std::make_shared<IRTemp>(rbp));
-
-    statements.push_back(storeRbp);
-
-    auto setRbp = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(rbp), 
+    auto moveESPIntoEBP = std::make_shared<IRMove>(
+        std::make_shared<IRTemp>(framePointer),
         std::make_shared<IRTemp>(stackPointer)
-        );
+    );
 
-    statements.push_back(setRbp);
+    statements.push_back(moveESPIntoEBP);
+
+
 
     // The frame size is already calculated
 
@@ -126,35 +114,22 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     // ------------------------ Reset the stack pointer (epilogue)
 
-    auto resetTheValueOfRbp = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(rbp), 
-        std::make_shared<IRMem>(
-            std::make_shared<IRTemp>(stackPointer)
-            )
-        );
+    // mobe rbp into rsp
 
-    statements.push_back(resetTheValueOfRbp);
-
-    auto moveRbpBackToRsp = std::make_shared<IRMove>(
+    auto moveRBPIntoRSP = std::make_shared<IRMove>(
         std::make_shared<IRTemp>(stackPointer),
-        std::make_shared<IRTemp>(rbp)
+        std::make_shared<IRTemp>(framePointer)
+    );
+    statements.push_back(moveRBPIntoRSP);
+
+    // Pop rbp
+    auto popRBP = std::make_shared<IRPop>(
+        std::make_shared<IRTemp>(framePointer)
     );
 
-    statements.push_back(moveRbpBackToRsp);
+    statements.push_back(popRBP);
 
     
-
-    auto incrementStackPointer = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(stackPointer),
-        std::make_shared<IRBinaryOperator>(
-           BinaryOperator::PLUS, 
-           std::make_shared<IRTemp>(stackPointer), 
-           std::make_shared<IRConst>(8)
-           )
-        );
-    
-
-    statements.push_back(incrementStackPointer);
 
     // TODO: Generate return instruction
 
