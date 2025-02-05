@@ -99,12 +99,68 @@ std::shared_ptr<VariableSymbol> VariableDefinitionNode::GetVariable()
 
 std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 {
+    std::vector<std::shared_ptr<IRStatement>> statements;
+
+    auto varType = variable->GetType();
+
+    auto varLocation = variable->TranslateExpressionToIr()->ToValueExpression();
+
+    // If the variable is an array type then we need to allocate space for it on the heap which will be done by an external function which will return a pointer to the start of the  allocated space
+
+    auto arrayType = std::dynamic_pointer_cast<Array>(varType);
+
+    // If there is an expression it means that we point this vairable to another array, so we don't have to allocate space for this one
+    
+    if(arrayType && !expression)
+    {
+        int sizeOfElement = arrayType->inner_type->GetSize();
+
+        auto numberOfElementsExpression = arrayType->number_of_elements->TranslateExpressionToIr()->ToValueExpression();
+
+        // Algorithm for calculating the space needed for an array: ((length_of_the_array) + 1) × (size_of_elements)
+        // + 1 is needed because the first element stored will be the size of the array
+
+        // ((length_of_the_array) + 1)
+        auto numberOfElementsPlusOne = std::make_shared<IRBinaryOperator>(
+            BinaryOperator::PLUS,
+            numberOfElementsExpression,
+            std::make_shared<IRConst>(1)
+        );
+
+        // ((length_of_the_array) + 1) × (size_of_elements)
+        auto spaceNeededExpression = std::make_shared<IRBinaryOperator>(
+            BinaryOperator::MULTIPLY,
+            numberOfElementsPlusOne,
+            std::make_shared<IRConst>(sizeOfElement)
+        );
+
+        auto labelForInitArray = std::make_shared<Label>("initArray");
+
+        auto expressionListForFunctionCall = std::make_shared<IRExpressionList>();
+
+        // Pass the space needed as a argument to the initArray function, so it knows how much space it should allocate
+
+        expressionListForFunctionCall->expression = spaceNeededExpression;
+
+        auto externalFunctionCall = std::make_shared<IRCall>(
+            std::make_shared<IRName>(labelForInitArray),
+            expressionListForFunctionCall
+        );
+
+        // Call the external function and move it's return value into this variable's location
+
+        auto moveLocation = std::make_shared<IRMove>(
+            externalFunctionCall,
+            varLocation
+        );
+
+        statements.push_back(moveLocation);
+    }
+
     // We should move the value of the expression into the variable, if it exists, if there is no initializing value, the value of the varaible will be whatever there is in the memory
 
     if(expression)
     {
-        auto varLocation = variable->TranslateExpressionToIr()->ToValueExpression();
-
         auto initializingValue = expression->TranslateExpressionToIr()->ToValueExpression();
 
         auto moveValueIntoVariable = std::make_shared<IRMove>(
@@ -112,9 +168,9 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             varLocation
         );
 
-        return moveValueIntoVariable;
+        statements.push_back(moveValueIntoVariable);
     }
 
     //FIXME: Do something when there is no initializing value (maybe this shouldn't be allowed)
-    return nullptr;
+    return std::make_shared<IRSequence>(statements);
 }
