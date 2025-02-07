@@ -67,6 +67,12 @@ bool VariableDefinitionNode::Check()
     }
     else if(auto array = std::dynamic_pointer_cast<Array>(variable->GetType()))
     {
+        if(!array->number_of_elements)
+        {
+            Error::ShowError("The number of elements of an array must be specified!",this->location);
+            return false;
+        }
+
         auto element_expression = array->number_of_elements->GetType();
         if(!std::dynamic_pointer_cast<TypeInteger>(element_expression))
         {
