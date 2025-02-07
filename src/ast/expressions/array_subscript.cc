@@ -65,10 +65,12 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
 
 
     auto offsetIntoArray = std::make_shared<IRBinaryOperator>(
-        BinaryOperator::PLUS,
+        BinaryOperator::MINUS,
         locationOfArray,
         multipliedIndexValue
     );
+
+    //TODO: The whole expression might need to be put into a MEM expression to ensure the dereferencing
 
     return std::make_shared<TranslateValueExpression>(offsetIntoArray);
 
