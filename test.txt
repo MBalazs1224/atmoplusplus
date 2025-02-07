@@ -1,6 +1,7 @@
-create boolean b equals true
+create array of 5 integers arr
 
-create boolean a equals false
-
-if a or b
-	return 500
+arr at 1 equals 1
+arr at 2 equals 2
+arr at 3 equals 3
+arr at 4 equals 4
+arr at 5 equals 5

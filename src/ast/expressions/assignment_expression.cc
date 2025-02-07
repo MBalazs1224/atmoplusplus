@@ -83,6 +83,7 @@ std::shared_ptr<TranslateExpression> AssignmentExpression::TranslateExpressionTo
 
 std::shared_ptr<IRStatement> AssignmentExpression::TranslateToIR()
 {
-    //TODO: "Implement AssignmentExpression to ir"
-    return nullptr;
+    // We just need to evaluate the move instruction which will be created by translating it as an expression
+    
+    return TranslateExpressionToIr()->ToNoValueExpression();
 }

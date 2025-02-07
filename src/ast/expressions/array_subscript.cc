@@ -44,8 +44,36 @@ bool ArraySubscriptExpression::Check()
 
 std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressionToIr()
 {
-    //TODO: "Implement array subscript to ir"
-    return nullptr;
+    // (array_address) + (data_size * index) is the algorithm used to index into an array
+
+    auto indexExpression = right->TranslateExpressionToIr()->ToValueExpression();
+
+    auto locationOfArray = left->TranslateExpressionToIr()->ToValueExpression();
+
+    // The semantic analyzer already checked that the left expression is of array type
+
+    auto leftAsArray = std::dynamic_pointer_cast<Array>(left->GetType());
+
+    int sizeOfElementsInTheArray = leftAsArray->inner_type->GetSize();
+
+    // (data_size * index)
+    auto multipliedIndexValue = std::make_shared<IRBinaryOperator>(
+        BinaryOperator::MULTIPLY,
+        std::make_shared<IRConst>(sizeOfElementsInTheArray),
+        indexExpression
+    );
+
+
+    auto offsetIntoArray = std::make_shared<IRBinaryOperator>(
+        BinaryOperator::PLUS,
+        locationOfArray,
+        multipliedIndexValue
+    );
+
+    return std::make_shared<TranslateValueExpression>(offsetIntoArray);
+
+
+
 }
 
 std::shared_ptr<IRStatement> ArraySubscriptExpression::TranslateToIR()
