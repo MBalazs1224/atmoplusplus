@@ -227,6 +227,9 @@ bool ClassSymbol::ProcessBody()
             {
                 return false;
             }
+            
+            // Give the correct name for the constructor scheme: $_{this_class_name}_constructor_{index_of_constructor}
+            constructorDefinition->function->name = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
 
 
             // TODO: Implement constructor checking

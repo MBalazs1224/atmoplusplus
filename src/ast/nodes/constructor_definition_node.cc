@@ -58,11 +58,18 @@ std::shared_ptr<IRStatement> ConstructorDefinitionNode::TranslateToIRWithGivenPa
 
     auto functionLocation = function->TranslateExpressionToIr()->ToValueExpression();
 
+    // The first parameter must be the location of the object
+
+    auto fullParameterList = std::make_shared<IRExpressionList>();
+
+    fullParameterList->expression = locationOfClassObject;
+    fullParameterList->next = paramsToThisConstructor;
+
     // Call this constructor with the given parameters
 
     auto callThisConstructor = std::make_shared<IRCall>(
         functionLocation,
-        paramsToThisConstructor
+        fullParameterList
     );
 
     auto evaulateThisConstructor = std::make_shared<IREvaluateExpression>(
