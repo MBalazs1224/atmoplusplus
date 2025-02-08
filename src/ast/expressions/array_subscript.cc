@@ -54,6 +54,7 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
 
     auto leftAsArray = std::dynamic_pointer_cast<Array>(left->GetType());
 
+
     int sizeOfElementsInTheArray = leftAsArray->inner_type->GetSize();
 
     // (data_size * index)
@@ -70,9 +71,12 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
         multipliedIndexValue
     );
 
-    //TODO: The whole expression might need to be put into a MEM expression to ensure the dereferencing
+    auto memExpression = std::make_shared<IRMem>(
+        offsetIntoArray
+    );
 
-    return std::make_shared<TranslateValueExpression>(offsetIntoArray);
+
+    return std::make_shared<TranslateValueExpression>(memExpression);
 
 
 
