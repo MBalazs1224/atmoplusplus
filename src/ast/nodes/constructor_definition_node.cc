@@ -2,11 +2,11 @@
 
 // Constructor: initializes the function symbol
 ConstructorDefinitionNode::ConstructorDefinitionNode(std::shared_ptr<FunctionSymbol> function_in, std::vector<std::shared_ptr<IExpressionable>> args_in, yy::location loc)
-    : Node(loc), function(std::move(function_in)), arguments_to_parent(args_in)
+    : Node(loc), arguments_to_parent(args_in), function(std::move(function_in)) 
 {
 }
 
-ConstructorDefinitionNode::ConstructorDefinitionNode(yy::location location) : function(std::make_shared<FunctionSymbol>()), arguments_to_parent() {
+ConstructorDefinitionNode::ConstructorDefinitionNode(yy::location location) : arguments_to_parent(), function(std::make_shared<FunctionSymbol>())  {
     this->location = location;
 }
 
@@ -33,4 +33,57 @@ const std::vector<std::shared_ptr<IExpressionable>>& ConstructorDefinitionNode::
 std::shared_ptr<IRStatement> ConstructorDefinitionNode::TranslateToIR()
 {
     throw std::logic_error("Constructor definitions shouldn't be translated to IR!");
+}
+
+std::shared_ptr<IRExpressionList> ConstructorDefinitionNode::TranslateArgumentsToParentToIR()
+{
+    std::vector<std::shared_ptr<IRExpression>> expressions;
+    for (auto &&exp : arguments_to_parent)
+    {
+        expressions.push_back(
+            exp->TranslateExpressionToIr()->ToValueExpression()
+        );
+    }
+
+    return std::make_shared<IRExpressionList>(expressions);
+    
+}
+
+
+std::shared_ptr<IRStatement> ConstructorDefinitionNode::TranslateToIRWithGivenParemeter(std::shared_ptr<IRExpression> locationOfClassObject, std::shared_ptr<IRExpressionList> paramsToThisConstructor)
+{
+
+
+    // Get the location of the function
+
+    auto functionLocation = function->TranslateExpressionToIr()->ToValueExpression();
+
+    // Call this constructor with the given parameters
+
+    auto callThisConstructor = std::make_shared<IRCall>(
+        functionLocation,
+        paramsToThisConstructor
+    );
+
+    auto evaulateThisConstructor = std::make_shared<IREvaluateExpression>(
+        callThisConstructor
+    );
+
+    // If there exists a parent constructor call, then we need to call that constructor before calling this one, otherwise just call this first
+
+    if(constructorOfParent)
+    {
+        auto parentConstructorIR = constructorOfParent->TranslateToIRWithGivenParemeter(
+            locationOfClassObject,
+            TranslateArgumentsToParentToIR()
+        );
+
+        return std::make_shared<IRSequence>(
+            parentConstructorIR,
+            evaulateThisConstructor
+        );
+    }
+
+    return evaulateThisConstructor;
+
 }

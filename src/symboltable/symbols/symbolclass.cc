@@ -49,9 +49,9 @@ bool ClassSymbol::IsClassAParent(const std::shared_ptr<ClassSymbol> &other)
     return false;
 }
 
-const std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>> &params_in)
+const std::vector<std::shared_ptr<ConstructorDefinitionNode>> ClassSymbol::GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>> &params_in)
 {
-    std::vector<std::shared_ptr<FunctionSymbol>> matching_constructors;
+    std::vector<std::shared_ptr<ConstructorDefinitionNode>> matching_constructors;
 
     for (auto &&constructor : constructors)
     {
@@ -86,7 +86,7 @@ const std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetConstructorsW
                 goto parameters_dont_match;
             }
         }
-        matching_constructors.push_back(constructor_function);
+        matching_constructors.push_back(constructor);
     // FIXME: This might be implemented without a goto
     parameters_dont_match:
         continue;
@@ -227,6 +227,8 @@ bool ClassSymbol::ProcessBody()
             {
                 return false;
             }
+
+
             // TODO: Implement constructor checking
             constructors.push_back(constructorDefinition);
         }
@@ -306,6 +308,10 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
                 Error::ShowError("Ambigous parent constructor call for the given parameters!", constructor->location);
                 return false;
             }
+            
+            // Set the called parent constructor inside the constructor
+
+            constructor->constructorOfParent = parent_constructors[0];
         }
     }
 

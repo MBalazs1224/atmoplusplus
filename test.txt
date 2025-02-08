@@ -1,7 +1,6 @@
-create array of 5 + 6 integers arr
+create class testClass
+	create integer asd
+	create constructor with integer a
+		asd equals a
 
-arr at 1 equals 1
-arr at 2 equals 2
-arr at 3 equals 3
-arr at 4 equals 4
-arr at 5 equals 5
+create testClass test with 5

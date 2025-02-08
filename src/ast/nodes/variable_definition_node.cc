@@ -33,6 +33,7 @@ bool VariableDefinitionNode::CheckConstructor()
     }
 
     // Save the constructor for later use
+
     constructor = constructors[0];
     return true;
 }
@@ -111,6 +112,74 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
     auto varLocation = variable->TranslateExpressionToIr()->ToValueExpression();
 
+
+    // If the variable is a class type then we need to allocate enough space on the heap for it, move the pointer to the allocated space to this variable's location and call the class's constructor with the location of this variable (so it will know where the variables of the correct object is)
+
+    auto classType = std::dynamic_pointer_cast<ClassSymbol>(
+        varType
+    );
+
+    if(classType)
+    {
+        // initClass function will be an external fucntion which will return a pointer to the heap-allocated space (but wont't initialize the spaces to 0)
+
+        auto labelForClassInit = std::make_shared<Label>(
+            "initClass"
+        );
+        
+        // We need to pass the required space as an argument to the function
+
+        auto expressionListForClassInit = std::make_shared<IRExpressionList>();
+
+        expressionListForClassInit->expression = std::make_shared<IRConst>(
+            classType->size_in_bytes
+        );
+
+        
+        auto callInitClass= std::make_shared<IRCall>(
+            std::make_shared<IRName>(
+                labelForClassInit
+            ),
+            expressionListForClassInit
+        );
+
+        // Move the return value of the function to this variable's location
+
+        auto moveToLocation = std::make_shared<IRMove>(
+            callInitClass,
+            varLocation
+        );
+
+        statements.push_back(moveToLocation);
+
+        // We need to call the wanted constructor (which was saved by the semantic analyzer, if needed) with the allcoated space
+
+        //TODO: Implement calling the parent's 
+        
+        if (constructor)
+        {
+            // The first argument must be the location of this variable
+
+            auto argumentsForConstructor = TranslateArgumentsToConstructorToIR();
+
+
+
+            auto constructorsChained = constructor->TranslateToIRWithGivenParemeter(
+                varLocation,
+                argumentsForConstructor
+            );
+
+            statements.push_back(constructorsChained);
+            
+            
+
+        }
+    }
+
+
+
+
+
     // If the variable is an array type then we need to allocate space for it on the heap which will be done by an external function which will return a pointer to the start of the  allocated space
 
     auto arrayType = std::dynamic_pointer_cast<Array>(varType);
@@ -179,4 +248,18 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
     //FIXME: Do something when there is no initializing value (maybe this shouldn't be allowed)
     return std::make_shared<IRSequence>(statements);
+}
+
+std::shared_ptr<IRExpressionList> VariableDefinitionNode::TranslateArgumentsToConstructorToIR()
+{
+    std::vector<std::shared_ptr<IRExpression>> expressions;
+
+    for (auto &&argument : arguments_to_constructor)
+    {
+        expressions.push_back(
+            argument->TranslateExpressionToIr()->ToValueExpression()
+        );
+    }
+    
+    return std::make_shared<IRExpressionList>(expressions);
 }

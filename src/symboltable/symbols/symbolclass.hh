@@ -49,7 +49,6 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> functions;
 
-        int size_in_bytes = 0;
 
         // Will check if the parents are valid and inherit the variables and functions from the parent classes
         bool CheckParents();
@@ -72,6 +71,9 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> GetFunctions();
 
     public:
+
+    int size_in_bytes = 0;
+
     ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in);
     
     std::vector<std::shared_ptr<Node>> body;
@@ -105,7 +107,7 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
     bool IsClassAParent(const std::shared_ptr<ClassSymbol>& parent);
 
     // Will that could be called with the given parameters
-    const std::vector<std::shared_ptr<FunctionSymbol>> GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>>&);
+    const std::vector<std::shared_ptr<ConstructorDefinitionNode>> GetConstructorsWithParametersMatching(const std::vector<std::shared_ptr<IExpressionable>>&);
 
     DataSize GetSize() override;
 
