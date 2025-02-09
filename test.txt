@@ -1,11 +1,3 @@
-create class testParent
-	create boolean b
-	create constructor with float f
-		b = true
+create array of 5 integers arr
 
-create class testClass derives from testParent
-	create integer asd
-	create constructor with integer a, integer b and call parent with 3.5
-		asd equals a
-
-create testClass test with 5, 40
+arr at 0 equals 100

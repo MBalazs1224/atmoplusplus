@@ -242,12 +242,24 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         // Call the external function and move it's return value into this variable's location
 
-        auto moveLocation = std::make_shared<IRMove>(
+        auto moveSpaceToLocation = std::make_shared<IRMove>(
             externalFunctionCall,
             varLocation
         );
 
-        return moveLocation;
+        // Move the size of the array into the first element
+
+        auto moveSizeIntoFirstElement = std::make_shared<IRMove>(
+            varLocation,
+            numberOfElementsExpression
+        );
+
+        auto allocateThenMoveSize = std::make_shared<IRSequence>(
+            moveSpaceToLocation,
+            moveSizeIntoFirstElement
+        );
+
+        return allocateThenMoveSize;
     }
 
     // We should move the value of the expression into the variable, if it exists, if there is no initializing value, the value of the varaible will be whatever there is in the memory
@@ -255,7 +267,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
     
 
     //FIXME: Do something when there is no initializing value (maybe this shouldn't be allowed)
-    
+
     return nullptr;
 }
 
