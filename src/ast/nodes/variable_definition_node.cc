@@ -106,11 +106,24 @@ std::shared_ptr<VariableSymbol> VariableDefinitionNode::GetVariable()
 
 std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 {
-    std::vector<std::shared_ptr<IRStatement>> statements;
 
     auto varType = variable->GetType();
 
     auto varLocation = variable->TranslateExpressionToIr()->ToValueExpression();
+
+    // If there is an expression, then the resource is already created so we just need to move it into this variable's location
+
+    if(expression)
+    {
+        auto initializingValue = expression->TranslateExpressionToIr()->ToValueExpression();
+
+        auto moveValueIntoVariable = std::make_shared<IRMove>(
+            initializingValue,
+            varLocation
+        );
+
+        return moveValueIntoVariable;
+    }
 
 
     // If the variable is a class type then we need to allocate enough space on the heap for it, move the pointer to the allocated space to this variable's location and call the class's constructor with the location of this variable (so it will know where the variables of the correct object is)
@@ -121,6 +134,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
     if(classType)
     {
+        std::vector<std::shared_ptr<IRStatement>> statements;
+
         // initClass function will be an external fucntion which will return a pointer to the heap-allocated space (but wont't initialize the spaces to 0)
 
         auto labelForClassInit = std::make_shared<Label>(
@@ -154,11 +169,10 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         // We need to call the wanted constructor (which was saved by the semantic analyzer, if needed) with the allcoated space
 
-        //TODO: Implement calling the parent's 
         
         if (constructor)
         {
-            // The first argument must be the location of this variable
+            // The first argument must be the location of the object
 
             auto argumentsForConstructor = TranslateArgumentsToConstructorToIR();
 
@@ -174,6 +188,10 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             
 
         }
+
+        return std::make_shared<IRSequence>(
+            statements
+        );
     }
 
 
@@ -186,7 +204,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
     // If there is an expression it means that we point this vairable to another array, so we don't have to allocate space for this one
     
-    if(arrayType && !expression)
+    if(arrayType)
     {
         int sizeOfElement = arrayType->inner_type->GetSize();
 
@@ -229,25 +247,16 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             varLocation
         );
 
-        statements.push_back(moveLocation);
+        return moveLocation;
     }
 
     // We should move the value of the expression into the variable, if it exists, if there is no initializing value, the value of the varaible will be whatever there is in the memory
 
-    if(expression)
-    {
-        auto initializingValue = expression->TranslateExpressionToIr()->ToValueExpression();
-
-        auto moveValueIntoVariable = std::make_shared<IRMove>(
-            initializingValue,
-            varLocation
-        );
-
-        statements.push_back(moveValueIntoVariable);
-    }
+    
 
     //FIXME: Do something when there is no initializing value (maybe this shouldn't be allowed)
-    return std::make_shared<IRSequence>(statements);
+    
+    return nullptr;
 }
 
 std::shared_ptr<IRExpressionList> VariableDefinitionNode::TranslateArgumentsToConstructorToIR()
