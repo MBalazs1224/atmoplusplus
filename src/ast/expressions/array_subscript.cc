@@ -48,6 +48,16 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
 
     auto indexExpression = right->TranslateExpressionToIr()->ToValueExpression();
 
+    // We need to add 1 to the wanted index because the first element will be the size of the array so everything is pushed to the side by 1
+
+    //FIXME: This might still need to be pushed by 4 because the first element is always an integer (the size) so the first actual element always starts at 5
+
+    auto correctedIndex = std::make_shared<IRBinaryOperator>(
+        BinaryOperator::PLUS,
+        indexExpression,
+        std::make_shared<IRConst>(1)
+    );
+
     auto locationOfArray = left->TranslateExpressionToIr()->ToValueExpression();
 
     // The semantic analyzer already checked that the left expression is of array type
@@ -61,7 +71,7 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
     auto multipliedIndexValue = std::make_shared<IRBinaryOperator>(
         BinaryOperator::MULTIPLY,
         std::make_shared<IRConst>(sizeOfElementsInTheArray),
-        indexExpression
+        correctedIndex
     );
 
 
