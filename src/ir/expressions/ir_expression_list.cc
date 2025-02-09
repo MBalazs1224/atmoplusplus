@@ -36,22 +36,17 @@ IRExpressionList::IRExpressionList(std::vector<std::shared_ptr<IRExpression>>& e
     // Assign the first expression
     expression = expressions[0];
 
-    // Recursively build the linked list
-    std::shared_ptr<IRExpressionList> current = std::make_shared<IRExpressionList>();
-    this->next = current;
+    // Pointer to the last added node
+    std::shared_ptr<IRExpressionList>* current = &next;
 
+    // Build the linked list iteratively
     for (size_t i = 1; i < expressions.size(); i++)
     {
-        current->expression = expressions[i];
-
-        if (i + 1 < expressions.size()) // Create a new node if more elements exist
-        {
-            current->next = std::make_shared<IRExpressionList>();
-            current = current->next;
-        }
-        else
-        {
-            current->next = nullptr; // Mark end of list
-        }
+        *current = std::make_shared<IRExpressionList>();
+        (*current)->expression = expressions[i];
+        current = &((*current)->next);
     }
+
+    // Ensure last node correctly points to nullptr
+    *current = nullptr;
 }
