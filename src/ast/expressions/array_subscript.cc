@@ -44,19 +44,11 @@ bool ArraySubscriptExpression::Check()
 
 std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressionToIr()
 {
-    // (array_address) + (data_size * index) is the algorithm used to index into an array
+    // (array_address) + (data_size * index) + 4 is the algorithm used to index into an array
+    // The first element is the size of the array, so we need to skip that, that's why + 4
 
     auto indexExpression = right->TranslateExpressionToIr()->ToValueExpression();
 
-    // We need to add 1 to the wanted index because the first element will be the size of the array so everything is pushed to the side by 1
-
-    //FIXME: This might still need to be pushed by 4 because the first element is always an integer (the size) so the first actual element always starts at 5
-
-    auto correctedIndex = std::make_shared<IRBinaryOperator>(
-        BinaryOperator::PLUS,
-        indexExpression,
-        std::make_shared<IRConst>(1)
-    );
 
     auto locationOfArray = left->TranslateExpressionToIr()->ToValueExpression();
 
@@ -71,14 +63,20 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
     auto multipliedIndexValue = std::make_shared<IRBinaryOperator>(
         BinaryOperator::MULTIPLY,
         std::make_shared<IRConst>(sizeOfElementsInTheArray),
-        correctedIndex
+        indexExpression
+    );
+
+    auto adjustedIndex = std::make_shared<IRBinaryOperator>(
+        BinaryOperator::PLUS,
+        multipliedIndexValue,
+        std::make_shared<IRConst>(4)
     );
 
 
     auto offsetIntoArray = std::make_shared<IRBinaryOperator>(
-        BinaryOperator::MINUS,
+        BinaryOperator::PLUS,
         locationOfArray,
-        multipliedIndexValue
+        adjustedIndex
     );
 
     auto memExpression = std::make_shared<IRMem>(
