@@ -1,4 +1,5 @@
 #pragma once
+#include "../../frame/boollist.hh"
 #include "../symboltableelement.hh"
 #include "symbolvariable.hh"
 #include "../../ast/nodes/body_node.hh"
@@ -13,6 +14,8 @@ class FunctionSymbol : public SymbolTableElement
 {
     private:
         std::vector<std::shared_ptr<VariableSymbol>> arguments;
+
+        std::shared_ptr<BoolList>  GetWetherVariablesEscape();
 
 
     public:

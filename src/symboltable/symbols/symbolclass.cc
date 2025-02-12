@@ -390,5 +390,33 @@ std::shared_ptr<TranslateExpression> ClassSymbol::TranslateExpressionToIr()
 
 std::shared_ptr<IRStatement> ClassSymbol::TranslateToIR()
 {
-    throw std::runtime_error("ClassSymbol should not be translated to IR");
+     // It needs to return it's functions' and constructors, destructors asm instructions
+
+     std::vector<std::shared_ptr<IRStatement>> statements;
+
+     // Generate instructions for constructors
+ 
+     for (auto &&constructor : constructors)
+     {
+         statements.push_back(
+             constructor->TranslateToIR()
+         );
+     }
+ 
+     // Generate instructions for functions
+ 
+     for (auto &&func : functions)
+     {
+         statements.push_back(
+             func.second->TranslateToIR() // functions is a hashtable so the loop will return a key-value pair, where second is the function symbol
+         );
+     }
+ 
+     // Generate instructions for destructor
+ 
+    statements.push_back(
+     destructor->TranslateToIR()
+    );
+ 
+    return std::make_shared<IRSequence>(statements);
 }
