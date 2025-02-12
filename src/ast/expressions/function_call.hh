@@ -1,5 +1,6 @@
 #pragma once
 #include "one_operand_expression.hh"
+#include "../../ir/reserved_ir_registers.hh"
 #include "identifier.hh"
 #include "member_access_expression.hh"
 #include "../../symboltable/symbols/symbolfunction.hh"
@@ -26,6 +27,7 @@ class FunctionCall : public OneOperandExpression
 
         // Will return the function element from the identifier or the member access
         std::shared_ptr<SymbolTableElement> GetElementFromExpression();
+        std::shared_ptr<IRExpressionList> TranslateArgumentsToIR();
     public:
 
         std::vector<std::shared_ptr<IExpressionable>> arguments;

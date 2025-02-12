@@ -81,25 +81,45 @@ std::shared_ptr<SymbolTableElement> FunctionCall::GetElementFromExpression()
     return nullptr;
 }
 
-std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
+std::shared_ptr<IRExpressionList> FunctionCall::TranslateArgumentsToIR()
 {
-    std::shared_ptr<IRExpressionList> argumentsList = std::make_shared<IRExpressionList>();
+    // If there are no arguments then there will be an empty argumentList object (because the object is created before te loop) which will mess up the ir-printing, so we just return null explicitly in this case
+    if (arguments.empty())
+    {
+        return nullptr;
+    }
 
-    // Generate the arguments
+    std::shared_ptr<IRExpressionList> argumentsList = std::make_shared<IRExpressionList>();
     for (auto &&arg : arguments)
     {
         argumentsList->expression = arg->TranslateExpressionToIr()->ToValueExpression();
         argumentsList->next = std::make_shared<IRExpressionList>();
         argumentsList = argumentsList->next;
     }
-    // Evaluate the function expression
-    auto func_evaluated = expression->TranslateExpressionToIr()->ToValueExpression();
 
-    // Generate the function call
-    auto functionCall = std::make_shared<IRCall>(func_evaluated, argumentsList);
+    return argumentsList;
+}
 
-    // Wrap it in a translate to value expression, so other expressions can use it
-    return std::make_shared<TranslateValueExpression>(functionCall);
+std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
+{
+    std::shared_ptr<IRExpressionList> argumentsList = TranslateArgumentsToIR();
+
+    
+    auto funcLocation = expression->TranslateExpressionToIr()->ToValueExpression();
+
+
+    auto functionCall = std::make_shared<IRCall>(funcLocation, argumentsList);
+
+    auto funcEvaluated = std::make_shared<IREvaluateExpression>(functionCall);
+
+    // The function will return the return value inside RAX, so we need to evaluate the function and get RAX for the result
+
+    auto eseq = std::make_shared<IREseq>(
+        std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
+        funcEvaluated
+    );
+
+    return std::make_shared<TranslateValueExpression>(eseq);
 }
 
 std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
