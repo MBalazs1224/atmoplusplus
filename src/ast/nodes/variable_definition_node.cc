@@ -210,21 +210,22 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         auto numberOfElementsExpression = arrayType->number_of_elements->TranslateExpressionToIr()->ToValueExpression();
 
-        // Algorithm for calculating the space needed for an array: ((length_of_the_array) + 1) × (size_of_elements)
-        // + 1 is needed because the first element stored will be the size of the array
+        // Algorithm for calculating the space needed for an array: ((length_of_the_array) × (size_of_elements)) + 4
+        // + 4 is needed because the first element stored will be the size of the array which is an integer
 
-        // ((length_of_the_array) + 1)
-        auto numberOfElementsPlusOne = std::make_shared<IRBinaryOperator>(
-            BinaryOperator::PLUS,
-            numberOfElementsExpression,
-            std::make_shared<IRConst>(1)
-        );
-
-        // ((length_of_the_array) + 1) × (size_of_elements)
+        // ((length_of_the_array)) × (size_of_elements)
         auto spaceNeededExpression = std::make_shared<IRBinaryOperator>(
             BinaryOperator::MULTIPLY,
-            numberOfElementsPlusOne,
+            numberOfElementsExpression,
             std::make_shared<IRConst>(sizeOfElement)
+        );
+
+        // + 4 expression
+
+        auto adjustedSpace = std::make_shared<IRBinaryOperator>(
+            BinaryOperator::PLUS,
+            spaceNeededExpression,
+            std::make_shared<IRConst>(4)
         );
 
         auto labelForInitArray = std::make_shared<Label>("initArray");
@@ -233,7 +234,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         // Pass the space needed as a argument to the initArray function, so it knows how much space it should allocate
 
-        expressionListForFunctionCall->expression = spaceNeededExpression;
+        expressionListForFunctionCall->expression = adjustedSpace;
 
         auto externalFunctionCall = std::make_shared<IRCall>(
             std::make_shared<IRName>(labelForInitArray),

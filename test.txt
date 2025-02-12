@@ -1,16 +1,3 @@
-create class testParent
+create array of 3 booleans arr
 
-	create constructor with float f
-		return 3
-
-
-create class testClass derives from testParent
-	create integer a
-
-	create constructor with integer i and call parent with 3.5
-		return 2
-	
-	create integer function testFunc
-		return 300
-
-create testClass obj with 5
+arr at 0 equals false
