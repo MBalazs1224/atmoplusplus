@@ -8,5 +8,6 @@ class ReservedIrRegisters
         static std::shared_ptr<Temp> StackPointer;
         static std::shared_ptr<Temp> FramePointer;
         static std::shared_ptr<Temp> RAX;
+        static std::shared_ptr<Temp> RDI;
         static void Initialize();
 };

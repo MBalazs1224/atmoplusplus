@@ -1,4 +1,3 @@
-create integer function testFunc
-	return 4
+create array of 5 integers arr
 
-create integer asd equals call testFunc
+arr at 5 equals 120

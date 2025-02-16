@@ -8,4 +8,5 @@
 #include "ir_return.hh"
 #include "ir_push.hh"
 #include "ir_pop.hh"
+#include "ir_syscall.hh"
 #include "../expressions/relational_operators.hh"
