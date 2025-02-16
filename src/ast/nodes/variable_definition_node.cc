@@ -240,11 +240,20 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             std::make_shared<IRName>(labelForInitArray),
             expressionListForFunctionCall
         );
+        
+        // First we need to execute the function call and that will put the return value into RAX, so we need to get that for the return value
+
+        auto evaluateFuncCallAndGetRAX = std::make_shared<IREseq>(
+            std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
+            std::make_shared<IREvaluateExpression>(
+                externalFunctionCall
+            )
+        );
 
         // Call the external function and move it's return value into this variable's location
 
         auto moveSpaceToLocation = std::make_shared<IRMove>(
-            externalFunctionCall,
+            evaluateFuncCallAndGetRAX,
             varLocation
         );
 
