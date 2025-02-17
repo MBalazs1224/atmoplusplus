@@ -145,6 +145,11 @@ bool ClassSymbol::CheckParents()
     auto parent_functions = parent_class->GetFunctions();
     functions.insert(parent_functions.begin(), parent_functions.end());
 
+    // Start allocating this classes variables after the parent's variables
+
+    this->variableOffset = parent_class->variableOffset;
+    this->size_in_bytes = parent_class->size_in_bytes;
+
     return true;
 }
 
@@ -286,7 +291,7 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
     if (constructors.empty())
     {
         auto empty_constructor = std::make_shared<ConstructorDefinitionNode>(this->location);
-        
+
         // Also give correct name for generated constructor
         empty_constructor->function->name = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
         constructors.push_back(empty_constructor);

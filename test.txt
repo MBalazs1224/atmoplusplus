@@ -1,12 +1,10 @@
-create class testClass
-	create public integer a
+create class testParent
+	create public integer first
 
+create class testClass derives from testParent
+	create public integer second
 
 create testClass testObj
-create testClass testObj1
-create testClass testObj2
-create testClass testObj3
 
-a inside testObj equals 5
-
-a inside testObj3 equals 3
+first inside testObj equals 1
+second inside testObj equals 2
