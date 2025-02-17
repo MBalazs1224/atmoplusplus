@@ -286,6 +286,9 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
     if (constructors.empty())
     {
         auto empty_constructor = std::make_shared<ConstructorDefinitionNode>(this->location);
+        
+        // Also give correct name for generated constructor
+        empty_constructor->function->name = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
         constructors.push_back(empty_constructor);
 
         Error::ShowWarning("No constructor defined for class, generating default one!", this->location);
