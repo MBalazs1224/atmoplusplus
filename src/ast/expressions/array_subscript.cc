@@ -119,14 +119,20 @@ std::shared_ptr<IRStatement> ArraySubscriptExpression::TranslateBoundaryCheckInt
         move255IntoRDI
     );
 
+    auto sysCallThenPrintLabelForIndexing = std::make_shared<IRSequence>(
+        std::make_shared<IRLabel>(labelForIndexing),
+        std::make_shared<IRSysCall>()
+
+    );
+
     auto initRegsThanSysCall = std::make_shared<IRSequence>(
         initializeRegs,
-        std::make_shared<IRSysCall>()
+        sysCallThenPrintLabelForIndexing
     );
 
     auto printExitLabelThenExit = std::make_shared<IRSequence>(
-        std::make_shared<IRLabel>(labelForAutoExit),
-        initRegsThanSysCall
+        initRegsThanSysCall,
+        std::make_shared<IRLabel>(labelForAutoExit)
     );
 
     // ----------- GENERATE BOUNDARY CHECK -----------
@@ -208,15 +214,10 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
 
     auto indexIntoArrayExpression = TranslateIndexingIntoIR(tempForindex);
 
-    auto indexLabelThenExpression = std::make_shared<IREseq>(
-        indexIntoArrayExpression,
-        std::make_shared<IRLabel>(indexLabel)
-    );
-
     // The boundary check should be executed first, then the indexing should be taken as the real value of this expression
 
     auto finalEseq = std::make_shared<IREseq>(
-        indexLabelThenExpression,
+        indexIntoArrayExpression,
         boundaryCheckExpression
     );
 
