@@ -1,3 +1,12 @@
-create array of 3 integers arr
+create class testClass
+	create public integer a
 
-arr at 2 equals 120
+
+create testClass testObj
+create testClass testObj1
+create testClass testObj2
+create testClass testObj3
+
+a inside testObj equals 5
+
+a inside testObj3 equals 3

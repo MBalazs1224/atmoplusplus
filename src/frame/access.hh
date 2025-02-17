@@ -10,8 +10,8 @@ class Access
 
 
         /*
-        @param framePointer - The expression that yields the frame pointer.
+        @param startOffset - The expression that yields the the location where the offset should start from if needed.
         @return The expression that yields this location as it's value.
         */
-        virtual std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> framePointer) = 0;
+        virtual std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> startOffset) = 0;
 };

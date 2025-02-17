@@ -182,8 +182,16 @@ bool ClassSymbol::InsertVariable(const std::shared_ptr<VariableDefinitionNode> &
 
     variables[variable->name] = variable;
 
+    // Set that the variable is at the next available offset position
+    variable->access = std::make_shared<OffsetFromObject>(variableOffset);
+
+    int variableSize = variable->GetSize();
+    
+    // Adjust the variable offset to the next available space
+    variableOffset += variableSize;
+
     // Update the size of the class
-    this->size_in_bytes += variable->GetSize();
+    this->size_in_bytes += variableSize;
 
     return true;
 }

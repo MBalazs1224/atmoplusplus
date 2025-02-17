@@ -11,6 +11,7 @@
 #include "../../ast/nodes/constructor_definition_node.hh"
 #include "../../ast/nodes/destructor_definition_node.hh"
 #include "../../ast/expressions/identifier.hh"
+#include "../../frame/offset_from_object.hh"
 #include <unordered_map>
 
 
@@ -29,6 +30,8 @@ class FunctionDefinitionNode;
 class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared_from_this makes it possible to retrieve a shared_ptr from this that the GetType can return*/ public std::enable_shared_from_this<ClassSymbol>
 {
     private:
+        // Counter that will keep track of the offset of the next avaialble space
+        int variableOffset = 0;
         // To prevent multiple checking when accessing multiple things inside the same class type
         bool alreadyChecked = false;
 

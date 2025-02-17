@@ -7,10 +7,11 @@
 #include "../../ast/attributes/attributepublic.hh"
 #include <memory>
 #include <vector>
+#include "class_member.hh"
 
 class BodyNode;
 
-class FunctionSymbol : public SymbolTableElement
+class FunctionSymbol : public SymbolTableElement, public ClassMember
 {
     private:
         std::vector<std::shared_ptr<VariableSymbol>> arguments;
