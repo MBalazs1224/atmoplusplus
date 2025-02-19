@@ -15,7 +15,7 @@ ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evalu
 
 ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o
 
-frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o
+frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o ./build/frame/printedlabel.o
 
 translate := ./build/translate/translate_conditional_expression.o ./build/translate/translate_value_expression.o ./build/translate/translate_no_value_expression.o
 
@@ -419,6 +419,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/frame/offset_from_object.o: ./src/frame/offset_from_object.cc ./src/frame/offset_from_object.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/printedlabel.o: ./src/frame/printedlabel.cc ./src/frame/printedlabel.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Translate

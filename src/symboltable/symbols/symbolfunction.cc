@@ -3,6 +3,13 @@
 FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<Attribute> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in)
     : SymbolTableElement(type_in, std::move(attr_in)), arguments(std::move(args_in)),body(std::move(body_in))
     {
+        // By defaule the generated name in assembly should be the function's name
+        this->nameInAssembly = name;
+
+        // All functions (by default) can be accessed by a label of it's name 
+        this->access = std::make_shared<PrintedLabel>(
+            std::make_shared<Label>(this->nameInAssembly)
+        );
     }
 
 FunctionSymbol::FunctionSymbol(std::shared_ptr<Attribute> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::make_unique<BodyNode>()) {}
@@ -65,14 +72,12 @@ DataSize FunctionSymbol::GetSize()
 }
 
 std::shared_ptr<TranslateExpression> FunctionSymbol::TranslateExpressionToIr()
-{   
-    // Generate a label with the function's name
-    std::shared_ptr<Label> label = std::make_shared<Label>(this->name);
+{
+    // If a function is accessed trough this function (not a member access) then it must be at a label, so the offset can be ignored
 
-    // Return the label as a value expression
+    auto accessExp = this->access->AsExpression(nullptr);
 
-    return std::make_shared<TranslateValueExpression>
-    (std::make_shared<IRName>(label));
+    return std::make_shared<TranslateValueExpression>(accessExp);
 }
 
 
@@ -118,7 +123,7 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
 
     if(body->isEmpty())
     {
-        auto label = std::make_shared<Label>(this->name);
+        auto label = std::make_shared<Label>(this->nameInAssembly);
         auto retIns = std::make_shared<IRReturn>();
 
         auto seq = std::make_shared<IRSequence>(
@@ -136,7 +141,7 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
 
     //TODO: Make the newFrame function a static function
 
-    auto currentFrame = frame.newFrame(this->name,escapesForVariables);
+    auto currentFrame = frame.newFrame(this->nameInAssembly,escapesForVariables);
 
     // Set the variables access to the generated accessList (the list is still in reverse)
 
@@ -162,9 +167,8 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
     //TODO: Call  currentFrame->ProcessFunctionEntryAndExit1(adjustedBody) (I took it out because I needed to est the rest of the IR generation and it returned nullptr which messed up the printing)
     // (7) Move the return value to the correct regsiter
     // TODO: Implement moving the return value
-    auto adjustedBody = currentFrame->ProcessFunctionEntryAndExit3(this->name,bodyInstructions);
+    auto adjustedBody = currentFrame->ProcessFunctionEntryAndExit3(this->nameInAssembly,bodyInstructions);
 
 
-    // If there is no body then we just need to return a label for the function
     return adjustedBody;
 }

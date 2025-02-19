@@ -172,6 +172,12 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
 
     functions[function->name] = function;
 
+    function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name);
+
+    function->access = std::make_shared<PrintedLabel>(
+        std::make_shared<Label>(function->nameInAssembly)
+    );
+
     return true;
 }
 
@@ -242,7 +248,13 @@ bool ClassSymbol::ProcessBody()
             }
             
             // Give the correct name for the constructor scheme: $_{this_class_name}_constructor_{index_of_constructor}
-            constructorDefinition->function->name = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
+            constructorDefinition->function->nameInAssembly = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
+
+            // Set the correct name for the function
+
+            constructorDefinition->function->access = std::make_shared<PrintedLabel>(
+                std::make_shared<Label>(constructorDefinition->function->nameInAssembly)
+            );
 
 
             // TODO: Implement constructor checking
@@ -265,6 +277,19 @@ bool ClassSymbol::ProcessBody()
 
             destructor = destructorDefinition;
 
+            auto destructorFunction = destructor->GetFunction();
+            
+            // Set the correct name for the destructor
+
+            destructorFunction->nameInAssembly = Helper::FormatString("$_%s_destructor", this->name.c_str());
+            
+            // Set the correct access
+
+            destructorFunction->access = std::make_shared<PrintedLabel>(
+                std::make_shared<Label>(destructorFunction->nameInAssembly)
+            );
+
+
         }
         else
         {
@@ -283,6 +308,18 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
          auto empty_destructor = std::make_shared<DestructorDefinitionNode>(this->location);
         destructor = empty_destructor;
 
+        auto destructorFunction = destructor->GetFunction();
+        
+        // Set the correct name for the destructor
+
+        destructorFunction->nameInAssembly = Helper::FormatString("$_%s_destructor", this->name.c_str());
+            
+        // Set the correct access
+        
+        destructorFunction->access = std::make_shared<PrintedLabel>(
+            std::make_shared<Label>(destructorFunction->nameInAssembly)
+        );
+
         Error::ShowWarning("No destructor defined for class, generating default one!", this->location);
     }
 
@@ -292,9 +329,18 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
     {
         auto empty_constructor = std::make_shared<ConstructorDefinitionNode>(this->location);
 
+        
         // Also give correct name for generated constructor
-        empty_constructor->function->name = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
+        empty_constructor->function->nameInAssembly = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
+
+        // Set the correct access
+        empty_constructor->function->access = std::make_shared<PrintedLabel>(
+            std::make_shared<Label>(empty_constructor->function->name)
+        );
+        
         constructors.push_back(empty_constructor);
+        
+
 
         Error::ShowWarning("No constructor defined for class, generating default one!", this->location);
     }

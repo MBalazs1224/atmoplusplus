@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include "class_member.hh"
+#include "../../frame/printedlabel.hh"
 
 class BodyNode;
 
@@ -21,6 +22,9 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
 
     public:
         int size_in_bytes = 0;
+
+        // Some functions have different name in assembly (like functions inside classes)
+        std::string nameInAssembly;
 
 
     // Contains all the local variables defined in the function
