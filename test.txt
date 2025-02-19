@@ -4,7 +4,10 @@ create class testParent
 create class testClass derives from testParent
 	create public integer second
 
-create testClass testObj
+	create constructor with integer a
+		return 3
+
+create testClass testObj with 5
 
 first inside testObj equals 1
 second inside testObj equals 2
