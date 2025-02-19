@@ -6,8 +6,13 @@ create class testClass derives from testParent
 
 	create constructor with integer a
 		return 3
+	
+	create public integer function testClassFunc
+		return 2
 
 create testClass testObj with 5
+
+create integer testInt = call testClassFunc inside testObj
 
 first inside testObj equals 1
 second inside testObj equals 2

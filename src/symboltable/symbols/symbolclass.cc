@@ -172,7 +172,7 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
 
     functions[function->name] = function;
 
-    function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name);
+    function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
 
     function->access = std::make_shared<PrintedLabel>(
         std::make_shared<Label>(function->nameInAssembly)
