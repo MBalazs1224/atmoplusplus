@@ -55,6 +55,8 @@ void (void)|VOID
 not_matches (not[ ]matches)|(NOT[ ]MATCHES)|!=
 protected (protected)|PROTECTED
 static (static)|STATIC
+virtual (virtual)|VIRTUAL
+overriding (overriding)|OVERRIDING
 derives_from (DERIVES[ ]FROM)|(derives[ ]from)|(DERIVED[ ]FROM)|(derived[ ]from)|(DERIVE[ ]FROM)|(derive[ ]from)
 else_if  (ELSE[ ]IF)|(else[ ]if)
 constructor  (constructor)|(CONSTRUCTOR)
@@ -238,6 +240,8 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{not_matches} {return yy::parser::token::NOT_MATCHES;}
 <NORMAL>{void} {return yy::parser::token::VOID;}
 <NORMAL>{static} {return yy::parser::token::STATIC;}
+<NORMAL>{virtual} {return yy::parser::token::VIRTUAL;}
+<NORMAL>{overriding} {return yy::parser::token::OVERRIDING;}
 <NORMAL>{protected} {return yy::parser::token::PROTECTED;}
 <NORMAL>{derives_from} {return yy::parser::token::DERIVES_FROM;}
 <NORMAL>{else_if} {return yy::parser::token::ELSE_IF;}

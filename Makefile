@@ -7,7 +7,7 @@ symbols := ./build/symbols/symbolvariable.o ./build/symbols/symbolfunction.o ./b
 
 expressions := ./build/expressions/add_expression.o ./build/expressions/and_expression.o ./build/expressions/assignment_expression.o ./build/expressions/divide_expression.o ./build/expressions/expressionable.o ./build/expressions/function_call.o ./build/expressions/greater_than_expression.o ./build/expressions/greater_than_or_equal_expression.o ./build/expressions/identifier.o  ./build/expressions/less_than_expression.o ./build/expressions/less_than_or_equal_expression.o ./build/expressions/matches_expression.o ./build/expressions/member_access_expression.o ./build/expressions/multiply_expression.o ./build/expressions/not_expression.o ./build/expressions/not_matches_expression.o ./build/expressions/or_expression.o ./build/expressions/subtract_expression.o ./build/expressions/two_operand_expression.o ./build/expressions/one_operand_expression.o ./build/expressions/array_subscript_expression.o
 
-attributes := ./build/attributes/attribute.o ./build/attributes/attribute_private.o ./build/attributes/attribute_protected.o ./build/attributes/attribute_public.o ./build/attributes/attribute_static.o
+attributes := ./build/attributes/attribute.o ./build/attributes/attribute_private.o ./build/attributes/attribute_protected.o ./build/attributes/attribute_public.o ./build/attributes/attribute_static.o ./build/attributes/attribute_virtual.o ./build/attributes/attribute_overriding.o
 
 types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboolean.o  ./build/types/typeinteger.o ./build/types/typefloat.o ./build/types/typestring.o ./build/types/typevoid.o ./build/types/typechar.o
 
@@ -261,6 +261,12 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/attributes/attribute_static.o: ./src/ast/attributes/attributestatic.cc ./src/ast/attributes/attributestatic.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/attributes/attribute_virtual.o: ./src/ast/attributes/attributevirtual.cc ./src/ast/attributes/attributevirtual.hh 
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/attributes/attribute_overriding.o: ./src/ast/attributes/attributeoverriding.cc ./src/ast/attributes/attributeoverriding.hh 
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Types

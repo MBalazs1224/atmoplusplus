@@ -54,6 +54,8 @@
     std::shared_ptr<AttributePublic> AttributePublicHolder = std::make_shared<AttributePublic>();
     std::shared_ptr<AttributeProtected> AttributeProtectedHolder = std::make_shared<AttributeProtected>();
     std::shared_ptr<AttributeStatic> AttributeStaticHolder = std::make_shared<AttributeStatic>();
+    std::shared_ptr<AttributeVirtual> AttributeVirtualHolder = std::make_shared<AttributeVirtual>();
+    std::shared_ptr<AttributeOverriding> AttributeOverridingHolder = std::make_shared<AttributeOverriding>();
 
     // Will return the summed of the locations, but ignore if the pointer is empty
     yy::location AddLocations(std::shared_ptr<Node> exp_one, std::shared_ptr<Node> exp_two)
@@ -123,6 +125,8 @@
 %token PRIVATE
 %token PROTECTED
 %token STATIC
+%token VIRTUAL
+%token OVERRIDING
 %token ARRAY_OF
 %token<int> NUMBER
 %token<double> NUMBER_FLOAT
@@ -246,6 +250,9 @@ attribute: %empty {$$ = AttributePrivateHolder;}
             | PROTECTED {$$ = AttributeProtectedHolder;}
             | PRIVATE {$$ = AttributePrivateHolder;}
             | STATIC {$$ = AttributeStaticHolder;}
+            | VIRTUAL {$$ = AttributeVirtualHolder;}
+            | OVERRIDING {$$ = AttributeOverridingHolder;}
+
 
 equals_holder: %empty {}
                 | EQUALS expression {$$ = $2;}
