@@ -1,6 +1,9 @@
 create class testParent
 	create public integer first
 
+	create public virtual integer function testVirt
+		return 5
+
 create class testClass derives from testParent
 	create public integer second
 
@@ -9,6 +12,9 @@ create class testClass derives from testParent
 	
 	create public integer function testClassFunc
 		return 2
+
+	create overriding integer function testVirt
+		return 6
 
 create testClass testObj with 5
 

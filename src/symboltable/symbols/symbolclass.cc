@@ -157,7 +157,26 @@ bool ClassSymbol::IdentifierAlreadyDeclared(const std::string &id)
 {
     // A variable cannot be declared with the same name as a function and vice versa
 
-    return variables.find(id) != variables.end() || functions.find(id) != functions.end();
+    // There is a variable with this name
+    if(variables.find(id) != variables.end())
+    {
+        return true;
+    }
+
+    // There is no function with this name so we know that there is no variable or function with this name, so we canreturnfalse
+    auto foundFunction = functions.find(id);
+    if(foundFunction == functions.end())
+    {
+        return false;
+    }
+
+    // Virtual and overriding functions can have the same name
+    if(foundFunction->second->isVirtual || foundFunction->second->isOverriding)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &node)
