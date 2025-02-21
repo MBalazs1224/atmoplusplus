@@ -19,9 +19,14 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
 
         std::shared_ptr<BoolList>  GetWetherVariablesEscape();
 
+        bool CheckAttributes();
+
 
     public:
         int size_in_bytes = 0;
+
+        bool isVirtual = false;
+        bool isOverriding = false;
 
         // Some functions have different name in assembly (like functions inside classes)
         std::string nameInAssembly;
@@ -32,10 +37,10 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
 
     std::unique_ptr<BodyNode> body;
     
-    FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<Attribute> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in);
+    FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::shared_ptr<Attribute>> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in);
 
     // Constructor for a constructor function
-    FunctionSymbol(std::shared_ptr<Attribute> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in);
+    FunctionSymbol(std::vector<std::shared_ptr<Attribute>>, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in);
 
     // Will create an empty public function with no body or parameters 
     FunctionSymbol();

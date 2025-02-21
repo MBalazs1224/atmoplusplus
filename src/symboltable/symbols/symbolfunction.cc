@@ -1,6 +1,6 @@
 #include "symbolfunction.hh"
 
-FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<Attribute> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in)
+FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::shared_ptr<Attribute>> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in)
     : SymbolTableElement(type_in, std::move(attr_in)), arguments(std::move(args_in)),body(std::move(body_in))
     {
         // By defaule the generated name in assembly should be the function's name
@@ -12,7 +12,7 @@ FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::shared_ptr<At
         );
     }
 
-FunctionSymbol::FunctionSymbol(std::shared_ptr<Attribute> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::make_unique<BodyNode>()) {}
+FunctionSymbol::FunctionSymbol(std::vector<std::shared_ptr<Attribute>> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::make_unique<BodyNode>()) {}
 
 FunctionSymbol::FunctionSymbol(std::unique_ptr<BodyNode> body_in) : FunctionSymbol(
     nullptr,
@@ -27,12 +27,81 @@ std::shared_ptr<Type> FunctionSymbol::GetType() {
     return this->type;
 }
 
+bool FunctionSymbol::CheckAttributes()
+{
+    int numberOfAccessModifiers = 0;
+
+    bool returnValue = true;
+
+    bool hasDuplicates = std::adjacent_find(attributes.begin(),attributes.end()) != attributes.end();
+
+    if(hasDuplicates)
+    {
+        Error::ShowError("An attribute has been specified multiple times!", this->location);
+        returnValue = false;
+    }
+
+    auto numberOfPolymorphicAttributes = 0;
+
+    for (auto &&attribute : attributes)
+    {
+        if(std::dynamic_pointer_cast<AttributeVirtual>(attribute))
+        {
+            numberOfPolymorphicAttributes++;
+            this->isVirtual = true;
+            if(numberOfPolymorphicAttributes > 1)
+            {
+                Error::ShowError("A function can only have maximum 1 polyphormic modifier!", this->location);
+                returnValue = false;
+            }
+        }
+        else if(std::dynamic_pointer_cast<AttributeOverriding>(attribute))
+        {
+            numberOfPolymorphicAttributes++;;
+            this->isOverriding = true;
+            if(numberOfPolymorphicAttributes > 1)
+            {
+                Error::ShowError("A function can only have maximum 1 polyphormic modifier!", this->location);
+                returnValue = false;
+            }
+        }
+        // A function cannot have multiple access modifiers like public and private at the same time
+        if(std::dynamic_pointer_cast<AttributePublic>(attribute) || std::dynamic_pointer_cast<AttributePrivate>(attribute) ||std::dynamic_pointer_cast<AttributeProtected>(attribute))
+        {
+            numberOfAccessModifiers++;
+            if(numberOfAccessModifiers > 1)
+            {
+                Error::ShowError("A function can only have maximum 1 access modifier!",this->location);
+                returnValue = false;
+            }
+        }
+        
+    }
+
+    // If the function doesn't have an access modifier, then default to private
+    if(numberOfAccessModifiers == 0)
+    {
+        attributes.push_back(
+            std::make_shared<AttributePrivate>()
+        );
+    }
+
+    return returnValue;
+    
+}
+
 bool FunctionSymbol::Check() {
     if(arguments.size() > 6)
     {
         Error::ShowError("Functions cannot have  more than 6 arguments!",this->location);
         return false;
     }
+
+    if(!CheckAttributes())
+    {
+        return false;
+    }
+
     if(!body->Check())
     {
         return false;

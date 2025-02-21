@@ -352,7 +352,7 @@ base_classes: %empty {}
 create_class_holder: CREATE CLASS {/*Need to increase the scope so the class variables and functions have their own scope*/ //SymbolTable::IncreaseScope();
 }
 
-function_create: CREATE attribute function_return_type FUNCTION IDENTIFIER argument_list body
+function_create: CREATE attributes function_return_type FUNCTION IDENTIFIER argument_list body
 {
 
     // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too

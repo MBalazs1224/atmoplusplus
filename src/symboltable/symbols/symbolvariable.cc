@@ -18,6 +18,13 @@ bool VariableSymbol::Check()
 
     int numberOfAccessModifiers = 0;
 
+    bool hasDuplicates = std::adjacent_find(attributes.begin(),attributes.end()) != attributes.end();
+    if(hasDuplicates)
+    {
+        Error::ShowError("An atribute has been specified multiple times!", this->location);
+        returnValue = false;
+    }
+
     for (auto &&attribute : attributes)
     {
         // A variable cannot be virtual
@@ -38,7 +45,7 @@ bool VariableSymbol::Check()
             numberOfAccessModifiers++;
             if(numberOfAccessModifiers > 1)
             {
-                Error::ShowError("A variable can only have maximum 1 access modifiers!",this->location);
+                Error::ShowError("A variable can only have maximum 1 access modifier!",this->location);
                 returnValue = false;
             }
         }
