@@ -201,6 +201,7 @@
 %nterm<std::shared_ptr<IExpressionable>> array_initial_size
 
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> parent_costructor_call
+%nterm<std::vector<std::shared_ptr<Attribute>>> attributes
 
     /* TODO: Implement error recovery */
 
@@ -238,7 +239,7 @@ statement:function_create {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
 
-variable_definition:CREATE attribute variable_type IDENTIFIER equals_holder function_call_arguments {
+variable_definition:CREATE attributes variable_type IDENTIFIER equals_holder function_call_arguments {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,variable);
@@ -252,6 +253,14 @@ attribute: %empty {$$ = AttributePrivateHolder;}
             | STATIC {$$ = AttributeStaticHolder;}
             | VIRTUAL {$$ = AttributeVirtualHolder;}
             | OVERRIDING {$$ = AttributeOverridingHolder;}
+
+attributes: attribute {
+                $$ = std::vector<std::shared_ptr<Attribute>>();
+                $$.push_back($1);
+            }
+            | attributes attribute {
+                $$.push_back($1);
+            }
 
 
 equals_holder: %empty {}

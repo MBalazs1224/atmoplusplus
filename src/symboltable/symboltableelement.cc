@@ -2,26 +2,30 @@
 
 #include "../ast/attributes/all_attributes.hh"
 
-SymbolTableElement::SymbolTableElement(std::shared_ptr<Type> type,std::shared_ptr<Attribute> attr)
+SymbolTableElement::SymbolTableElement(std::shared_ptr<Type> type,std::vector<std::shared_ptr<Attribute>> attr)
 {
     this->type = type;
-    this->attribute = std::move(attr);
+    this->attributes = std::move(attr);
 }
 
-std::shared_ptr<Attribute> SymbolTableElement::GetAttribute()
+std::vector<std::shared_ptr<Attribute>> SymbolTableElement::GetAttributes()
 {
-    return attribute;
+    return attributes;
 }
 
 SymbolTableElement::~SymbolTableElement() = default;
 
 bool SymbolTableElement::IsReachableOutside()
 {
-    return std::dynamic_pointer_cast<AttributePublic>(attribute) || std::dynamic_pointer_cast<AttributeStatic>(attribute);
+    auto publicAttribute = std::make_shared<AttributePublic>();
+
+    // The element is reachable outside if it has a public attribute
+
+    return std::find(attributes.begin(),attributes.end(),publicAttribute) != attributes.end();
 }
 
 
-SymbolTableElement::SymbolTableElement(std::shared_ptr<Attribute> attr)
+SymbolTableElement::SymbolTableElement(std::vector<std::shared_ptr<Attribute>> attr)
 {
-    this->attribute = std::move(attr);
+    this->attributes = std::move(attr);
 }

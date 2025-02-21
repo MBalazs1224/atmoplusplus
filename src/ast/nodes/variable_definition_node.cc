@@ -40,6 +40,10 @@ bool VariableDefinitionNode::CheckConstructor()
 
 bool VariableDefinitionNode::Check()
 {
+    if(!variable->Check())
+    {
+        return false;
+    }
     // If the expression is not set it means that there is no initialization value
     if (expression)
     {
