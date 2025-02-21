@@ -149,6 +149,7 @@ bool ClassSymbol::CheckParents()
 
     this->variableOffset = parent_class->variableOffset;
     this->size_in_bytes = parent_class->size_in_bytes;
+    this->parent = parent_class;
 
     return true;
 }
@@ -191,13 +192,107 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
 
     functions[function->name] = function;
 
-    function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
+    // If the function is virtual, then we need to allocate space for a pointer for it
+    if(function->isVirtual)
+    {
+        function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
+        this->size_in_bytes += DataSize::QWord;
 
-    function->access = std::make_shared<PrintedLabel>(
+        // Set that the function can be called from the pointer
+        auto accessObj = std::make_shared<OffsetFromObject>(variableOffset);
+
+        variableOffset += DataSize::QWord;
+
+        function->access = accessObj;
+    }
+    // If the function is overriding a base function, then we need to find that function and point this function to the same pointer
+    else if (function->isOverriding)
+    {
+        if(!this->parent)
+        {
+            Error::ShowError("Overriding functions can only be placed inside classes with parents!",this->location);
+            return false;
+        }
+        std::vector<std::shared_ptr<FunctionSymbol>> foundFunctions = parent->GetBaseFunctionForOverride(function);
+
+        if(foundFunctions.empty())
+        {
+            Error::ShowError("Cannot find base function for overriding!", function->location);
+            return false;
+        }
+        if(foundFunctions.size() > 2)
+        {
+            Error::ShowError("Ambigous override!", function->location);
+            return false;
+        }
+
+        auto baseFunction = foundFunctions[0];
+
+        // Set that the function can be called from the same pointer
+        function->access = baseFunction->access;
+
+        //TODO: Add to constructors, that the correct function pointer needs to be moved to this place
+    }
+    else
+    {
+        function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
+
+        function->access = std::make_shared<PrintedLabel>(
         std::make_shared<Label>(function->nameInAssembly)
     );
+    }
+
+    
 
     return true;
+}
+
+std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetBaseFunctionForOverride(std::shared_ptr<FunctionSymbol> overridingFunc)
+{
+    std::vector<std::shared_ptr<FunctionSymbol>> possibleFunctions;
+    // If there is a parent, try to find the base function inside that class first
+    if(parent)
+    {
+        auto parentFuncs = parent->GetBaseFunctionForOverride(overridingFunc);
+        possibleFunctions.insert(possibleFunctions.begin(),parentFuncs.begin(),parentFuncs.end());
+    }
+    
+    for (auto &&funcPair : functions)
+    {
+        auto function = funcPair.second;
+
+        // Both functions must have the same name, return type and arguments
+
+        if(function->name != overridingFunc->name)
+            continue;;
+        if(function->GetType() != overridingFunc->GetType())
+            continue;
+
+        auto overridingArgs = overridingFunc->GetArguments();
+        auto baseArgs = function->GetArguments();
+
+        // If the number of arguments don't match skip this function
+
+        if(overridingArgs.size() != baseArgs.size())
+            continue;
+
+        size_t argCounter = 0;
+
+        while(argCounter < overridingArgs.size() && overridingArgs[argCounter]->GetType()->Compatible(baseArgs[argCounter]->GetType()))
+        {
+            argCounter++;
+        }
+
+        // If the counter is bigger or equal to the number of arguments then it means that all arguments' types matched and it's a possible base function
+
+        if(argCounter >= overridingArgs.size())
+        {
+            possibleFunctions.push_back(function);
+        }
+        
+    }
+    
+    return possibleFunctions;
 }
 
 bool ClassSymbol::InsertVariable(const std::shared_ptr<VariableDefinitionNode> &node)

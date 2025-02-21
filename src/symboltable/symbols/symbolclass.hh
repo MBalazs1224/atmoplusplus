@@ -40,6 +40,9 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
         std::vector<std::shared_ptr<Identifier>> parents;
 
+        // Points to the parent class after semantic analyzing
+        std::shared_ptr<ClassSymbol> parent;
+
         // The constructors of the class
         std::vector<std::shared_ptr<ConstructorDefinitionNode>> constructors;
 
@@ -64,6 +67,8 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
         // Will check if the identifier is already declared in the class (either as a variable or a function)
         bool IdentifierAlreadyDeclared(const std::string& id);
+
+        std::vector<std::shared_ptr<FunctionSymbol>> GetBaseFunctionForOverride(std::shared_ptr<FunctionSymbol>);
 
         
 
