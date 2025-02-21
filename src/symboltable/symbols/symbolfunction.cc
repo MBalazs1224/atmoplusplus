@@ -15,7 +15,7 @@ FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::s
 FunctionSymbol::FunctionSymbol(std::vector<std::shared_ptr<Attribute>> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::make_unique<BodyNode>()) {}
 
 FunctionSymbol::FunctionSymbol(std::unique_ptr<BodyNode> body_in) : FunctionSymbol(
-    nullptr,
+    std::vector<std::shared_ptr<Attribute>>(),
     std::make_unique<BodyNode>(),
     std::vector<std::shared_ptr<VariableSymbol>>()
 ) {}
@@ -125,8 +125,8 @@ const std::vector<std::shared_ptr<VariableSymbol>>& FunctionSymbol::GetArguments
 }
 
 // If we want to create an empty function (for destructors, constructors etc.) we need it to have a body but with an empty vector of statements to prevent segfaults
-
-FunctionSymbol::FunctionSymbol() : SymbolTableElement(std::make_shared<AttributePublic>()), arguments() , body(std::make_unique<BodyNode>(
+                                    // Implicitly converts the {std::make_shared<AttributePublic>()} to a vector
+FunctionSymbol::FunctionSymbol() : SymbolTableElement({std::make_shared<AttributePublic>()}), arguments() , body(std::make_unique<BodyNode>(
     std::vector<std::shared_ptr<Node>>()
 )) 
 {

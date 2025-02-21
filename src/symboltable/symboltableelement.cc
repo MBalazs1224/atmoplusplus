@@ -21,7 +21,7 @@ bool SymbolTableElement::IsReachableOutside()
 
     // The element is reachable outside if it has a public attribute
 
-    return std::find(attributes.begin(),attributes.end(),publicAttribute) != attributes.end();
+    return std::find(attributes.begin(),attributes.end(),publicAttribute) == attributes.end();
 }
 
 

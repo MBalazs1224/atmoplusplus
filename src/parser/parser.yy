@@ -259,7 +259,7 @@ attributes: attribute {
                 $$.push_back($1);
             }
             | attributes attribute {
-                $$.push_back($1);
+                $$.push_back($2);
             }
 
 
@@ -369,7 +369,7 @@ function_create: CREATE attributes function_return_type FUNCTION IDENTIFIER argu
 }
     // FIXME: Constructor definition might be unnecessary, can be implemented with an empty return type for funcion where the semantic analyzer will check if the function is a constructor
     
-constructor_definition: CREATE attribute CONSTRUCTOR argument_list parent_costructor_call body
+constructor_definition: CREATE attributes CONSTRUCTOR argument_list parent_costructor_call body
 {
     // The argument list will increase the scope so the arguments can be inserted into their own scope, even if there are no arguments that's why we need to decrease it here too
     SymbolTable::DecreaseScope();
@@ -456,8 +456,8 @@ argument_list: %empty {
                 // Increase the scope so the arguments can be pushed into their own scope
                 SymbolTable::IncreaseScope();
                 std::vector<std::shared_ptr<VariableSymbol>> args;
-
-                auto variableSymbol = std::make_shared<VariableSymbol>($2->type,std::make_unique<AttributePrivate>());
+                auto attributePrivate = std::vector<std::shared_ptr<Attribute>>{std::make_unique<AttributePrivate>()};
+                auto variableSymbol = std::make_shared<VariableSymbol>($2->type,attributePrivate);
                 variableSymbol->location = @2;
 
                 SymbolTable::Insert($2->name,variableSymbol);
@@ -469,8 +469,9 @@ argument_list: %empty {
 
                 auto temp = $1;
                 auto temp2 = $3;
+                auto attributePrivate = std::vector<std::shared_ptr<Attribute>>{std::make_unique<AttributePrivate>()};
                 
-                auto variableSymbol = std::make_shared<VariableSymbol>($3->type,std::make_unique<AttributePrivate>());
+                auto variableSymbol = std::make_shared<VariableSymbol>($3->type,attributePrivate);
                 variableSymbol->location = @3;
                 $1.push_back(variableSymbol);
                 SymbolTable::Insert($3->name,std::move(variableSymbol));

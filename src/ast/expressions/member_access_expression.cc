@@ -36,7 +36,7 @@ bool MemberAccessExpression::Check()
             }
             if (!element->IsReachableOutside())
             {
-                Error::ShowError(Helper::FormatString("'%s' is inaccessible due to it's protection level! ('%s')",element->name.c_str(), element->GetAttribute()->ToString().c_str()),left->location);
+                Error::ShowError(Helper::FormatString("'%s' is inaccessible due to it's protection level!"),left->location);
                 return false;
             }
             
