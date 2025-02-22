@@ -201,21 +201,33 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         // Set that the function can be called from the pointer
         auto accessObj = std::make_shared<OffsetFromObject>(variableOffset);
 
-        variableOffset += DataSize::QWord;
 
         function->access = accessObj;
 
+
         auto labelForFunction = std::make_shared<Label>(function->nameInAssembly);
+
+        // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register (after dereferencing the pointer)
+
+        auto RDIDereferencePlusOffset = std::make_shared<IRBinaryOperator>(
+            BinaryOperator::PLUS,
+            std::make_shared<IRMem>(
+                std::make_shared<IRTemp>(ReservedIrRegisters::RDI) 
+            ),
+            std::make_shared<IRConst>(variableOffset)
+        );
 
         // We need all constructors to move the function's location into the correct pointer for polymorphism
         statementsForConstructors.push_back(
             std::make_shared<IRMove>(
-                accessObj->AsExpression(
-                    std::make_shared<IRTemp>(ReservedIrRegisters::RDI) // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register
-                ),
+                RDIDereferencePlusOffset,
                 std::make_shared<IRName>(labelForFunction)
             )
         );
+
+        // Update the next available position
+        variableOffset += DataSize::QWord;
+
     }
     // If the function is overriding a base function, then we need to find that function and point this function to the same pointer
     else if (function->isOverriding)
@@ -243,16 +255,27 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         // Set that the function can be called from the same pointer
         function->access = baseFunction->access;
 
+        // Because the overriding function is correct at this point, it's location must be an offset from the object, so we can safely extract the offset from the object
+        int offset = std::dynamic_pointer_cast<OffsetFromObject>(function->access)->offset;
+
         function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
 
         auto labelForFunction = std::make_shared<Label>(function->nameInAssembly);
 
+        // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register (after dereferencing the pointer)
+
+        auto RDIDereferencePlusOffset = std::make_shared<IRBinaryOperator>(
+            BinaryOperator::PLUS,
+            std::make_shared<IRMem>(
+                std::make_shared<IRTemp>(ReservedIrRegisters::RDI) 
+            ),
+            std::make_shared<IRConst>(offset)
+        );
+
         // We need all constructors to move the function's location into the correct pointer for polymorphism
         statementsForConstructors.push_back(
             std::make_shared<IRMove>(
-                function->access->AsExpression(
-                    std::make_shared<IRTemp>(ReservedIrRegisters::RDI) // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register
-                ),
+                RDIDereferencePlusOffset,
                 std::make_shared<IRName>(labelForFunction)
             )
         );
