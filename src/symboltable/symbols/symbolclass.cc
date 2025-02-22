@@ -217,12 +217,12 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
 
         if(foundFunctions.empty())
         {
-            Error::ShowError("Cannot find base function for overriding!", function->location);
+            Error::ShowError(Helper::FormatString("Cannot find base function for overriding function '%s'!",function->name.c_str()), function->location);
             return false;
         }
         if(foundFunctions.size() > 2)
         {
-            Error::ShowError("Ambigous override!", function->location);
+            Error::ShowError(Helper::FormatString("Ambigous override function '%s'!",function->name.c_str()), function->location);
             return false;
         }
 
@@ -230,6 +230,8 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
 
         // Set that the function can be called from the same pointer
         function->access = baseFunction->access;
+
+        function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());;
 
         //TODO: Add to constructors, that the correct function pointer needs to be moved to this place
     }
@@ -446,6 +448,8 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
         
         // Also give correct name for generated constructor
         empty_constructor->function->nameInAssembly = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
+
+        empty_constructor->function->name = empty_constructor->function->nameInAssembly;
 
         // Set the correct access
         empty_constructor->function->access = std::make_shared<PrintedLabel>(

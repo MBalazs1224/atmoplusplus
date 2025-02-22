@@ -18,7 +18,4 @@ create class testClass derives from testParent
 
 create testClass testObj with 5
 
-create integer testInt = call testClassFunc inside testObj
-
-first inside testObj equals 1
-second inside testObj equals 2
+create integer testInt = call testVirt inside testObj
