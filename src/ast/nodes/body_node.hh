@@ -14,6 +14,9 @@ class ConstructorDefinitionNode;
 class BodyNode : public Node, public VariableContainer
 {
     std::vector<std::shared_ptr<Node>> statements;
+    
+    // Statements that needs to be printed at the start of the body (function pointer movement etc.)
+    std::vector<std::shared_ptr<IRStatement>> priorityStatements;
     public:
     BodyNode(std::vector<std::shared_ptr<Node>>);
     BodyNode() = default;
@@ -21,6 +24,9 @@ class BodyNode : public Node, public VariableContainer
     BodyNode(BodyNode&& other);
     public:
         ~BodyNode() override = default;
+
+        // Will add the statements to start of the body
+        void AddStatements(std::vector<std::shared_ptr<IRStatement>>);
 
         bool Check() override;
         bool isEmpty();

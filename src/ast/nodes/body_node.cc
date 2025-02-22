@@ -11,6 +11,11 @@ BodyNode::BodyNode(std::vector<std::shared_ptr<Node>> statements)
     this->statements = std::move(statements);
 }
 
+void BodyNode::AddStatements(std::vector<std::shared_ptr<IRStatement>> stmts)
+{
+    this->priorityStatements = std::move(stmts);
+}
+
 bool BodyNode::Check()
 {
     // TODO: Might need to calculate the size of teh body here
@@ -56,7 +61,8 @@ bool BodyNode::StatementIsValid(const std::shared_ptr<Node> statement)
 
 bool BodyNode::isEmpty()
 {
-    return statements.empty();
+    // The body is empty if it doesn't have any normal or priority instructions
+    return statements.empty() && priorityStatements.empty();
 }
 
 std::vector<std::shared_ptr<Node>> BodyNode::GetStatements()
@@ -89,6 +95,11 @@ std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetVariables()
 std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
 {
     std::vector<std::shared_ptr<IRStatement>> ir_statements;
+
+    // The first statements should be the priority statements
+    ir_statements.insert(ir_statements.begin(), priorityStatements.begin(),priorityStatements.end());
+
+
     for (auto &&statement : statements)
     {
         auto ir = statement->TranslateToIR();

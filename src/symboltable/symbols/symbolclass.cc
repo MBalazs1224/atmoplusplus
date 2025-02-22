@@ -204,6 +204,18 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         variableOffset += DataSize::QWord;
 
         function->access = accessObj;
+
+        auto labelForFunction = std::make_shared<Label>(function->nameInAssembly);
+
+        // We need all constructors to move the function's location into the correct pointer for polymorphism
+        statementsForConstructors.push_back(
+            std::make_shared<IRMove>(
+                accessObj->AsExpression(
+                    std::make_shared<IRTemp>(ReservedIrRegisters::RDI) // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register
+                ),
+                std::make_shared<IRName>(labelForFunction)
+            )
+        );
     }
     // If the function is overriding a base function, then we need to find that function and point this function to the same pointer
     else if (function->isOverriding)
@@ -231,9 +243,20 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         // Set that the function can be called from the same pointer
         function->access = baseFunction->access;
 
-        function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());;
+        function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
 
-        //TODO: Add to constructors, that the correct function pointer needs to be moved to this place
+        auto labelForFunction = std::make_shared<Label>(function->nameInAssembly);
+
+        // We need all constructors to move the function's location into the correct pointer for polymorphism
+        statementsForConstructors.push_back(
+            std::make_shared<IRMove>(
+                function->access->AsExpression(
+                    std::make_shared<IRTemp>(ReservedIrRegisters::RDI) // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register
+                ),
+                std::make_shared<IRName>(labelForFunction)
+            )
+        );
+
     }
     else
     {
@@ -497,6 +520,13 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
             constructor->constructorOfParent = parent_constructors[0];
         }
     }
+
+    // Insert the needed statements to the start of all constructors body
+    for (auto &&constructor : constructors)
+    {
+        constructor->AddStatementsToBody(statementsForConstructors);
+    }
+    
 
     return true;
 }

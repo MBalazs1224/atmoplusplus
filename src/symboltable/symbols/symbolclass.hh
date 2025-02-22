@@ -52,8 +52,11 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
         // The hashmap storing the variables inside the class
         std::unordered_map<std::string, std::shared_ptr<VariableSymbol>> variables;
 
-        // The hashmap storing the variables inside the class
+        // The hashmap storing the functions inside the class
         std::unordered_map<std::string, std::shared_ptr<FunctionSymbol>> functions;
+
+        // Stores statements that all constructors need to execute (moving function ppointers to the correct location etc.)
+        std::vector<std::shared_ptr<IRStatement>> statementsForConstructors;
 
 
         // Will check if the parents are valid and inherit the variables and functions from the parent classes

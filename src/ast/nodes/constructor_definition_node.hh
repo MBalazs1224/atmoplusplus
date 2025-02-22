@@ -12,6 +12,9 @@ class ConstructorDefinitionNode : public Node
     
     public:
 
+    // Will add the needed statements to the start of the body of the constructor function.
+    void AddStatementsToBody(std::vector<std::shared_ptr<IRStatement>>);
+
     // The constructor which the arguments need to be given to
 
     std::shared_ptr<ConstructorDefinitionNode> constructorOfParent;

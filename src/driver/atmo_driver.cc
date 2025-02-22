@@ -31,6 +31,12 @@ void AtmoDriver::StartCompilation(std::istream &stream)
         std::cerr << "Parsing failed, exiting!" << std::endl;
         exit(EXIT_FAILURE);
     }
+
+    // ClassSymbol's Check funtion might need these pointers (becaues of polphormic function being offseted from RDI), so we need to initialize them here
+    
+    //Initialize the IR register pointers
+    ReservedIrRegisters::Initialize();
+
     SemanticAnalyze();
 
     if(!Error::CanContinue())
@@ -102,8 +108,7 @@ std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector
 
 void AtmoDriver::TranslateToIR()
 {
-    //Initialize rsp and rbp
-    ReservedIrRegisters::Initialize();
+
 
 
     auto nodes = ast_root->GetStatementsRef();

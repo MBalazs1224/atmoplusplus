@@ -35,6 +35,11 @@ std::shared_ptr<IRStatement> ConstructorDefinitionNode::TranslateToIR()
     return function->TranslateToIR();
 }
 
+void ConstructorDefinitionNode::AddStatementsToBody(std::vector<std::shared_ptr<IRStatement>> stmt)
+{
+    this->function->body->AddStatements(std::move(stmt));
+}
+
 std::shared_ptr<IRExpressionList> ConstructorDefinitionNode::TranslateArgumentsToParentToIR()
 {
     std::vector<std::shared_ptr<IRExpression>> expressions;
