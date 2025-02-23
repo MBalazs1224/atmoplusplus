@@ -9,6 +9,7 @@
 #include <vector>
 #include "class_member.hh"
 #include "../../frame/printedlabel.hh"
+class ClassSymbol;
 
 class BodyNode;
 
@@ -30,6 +31,9 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
 
         // Some functions have different name in assembly (like functions inside classes)
         std::string nameInAssembly;
+
+        // Will point to the class, where this function can be found inside
+        std::shared_ptr<ClassSymbol> containingClass;
 
 
     // Contains all the local variables defined in the function

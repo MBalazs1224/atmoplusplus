@@ -188,6 +188,12 @@ std::shared_ptr<BoolList>  FunctionSymbol::GetWetherVariablesEscape()
 
 std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
 {
+    // Set that if the function tries to access a variable inside the same class it was declared in, then it should offset it from RDI (which will be the this pointer)
+    if(containingClass)
+    {
+        containingClass->VariablesShouldUseRDI(true);
+    }
+
     // If there is no body for the function (like empty constructors or destructors) we just define a dummy body which will just return immediately (maybe we should just ignore these types of function? FIXME)
 
     if(body->isEmpty())
@@ -237,6 +243,11 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
     // (7) Move the return value to the correct regsiter
     // TODO: Implement moving the return value
     auto adjustedBody = currentFrame->ProcessFunctionEntryAndExit3(this->nameInAssembly,bodyInstructions);
+
+    if(containingClass)
+    {
+        containingClass->VariablesShouldUseRDI(false);
+    }
 
 
     return adjustedBody;

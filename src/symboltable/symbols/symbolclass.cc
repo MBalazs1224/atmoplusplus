@@ -192,6 +192,9 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
 
     functions[function->name] = function;
 
+    // Set that the function can be found inside this class
+    function->containingClass = shared_from_this();
+
     // If the function is virtual, then we need to allocate space for a pointer for it
     if(function->isVirtual)
     {
@@ -293,6 +296,21 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
     
 
     return true;
+}
+
+void ClassSymbol::VariablesShouldUseRDI(bool shouldUse)
+{
+    for (auto &&variable : variables)
+    {
+
+        // Because the variables are inside a class their locations must be OffsetFromObject
+        auto variableLocation = std::dynamic_pointer_cast<OffsetFromObject>(variable.second->access);
+        assert(variableLocation);
+
+        variableLocation->shouldUseRDI = shouldUse;
+
+    }
+    
 }
 
 std::vector<std::shared_ptr<FunctionSymbol>> ClassSymbol::GetBaseFunctionForOverride(std::shared_ptr<FunctionSymbol> overridingFunc)

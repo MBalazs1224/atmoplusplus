@@ -83,6 +83,10 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
     public:
 
+    /// @brief Will set wether the variables inside this class should use RDI as their offset.
+    /// @param shouldUseRDI true: use RDI - false: Use regular offset
+    void VariablesShouldUseRDI(bool shouldUseRDI);
+
     int size_in_bytes = 0;
 
     ClassSymbol(std::vector<std::shared_ptr<Identifier>> parents_in, std::unique_ptr<BodyNode> body_in);
