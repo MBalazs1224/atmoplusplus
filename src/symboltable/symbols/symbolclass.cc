@@ -607,11 +607,24 @@ bool ClassSymbol::Check()
 
 std::shared_ptr<FunctionSymbol> ClassSymbol::GetFunction(const std::string &id)
 {
+    // hashmap[] will add an empty element to the hashmap with default value, if the wanted key-value doesn't exists, which messes up the whole thing because it will think it has one more element, to prevent this we need to check if it exists before indexing
+
+    auto funcExists = functions.find(id) != functions.end();
+    if(!funcExists)
+        return nullptr;
+    
     return functions[id];
 }
 
 std::shared_ptr<VariableSymbol> ClassSymbol::GetVariable(const std::string &id)
 {
+    auto varExists = variables.find(id) != variables.end();
+
+    // hashmap[] will add an empty element to the hashmap with default value, if the wanted key-value doesn't exists, which messes up the whole thing because it will think it has one more element, to prevent this we need to check if it exists before indexing
+    
+    if(!varExists)
+        return nullptr;
+    
     return variables[id];
 }
 

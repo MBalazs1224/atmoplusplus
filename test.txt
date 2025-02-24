@@ -10,3 +10,7 @@ create class testClass derives from testParent
 	
 	create public integer function testClassFunc
 		second equals 5
+
+create testClass testObj with 5
+
+create integer asd equals call testClassFunc inside testObj
