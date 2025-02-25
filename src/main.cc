@@ -29,13 +29,12 @@ void Process_Args( std::vector<std::string>& params, AtmoDriver& driver)
 
 int main(int argc, char** argv)
 {
-    AtmoDriver driver;
-    std::ifstream input("test.txt");
     // + 1 because first arg is app name
     std::vector<std::string> params(argv + 1, argv+argc);
+
+    AtmoDriver driver(params);
     
-    Process_Args(params,driver);
-    driver.StartCompilation(input);
+    driver.StartCompilation();
     
     return 0;
 }

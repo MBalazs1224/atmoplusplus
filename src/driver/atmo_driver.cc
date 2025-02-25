@@ -1,13 +1,78 @@
 #include "atmo_driver.hh"
 
-void AtmoDriver::StartCompilation(std::istream &stream)
+AtmoDriver::AtmoDriver(std::vector<std::string>& params)
 {
-    if (!stream.good() && stream.eof())
+    if(params.empty())
     {
-        return;
+        Error::ShowCompilerError("No parameters received!");
     }
 
-    lexer = CreateLexer(stream);
+    ProcessArguments(params);
+}
+
+void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
+{
+    if (param == "--debug-lexer")
+    {
+        set_lexer_debug_level(1);
+    }
+    else if(param == "--debug-parser")
+    {
+        set_parser_debug_level(1);
+    }
+    else if (param == "--print-ir-tree")
+    {
+        printIRTree = true;
+    }
+    else
+    {
+        Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
+    }
+        
+}
+
+void AtmoDriver::OpenFile(const std::string& fileName)
+{
+    if(!openedFilePath.empty())
+    {
+        Error::ShowCompilerError("Input file specified multiple times!");
+    }
+
+    inputFile.open(fileName);
+
+    if(!inputFile.is_open())
+    {
+        Error::ShowCompilerError(Helper::FormatString("Couldn't open file '%s'!", fileName.c_str()));
+    }
+
+    openedFilePath = fileName;
+}
+
+void AtmoDriver::ProcessArguments(std::vector<std::string>& params)
+{
+    for(auto param : params)
+    {
+        // All behavoural flags will start with "--"
+        if(param.rfind("--",0) == 0)
+        {
+            ProcessBehaviouralFlag(param);
+        }
+        // If the flag didn't start with "--", it must be an input file name
+        else
+        {
+            OpenFile(param);
+        }
+    }
+}
+
+void AtmoDriver::StartCompilation()
+{
+    if (openedFilePath.empty())
+    {
+        Error::ShowCompilerError("No input file specified!");
+    }
+
+    lexer = CreateLexer(inputFile);
 
     try
     { 
@@ -23,7 +88,7 @@ void AtmoDriver::StartCompilation(std::istream &stream)
 
     //TODO: Let the user choose input file, currently defaults to test.txt
 
-    Error::Initialize();
+    Error::Initialize(openedFilePath);
     SymbolTable::Initialize();
     parser->parse();
     if (!Error::CanContinue())
@@ -220,7 +285,7 @@ void AtmoDriver::parse_only(std::istream& stream)
 {
     auto lexer = CreateLexer(stream);
     auto parser = CreateParser(std::move(lexer));
-    Error::Initialize();
+    Error::Initialize(openedFilePath);
     SymbolTable::Initialize();
     parser->parse();
 }

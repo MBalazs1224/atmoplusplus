@@ -72,6 +72,7 @@ PrintYellowUnderline(loc.begin.column, loc.end.column,loc.begin.line);
 void Error::ShowCompilerError(const std::string& message)
 {
     std::cerr << Red("Error:") << " " << message << std::endl;
+    exit(1);
 }
 
 void Error::PrintSource(int line)
@@ -146,20 +147,19 @@ std::string Error::Yellow(const std::string& text)
     return s.str();
 }
 
-void Error::Initialize()
+void Error::Initialize(std::string& inputFilePath)
 {
-    std::ifstream in("test.txt");
-    if (!in.good())
-    {
-        ShowCompilerError("Unable to open input file!");
-        exit(EXIT_FAILURE);
-    }
+    std::ifstream reOpen(inputFilePath);
+
     //FIXME: There must be a better way to show source in error messages, than prereading the source into a vector
     std::string line;
-    while (getline(in,line))
+
+    while (getline(reOpen,line))
     {
         source.push_back(line);
     }
+
+    reOpen.close();
     
 }
 

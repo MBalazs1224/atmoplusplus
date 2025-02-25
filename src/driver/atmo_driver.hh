@@ -14,13 +14,26 @@ class AtmoDriver
     std::vector<std::shared_ptr<VariableSymbol>> GetGlobalVariables(std::vector<std::shared_ptr<Node>>&);
     
     std::shared_ptr<BoolList> GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>>& );
+
+    std::ifstream inputFile;
+
+    // Error class needs to preread the source file, so it can show error messages, but that will read the inputFile to EOF, so we need to open it seperately inside Error, that's why we need the file's path
+    std::string openedFilePath;
+
+    void ProcessArguments(std::vector<std::string>&);
+
+    void ProcessBehaviouralFlag(const std::string&);
+    void OpenFile(const std::string&);
     
     public:
 
     bool printIRTree = false;
-    AtmoDriver() = default;
+    /// @brief Will initialize the object and process the  arguments.
+    /// @param params A vector containing all the received arguments.
+    AtmoDriver(std::vector<std::string>& params);
+
     ~AtmoDriver() = default;
-    void StartCompilation(std::istream &iss);
+    void StartCompilation();
     void set_parser_debug_level(int);
     void set_lexer_debug_level(int);
     std::shared_ptr<StatementListNode> ast_root;
