@@ -245,10 +245,12 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
     auto bodyInstructions = this->body->TranslateToIR();
 
     // (4-5-8) Use the frames function to save registers and return the correct value
-    //TODO: Call  currentFrame->ProcessFunctionEntryAndExit1(adjustedBody) (I took it out because I needed to est the rest of the IR generation and it returned nullptr which messed up the printing)
+
+    auto newBody = currentFrame->ProcessFunctionEntryAndExit1(bodyInstructions);
     // (7) Move the return value to the correct regsiter
+
     // TODO: Implement moving the return value
-    auto adjustedBody = currentFrame->ProcessFunctionEntryAndExit3(this->nameInAssembly,bodyInstructions);
+    auto adjustedBody = currentFrame->ProcessFunctionEntryAndExit3(this->nameInAssembly,newBody);
 
     if(containingClass)
     {

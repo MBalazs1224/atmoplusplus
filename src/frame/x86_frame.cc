@@ -89,8 +89,22 @@ void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& p
 
 std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit1(std::shared_ptr<IRStatement> body)
 {
-    // TODO: Implement ProcessFunctionEntryAndExit1 (book [~251])
-    return nullptr;
+    std::vector<std::shared_ptr<IRStatement>> statements;
+    // Save callee saved registers
+    // TODO: Implement only saving registers that we don't use, might need to also allocate space for them
+
+    for (size_t i = 0; i < ReservedIrRegisters::calleeSavedRegs.size(); i++)
+    {
+        auto push = std::make_shared<IRPush>(
+            std::make_shared<IRTemp>(ReservedIrRegisters::calleeSavedRegs[i])
+        );
+        statements.push_back(push);
+    }
+
+    statements.push_back(body);
+
+    return std::make_shared<IRSequence>(statements);
+    
 }
 
 std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string functionName, std::shared_ptr<IRStatement> body)
