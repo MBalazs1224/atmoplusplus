@@ -115,7 +115,11 @@ bool FunctionSymbol::Check() {
     {
         this->size_in_bytes += variable->GetSize();
     }
-    
+    // If nothing set some other assemby name for this function (class, etc) then it's assembly label should be it's user given name
+    if(this->nameInAssembly == "")
+    {
+        this->nameInAssembly = this->name;
+    }
 
     return true;
 }
