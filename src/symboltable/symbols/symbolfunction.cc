@@ -234,6 +234,8 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
         //Get the previous var
         indexOfLocalVar--;
     }
+
+    currentFrame->AllocateRegisters(this->arguments);
     
     // (1-2-3-6-9-10-11) Use the frame's function to do the neccessary instructions
     auto bodyInstructions = this->body->TranslateToIR();

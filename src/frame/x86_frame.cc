@@ -46,6 +46,11 @@ std::shared_ptr<Temp> x86Frame::ReturnLocation()
     return ReservedIrRegisters::RAX;
 }
 
+void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params)
+{
+    
+}
+
 std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit1(std::shared_ptr<IRStatement> body)
 {
     // TODO: Implement ProcessFunctionEntryAndExit1 (book [~251])
