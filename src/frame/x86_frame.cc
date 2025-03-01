@@ -50,6 +50,8 @@ void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& p
 {
     // The number of parameters will be indexes into the vector of possible param locations which will contain the regs in a correct order
 
+    //TODO: Implement that if the function is inside a class the first poitner should be the this poitner and everything should be pushed to the right
+
     int integerParams = 0;
     int floatParams = 0;
 

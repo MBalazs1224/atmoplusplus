@@ -1,4 +1,7 @@
-create integer function testFunc with integer a
+create integer function testFunc with integer a, integer d
 	create integer b
 	b equals a
 	return b
+
+
+create integer testInt equals call testFunc with 5, 6

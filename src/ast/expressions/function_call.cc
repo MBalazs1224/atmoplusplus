@@ -102,24 +102,55 @@ std::shared_ptr<IRExpressionList> FunctionCall::TranslateArgumentsToIR()
 
 std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 {
+
+    std::vector<std::shared_ptr<IRStatement>> statements;
+
     std::shared_ptr<IRExpressionList> argumentsList = TranslateArgumentsToIR();
 
     
     auto funcLocation = expression->TranslateExpressionToIr()->ToValueExpression();
 
+    // Move the arguments to the location of the parameters
+
+    // Will return the parameters, the name just wrong for now
+    auto functionParams = this->function->GetArguments();
+
+    assert(functionParams.size() == arguments.size());
+
+    for (size_t i = 0; i < this->arguments.size(); i++)
+    {
+        auto move = std::make_shared<IRMove>(
+            arguments[i]->TranslateExpressionToIr()->ToValueExpression(), // The argument's value
+            functionParams[i]->TranslateExpressionToIr()->ToValueExpression() // The param's location
+        );
+
+        statements.push_back(move);
+
+    }
+    
+    
 
     auto functionCall = std::make_shared<IRCall>(funcLocation, argumentsList);
 
+    
     auto funcEvaluated = std::make_shared<IREvaluateExpression>(functionCall);
 
+    statements.push_back(funcEvaluated);
+    
+    
     // The function will return the return value inside RAX, so we need to evaluate the function and get RAX for the result
-
+    
     auto eseq = std::make_shared<IREseq>(
         std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
-        funcEvaluated
+        std::make_shared<IRSequence>(
+            statements
+        )
     );
+    
 
-    return std::make_shared<TranslateValueExpression>(eseq);
+    return std::make_shared<TranslateValueExpression>(
+        eseq
+    );
 }
 
 std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
