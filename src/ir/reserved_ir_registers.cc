@@ -32,7 +32,6 @@ void ReservedIrRegisters::Initialize()
     RDI  = std::make_shared<Temp>();
     RSI = std::make_shared<Temp>();
     RDX  = std::make_shared<Temp>();
-    RAX = std::make_shared<Temp>();
     RCX  = std::make_shared<Temp>();
     R8 = std::make_shared<Temp>();
     R9  = std::make_shared<Temp>();

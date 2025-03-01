@@ -48,6 +48,40 @@ std::shared_ptr<Temp> x86Frame::ReturnLocation()
 
 void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params)
 {
+    // The number of parameters will be indexes into the vector of possible param locations which will contain the regs in a correct order
+
+    int integerParams = 0;
+    int floatParams = 0;
+
+    for (auto &&variable : params)
+    {
+        auto paramType = variable->GetType();
+
+        // The parameter is a float
+
+        if(paramType->Compatible(Helper::FloatType))
+        {
+            auto correctRegister = ReservedIrRegisters::incomingFloatParameterLocations[floatParams];
+
+            variable->access = std::make_shared<InReg>(
+                correctRegister
+            );
+
+            floatParams++;
+        }
+        // If the paremeter is not float type, then it must be int
+        else
+        {
+            auto correctRegister = ReservedIrRegisters::incomingIntegerParameterLocations[integerParams];
+
+            variable->access = std::make_shared<InReg>(
+                correctRegister
+            );
+
+            integerParams++;
+        }
+        
+    }
     
 }
 
@@ -106,8 +140,7 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
         std::make_shared<IRTemp>(stackPointer),
         std::make_shared<IRConst>(frameSize));
 
-    auto evaluateSub = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(stackPointer),
+    auto evaluateSub = std::make_shared<IREvaluateExpression>(
         subInstruction
         );
 

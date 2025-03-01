@@ -1,16 +1,4 @@
-create class testParent
-	create public integer first
-
-
-create class testClass derives from testParent
-	create public integer second
-
-	create constructor with integer a
-		return 3
-	
-	create public integer function testClassFunc
-		second equals 5
-
-create testClass testObj with 5
-
-create integer asd equals call testClassFunc inside testObj
+create integer function testFunc with integer a
+	create integer b
+	b equals a
+	return b

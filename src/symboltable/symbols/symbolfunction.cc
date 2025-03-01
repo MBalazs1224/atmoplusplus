@@ -157,8 +157,8 @@ std::shared_ptr<BoolList>  FunctionSymbol::GetWetherVariablesEscape()
 
     for (size_t i = 0; i < this->local_variables.size(); i++)
     {
-        // In this language non of the variables escape, so false will indicate it for all of them
-        boolList = std::make_shared<BoolList>(false, boolList);
+        // In this language all local variables should be in frame
+        boolList = std::make_shared<BoolList>(true, boolList);
     }
 
     return boolList;

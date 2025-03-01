@@ -5,6 +5,11 @@ InReg::InReg()
     temp = std::make_shared<Temp>();
 }
 
+InReg::InReg(std::shared_ptr<Temp> incomingTemp)
+{
+    this->temp = incomingTemp;
+}
+
 std::string InReg::ToString()
 {
     return temp->ToString();
