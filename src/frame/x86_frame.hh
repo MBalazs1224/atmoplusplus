@@ -28,6 +28,11 @@ class x86Frame : public Frame
 
         std::shared_ptr<Temp> ReturnLocation() override;
 
+        /// @brief Alligns the given parameter to 16.
+        /// @param size The real size.
+        /// @return The size alligned.
+        int AlignTo16Bytes(int size);
+
         /// @brief Will allocate all incoming parameters their correct register as their access locations.
         /// @param params The vector containing a pointer to all incoming parameters
         void AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params) override;

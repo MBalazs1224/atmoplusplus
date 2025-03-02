@@ -107,6 +107,18 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit1(std::shared_
     
 }
 
+int x86Frame::AlignTo16Bytes(int size)
+{
+     // Find how much extra space is needed
+    int remainder = size % 16;
+    if (remainder == 0)
+    {
+        // It's already aligned
+        return size;
+    }
+    return size + (16 - remainder);
+}
+
 std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string functionName, std::shared_ptr<IRStatement> body)
 {
 
@@ -126,6 +138,12 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
     // The frame size is already calculated
 
     auto frameSize = -allocated;
+
+    // For now it pushes all registers onto the stack to save them, 8 bytes is the size of a push on 64 bit
+    frameSize += ReservedIrRegisters::calleeSavedRegs.size() * 8;
+
+    // The frame needs to be aligned to 16 bytes to enable nested calls
+    frameSize = AlignTo16Bytes(frameSize);
 
     auto enterIns = std::make_shared<IREnter>(frameSize);
 
