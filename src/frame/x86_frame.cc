@@ -135,13 +135,20 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     statements.push_back(body);
 
-    // ------------------------ Reset the stack pointer (epilogue), use leave ins
+    // Automatically return to the caller if the bodies end is reached
+
+    // ------------------------ Reset the stack pointer and return to caller (epilogue), use leave and ret ins
 
     auto leaveIns = std::make_shared<IRLeave>();
 
 
 
     statements.push_back(leaveIns);
+
+    auto retIns = std::make_shared<IRReturn>();
+
+    statements.push_back(retIns);
+
 
     
 
