@@ -119,30 +119,7 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     statements.push_back(labelInstruction);
 
-    // ------------------------ Adjust stack pointer (prologue)
-
-    // Push rbp to stack
-
-    // rsp
-    auto stackPointer = this->StackPointer();
-    // rbp
-    auto framePointer = ReservedIrRegisters::FramePointer;
-
-    // Push rbp to top of the stack
-    auto pushEBP = std::make_shared<IRPush>(
-        std::make_shared<IRTemp>(framePointer)
-    );
-
-    statements.push_back(pushEBP);
-
-    // move rsp into rbp
-
-    auto moveESPIntoEBP = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(framePointer),
-        std::make_shared<IRTemp>(stackPointer)
-    );
-
-    statements.push_back(moveESPIntoEBP);
+    // ------------------------ Adjust stack pointer (prologue), use ENTER instruction for efficiency
 
 
 
@@ -150,38 +127,21 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     auto frameSize = -allocated;
 
-    // Generate isntruction to subtract the frameSize from the framePointer
-    auto subInstruction = std::make_shared<IRBinaryOperator>(
-        BinaryOperator::MINUS,
-        std::make_shared<IRTemp>(stackPointer),
-        std::make_shared<IRConst>(frameSize));
+    auto enterIns = std::make_shared<IREnter>(frameSize);
 
-    auto evaluateSub = std::make_shared<IREvaluateExpression>(
-        subInstruction
-        );
-
-    statements.push_back(evaluateSub);
+    statements.push_back(enterIns);
 
     // ------------------------ Add body instructions to the statements
 
     statements.push_back(body);
 
-    // ------------------------ Reset the stack pointer (epilogue)
+    // ------------------------ Reset the stack pointer (epilogue), use leave ins
 
-    // mobe rbp into rsp
+    auto leaveIns = std::make_shared<IRLeave>();
 
-    auto moveRBPIntoRSP = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(stackPointer),
-        std::make_shared<IRTemp>(framePointer)
-    );
-    statements.push_back(moveRBPIntoRSP);
 
-    // Pop rbp
-    auto popRBP = std::make_shared<IRPop>(
-        std::make_shared<IRTemp>(framePointer)
-    );
 
-    statements.push_back(popRBP);
+    statements.push_back(leaveIns);
 
     
 

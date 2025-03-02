@@ -11,3 +11,4 @@
 #include "ir_syscall.hh"
 #include "../expressions/relational_operators.hh"
 #include "ir_leave.hh"
+#include "ir_enter.hh"

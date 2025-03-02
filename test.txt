@@ -5,6 +5,8 @@ create class testClass
 		a equals asd
 
 	create void function testFunc
+		create integer testInt
+		create float testFloat
 		a equals 5
 		return 3
 
