@@ -29,11 +29,12 @@ class Frame
         std::shared_ptr<AccessList> formals;
 
         /*
-        * @brief Allocates a new local variable in the frame
-        * @param escape - whether the variable escapes the frame or not
-        * @return the Access object to the variable
+        * @brief Allocates a new local variable in the frame.
+        * @param escape  Whether the variable escapes the frame or not.
+        * @param size  The size of the variable.
+        * @return the Access object to the variable.
         */
-        virtual std::shared_ptr<Access> allocLocal(bool escape) = 0;
+        virtual std::shared_ptr<Access> allocLocal(bool escape, int size) = 0;
 
 
         virtual std::shared_ptr<Temp> StackPointer() = 0;

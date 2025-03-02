@@ -12,11 +12,11 @@ FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::s
         );
     }
 
-FunctionSymbol::FunctionSymbol(std::vector<std::shared_ptr<Attribute>> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::make_unique<BodyNode>()) {}
+FunctionSymbol::FunctionSymbol(std::vector<std::shared_ptr<Attribute>> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::move(body_in)) {}
 
 FunctionSymbol::FunctionSymbol(std::unique_ptr<BodyNode> body_in) : FunctionSymbol(
     std::vector<std::shared_ptr<Attribute>>(),
-    std::make_unique<BodyNode>(),
+    std::move(body_in),
     std::vector<std::shared_ptr<VariableSymbol>>()
 ) {}
 
@@ -163,6 +163,7 @@ std::shared_ptr<BoolList>  FunctionSymbol::GetWetherVariablesEscape()
     {
         // In this language all local variables should be in frame
         boolList = std::make_shared<BoolList>(true, boolList);
+        boolList->sizeOfVariable = local_variables[i]->GetSize();
     }
 
     return boolList;

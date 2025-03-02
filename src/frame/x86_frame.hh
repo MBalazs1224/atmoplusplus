@@ -22,7 +22,7 @@ class x86Frame : public Frame
 
         std::shared_ptr<Frame> newFrame(Label name_in, std::shared_ptr<BoolList> formals_in) override;
 
-        std::shared_ptr<Access> allocLocal(bool escape) override;
+        std::shared_ptr<Access> allocLocal(bool escape, int) override;
 
         std::shared_ptr<Temp> StackPointer() override;
 

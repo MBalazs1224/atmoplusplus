@@ -1,6 +1,11 @@
-create integer function testFunc
-	create integer a
+create class testClass
 	create integer b
-	create integer c
-	return a
+	create integer a
+	create constructor with integer asd
+		a equals asd
 
+	create void function testFunc
+		a equals 5
+
+
+create testClass testVar with 5

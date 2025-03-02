@@ -8,22 +8,22 @@ std::shared_ptr<Frame> x86Frame::newFrame(Label name_in, std::shared_ptr<BoolLis
     // Iterate through the formals and allocate a new local for each one, the allocated list will be backwards (the last allocated will be the first pointer)
     for (auto it = formals_in; it != nullptr; it = it->tail)
     {
-        auto access = frame->allocLocal(it->head);
+        auto access = frame->allocLocal(it->head, it->sizeOfVariable);
         frame->formals = std::make_shared<AccessList>(access, frame->formals);
     }
 
     return frame;
 }
 
-std::shared_ptr<Access> x86Frame::allocLocal(bool escapes)
+std::shared_ptr<Access> x86Frame::allocLocal(bool escapes, int size)
 {
     // TODO: Implement that not all variables are the same size
     if (escapes)
     {
         auto ret = std::make_shared<InFrame>(allocated);
 
-        // Allocate bytes for the next variable (4 bytes is the word size)
-        allocated -= 8;
+        // Allocate bytes for the next variable
+        allocated -= size;
         return ret;
     }
     else
