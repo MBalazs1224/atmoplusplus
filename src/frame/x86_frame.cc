@@ -153,6 +153,18 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit3(std::string 
 
     statements.push_back(body);
 
+    // ------------------------ Reset calle-saved registers
+
+    // Pop all registers back in reverse order because of the stack
+
+    for (size_t i = ReservedIrRegisters::calleeSavedRegs.size() - 1; i > 0; i--)
+    {
+        auto push = std::make_shared<IRPop>(
+            std::make_shared<IRTemp>(ReservedIrRegisters::calleeSavedRegs[i])
+        );
+        statements.push_back(push);
+    }
+
     // Automatically return to the caller if the bodies end is reached
 
     // ------------------------ Reset the stack pointer and return to caller (epilogue), use leave and ret ins
