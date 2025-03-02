@@ -17,7 +17,7 @@ bool ReturnStatementNode::Check()
 std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
 {
 
-    // The return value needs to be moved into RAX and a ret instruction needs to be generated
+    // The return value needs to be moved into RAX then a leave and a ret instruction needs to be generated
 
     auto expressionAsIR = expression->TranslateExpressionToIr()->ToValueExpression();
 
@@ -28,9 +28,16 @@ std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
 
     auto ret = std::make_shared<IRReturn>();
 
+    auto leave = std::make_shared<IRLeave>();
+
+    auto leaveThenReturn = std::make_shared<IRSequence>(
+        leave,
+        ret
+    );
+
     auto seq = std::make_shared<IRSequence>(
         moveExpIntoRAX,
-        ret
+        leaveThenReturn
     );
 
 

@@ -6,6 +6,7 @@ create class testClass
 
 	create void function testFunc
 		a equals 5
+		return 3
 
 
 create testClass testVar with 5
