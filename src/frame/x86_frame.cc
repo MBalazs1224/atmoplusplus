@@ -8,7 +8,7 @@ std::shared_ptr<Frame> x86Frame::newFrame(Label name_in, std::shared_ptr<BoolLis
     // Iterate through the formals and allocate a new local for each one, the allocated list will be backwards (the last allocated will be the first pointer)
     for (auto it = formals_in; it != nullptr; it = it->tail)
     {
-        auto access = allocLocal(it->head);
+        auto access = frame->allocLocal(it->head);
         frame->formals = std::make_shared<AccessList>(access, frame->formals);
     }
 

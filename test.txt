@@ -1,3 +1,6 @@
-create class testClass
-	create integer function testFunc
-		return 0
+create integer function testFunc
+	create integer a
+	create integer b
+	create integer c
+	return a
+
