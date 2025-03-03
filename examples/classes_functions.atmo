@@ -1,0 +1,8 @@
+create class testClass
+	create public integer function testFunc
+		return 3
+
+
+create testClass testObj
+
+create integer testInt equals call testFunc inside testObj

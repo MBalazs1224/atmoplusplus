@@ -1,0 +1,2 @@
+create integer a equals 5 times 6 plus 4
+create float b equals 4 divided by 2

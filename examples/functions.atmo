@@ -1,0 +1,17 @@
+create integer function testIntFunc
+	create integer a
+	create float b equals 10.0
+	return a / 2 * b
+
+create float function testParamFunc with float a
+	return a * 2
+
+
+create void function testVoidFunc
+	create integer a
+
+
+create integer testIntVar equals call testIntFunc
+create float testFloatVar equals call testParamFunc with .5
+
+call testVoidFunc

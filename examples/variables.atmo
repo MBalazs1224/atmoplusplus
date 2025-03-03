@@ -1,0 +1,2 @@
+create integer a equals 5
+create integer b equals a

@@ -1,0 +1,13 @@
+create class testParent
+	create public virtual integer function testVirtual
+		return 3
+
+create class testChild derives from testParent
+	create public overriding integer function testVirtual
+		return 3
+
+
+create testParent testObj
+
+
+create integer testInt equals call testVirtual inside testObj

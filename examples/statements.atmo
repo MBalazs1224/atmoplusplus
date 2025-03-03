@@ -1,0 +1,9 @@
+create integer testInt equals 0
+
+if testInt greater than 5
+	return 5
+else
+	return 3
+
+until testInt less than 4
+	testInt equals testInt plus 1

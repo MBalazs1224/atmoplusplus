@@ -1,0 +1,10 @@
+create class testClass
+	create public integer testInt
+
+	create constructor with integer testParam
+		testInt equals testParam
+
+
+create testClass testObj with 5
+
+testInt inside testObj equals 10

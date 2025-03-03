@@ -1,0 +1,13 @@
+create class testParent
+	create integer testInt
+	create constructor with integer testParam
+		testInt equals 5
+
+create class testChild derives from testParent
+	create integer testLocal
+	create constructor and call parent with 5
+		testLocal equals 100
+
+create testChild testObj
+
+testInt inside testObj equals 0
