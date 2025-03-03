@@ -120,8 +120,8 @@ std::shared_ptr<IRStatement> ArraySubscriptExpression::TranslateBoundaryCheckInt
     );
 
     auto sysCallThenPrintLabelForIndexing = std::make_shared<IRSequence>(
-        std::make_shared<IRLabel>(labelForIndexing),
-        std::make_shared<IRSysCall>()
+        std::make_shared<IRSysCall>(),
+        std::make_shared<IRLabel>(labelForIndexing)
 
     );
 
@@ -131,8 +131,8 @@ std::shared_ptr<IRStatement> ArraySubscriptExpression::TranslateBoundaryCheckInt
     );
 
     auto printExitLabelThenExit = std::make_shared<IRSequence>(
-        initRegsThanSysCall,
-        std::make_shared<IRLabel>(labelForAutoExit)
+        std::make_shared<IRLabel>(labelForAutoExit),
+        initRegsThanSysCall
     );
 
     // ----------- GENERATE BOUNDARY CHECK -----------
