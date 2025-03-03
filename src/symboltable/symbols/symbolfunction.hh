@@ -41,7 +41,7 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
 
     std::unique_ptr<BodyNode> body;
     
-    FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::shared_ptr<Attribute>> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in);
+    FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::shared_ptr<Attribute>> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in, std::string name_in);
 
     // Constructor for a constructor function
     FunctionSymbol(std::vector<std::shared_ptr<Attribute>>, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in);

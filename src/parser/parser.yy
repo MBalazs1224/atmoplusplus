@@ -360,7 +360,7 @@ function_create: CREATE attributes function_return_type FUNCTION IDENTIFIER argu
     SymbolTable::DecreaseScope();
 
     //TODO: The semantics analyzer will have to check if the function is on the root
-    auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7));
+    auto functionSymbol = std::make_shared<FunctionSymbol>(std::move($3),std::move($2),$6,std::move($7),$5);
     functionSymbol->location = @5;
     SymbolTable::Insert($5,functionSymbol);
     $$ = std::make_unique<FunctionDefinitionNode>(std::move(functionSymbol));

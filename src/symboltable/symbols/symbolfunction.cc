@@ -1,8 +1,9 @@
 #include "symbolfunction.hh"
 
-FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::shared_ptr<Attribute>> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in)
+FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::shared_ptr<Attribute>> attr_in, std::vector<std::shared_ptr<VariableSymbol>> args_in, std::unique_ptr<BodyNode> body_in, std::string name_in)
     : SymbolTableElement(type_in, std::move(attr_in)), arguments(std::move(args_in)),body(std::move(body_in))
     {
+        this->name = name_in;
         // By defaule the generated name in assembly should be the function's name
         this->nameInAssembly = name;
 
@@ -12,7 +13,7 @@ FunctionSymbol::FunctionSymbol(std::shared_ptr<Type> type_in, std::vector<std::s
         );
     }
 
-FunctionSymbol::FunctionSymbol(std::vector<std::shared_ptr<Attribute>> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::move(body_in)) {}
+FunctionSymbol::FunctionSymbol(std::vector<std::shared_ptr<Attribute>> attr_in, std::unique_ptr<BodyNode> body_in, std::vector<std::shared_ptr<VariableSymbol>> args_in) : FunctionSymbol(nullptr, attr_in, args_in,std::move(body_in), "") {}
 
 FunctionSymbol::FunctionSymbol(std::unique_ptr<BodyNode> body_in) : FunctionSymbol(
     std::vector<std::shared_ptr<Attribute>>(),

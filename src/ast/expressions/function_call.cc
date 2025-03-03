@@ -173,7 +173,7 @@ std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
     // FIXME: Function call to a label of the function name might be a wrong implementation
 
     // Generate the function call
-    auto functionCall = std::make_shared<IRCall>(std::make_shared<IRName>(std::make_shared<Label>(function->name)), argumentsList);
+    auto functionCall = std::make_shared<IRCall>(std::make_shared<IRName>(std::make_shared<Label>(function->nameInAssembly)), argumentsList);
 
     //TODO:  Might be a wrong implementation of function call in IR
 
