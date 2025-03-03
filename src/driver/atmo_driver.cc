@@ -165,6 +165,7 @@ std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector
     for (size_t i = 0; i < variables.size(); i++)
     {
         boolList = std::make_shared<BoolList>(true, boolList);
+        boolList->sizeOfVariable = variables[i]->GetSize();
     }
 
     return boolList;

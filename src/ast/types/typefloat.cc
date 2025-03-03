@@ -13,6 +13,6 @@ std::string TypeFloat::ToString()
 
 DataSize TypeFloat::GetSize()
 {
-    // Float type is 8 bytes because it's always double precision
-    return DataSize::QWord;
+    // Float type is 4 bytes because it's always single precision (double would be 8 bytes)
+    return DataSize::DWord;
 }
