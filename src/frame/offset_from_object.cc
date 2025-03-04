@@ -14,10 +14,14 @@ std::shared_ptr<IRExpression> OffsetFromObject::AsExpression(std::shared_ptr<IRE
         correctOffset = std::make_shared<IRTemp>(ReservedIrRegisters::RDI);
     }
     
-
-    return std::make_shared<IRBinaryOperator>(
-        BinaryOperator::PLUS,
-        correctOffset,
-        std::make_shared<IRConst>(offset)
+    
+    // We need to dereference that memory location
+    return std::make_shared<IRMem>(
+        std::make_shared<IRBinaryOperator>(
+            BinaryOperator::PLUS,
+            correctOffset,
+            std::make_shared<IRConst>(offset)
+        )
     );
+
 }
