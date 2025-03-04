@@ -170,6 +170,11 @@ std::shared_ptr<BoolList>  FunctionSymbol::GetWetherVariablesEscape()
     return boolList;
 }
 
+bool FunctionSymbol::IsInClass()
+{
+    return containingClass != nullptr;
+}
+
 /*
     1. pseudo-instructions, as needed in the particular assembly language, to an-
     nounce the beginning of a function;
@@ -241,7 +246,10 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
         indexOfLocalVar--;
     }
 
-    currentFrame->AllocateRegisters(this->arguments);
+
+    
+
+    currentFrame->AllocateRegisters(this->arguments, this->IsInClass());
     
     // (1-2-3-6-9-10-11) Use the frame's function to do the neccessary instructions
     auto bodyInstructions = this->body->TranslateToIR();

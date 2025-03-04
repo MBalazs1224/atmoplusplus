@@ -35,6 +35,9 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
         // Will point to the class, where this function can be found inside
         std::shared_ptr<ClassSymbol> containingClass;
 
+        /// @brief Will return wether the function was defined inside a class.
+        bool IsInClass();
+
 
     // Contains all the local variables defined in the function
     std::vector<std::shared_ptr<VariableSymbol>> local_variables;
