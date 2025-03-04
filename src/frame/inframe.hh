@@ -16,4 +16,5 @@ class InFrame : public Access
         std::string ToString();
 
         std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> framePointer) override;
+        std::shared_ptr<IRExpression> AsExpressionNoDereference(std::shared_ptr<IRExpression> framePointer) override;
 };

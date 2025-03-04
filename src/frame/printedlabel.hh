@@ -15,5 +15,4 @@ class PrintedLabel : public Access
         /// @param startOffset The offset will be ignored.
         /// @return Will return an expression that points to the needed label.
         std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> startOffset) override;
-
 };

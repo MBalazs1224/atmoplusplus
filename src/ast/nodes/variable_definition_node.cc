@@ -181,9 +181,10 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             auto argumentsForConstructor = TranslateArgumentsToConstructorToIR();
 
 
+            auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
 
             auto constructorsChained = constructor->TranslateToIRWithGivenParemeter(
-                varLocation,
+                variable->access->AsExpressionNoDereference(sp), // The variable should be offseted from RSP, but shouldn't be dereferenced
                 argumentsForConstructor
             );
 

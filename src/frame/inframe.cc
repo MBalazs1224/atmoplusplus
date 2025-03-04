@@ -20,3 +20,15 @@ std::shared_ptr<IRExpression> InFrame::AsExpression(std::shared_ptr<IRExpression
             std::make_shared<IRConst>(offset)
         ));
 }
+
+std::shared_ptr<IRExpression> InFrame::AsExpressionNoDereference(std::shared_ptr<IRExpression> framePointer)
+{
+    // Don't dereference the location
+
+    return std::make_shared<IRBinaryOperator>(
+        BinaryOperator::PLUS,
+        framePointer,
+        std::make_shared<IRConst>(offset)
+    );
+}
+
