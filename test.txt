@@ -1,16 +1,6 @@
-create class testClass
+create class testParent
 	create integer b
+create class testClass derives from testParent
 	create integer a
-	create constructor with integer asd
-		a equals asd
 
-	create void function testFunc
-		create integer testInt
-		create float testFloat
-		a equals 5
-		return 3
-
-
-create testClass testVar with 5
-
-call testFunc inside testVar
+create testClass testObj
