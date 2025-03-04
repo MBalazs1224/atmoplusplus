@@ -12,3 +12,5 @@ create class testClass
 
 
 create testClass testVar with 5
+
+call testFunc inside testVar
