@@ -6,8 +6,8 @@
 // Represents wordSize bytes of memory starting at exp location
 class IRMem : public IRExpression
 {
-        std::shared_ptr<IRExpression> exp;
     public:
+    std::shared_ptr<IRExpression> exp;
         IRMem(std::shared_ptr<IRExpression>);
 
         std::string ToDotFormat(int &nodeCounter) override;

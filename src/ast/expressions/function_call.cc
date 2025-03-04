@@ -117,6 +117,26 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 
     assert(functionParams.size() == arguments.size());
 
+    // If the expression is a MemberAccessExpression then that means, that the function is inside a class, so the location of the object should be moved into RDI
+    if(auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(expression))
+    {
+
+        auto objectLocation = memberAccess->GetRight()->TranslateExpressionToIr()->ToValueExpression();
+        
+        // If the objectLocation returns a location that it want's todereference (which would mess up the pointer passing), we just bypass the mem node and take it's children as the location
+        if(auto mem = std::dynamic_pointer_cast<IRMem>(objectLocation))
+        {
+            objectLocation = mem->exp;
+        }
+
+        auto move = std::make_shared<IRMove>(
+            std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
+            objectLocation
+        );
+
+        statements.push_back(move);
+    }
+
     for (size_t i = 0; i < this->arguments.size(); i++)
     {
         auto move = std::make_shared<IRMove>(
@@ -136,6 +156,8 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     auto funcEvaluated = std::make_shared<IREvaluateExpression>(functionCall);
 
     statements.push_back(funcEvaluated);
+
+
     
     
     // The function will return the return value inside RAX, so we need to evaluate the function and get RAX for the result
