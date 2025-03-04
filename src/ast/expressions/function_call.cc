@@ -120,8 +120,8 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     for (size_t i = 0; i < this->arguments.size(); i++)
     {
         auto move = std::make_shared<IRMove>(
-            arguments[i]->TranslateExpressionToIr()->ToValueExpression(), // The argument's value
-            functionParams[i]->TranslateExpressionToIr()->ToValueExpression() // The param's location
+            functionParams[i]->TranslateExpressionToIr()->ToValueExpression(), // The param's location
+            arguments[i]->TranslateExpressionToIr()->ToValueExpression() // The argument's value
         );
 
         statements.push_back(move);

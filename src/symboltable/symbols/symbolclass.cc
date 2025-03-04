@@ -223,8 +223,8 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         // We need all constructors to move the function's location into the correct pointer for polymorphism
         statementsForConstructors.push_back(
             std::make_shared<IRMove>(
-                RDIDereferencePlusOffset,
-                std::make_shared<IRName>(labelForFunction)
+                std::make_shared<IRName>(labelForFunction),
+                RDIDereferencePlusOffset
             )
         );
 
@@ -278,8 +278,8 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         // We need all constructors to move the function's location into the correct pointer for polymorphism
         statementsForConstructors.push_back(
             std::make_shared<IRMove>(
-                RDIDereferencePlusOffset,
-                std::make_shared<IRName>(labelForFunction)
+                std::make_shared<IRName>(labelForFunction),
+                RDIDereferencePlusOffset
             )
         );
 

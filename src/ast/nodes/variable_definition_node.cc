@@ -122,8 +122,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         auto initializingValue = expression->TranslateExpressionToIr()->ToValueExpression();
 
         auto moveValueIntoVariable = std::make_shared<IRMove>(
-            initializingValue,
-            varLocation
+            varLocation,
+            initializingValue
         );
 
         return moveValueIntoVariable;
@@ -165,8 +165,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         // Move the return value of the function to this variable's location
 
         auto moveToLocation = std::make_shared<IRMove>(
-            callInitClass,
-            varLocation
+            varLocation,
+            callInitClass
         );
 
         statements.push_back(moveToLocation);
@@ -257,8 +257,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         // Call the external function and move it's return value into this variable's location
 
         auto moveSpaceToLocation = std::make_shared<IRMove>(
-            evaluateFuncCallAndGetRAX,
-            varLocation
+            varLocation,
+            evaluateFuncCallAndGetRAX
         );
 
         // Move the size of the array into the first element
