@@ -102,6 +102,9 @@ void ConstructorDefinitionNode::TranslateToIRWithGivenParemeter(std::shared_ptr<
             passedParam->expression // The given parameter
         );
 
+        passedParam = passedParam->next;
+        paramIndex++;
+
         statements.push_back(move);
     }
     

@@ -164,9 +164,14 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         // Move the return value of the function to this variable's location
 
+        auto evaluateAndGetRAX = std::make_shared<IREseq>(
+            std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
+            std::make_shared<IREvaluateExpression>(callInitClass)
+        );
+
         auto moveToLocation = std::make_shared<IRMove>(
             varLocation,
-            callInitClass
+            evaluateAndGetRAX
         );
 
         statements.push_back(moveToLocation);
