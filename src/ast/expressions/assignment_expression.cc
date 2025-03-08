@@ -67,7 +67,18 @@ std::shared_ptr<TranslateExpression> AssignmentExpression::TranslateExpressionTo
 
     // The left hand side will either be a binary plus (framePointer + offset, if the var is in the frame) or an inreg which is just a register, that's why I think it needs to be a value expression
 
-    auto leftExp = left->TranslateExpressionToIr()->ToValueExpression();
+    std::shared_ptr<IRExpression> leftExp;
+
+    // If the variable is inside a class (the expression is member access), we don't need to dereference it
+
+    if(std::dynamic_pointer_cast<MemberAccessExpression>(left))
+    {
+        leftExp = left->TranslateExpressionToIrNoDereference()->ToValueExpression();
+    }
+    else
+    {
+        leftExp = left->TranslateExpressionToIr()->ToValueExpression();
+    }
 
     auto rightExp = right->TranslateExpressionToIr()->ToValueExpression();
 

@@ -1,7 +1,9 @@
 #pragma once
 #include "two_operand_expression.hh"
+#include "member_access_expression.hh"
 #include <memory>
 #include <iostream>
+
 
 class AssignmentExpression : public TwoOperandExpression
 {
