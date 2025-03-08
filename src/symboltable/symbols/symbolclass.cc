@@ -195,6 +195,7 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
     // Set that the function can be found inside this class
     function->containingClass = shared_from_this();
 
+
     // If the function is virtual, then we need to allocate space for a pointer for it
     if(function->isVirtual)
     {
@@ -435,6 +436,9 @@ bool ClassSymbol::ProcessBody()
             constructorDefinition->function->access = std::make_shared<PrintedLabel>(
                 std::make_shared<Label>(constructorDefinition->function->nameInAssembly)
             );
+            
+            // Set to the constructor function, that it can be found inside this class
+            constructorDefinition->function->containingClass = shared_from_this();
 
 
             // TODO: Implement constructor checking
@@ -462,6 +466,8 @@ bool ClassSymbol::ProcessBody()
             // Set the correct name for the destructor
 
             destructorFunction->nameInAssembly = Helper::FormatString("$_%s_destructor", this->name.c_str());
+
+            destructorFunction->containingClass = shared_from_this();
             
             // Set the correct access
 

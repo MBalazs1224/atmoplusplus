@@ -83,14 +83,6 @@ void ConstructorDefinitionNode::TranslateToIRWithGivenParemeter(std::shared_ptr<
     // Move the arguments to the correct location
 
     
-    // Move the class pointer into RDI
-    auto moveObjectIntoRDI = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
-        locationOfClassObject
-    );
-    
-    statements.push_back(moveObjectIntoRDI);
-    
     size_t paramIndex = 0;
     auto funcParams = function->GetArguments();
     std::shared_ptr<IRExpressionList> passedParam = fullParameterList;

@@ -203,6 +203,19 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
     if(containingClass)
     {
         containingClass->VariablesShouldUseRDI(true);
+
+        // If the function is inside a class, then it receives the this pointer as it's first argument, so we need to adjust the argument vector
+
+        auto classTypeVar = std::make_shared<VariableSymbol>(
+            containingClass, // The type of the variable is the type of the containing class (ClassSymbols act as types)
+            std::vector<std::shared_ptr<Attribute>> {std::make_shared<AttributePrivate>()} // Attribute must be a vector containng private (doesn't really matter, because it's not inside a class but just in case)
+        );
+
+        // Insert the this pointer to the start of the vector
+        arguments.insert(
+            arguments.begin(),
+            classTypeVar
+        );
     }
 
     // If there is no body for the function (like empty constructors or destructors) we just define a dummy body which will just return immediately (maybe we should just ignore these types of function? FIXME)
