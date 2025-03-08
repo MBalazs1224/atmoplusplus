@@ -1,6 +1,3 @@
-create class testParent
-	create integer b
-create class testClass derives from testParent
-	create integer a
+create integer a
 
-create testClass testObj
+a equals 5

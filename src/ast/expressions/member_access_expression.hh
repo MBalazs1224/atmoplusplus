@@ -21,6 +21,8 @@ class MemberAccessExpression : public TwoOperandExpression, public MemberContain
 
     std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
 
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIrNoDereference() override;
+
     std::shared_ptr<IRStatement> TranslateToIR() override;
 
 };

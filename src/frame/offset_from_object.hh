@@ -16,5 +16,7 @@ class OffsetFromObject : public Access
         */
         std::shared_ptr<IRExpression> AsExpression(std::shared_ptr<IRExpression> objectLocation) override;
 
+        std::shared_ptr<IRExpression> AsExpressionNoDereference(std::shared_ptr<IRExpression> objectLocation) override;
+
         OffsetFromObject(int);
 };

@@ -92,6 +92,26 @@ std::shared_ptr<TranslateExpression> MemberAccessExpression::TranslateExpression
     return std::make_shared<TranslateValueExpression>(finalOffset);
 }
 
+std::shared_ptr<TranslateExpression> MemberAccessExpression::TranslateExpressionToIrNoDereference()
+{
+    // The right hand side will always yield the location of the object
+    auto locationOfObject = right->TranslateExpressionToIr()->ToValueExpression();
+
+    // The left expression will always be an identifier either a variable or function (and the Check function checked that it's valid)
+    auto leftID = std::dynamic_pointer_cast<Identifier>(left);
+
+    auto element = leftID->GetElement();
+
+    // The check functions already checked that the identifier validly points to a class member so  we don't have to check it again
+    auto classMember = std::dynamic_pointer_cast<ClassMember>(element);
+
+    auto finalOffset = classMember->access->AsExpressionNoDereference(
+        locationOfObject
+    );
+
+    return std::make_shared<TranslateValueExpression>(finalOffset);
+}
+
 std::shared_ptr<IRStatement> MemberAccessExpression::TranslateToIR()
 {
     //TODO: "Implement MemberAccessExpression to ir"

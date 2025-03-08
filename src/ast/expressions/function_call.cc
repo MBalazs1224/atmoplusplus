@@ -108,7 +108,7 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     std::shared_ptr<IRExpressionList> argumentsList = TranslateArgumentsToIR();
 
     
-    auto funcLocation = expression->TranslateExpressionToIr()->ToValueExpression();
+    auto funcLocation = expression->TranslateExpressionToIrNoDereference()->ToValueExpression();
 
     // Move the arguments to the location of the parameters
 
