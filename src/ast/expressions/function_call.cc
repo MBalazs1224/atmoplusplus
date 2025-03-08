@@ -115,27 +115,21 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     // Will return the parameters, the name just wrong for now
     auto functionParams = this->function->GetArguments();
 
-    assert(functionParams.size() == arguments.size());
 
     // If the expression is a MemberAccessExpression then that means, that the function is inside a class, so the location of the object should be moved into RDI
     if(auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(expression))
     {
 
-        auto objectLocation = memberAccess->GetRight()->TranslateExpressionToIr()->ToValueExpression();
+        // If the wanted function is a member access expression, then that means that the function is inside a class, so the first argument must be the this pointer (which's location is the right element of the member access)
         
-        // If the objectLocation returns a location that it want's todereference (which would mess up the pointer passing), we just bypass the mem node and take it's children as the location
-        if(auto mem = std::dynamic_pointer_cast<IRMem>(objectLocation))
-        {
-            objectLocation = mem->exp;
-        }
-
-        auto move = std::make_shared<IRMove>(
-            std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
-            objectLocation
+        arguments.insert(
+            arguments.begin(),
+            memberAccess->GetRight()
         );
-
-        statements.push_back(move);
     }
+
+    assert(functionParams.size() == arguments.size());
+
 
     for (size_t i = 0; i < this->arguments.size(); i++)
     {
