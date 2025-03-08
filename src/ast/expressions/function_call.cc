@@ -115,9 +115,11 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     // Will return the parameters, the name just wrong for now
     auto functionParams = this->function->GetArguments();
 
+    auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(expression);
+
 
     // If the expression is a MemberAccessExpression then that means, that the function is inside a class, so the location of the object should be moved into RDI
-    if(auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(expression))
+    if(memberAccess)
     {
 
         // If the wanted function is a member access expression, then that means that the function is inside a class, so the first argument must be the this pointer (which's location is the right element of the member access)
@@ -126,16 +128,27 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
             arguments.begin(),
             memberAccess->GetRight()
         );
+
+        // If the function is inside a class, the first argument must be the this pointer (which shouldn't be dereferenced, that why it needs it's special case)
+        statements.push_back(
+            std::make_shared<IRMove>(
+                functionParams[0]->TranslateExpressionToIr()->ToValueExpression(), // The param's location
+                arguments[0]->TranslateExpressionToIrNoDereference()->ToValueExpression() // The argument's value
+            )
+        );
     }
 
     assert(functionParams.size() == arguments.size());
 
+    // If the function is inside a class, the first argument move is already generated, so we need to start from the second
+    size_t startIndex = memberAccess ? 1 : 0;
 
-    for (size_t i = 0; i < this->arguments.size(); i++)
+
+    for (; startIndex < this->arguments.size(); startIndex++)
     {
         auto move = std::make_shared<IRMove>(
-            functionParams[i]->TranslateExpressionToIr()->ToValueExpression(), // The param's location
-            arguments[i]->TranslateExpressionToIr()->ToValueExpression() // The argument's value
+            functionParams[startIndex]->TranslateExpressionToIr()->ToValueExpression(), // The param's location
+            arguments[startIndex]->TranslateExpressionToIr()->ToValueExpression() // The argument's value
         );
 
         statements.push_back(move);

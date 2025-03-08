@@ -15,5 +15,7 @@ class VariableSymbol : public SymbolTableElement, public ClassMember
 
 
     std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIrNoDereference() override;
     std::shared_ptr<IRStatement> TranslateToIR() override;
 };

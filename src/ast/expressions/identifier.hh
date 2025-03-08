@@ -36,6 +36,7 @@ class Identifier : public IExpressionable, public Type, public MemberContainer
     DataSize GetSize() override;
 
     std::shared_ptr<TranslateExpression> TranslateExpressionToIr() override;
+    std::shared_ptr<TranslateExpression> TranslateExpressionToIrNoDereference() override;
 
     std::shared_ptr<IRStatement> TranslateToIR() override;
 };

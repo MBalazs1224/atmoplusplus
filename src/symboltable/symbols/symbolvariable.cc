@@ -70,7 +70,7 @@ DataSize VariableSymbol::GetSize()
 
 std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
 {
-    // Use the access object to retreive this variable's location
+    // Use the access object to retrieve this variable's location
 
     auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
     auto access_exp = access->AsExpression(fp_exp);
@@ -78,7 +78,21 @@ std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
     return std::make_shared<TranslateValueExpression>(access_exp);
 }
 
+std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIrNoDereference()
+{
+
+    auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
+
+    // Use the no dereference function
+    auto access_exp = access->AsExpressionNoDereference(fp_exp);
+    
+    return std::make_shared<TranslateValueExpression>(access_exp);
+}
+
+
 std::shared_ptr<IRStatement> VariableSymbol::TranslateToIR()
 {
     throw std::runtime_error("VariableSymbol should not be translated to IR");
 }
+
+

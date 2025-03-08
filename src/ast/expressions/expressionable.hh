@@ -24,4 +24,7 @@ class IExpressionable : public Node
         
         // Will return an TranslateExpression type object that will represent the type of the  expression
         virtual std::shared_ptr<TranslateExpression> TranslateExpressionToIr() = 0;
+
+        // Will return an TranslateExpression type object that will represent the type of the  expression, but won't generate any dereferencing 
+        virtual std::shared_ptr<TranslateExpression> TranslateExpressionToIrNoDereference();
 };
