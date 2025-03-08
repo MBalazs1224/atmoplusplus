@@ -60,9 +60,8 @@ class Frame
         virtual std::shared_ptr<IRStatement> ProcessFunctionEntryAndExit3(std::string functionName, std::shared_ptr<IRStatement> body) = 0;
         /// @brief Will allocate all incoming parameters their correct register as their access locations.
         /// @param params The vector containing a pointer to all incoming parameters.
-        /// @param isInClass Wether the function is inside a class.
 
-        virtual void AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params, bool isInClass) = 0;
+        virtual void AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params) = 0;
 
 
 };

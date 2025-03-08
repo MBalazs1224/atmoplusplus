@@ -46,13 +46,11 @@ std::shared_ptr<Temp> x86Frame::ReturnLocation()
     return ReservedIrRegisters::RAX;
 }
 
-void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params, bool inClass)
+void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params)
 {
-    // The number of parameters will be indexes into the vector of possible param locations which will contain the regs in a correct order
+    // The number of parameters will be indexes into the vector of possible param locations which will contain the regs in a correct
 
-    // If the function is in a class, then the first argument (RDI) should be the this pointer, so the regular arguments gets pushed 1 index
-
-    int integerParams = inClass ? 1 : 0;
+    int integerParams = 0;
     int floatParams = 0;
 
     for (auto &&variable : params)
