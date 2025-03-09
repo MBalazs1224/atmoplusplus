@@ -149,25 +149,21 @@
 %token DESTRUCTOR
 %token AT
 
-%left MATCHES NOT_MATCHES
-%right NOT
-%right EQUALS
-%left WITH
-%left AT
+
 %right CALL
-%right INSIDE
+%right INSIDE AT
+%left WITH COMMA
 %left OPEN_BRACKET CLOSE_BRACKET
-%left OR
-%left AND
-%left GREATER_THAN GREATER_THAN_OR_EQUAL LESS_THAN LESS_THAN_OR_EQUAL
+%left NOT
+%left OR AND
+%left EQUALS
+%left LESS_THAN GREATER_THAN LESS_THAN_OR_EQUAL GREATER_THAN_OR_EQUAL MATCHES NOT_MATCHES
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
 %right ARRAY_OF
 
-
-%left COMMA
-
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
+
 
 %nterm<std::shared_ptr<StatementListNode>> statement_list
 %nterm<std::shared_ptr<Node>> statement
@@ -202,6 +198,7 @@
 
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> parent_costructor_call
 %nterm<std::vector<std::shared_ptr<Attribute>>> attributes
+%nterm<std::vector<std::shared_ptr<Attribute>>> attribute_list
 
     /* TODO: Implement error recovery */
 
@@ -239,28 +236,32 @@ statement:function_create {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
 
-variable_definition:CREATE attributes variable_type IDENTIFIER equals_holder function_call_arguments {
+variable_definition:CREATE attributes variable_type IDENTIFIER equals_holder function_call_arguments  %prec CREATE {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,variable);
     auto s = $6;
     $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), $5,AddLocations(variable, $5), $6);
 } 
-attribute: %empty {$$ = AttributePrivateHolder;}
-            | PUBLIC {$$ = AttributePublicHolder;}
+attribute:  PUBLIC {$$ = AttributePublicHolder;}
             | PROTECTED {$$ = AttributeProtectedHolder;}
             | PRIVATE {$$ = AttributePrivateHolder;}
             | STATIC {$$ = AttributeStaticHolder;}
             | VIRTUAL {$$ = AttributeVirtualHolder;}
             | OVERRIDING {$$ = AttributeOverridingHolder;}
+            
+attribute_list: %empty {
+                  $$ = std::vector<std::shared_ptr<Attribute>>(); 
+                  $$.push_back(AttributePrivateHolder);
+                }
+                | attribute_list attribute { 
+                $$.push_back($2); 
+                };
+            
+            
+            
 
-attributes: attribute {
-                $$ = std::vector<std::shared_ptr<Attribute>>();
-                $$.push_back($1);
-            }
-            | attributes attribute {
-                $$.push_back($2);
-            }
+attributes: attribute_list {$$ = $1;};
 
 
 equals_holder: %empty {}
