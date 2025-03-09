@@ -148,6 +148,8 @@
 %token PARENT
 %token DESTRUCTOR
 %token AT
+%token ARGUMENTS
+%token NO_ARGUMENTS
 
 
 %left EQUALS
@@ -182,6 +184,7 @@
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
 %nterm<std::shared_ptr<FunctionCall>> function_call
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
+%nterm<std::vector<std::shared_ptr<IExpressionable>>> optional_arguments
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> constructor_parameters
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> more_arguments
 %nterm<std::vector<std::shared_ptr<Identifier>>> base_classes
@@ -414,53 +417,47 @@ parent_costructor_call: %empty
                             std::vector<std::shared_ptr<IExpressionable>> empty;
                             $$ = empty;
                         }
-                        | AND CALL PARENT function_call_arguments
+                        | AND CALL PARENT WITH function_call_arguments
                         {
-                            $$ = $4;
-                            @$ = @1 + @4;
+                            $$ = $5;
+                            @$ = @1 + @5;
                         }
 
 
-function_call: CALL expression function_call_arguments {
 
-    $$ = std::make_shared<FunctionCall>($2,$3,@1+@2);
+function_call: CALL expression WITH optional_arguments {
+
+    $$ = std::make_shared<FunctionCall>($2,$4,@1+@2);
     }
 
-function_call_arguments: %empty {}
-                        | WITH expression
+optional_arguments: NO_ARGUMENTS
+                    {
+                        // No arguments, return an empty vector
+                        $$ = std::vector<std::shared_ptr<IExpressionable>>();
+                    }
+                    | function_call_arguments AS ARGUMENTS
+                    {
+                        // Arguments provided, return the argument list
+                        $$ = $1;
+                    }
+
+function_call_arguments: expression
                         {
                             std::vector<std::shared_ptr<IExpressionable>> vec;
-                            vec.push_back($2);
+                            vec.push_back($1);
                             $$ = std::move(vec);
-                            @$ = @1 + @2;
+                            @$ = @1;
                         }
-                        | WITH expression more_arguments
+                        | function_call_arguments COMMA expression
                         {
                             // The first added expression should be on the front of the vector, so it can be compared to the function's wanted arguments
 
 
                             //FIXME: Inserting one element to the front of the vector will copy everything to the side which is an O(n) op, should be done with a better performance operation
 
-                            $3.insert($3.begin(), $2);
-                            $$ = std::move($3);
-                            @$ = @1 + @3;
+                            $1.push_back($3);
+                            $$ = $1;
                         }
-    // makes it clear that after the first argument, any next argument must be followed by a COMMA
-more_arguments: COMMA expression
-                {
-                    std::vector<std::shared_ptr<IExpressionable>> vec;
-                    vec.push_back(std::move($2));
-                    $$ = std::move(vec);
-                    @$ = @1 + @2;
-                }
-              | more_arguments COMMA expression
-              {
-                $1.push_back(std::move($3));
-                $$ = std::move($1);
-                @$ = @1 + @3;
-
-              }
-
                         
 
 function_return_type: datatype {$$ = std::move($1);}

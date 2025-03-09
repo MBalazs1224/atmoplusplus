@@ -63,6 +63,8 @@ constructor  (constructor)|(CONSTRUCTOR)
 destructor  (destructor)|(DESTRUCTOR)
 parent  (parent)|(PARENT)
 at  (at)|(AT)
+arguments  (argument)|(ARGUMENT)|(arguments)|(ARGUMENTS)
+no_arguments  (no[ ]argument)|(NO[ ]ARGUMENT)|(no[ ]arguments)|(NO[ ]ARGUMENTS)
 
 float_literal \.{digit}+f*|{digit}+\.{digit}+f*|{digit}+f*
 identifier {letter}({letter}|{digit})*
@@ -249,6 +251,8 @@ BEGIN NORMAL; return yy::parser::token::CHAR_LITERAL;}
 <NORMAL>{destructor}	{return yy::parser::token::DESTRUCTOR;}
 <NORMAL>{parent}	{return yy::parser::token::PARENT;}
 <NORMAL>{at}	{return yy::parser::token::AT;}
+<NORMAL>{arguments}	{return yy::parser::token::ARGUMENTS;}
+<NORMAL>{no_arguments}	{return yy::parser::token::NO_ARGUMENTS;}
 
 <NORMAL>return|RETURN	{return yy::parser::token::RETURN;}
 <NORMAL>with|WITH	{return yy::parser::token::WITH;}

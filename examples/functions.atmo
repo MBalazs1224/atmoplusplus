@@ -11,7 +11,7 @@ create void function testVoidFunc
 	create integer a
 
 
-create integer testIntVar equals call testIntFunc
-create float testFloatVar equals call testParamFunc with .5
+create integer testIntVar equals call testIntFunc with no arguments
+create float testFloatVar equals call testParamFunc with .5 as argument
 
-call testVoidFunc
+call testVoidFunc with no arguments

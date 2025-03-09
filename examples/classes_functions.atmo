@@ -7,4 +7,4 @@ create class testClass
 
 create testClass testObj
 
-create integer testInt equals call testFunc inside testObj with 5
+create integer testInt equals call testFunc inside testObj with 5 as argument
