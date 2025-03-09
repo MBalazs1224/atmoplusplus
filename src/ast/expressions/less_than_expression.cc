@@ -27,6 +27,12 @@ bool LessThanExpression::Check() {
         return false;
     }
 
+    if(left_type->NotCompatible(Helper::IntegerType) && left_type->NotCompatible(Helper::FloatType))
+    {
+        Error::ShowError("Only numerical values can be compared with LESS THAN (<) operator!",this->location);
+        return false;
+    }
+
     return true;
 }
 

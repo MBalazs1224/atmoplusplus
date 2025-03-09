@@ -12,6 +12,13 @@ bool GreaterThanExpression::Check()
         Error::ShowError(Helper::FormatString("The two operands of GREATER THAN (>) expression must be of same type! (received '%s' and '%s')",left_type->ToString().c_str(),right_type->ToString().c_str()),location);
         return false;
     }
+
+    if(left_type->NotCompatible(Helper::IntegerType) && left_type->NotCompatible(Helper::FloatType))
+    {
+        Error::ShowError("Only numerical values can be compared with GREATER THAN (>) operator!",this->location);
+        return false;
+    }
+
     return true;
 }
 
