@@ -150,13 +150,12 @@
 %token AT
 
 
-%right CALL
-%right INSIDE AT
+%left EQUALS
+%right CALL INSIDE AT
+%left NOT
 %left WITH COMMA
 %left OPEN_BRACKET CLOSE_BRACKET
-%left NOT
 %left OR AND
-%left EQUALS
 %left LESS_THAN GREATER_THAN LESS_THAN_OR_EQUAL GREATER_THAN_OR_EQUAL MATCHES NOT_MATCHES
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
@@ -183,6 +182,7 @@
 %nterm<std::vector<std::shared_ptr<VariableSymbol>>> argument_list
 %nterm<std::shared_ptr<FunctionCall>> function_call
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
+%nterm<std::vector<std::shared_ptr<IExpressionable>>> constructor_parameters
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> more_arguments
 %nterm<std::vector<std::shared_ptr<Identifier>>> base_classes
 %nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
@@ -236,13 +236,30 @@ statement:function_create {$$ = std::move($1);}
 
 variable_type: datatype {$$ = std::move($1);}
 
-variable_definition:CREATE attributes variable_type IDENTIFIER equals_holder function_call_arguments  %prec CREATE {
+variable_definition:CREATE attributes variable_type IDENTIFIER equals_holder constructor_parameters  %prec CREATE {
     auto variable = std::make_shared<VariableSymbol>(std::move($3),std::move($2));
     variable->location = @4;
     SymbolTable::Insert($4,variable);
     auto s = $6;
     $$ = std::make_unique<VariableDefinitionNode>(std::move(variable), $5,AddLocations(variable, $5), $6);
 } 
+
+constructor_parameters: %empty
+                        {
+                            $$ = std::vector<std::shared_ptr<IExpressionable>>();
+                        }
+                        | WITH expression
+                        {
+                            $$ = std::vector<std::shared_ptr<IExpressionable>>();
+                            $$.push_back($2);
+                        }
+                        | constructor_parameters COMMA expression
+                        {
+                            $1.push_back($3);
+                            $$ = $1;
+                        }
+
+
 attribute:  PUBLIC {$$ = AttributePublicHolder;}
             | PROTECTED {$$ = AttributeProtectedHolder;}
             | PRIVATE {$$ = AttributePrivateHolder;}
