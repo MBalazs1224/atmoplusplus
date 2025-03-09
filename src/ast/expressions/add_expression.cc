@@ -1,5 +1,6 @@
 #include "add_expression.hh"
 
+
 bool AddExpression::Check()
 {
     if(!left->Check() || !right->Check())
@@ -9,18 +10,20 @@ bool AddExpression::Check()
     auto left_type = left->GetType();
     auto right_type = right->GetType();
 
-    // Chars cannot be added together
-    if(left_type->Compatible(Helper::CharType))
-    {
-        Error::ShowError("Only numerical values or strings can be added together!",this->location);
-        return false;
-    }
 
     if (left_type->NotCompatible(right_type))
     {
         Error::ShowError(Helper::FormatString("The two operands of ADD (+) expression must be of same type! (received '%s' and '%s')",left_type->ToString().c_str(),right_type->ToString().c_str()),location);
         return false;
     }
+
+    // Only numerical values can be added
+    if(left_type->NotCompatible(Helper::IntegerType) && left_type->NotCompatible(Helper::FloatType))
+    {
+        Error::ShowError("Only numerical values can be added together!",this->location);
+        return false;
+    }
+
     
     return true;
 }
