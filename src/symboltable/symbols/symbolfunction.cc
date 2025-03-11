@@ -218,21 +218,7 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
         );
     }
 
-    // If there is no body for the function (like empty constructors or destructors) we just define a dummy body which will just return immediately (maybe we should just ignore these types of function? FIXME)
-
-    if(body->isEmpty())
-    {
-        auto label = std::make_shared<Label>(this->nameInAssembly);
-        auto retIns = std::make_shared<IRReturn>();
-
-        auto seq = std::make_shared<IRSequence>(
-            std::make_shared<IRLabel>(label),
-            retIns
-        );
-
-        return seq;
-        
-    }
+    
     // The frame element that will hold the information
 
     x86Frame frame;
@@ -263,6 +249,22 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
     
 
     currentFrame->AllocateRegisters(this->arguments);
+
+    // If there is no body for the function (like empty constructors or destructors) we just define a dummy body which will just return immediately (maybe we should just ignore these types of function? FIXME)
+
+    if(body->isEmpty())
+    {
+        auto label = std::make_shared<Label>(this->nameInAssembly);
+        auto retIns = std::make_shared<IRReturn>();
+
+        auto seq = std::make_shared<IRSequence>(
+            std::make_shared<IRLabel>(label),
+            retIns
+        );
+
+        return seq;
+        
+    }
     
     // (1-2-3-6-9-10-11) Use the frame's function to do the neccessary instructions
     auto bodyInstructions = this->body->TranslateToIR();

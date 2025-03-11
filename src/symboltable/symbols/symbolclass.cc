@@ -494,7 +494,11 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
          auto empty_destructor = std::make_shared<DestructorDefinitionNode>(this->location);
         destructor = empty_destructor;
 
+
         auto destructorFunction = destructor->GetFunction();
+
+
+        destructorFunction->containingClass = shared_from_this();
         
         // Set the correct name for the destructor
 
@@ -515,7 +519,7 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
     {
         auto empty_constructor = std::make_shared<ConstructorDefinitionNode>(this->location);
 
-        
+        empty_constructor->function->containingClass = shared_from_this();
         // Also give correct name for generated constructor
         empty_constructor->function->nameInAssembly = Helper::FormatString("$%s_constructor_%i_",this->name.c_str(), constructors.size());
 
