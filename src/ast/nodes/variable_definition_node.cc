@@ -154,6 +154,16 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             classType->size_in_bytes
         );
 
+        //FIXME: Pass the parameter to the function, moving the argument might need to be done by the code emitter
+        auto moveSizeIntoRDI = std::make_shared<IRMove>(
+            std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
+            std::make_shared<IRConst>(
+                classType->size_in_bytes
+            )
+        );
+
+        statements.push_back(moveSizeIntoRDI);
+
         
         auto callInitClass= std::make_shared<IRCall>(
             std::make_shared<IRName>(
