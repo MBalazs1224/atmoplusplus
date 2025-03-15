@@ -89,33 +89,38 @@ std::shared_ptr<IRExpressionList> FunctionCall::TranslateArgumentsToIR()
         return nullptr;
     }
 
-    std::shared_ptr<IRExpressionList> argumentsList = std::make_shared<IRExpressionList>();
-    for (auto &&arg : arguments)
+    // Create the head of the argument list
+    std::shared_ptr<IRExpressionList> head = std::make_shared<IRExpressionList>();
+    std::shared_ptr<IRExpressionList> current = head;
+
+    // Iterate through the arguments
+    for (auto&& arg : arguments)
     {
-        argumentsList->expression = arg->TranslateExpressionToIr()->ToValueExpression();
-        argumentsList->next = std::make_shared<IRExpressionList>();
-        argumentsList = argumentsList->next;
+        // Translate the argument to IR and add it to the list
+        current->expression = arg->TranslateExpressionToIr()->ToValueExpression();
+
+        // If this is not the last argument, create a new node for the next argument
+        if (&arg != &arguments.back())
+        {
+            current->next = std::make_shared<IRExpressionList>();
+            current = current->next;
+        }
     }
 
-    return argumentsList;
+    // Return the head of the argument list
+    return head;
 }
 
 std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 {
 
     std::vector<std::shared_ptr<IRStatement>> statements;
-
-    std::shared_ptr<IRExpressionList> argumentsList = TranslateArgumentsToIR();
-
     
-    auto funcLocation = expression->TranslateExpressionToIrNoDereference()->ToValueExpression();
-
-    // Move the arguments to the location of the parameters
-
     // Will return the parameters, the name just wrong for now
     auto functionParams = this->function->GetArguments();
 
     auto memberAccess = std::dynamic_pointer_cast<MemberAccessExpression>(expression);
+
 
 
     // If the expression is a MemberAccessExpression then that means, that the function is inside a class, so the location of the object should be moved into RDI
@@ -137,6 +142,19 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
             )
         );
     }
+
+    std::shared_ptr<IRExpressionList> argumentsList = TranslateArgumentsToIR();
+
+    
+    auto funcLocation = expression->TranslateExpressionToIrNoDereference()->ToValueExpression();
+
+    // Move the arguments to the location of the parameters
+
+
+
+
+
+    
 
     assert(functionParams.size() == arguments.size());
 
