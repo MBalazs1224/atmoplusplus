@@ -24,6 +24,10 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
     {
         printIRTree = true;
     }
+    else if (param == "--print-canonical-ir-tree")
+    {
+        printCanonicalIRTree = true;
+    }
     else
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
@@ -172,6 +176,19 @@ std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector
     
 }
 
+std::shared_ptr<IRStatement> AtmoDriver::ConvertStatementListToSequence(std::shared_ptr<IRStatementList> list)
+{
+    // If there are no statements return null
+    if(!list) return nullptr;
+    // If only one statement,return that one
+    if(!list->tail) return list->head;
+
+    return std::make_shared<IRSequence>(
+        list->head,
+        ConvertStatementListToSequence(list->tail)
+    );
+}
+
 void AtmoDriver::TranslateToIR()
 {
 
@@ -240,6 +257,7 @@ void AtmoDriver::TranslateToIR()
         }
     }
 
+
     if(printIRTree)
     {
         // Print DOT Formatinstructions to file
@@ -258,6 +276,30 @@ void AtmoDriver::TranslateToIR()
         // Open the png
 
         system("xdg-open ./ir_tree.png");
+    }
+
+    auto irSeq = ConvertStatementListToSequence(ir_root);
+    auto canonicalIrRoot = IRNormalizer::NormalizeTree(irSeq);
+
+
+    if(printCanonicalIRTree)
+    {
+        // Print DOT Formatinstructions to file
+        std::ofstream dotFile("ir_canonical_tree.dot");
+        int nodeCounter = 0;
+
+        dotFile << "digraph IRTree {\n";
+        dotFile << canonicalIrRoot->ToDotFormat(nodeCounter);
+        dotFile << "}\n";
+        dotFile.close();
+
+        // Translate the instructions into png
+
+        system("dot -Tpng ir_canonical_tree.dot -o ir_canonical_tree.png");
+
+        // Open the png
+
+        system("xdg-open ./ir_canonical_tree.png");
     }
     
 

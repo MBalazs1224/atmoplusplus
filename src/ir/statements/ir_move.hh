@@ -5,9 +5,9 @@
 
 class IRMove : public IRStatement
 {
+    public:
         std::shared_ptr<IRExpression> source;
         std::shared_ptr<IRExpression> destination;
-    public:
         
 
         IRMove(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpression>);

@@ -7,9 +7,9 @@
 // left followed by right immediately
 class IRSequence : public IRStatement
 {
+    public:
         std::shared_ptr<IRStatement> left;
         std::shared_ptr<IRStatement> right;
-    public:
        
         IRSequence(std::shared_ptr<IRStatement>,std::shared_ptr<IRStatement>);
 

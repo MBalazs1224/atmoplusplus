@@ -181,7 +181,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         auto moveToLocation = std::make_shared<IRMove>(
             varLocation,
-            evaluateAndGetRAX
+            callInitClass
         );
 
         statements.push_back(moveToLocation);

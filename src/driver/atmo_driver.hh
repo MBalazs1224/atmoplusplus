@@ -7,6 +7,8 @@
 
 #include "../ir/statements/ir_statement_list.hh"
 #include "../ir/reserved_ir_registers.hh"
+
+#include "../ir/ir_normalizer.hh"
 class AtmoDriver
 {
 
@@ -24,10 +26,14 @@ class AtmoDriver
 
     void ProcessBehaviouralFlag(const std::string&);
     void OpenFile(const std::string&);
+
+    std::shared_ptr<IRStatement> ConvertStatementListToSequence(std::shared_ptr<IRStatementList> list);
     
     public:
 
     bool printIRTree = false;
+
+    bool printCanonicalIRTree = false;
     /// @brief Will initialize the object and process the  arguments.
     /// @param params A vector containing all the received arguments.
     AtmoDriver(std::vector<std::string>& params);
