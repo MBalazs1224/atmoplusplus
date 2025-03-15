@@ -28,7 +28,8 @@ class FunctionCall : public OneOperandExpression
         // Will return the function element from the identifier or the member access
         std::shared_ptr<SymbolTableElement> GetElementFromExpression();
         std::shared_ptr<IRExpressionList> TranslateArgumentsToIR();
-    public:
+
+        public:
 
         std::vector<std::shared_ptr<IExpressionable>> arguments;
 

@@ -175,6 +175,40 @@ bool FunctionSymbol::IsInClass()
     return containingClass != nullptr;
 }
 
+std::shared_ptr<IRExpressionList> FunctionSymbol::ConvertParameterLocationToList()
+{
+
+    //FIXME: Arguments should be called parameters!!!!!!!!!!!!!
+
+    // If the vector is empty, return nullptr
+    if (this->arguments.empty())
+    {
+        return nullptr;
+    }
+
+    // Create the head of the linked list
+    std::shared_ptr<IRExpressionList> head = std::make_shared<IRExpressionList>();
+    std::shared_ptr<IRExpressionList> current = head;
+
+    // Iterate through the vector
+    for (size_t i = 0; i < this->arguments.size(); ++i)
+    {
+        // Set the current node's expression
+        current->expression = arguments[i]->TranslateExpressionToIr()->ToValueExpression();
+
+        // If this is not the last element, create a new node for the next element
+        if (i < this->arguments.size() - 1)
+        {
+            current->next = std::make_shared<IRExpressionList>();
+            current = current->next;
+        }
+    }
+
+    // Return the head of the linked list
+    return head;
+}
+
+
 /*
     1. pseudo-instructions, as needed in the particular assembly language, to an-
     nounce the beginning of a function;

@@ -169,7 +169,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             std::make_shared<IRName>(
                 labelForClassInit
             ),
-            expressionListForClassInit
+            expressionListForClassInit,
+            nullptr // FIXME: Parameter location for init class should be set
         );
 
         // Move the return value of the function to this variable's location
@@ -257,7 +258,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         auto externalFunctionCall = std::make_shared<IRCall>(
             std::make_shared<IRName>(labelForInitArray),
-            expressionListForFunctionCall
+            expressionListForFunctionCall,
+            nullptr // FIXME: Parameter location for init class should be set
         );
         
         // First we need to execute the function call and that will put the return value into RAX, so we need to get that for the return value

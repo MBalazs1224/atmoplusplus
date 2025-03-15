@@ -81,6 +81,7 @@ std::shared_ptr<SymbolTableElement> FunctionCall::GetElementFromExpression()
     return nullptr;
 }
 
+
 std::shared_ptr<IRExpressionList> FunctionCall::TranslateArgumentsToIR()
 {
     // If there are no arguments then there will be an empty argumentList object (because the object is created before te loop) which will mess up the ir-printing, so we just return null explicitly in this case
@@ -115,7 +116,7 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 {
 
     std::vector<std::shared_ptr<IRStatement>> statements;
-    
+
     // Will return the parameters, the name just wrong for now
     auto functionParams = this->function->GetArguments();
 
@@ -175,7 +176,11 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     
     
 
-    auto functionCall = std::make_shared<IRCall>(funcLocation, argumentsList);
+    auto functionCall = std::make_shared<IRCall>(
+        funcLocation, 
+        argumentsList,
+        function->ConvertParameterLocationToList()
+    );
 
 
     auto funcEvaluated = std::make_shared<IREvaluateExpression>(functionCall);
@@ -217,7 +222,12 @@ std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
 
     auto functionLocation = expression->TranslateExpressionToIr()->ToValueExpression();
     // Generate the function call
-    auto functionCall = std::make_shared<IRCall>(functionLocation, argumentsList);
+    auto functionCall = std::make_shared<IRCall>(
+        functionLocation, 
+        argumentsList,
+        function->ConvertParameterLocationToList()
+    );
+
 
 
     // We only need to evaluate the function call

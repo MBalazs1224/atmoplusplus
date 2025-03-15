@@ -11,7 +11,10 @@ class IRCall : public IRExpression
     public:
         std::shared_ptr<IRExpression> func;
         std::shared_ptr<IRExpressionList> args;
-        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>);
+
+        std::shared_ptr<IRExpressionList> argumentLocations;
+
+        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>, std::shared_ptr<IRExpressionList>);
 
         std::string ToDotFormat(int&) override;
 };

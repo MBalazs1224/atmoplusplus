@@ -118,25 +118,41 @@ std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
         }
         else
         {
-            auto newArgs  = std::make_shared<IRExpressionList>();
-            newArgs->expression = normalizedArgs[0];
-            newArgs->next = std::make_shared<IRExpressionList>();
+            // Create the head of the linked list
+            auto head = std::make_shared<IRExpressionList>();
+            head->expression = normalizedArgs[0];
 
-            newArgs = newArgs->next;
+            // Use a pointer to traverse and build the list
+            auto current = head;
 
+            // Add the remaining arguments
             for (size_t i = 1; i < normalizedArgs.size(); i++)
             {
-                newArgs->expression = normalizedArgs[i];
-                newArgs->next = std::make_shared<IRExpressionList>();
-            newArgs = newArgs->next;
-
+                current->next = std::make_shared<IRExpressionList>();
+                current = current->next;
+                current->expression = normalizedArgs[i];
             }
 
-            call->args = newArgs;
-            // for (auto& arg : call->args) {
-            //     normalizedArgs.push_back(NormalizeExpression(arg, extracted));
-            // }
-            // call->args = normalizedArgs;
+            // Ensure the last node's next pointer is nullptr
+            current->next = nullptr;
+
+            // Assign the head of the list to call->args
+            call->args = head;
+        }
+
+        // Generate moving the params to the correct location
+        auto currentParamLocation = call->argumentLocations;
+        auto currentArgument = call->args;
+        if(currentArgument)
+        {
+            auto move = std::make_shared<IRMove>(
+                currentParamLocation->expression,
+                currentArgument->expression
+            );
+            extracted.push_back(move);
+
+            currentArgument = currentArgument->next;
+            currentParamLocation = currentParamLocation->next;
         }
 
         

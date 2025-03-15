@@ -38,6 +38,9 @@ class FunctionSymbol : public SymbolTableElement, public ClassMember
         /// @brief Will return wether the function was defined inside a class.
         bool IsInClass();
 
+        std::shared_ptr<IRExpressionList> ConvertParameterLocationToList();
+
+
 
     // Contains all the local variables defined in the function
     std::vector<std::shared_ptr<VariableSymbol>> local_variables;

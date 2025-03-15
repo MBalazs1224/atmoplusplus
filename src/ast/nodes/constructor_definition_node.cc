@@ -105,7 +105,8 @@ void ConstructorDefinitionNode::TranslateToIRWithGivenParemeter(std::shared_ptr<
 
     auto callThisConstructor = std::make_shared<IRCall>(
         functionLocation,
-        fullParameterList
+        fullParameterList,
+        this->function->ConvertParameterLocationToList()
     );
 
     auto evaulateThisConstructor = std::make_shared<IREvaluateExpression>(
