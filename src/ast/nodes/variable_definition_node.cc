@@ -164,13 +164,20 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         statements.push_back(moveSizeIntoRDI);
 
+        auto argumentLocation = std::make_shared<IRExpressionList>();
+
+        argumentLocation->expression = std::make_shared<IRTemp>(
+            ReservedIrRegisters::RDI //FIXME: Set that the first argument can be found inside RDI maybe the argument location should be allcoated during canonical
+        );
+
+        argumentLocation->next = nullptr;
         
         auto callInitClass= std::make_shared<IRCall>(
             std::make_shared<IRName>(
                 labelForClassInit
             ),
             expressionListForClassInit,
-            nullptr // FIXME: Parameter location for init class should be set
+            argumentLocation
         );
 
         // Move the return value of the function to this variable's location
@@ -256,10 +263,18 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         expressionListForFunctionCall->expression = adjustedSpace;
 
+        auto argumentLocation = std::make_shared<IRExpressionList>();
+
+        argumentLocation->expression = std::make_shared<IRTemp>(
+            ReservedIrRegisters::RDI //FIXME: Set that the first argument can be found inside RDI maybe the argument location should be allcoated during canonical
+        );
+
+        argumentLocation->next = nullptr;
+
         auto externalFunctionCall = std::make_shared<IRCall>(
             std::make_shared<IRName>(labelForInitArray),
             expressionListForFunctionCall,
-            nullptr // FIXME: Parameter location for init class should be set
+            argumentLocation
         );
         
         // First we need to execute the function call and that will put the return value into RAX, so we need to get that for the return value
