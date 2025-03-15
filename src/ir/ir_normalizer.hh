@@ -2,14 +2,9 @@
 #include <vector>
 #include <memory>
 
-#include "statements/ir_statement.hh"
-#include "statements/ir_move.hh"
-#include "statements/ir_sequence.hh"
-#include "statements/ir_evaluate_expression.hh"
-#include "expressions/ir_expression.hh"
-#include "expressions/ir_eseq.hh"
-#include "expressions/ir_call.hh"
-#include "expressions/ir_temp.hh"
+
+#include "statements/all_ir_statements.hh"
+#include "expressions/all_ir_expressions.hh"
 
 #include "../frame/temp.hh"
 class IRNormalizer

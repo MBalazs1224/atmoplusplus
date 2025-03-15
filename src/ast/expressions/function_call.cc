@@ -159,7 +159,7 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 
     auto functionCall = std::make_shared<IRCall>(funcLocation, argumentsList);
 
-    
+
     auto funcEvaluated = std::make_shared<IREvaluateExpression>(functionCall);
 
     statements.push_back(funcEvaluated);
@@ -169,17 +169,16 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
     
     // The function will return the return value inside RAX, so we need to evaluate the function and get RAX for the result
     
-    auto eseq = std::make_shared<IREseq>(
-        std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
-        std::make_shared<IRSequence>(
-            statements
-        )
+    // auto eseq = std::make_shared<IREseq>(
+    //     std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
+    //     std::make_shared<IRSequence>(
+    //         statements
+    //     )
+    // );
+      return std::make_shared<TranslateValueExpression>(
+        functionCall
     );
-    
 
-    return std::make_shared<TranslateValueExpression>(
-        eseq
-    );
 }
 
 std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()

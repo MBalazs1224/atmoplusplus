@@ -9,13 +9,13 @@
 // Evaluate left and right in that order and compare their results using relop, if the result is true jump to iftrue, otherwise iffalse
 class IRCJump : public IRStatement
 {
+    public:
         RelationalOperator relop;
         std::shared_ptr<IRExpression> left;
         std::shared_ptr<IRExpression> right;
 
         std::shared_ptr<Label> iftrue;
         std::shared_ptr<Label> iffalse;
-    public:
        
 
         IRCJump(RelationalOperator,std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,std::shared_ptr<Label>,std::shared_ptr<Label>);

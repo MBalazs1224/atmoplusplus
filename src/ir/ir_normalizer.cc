@@ -1,119 +1,175 @@
 #include "ir_normalizer.hh"
 
-
-std::shared_ptr<IRStatement> IRNormalizer::NormalizeTree(std::shared_ptr<IRStatement> root)
-{
-    // Step 1: Flatten nested SEQ structures
-    std::vector<std::shared_ptr<IRStatement>> flattenedStatements = FlattenStatements(root);
-    std::vector<std::shared_ptr<IRStatement>> finalResult;
-
-    // Step 2: Normalize each statement in the flattened list
-    for (auto &&statement : flattenedStatements)
-    {
-        auto normalized = NormalizeStatement(statement);
-        finalResult.push_back(normalized);
+std::shared_ptr<IRStatement> IRNormalizer::NormalizeTree(std::shared_ptr<IRStatement> root) {
+    std::vector<std::shared_ptr<IRStatement>> flattened = FlattenStatements(root);
+    std::vector<std::shared_ptr<IRStatement>> normalized;
+    
+    for (auto&& stmt : flattened) {
+        auto processed = NormalizeStatement(stmt);
+        if (processed) {
+            auto subFlattened = FlattenStatements(processed);
+            normalized.insert(normalized.end(), subFlattened.begin(), subFlattened.end());
+        }
     }
     
-    // Step 3: Merge back into a single sequence
-    return MergeStatements(finalResult);
+    return MergeStatements(normalized);
 }
 
-// Flattens nested SEQ statements into a linear list
-std::vector<std::shared_ptr<IRStatement>> IRNormalizer::FlattenStatements(std::shared_ptr<IRStatement> statement)
+std::vector<std::shared_ptr<IRStatement>> IRNormalizer::FlattenStatements(
+    std::shared_ptr<IRStatement> statement) 
 {
     std::vector<std::shared_ptr<IRStatement>> result;
-
-    if (auto seq = std::dynamic_pointer_cast<IRSequence>(statement))
-    {
-        // Recursively flatten left and right branches
-        auto leftBranch = FlattenStatements(seq->left);
-        auto rightBranch = FlattenStatements(seq->right);
-
-        result.insert(result.end(), leftBranch.begin(), leftBranch.end());
-        result.insert(result.end(), rightBranch.begin(), rightBranch.end());
+    
+    if (auto seq = std::dynamic_pointer_cast<IRSequence>(statement)) {
+        auto left = FlattenStatements(seq->left);
+        auto right = FlattenStatements(seq->right);
+        result.insert(result.end(), left.begin(), left.end());
+        result.insert(result.end(), right.begin(), right.end());
     }
-    else
-    {
-        // If not a SEQ, add directly
+    else if (statement) {
         result.push_back(statement);
     }
     
     return result;
 }
 
-// Normalizes statements, specifically handling MOVE with ESEQ or CALL
-std::shared_ptr<IRStatement> IRNormalizer::NormalizeStatement(std::shared_ptr<IRStatement> statement)
+std::shared_ptr<IRStatement> IRNormalizer::NormalizeStatement(
+    std::shared_ptr<IRStatement> statement) 
 {
-    if (auto move = std::dynamic_pointer_cast<IRMove>(statement))
-    {
-        std::vector<std::shared_ptr<IRStatement>> extractedStatements;
-
-        // Case: Destination of MOVE is an ESEQ (must extract the statement first)
-        if (auto eseq = std::dynamic_pointer_cast<IREseq>(move->destination))
-        {
+    if (auto move = std::dynamic_pointer_cast<IRMove>(statement)) {
+        std::vector<std::shared_ptr<IRStatement>> extracted;
+        
+        // Handle ESEQ in destination
+        if (auto eseq = std::dynamic_pointer_cast<IREseq>(move->destination)) {
             auto normalizedStmt = NormalizeStatement(eseq->stmt);
-            extractedStatements.push_back(normalizedStmt);
-            move->destination = eseq->exp;  // Use the extracted expression
+            auto normalizedExp = NormalizeExpression(eseq->exp, extracted);
+            extracted.push_back(normalizedStmt);
+            move->destination = normalizedExp;
         }
-
-        // Normalize both destination and source
-        move->source = NormalizeExpression(move->source, extractedStatements);
-        move->destination = NormalizeExpression(move->destination, extractedStatements);
-
-        extractedStatements.push_back(move);
-        return MergeStatements(extractedStatements);
+        
+        // Normalize source and destination
+        move->source = NormalizeExpression(move->source, extracted);
+        move->destination = NormalizeExpression(move->destination, extracted);
+        
+        extracted.push_back(move);
+        return MergeStatements(extracted);
     }
-    else if (auto expStmt = std::dynamic_pointer_cast<IREvaluateExpression>(statement))
-    {
-        // Case: EXP statement containing CALL (ensure CALL is a statement)
-        if (auto call = std::dynamic_pointer_cast<IRCall>(expStmt->exp))
-        {
-            std::vector<std::shared_ptr<IRStatement>> extractedStatements;
-            NormalizeExpression(call, extractedStatements);
-            return MergeStatements(extractedStatements);
+    else if (auto exp = std::dynamic_pointer_cast<IREvaluateExpression>(statement)) {
+        std::vector<std::shared_ptr<IRStatement>> extracted;
+        auto normalizedExp = NormalizeExpression(exp->exp, extracted);
+        
+        // Changed: Replace EVAL(CALL) with MOVE + TEMP
+        if (!extracted.empty()) {
+            return MergeStatements(extracted);
         }
+        return exp;
     }
-
+    // else if (auto cjump = std::dynamic_pointer_cast<IRCJump>(statement)) {
+    //     std::vector<std::shared_ptr<IRStatement>> extracted;
+    //     cjump->cond = NormalizeExpression(cjump->relop, extracted);
+    //     return MergeStatements(extracted);
+    // }
+    else if (auto label = std::dynamic_pointer_cast<IRLabel>(statement)) {
+        // Labels don't need normalization
+        return label;
+    }
+    else if (auto jump = std::dynamic_pointer_cast<IRJump>(statement)) {
+        std::vector<std::shared_ptr<IRStatement>> extracted;
+        jump->exp = NormalizeExpression(jump->exp, extracted);
+        return MergeStatements(extracted);
+    }
+    
     return statement;
 }
 
-// Normalizes expressions by extracting ESEQ statements and function calls
-std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(std::shared_ptr<IRExpression> expression,
-    std::vector<std::shared_ptr<IRStatement>>& statements)
+std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
+    std::shared_ptr<IRExpression> exp,
+    std::vector<std::shared_ptr<IRStatement>>& extracted) 
 {
-    if (auto eseq = std::dynamic_pointer_cast<IREseq>(expression))
-    {
-        // Flatten the statement part first
+    if (auto eseq = std::dynamic_pointer_cast<IREseq>(exp)) {
         auto normalizedStmt = NormalizeStatement(eseq->stmt);
-        auto normalizedExp = NormalizeExpression(eseq->exp, statements);
-
-        statements.push_back(normalizedStmt);
+        auto normalizedExp = NormalizeExpression(eseq->exp, extracted);
+        
+        // Flatten the statement
+        auto flattened = FlattenStatements(normalizedStmt);
+        extracted.insert(extracted.end(), flattened.begin(), flattened.end());
+        
         return normalizedExp;
     }
-    else if (auto functionCall = std::dynamic_pointer_cast<IRCall>(expression))
-    {
-        // Assign function call result to a temporary register
-        auto temp = std::make_shared<Temp>();
-        auto irTemp = std::make_shared<IRTemp>(temp);
+    else if (auto call = std::dynamic_pointer_cast<IRCall>(exp)) {
 
-        auto newMove = std::make_shared<IRMove>(irTemp, functionCall);
-        statements.push_back(newMove);
+        // Handle function calls by storing result in temporary
+        auto temp = std::make_shared<IRTemp>(std::make_shared<Temp>());
+        
+        // Normalize call arguments
+        std::vector<std::shared_ptr<IRExpression>> normalizedArgs;
 
-        return irTemp;
+        auto currentArg = call->args;
+
+        while (currentArg)
+        {
+            normalizedArgs.push_back(NormalizeExpression(currentArg->expression,extracted));
+            currentArg = currentArg->next;
+        }
+        
+        if(normalizedArgs.empty())
+        {
+            call->args = nullptr;
+        }
+        else
+        {
+            auto newArgs  = std::make_shared<IRExpressionList>();
+            newArgs->expression = normalizedArgs[0];
+            newArgs->next = std::make_shared<IRExpressionList>();
+
+            newArgs = newArgs->next;
+
+            for (size_t i = 1; i < normalizedArgs.size(); i++)
+            {
+                newArgs->expression = normalizedArgs[i];
+                newArgs->next = std::make_shared<IRExpressionList>();
+            newArgs = newArgs->next;
+
+            }
+
+            call->args = newArgs;
+            // for (auto& arg : call->args) {
+            //     normalizedArgs.push_back(NormalizeExpression(arg, extracted));
+            // }
+            // call->args = normalizedArgs;
+        }
+
+        
+        extracted.push_back(std::make_shared<IRMove>(temp, call));
+        return temp;
+    }
+    else if (auto binop = std::dynamic_pointer_cast<IRBinaryOperator>(exp)) {
+        binop->left = NormalizeExpression(binop->left, extracted);
+        binop->right = NormalizeExpression(binop->right, extracted);
+        return binop;
+    }
+    else if (auto mem = std::dynamic_pointer_cast<IRMem>(exp)) {
+        mem->exp = NormalizeExpression(mem->exp, extracted);
+        return mem;
+    }
+    else if (auto temp = std::dynamic_pointer_cast<IRTemp>(exp)) {
+        return temp;  // No normalization needed
+    }
+    else if (auto constant = std::dynamic_pointer_cast<IRConst>(exp)) {
+        return constant;  // No normalization needed
     }
     
-    return expression;
+    return exp;
 }
 
-// Merges a vector of statements into a single SEQ statement
-std::shared_ptr<IRStatement> IRNormalizer::MergeStatements(const std::vector<std::shared_ptr<IRStatement>>& stmts)
+std::shared_ptr<IRStatement> IRNormalizer::MergeStatements(
+    const std::vector<std::shared_ptr<IRStatement>>& stmts) 
 {
     if (stmts.empty()) return nullptr;
+    
     std::shared_ptr<IRStatement> result = stmts[0];
-
     for (size_t i = 1; i < stmts.size(); ++i) {
         result = std::make_shared<IRSequence>(result, stmts[i]);
     }
-
     return result;
 }
