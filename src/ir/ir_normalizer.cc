@@ -64,11 +64,26 @@ std::shared_ptr<IRStatement> IRNormalizer::NormalizeStatement(
         }
         return exp;
     }
-    // else if (auto cjump = std::dynamic_pointer_cast<IRCJump>(statement)) {
-    //     std::vector<std::shared_ptr<IRStatement>> extracted;
-    //     cjump->cond = NormalizeExpression(cjump->relop, extracted);
-    //     return MergeStatements(extracted);
-    // }
+    else if (auto cjump = std::dynamic_pointer_cast<IRCJump>(statement)) {
+        std::vector<std::shared_ptr<IRStatement>> extracted;
+    
+        // Normalize left and right expressions
+        if (cjump->left) {
+            cjump->left = NormalizeExpression(cjump->left, extracted);
+        }
+        if (cjump->right) {
+            cjump->right = NormalizeExpression(cjump->right, extracted);
+        }
+    
+        // If no statements were extracted, return the CJUMP as-is
+        if (extracted.empty()) {
+            return cjump;
+        }
+    
+        // Otherwise, merge extracted statements with the CJUMP
+        extracted.push_back(cjump);
+        return MergeStatements(extracted);
+    }
     else if (auto label = std::dynamic_pointer_cast<IRLabel>(statement)) {
         // Labels don't need normalization
         return label;
