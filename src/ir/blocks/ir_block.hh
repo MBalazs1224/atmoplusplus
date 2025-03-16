@@ -9,9 +9,11 @@ class IRBlock
 {
     public:
         std::string name;
-        std::vector<IRStatement> statements;
+        std::vector<std::shared_ptr<IRStatement>> statements;
 
-        std::shared_ptr<IRBlock> next;
+        std::vector<std::shared_ptr<IRBlock>> nextBlocks;
 
-        IRBlock(std::string, std::vector<IRStatement>,std::shared_ptr<IRBlock>);
+        IRBlock(std::string, std::vector<std::shared_ptr<IRStatement>>,std::vector<std::shared_ptr<IRBlock>>);
+
+        IRBlock(std::string);
 };

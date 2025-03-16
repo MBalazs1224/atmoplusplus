@@ -6,8 +6,8 @@
 // Represents an assembly label
 class IRName : public IRExpression
 {
-        std::shared_ptr<Label> label;
     public:
+        std::shared_ptr<Label> label;
         IRName(std::shared_ptr<Label>);
 
     std::string ToDotFormat(int&) override;

@@ -6,9 +6,8 @@
 // Constant value of name N, like a label in assembly
 class IRLabel : public IRStatement
 {
-        //TODO: Create copy constructor for Label
+        public:
         std::shared_ptr<Label> label;
-    public:
         
         IRLabel(std::shared_ptr<Label> l);
 

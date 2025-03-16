@@ -15,6 +15,8 @@ ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evalu
 
 ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o
 
+ir_block_trace := ./build/ir/blocks/ir_block.o ./build/ir/traces/ir_trace.o
+
 ir_normalizer := ./build/ir/ir_normalizer.o
 
 frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o ./build/frame/printedlabel.o ./build/frame/access.o ./build/frame/global_frame.o
@@ -43,7 +45,7 @@ ilocation := ./build/location/ilocation.o
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer) $(ir_block_trace)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
@@ -374,6 +376,13 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 ./build/ir/ir_normalizer.o: ./src/ir/ir_normalizer.cc ./src/ir/ir_normalizer.hh
 	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/blocks/ir_block.o: ./src/ir/blocks/it_block.cc ./src/ir/blocks/it_block.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/traces/ir_trace.o: ./src/ir/traces/ir_trace.cc ./traces/ir_trace.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
 # IR Expressions
 
 ./build/ir/expressions/ir_binary_operator.o: ./src/ir/expressions/ir_binary_operator.cc ./src/ir/expressions/ir_binary_operator.hh

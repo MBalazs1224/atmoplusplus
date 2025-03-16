@@ -230,5 +230,94 @@ std::shared_ptr<IRStatement> IRNormalizer::MergeStatements(
 
 std::shared_ptr<IRBlock> IRNormalizer::GenerateBlocks(std::shared_ptr<IRStatement> normalized)
 {
+    auto flattenedStatements = FlattenStatements(normalized);
+
+    // Map a given name to a block
+    std::unordered_map<std::string, std::shared_ptr<IRBlock>> labelMap;
+
+    std::vector<std::shared_ptr<IRBlock>> allBlocks;
+
+    auto currentBlock = std::make_shared<IRBlock>("block_0");
+
+    allBlocks.push_back(currentBlock);
+
+    for (auto &&statement : flattenedStatements)
+    {
+        // A block is considered ended if the next instruction is either a label or some kind of jump
+
+        // If a new label is opened, a new block also needs to be started
+        if(auto label = std::dynamic_pointer_cast<IRLabel>(statement))
+        {
+            auto labelName = label->label->ToString();
+
+            if(!currentBlock->statements.empty())
+            {
+                currentBlock = std::make_shared<IRBlock>(labelName);
+            }
+
+            labelMap[labelName] = currentBlock;
+        }
+
+        else if(auto cJump = std::dynamic_pointer_cast<IRCJump>(statement))
+        {
+            // The jump is part of the block as well
+            currentBlock->statements.push_back(statement);
+
+            auto ifTrueName = cJump->iftrue->ToString();
+            auto ifFalseName = cJump->iffalse->ToString();
+
+            // Indicate that both paths can be the next after this block
+
+            if(labelMap.count(ifTrueName))
+            {
+                auto block = labelMap[ifTrueName];
+                currentBlock->nextBlocks.push_back(block);
+            }
+
+            if(labelMap.count(ifFalseName))
+            {
+                auto block = labelMap[ifFalseName];
+                currentBlock->nextBlocks.push_back(block);
+            }
+
+            // Current block ended
+            currentBlock = nullptr;
+
+        }
+        else if (auto jump = std::dynamic_pointer_cast<IRJump>(statement))
+        {
+            // The jump statement itslef must be the part of the block
+            currentBlock->statements.push_back(statement);
+
+            // Get where the flow jumps
+            if(auto name = std::dynamic_pointer_cast<IRName>(jump->exp))
+            {
+                auto labelName = name->label->ToString();
+
+                if(labelMap.count(labelName)) // Will return the number of elements that match, if non-zero it means the map contains the element
+                {
+                    auto block = labelMap[labelName];
+                    // Add the referenced block to indicate that the current block can be followed by it
+                    currentBlock->nextBlocks.push_back(block);
+                }
+            }
+
+            // The current block ended
+            currentBlock = nullptr;
+        }
+        else
+        {
+            if(!currentBlock)
+            {
+                // Generate new block with a new index
+                currentBlock = std::make_shared<IRBlock>("block_" + std::to_string(allBlocks.size()));
+                allBlocks.push_back(currentBlock);
+
+            }
+            // Add this statement to the statements of the current block
+            currentBlock->statements.push_back(statement);
+        }
+    }
     
+
 }
