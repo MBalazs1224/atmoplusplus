@@ -155,8 +155,24 @@ std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
             currentParamLocation = currentParamLocation->next;
         }
 
+        // First evaluate the expression
+        extracted.push_back(
+            std::make_shared<IREvaluateExpression>(
+                call
+            )
+        );
+
+        // Then move the return value into the new temporary
+
+        auto returnLocation = GlobalFrame::globalFrameType->ReturnLocation();
+
+        extracted.push_back(
+            std::make_shared<IRMove>(
+                temp,
+                returnLocation
+            )
+        );
         
-        extracted.push_back(std::make_shared<IRMove>(temp, call));
         return temp;
     }
     else if (auto binop = std::dynamic_pointer_cast<IRBinaryOperator>(exp)) {
