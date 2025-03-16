@@ -2,6 +2,7 @@
 #include "node.hh"
 #include "../expressions/expressionable.hh"
 #include "../../ir/reserved_ir_registers.hh"
+#include "../../frame/global_frame.hh"
 #include <memory>
 class ReturnStatementNode : public  Node
 {

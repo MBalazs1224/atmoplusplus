@@ -21,8 +21,12 @@ std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
 
     auto expressionAsIR = expression->TranslateExpressionToIr()->ToValueExpression();
 
+    auto returnLocation = std::make_shared<IRTemp>(
+        GlobalFrame::globalFrameType->ReturnLocation() // Get the return location from the global frame onject
+    );
+
     auto moveExpIntoRAX = std::make_shared<IRMove>(
-        std::make_shared<IRTemp>(ReservedIrRegisters::RAX),
+        returnLocation,
         expressionAsIR
     );
 
