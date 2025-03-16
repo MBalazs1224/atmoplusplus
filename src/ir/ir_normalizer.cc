@@ -158,7 +158,8 @@ std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
         // Generate moving the params to the correct location
         auto currentParamLocation = call->argumentLocations;
         auto currentArgument = call->args;
-        if(currentArgument)
+        
+        while(currentArgument)
         {
             auto move = std::make_shared<IRMove>(
                 currentParamLocation->expression,

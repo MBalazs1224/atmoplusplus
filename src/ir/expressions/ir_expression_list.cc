@@ -24,29 +24,32 @@ std::string IRExpressionList::ToDotFormat(int& nodeCounter)
     return dot;
 }
 
-IRExpressionList::IRExpressionList(std::vector<std::shared_ptr<IRExpression>>& expressions)
+std::shared_ptr<IRExpressionList> IRExpressionList::CreateFromVector(std::vector<std::shared_ptr<IRExpression>>& expressions)
 {
+    // If the vector is empty, return nullptr
     if (expressions.empty())
     {
-        expression = nullptr;
-        next = nullptr;
-        return;
+        return nullptr;
     }
 
-    // Assign the first expression
-    expression = expressions[0];
+    // Create the head of the linked list
+    auto head = std::make_shared<IRExpressionList>();
+    head->expression = expressions[0];
 
     // Pointer to the last added node
-    std::shared_ptr<IRExpressionList>* current = &next;
+    auto current = head;
 
     // Build the linked list iteratively
     for (size_t i = 1; i < expressions.size(); i++)
     {
-        *current = std::make_shared<IRExpressionList>();
-        (*current)->expression = expressions[i];
-        current = &((*current)->next);
+        current->next = std::make_shared<IRExpressionList>();
+        current = current->next;
+        current->expression = expressions[i];
     }
 
-    // Ensure last node correctly points to nullptr
-    *current = nullptr;
+    // Ensure the last node's next pointer is nullptr
+    current->next = nullptr;
+
+    // Return the head of the linked list
+    return head;
 }

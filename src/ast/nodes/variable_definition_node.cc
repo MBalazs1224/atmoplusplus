@@ -324,5 +324,5 @@ std::shared_ptr<IRExpressionList> VariableDefinitionNode::TranslateArgumentsToCo
         );
     }
     
-    return std::make_shared<IRExpressionList>(expressions);
+    return IRExpressionList::CreateFromVector(expressions);
 }

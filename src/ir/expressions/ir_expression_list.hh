@@ -13,8 +13,10 @@ class IRExpressionList : public IRNode
 
         std::string ToDotFormat(int&) override;
 
-        // Will turn the vector of expressions into an expresison list
-        IRExpressionList(std::vector<std::shared_ptr<IRExpression>>&);
+        /*
+            Will turn the given vector into a linked list.
+         */
+        static std::shared_ptr<IRExpressionList> CreateFromVector(std::vector<std::shared_ptr<IRExpression>>&);
 
         // We still need an empty constructor
         

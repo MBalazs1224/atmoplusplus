@@ -50,7 +50,7 @@ std::shared_ptr<IRExpressionList> ConstructorDefinitionNode::TranslateArgumentsT
         );
     }
 
-    return std::make_shared<IRExpressionList>(expressions);
+    return IRExpressionList::CreateFromVector(expressions);
     
 }
 
@@ -80,26 +80,6 @@ void ConstructorDefinitionNode::TranslateToIRWithGivenParemeter(std::shared_ptr<
     fullParameterList->expression = locationOfClassObject;
     fullParameterList->next = paramsToThisConstructor;
 
-    // Move the arguments to the correct location
-
-    
-    size_t paramIndex = 0;
-    auto funcParams = function->GetArguments();
-    std::shared_ptr<IRExpressionList> passedParam = fullParameterList;
-
-    while (passedParam != nullptr && paramIndex < funcParams.size())
-    {
-        auto move = std::make_shared<IRMove>(
-            funcParams[paramIndex]->TranslateExpressionToIr()->ToValueExpression(), // Param location
-            passedParam->expression // The given parameter
-        );
-
-        passedParam = passedParam->next;
-        paramIndex++;
-
-        statements.push_back(move);
-    }
-    
 
     // Call this constructor with the given parameters
 
