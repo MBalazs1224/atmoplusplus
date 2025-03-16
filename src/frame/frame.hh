@@ -40,10 +40,10 @@ class Frame
         virtual std::shared_ptr<Temp> StackPointer() = 0;
 
         /*
-        @brief Returns the frame's return-value register.
-        @return The register that should hold the return value.
+        @brief Returns the frame's return-value location.
+        @return The expression that yields lcoation of the return value.
         */
-        virtual std::shared_ptr<Temp> ReturnLocation() = 0;
+        virtual std::shared_ptr<IRExpression> ReturnLocation() = 0;
         
         /*
         @brief Will move incoming formal parameters, save and restore callee-save registers then execute the body.

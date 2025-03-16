@@ -39,11 +39,12 @@ std::shared_ptr<Temp> x86Frame::StackPointer()
     return ReservedIrRegisters::StackPointer;
 }
 
-std::shared_ptr<Temp> x86Frame::ReturnLocation()
+std::shared_ptr<IRExpression> x86Frame::ReturnLocation()
 {
-    // RAX is used for return value
-
-    return ReservedIrRegisters::RAX;
+    // The return value should be in RAX
+    return std::make_shared<IRTemp>(
+        ReservedIrRegisters::RAX
+    );
 }
 
 void x86Frame::AllocateRegisters(std::vector<std::shared_ptr<VariableSymbol>>& params)

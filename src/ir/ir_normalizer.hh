@@ -7,6 +7,8 @@
 #include "expressions/all_ir_expressions.hh"
 
 #include "../frame/temp.hh"
+
+#include "../frame/global_frame.hh"
 class IRNormalizer
 {
 public:

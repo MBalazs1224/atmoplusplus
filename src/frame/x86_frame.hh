@@ -26,7 +26,7 @@ class x86Frame : public Frame
 
         std::shared_ptr<Temp> StackPointer() override;
 
-        std::shared_ptr<Temp> ReturnLocation() override;
+        std::shared_ptr<IRExpression> ReturnLocation() override;
 
         /// @brief Alligns the given parameter to 16.
         /// @param size The real size.
