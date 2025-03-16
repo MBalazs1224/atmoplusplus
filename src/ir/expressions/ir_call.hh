@@ -12,9 +12,12 @@ class IRCall : public IRExpression
         std::shared_ptr<IRExpression> func;
         std::shared_ptr<IRExpressionList> args;
 
+        // Indicates, wether the return value is needed later (in case of void functions and constructors it's not)
+        bool returnValueNeeded = true;
+
         std::shared_ptr<IRExpressionList> argumentLocations;
 
-        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>, std::shared_ptr<IRExpressionList>);
+        IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>, std::shared_ptr<IRExpressionList>, bool);
 
         std::string ToDotFormat(int&) override;
 };

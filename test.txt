@@ -1,6 +1,4 @@
-create integer function testInt
-	return 1
+create void function testVoid
+	create integer a
 
-create integer function testIntTwo
-
-create integer testIntVar equals call testInt with no arguments plus call testIntTwo with no arguments
+call testVoid with no arguments

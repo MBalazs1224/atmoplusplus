@@ -162,16 +162,20 @@ std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
             )
         );
 
-        // Then move the return value into the new temporary
+        // Only move the return value to a new location if it's needed
+        if(call->returnValueNeeded)
+        {
 
-        auto returnLocation = GlobalFrame::globalFrameType->ReturnLocation();
+            auto returnLocation = GlobalFrame::globalFrameType->ReturnLocation();
 
-        extracted.push_back(
-            std::make_shared<IRMove>(
-                temp,
-                returnLocation
-            )
-        );
+            extracted.push_back(
+                std::make_shared<IRMove>(
+                    temp,
+                    returnLocation
+                )
+            );
+        }
+
         
         return temp;
     }

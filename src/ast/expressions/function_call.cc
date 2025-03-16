@@ -173,13 +173,15 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
         statements.push_back(move);
 
     }
-    
-    
+    // The return value is only needed if the function is non-void
+
+    bool returnValueNeeded = this->GetType()->NotCompatible(Helper::VoidType);
 
     auto functionCall = std::make_shared<IRCall>(
         funcLocation, 
         argumentsList,
-        function->ConvertParameterLocationToList()
+        function->ConvertParameterLocationToList(),
+        returnValueNeeded
     );
 
 
@@ -218,6 +220,9 @@ std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
 
     auto argumentsList = dummyHead->next;
      
+    // The return value is only needed if the function is non-void
+
+    bool returnValueNeeded = this->GetType()->NotCompatible(Helper::VoidType);
 
 
     auto functionLocation = expression->TranslateExpressionToIr()->ToValueExpression();
@@ -225,7 +230,8 @@ std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
     auto functionCall = std::make_shared<IRCall>(
         functionLocation, 
         argumentsList,
-        function->ConvertParameterLocationToList()
+        function->ConvertParameterLocationToList(),
+        returnValueNeeded
     );
 
 
