@@ -9,6 +9,9 @@
 #include <vector>
 #include "class_member.hh"
 #include "../../frame/printedlabel.hh"
+
+#include "../../frame/global_frame.hh"
+
 class ClassSymbol;
 
 class BodyNode;

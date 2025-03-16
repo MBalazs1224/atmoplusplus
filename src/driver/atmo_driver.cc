@@ -82,7 +82,7 @@ void AtmoDriver::SetFrameType()
 
     if(strcmp(osInfo.machine, "x86_64") == 0)
     {
-        globalFrameType = std::make_unique<x86Frame>();
+        GlobalFrame::globalFrameType = std::make_unique<x86Frame>();
     }
     else
     {

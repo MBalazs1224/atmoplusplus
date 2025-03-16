@@ -15,7 +15,8 @@
 
 #include "../ir/ir_normalizer.hh"
 
-#include "../frame/x86_frame.hh"
+#include "../frame/global_frame.hh"
+
 class AtmoDriver
 {
 

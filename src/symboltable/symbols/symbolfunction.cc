@@ -255,12 +255,10 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
     
     // The frame element that will hold the information
 
-    x86Frame frame;
     auto escapesForVariables = GetWetherVariablesEscape();
 
-    //TODO: Make the newFrame function a static function
 
-    auto currentFrame = frame.newFrame(this->nameInAssembly,escapesForVariables);
+    auto currentFrame = GlobalFrame::globalFrameType->newFrame(this->nameInAssembly,escapesForVariables);
 
     // Set the variables access to the generated accessList (the list is still in reverse)
 

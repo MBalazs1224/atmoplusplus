@@ -17,7 +17,7 @@ ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/express
 
 ir_normalizer := ./build/ir/ir_normalizer.o
 
-frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o ./build/frame/printedlabel.o ./build/frame/access.o
+frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o ./build/frame/printedlabel.o ./build/frame/access.o ./build/frame/global_frame.o
 
 translate := ./build/translate/translate_conditional_expression.o ./build/translate/translate_value_expression.o ./build/translate/translate_no_value_expression.o
 
@@ -41,6 +41,7 @@ error := ./build/error/error.o
 ilocation := ./build/location/ilocation.o
 
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
+
 
 objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer)
 
@@ -440,6 +441,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/frame/access.o: ./src/frame/access.cc ./src/frame/access.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/global_frame.o: ./src/frame/global_frame.cc ./src/frame/global_frame.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Translate
