@@ -2,6 +2,11 @@
 #include <memory>
 #include <iostream>
 #include <utility>
+#include <string.h>
+
+// Needed for CPU architecture detection
+#include <sys/utsname.h>
+
 #include "../lexer/AtmoLexer.hh"
 #include "../parser/parser.tab.hh"
 
@@ -9,6 +14,8 @@
 #include "../ir/reserved_ir_registers.hh"
 
 #include "../ir/ir_normalizer.hh"
+
+#include "../frame/x86_frame.hh"
 class AtmoDriver
 {
 
@@ -28,8 +35,12 @@ class AtmoDriver
     void OpenFile(const std::string&);
 
     std::shared_ptr<IRStatement> ConvertStatementListToSequence(std::shared_ptr<IRStatementList> list);
+
+    void SetFrameType();
     
     public:
+    /// @brief Will point to the type of the frame during this compilation.
+    static std::unique_ptr<Frame> globalFrameType;
 
     bool printIRTree = false;
 

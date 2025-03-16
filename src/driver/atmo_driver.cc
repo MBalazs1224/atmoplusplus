@@ -1,5 +1,8 @@
 #include "atmo_driver.hh"
 
+
+std::unique_ptr<Frame> AtmoDriver::globalFrameType;
+
 AtmoDriver::AtmoDriver(std::vector<std::string>& params)
 {
     if(params.empty())
@@ -69,6 +72,26 @@ void AtmoDriver::ProcessArguments(std::vector<std::string>& params)
     }
 }
 
+void AtmoDriver::SetFrameType()
+{
+    struct utsname osInfo{};
+
+    uname(&osInfo);
+
+    // osInfo.machine will contain the cpu architecture
+
+    if(strcmp(osInfo.machine, "x86_64") == 0)
+    {
+        globalFrameType = std::make_unique<x86Frame>();
+    }
+    else
+    {
+        Error::ShowCompilerError(Helper::FormatString("The current architecture (%s) is not supported!",osInfo.machine));
+        exit(EXIT_FAILURE);
+    }
+    
+}
+
 void AtmoDriver::StartCompilation()
 {
     if (openedFilePath.empty())
@@ -76,7 +99,10 @@ void AtmoDriver::StartCompilation()
         Error::ShowCompilerError("No input file specified!");
     }
 
+    SetFrameType();
+
     lexer = CreateLexer(inputFile);
+
 
     try
     { 
