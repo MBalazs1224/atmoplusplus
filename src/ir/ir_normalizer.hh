@@ -9,11 +9,18 @@
 #include "../frame/temp.hh"
 
 #include "../frame/global_frame.hh"
+
+#include "blocks/ir_block.hh"
 class IRNormalizer
 {
 public:
     // Main function to normalize the IR tree
     static std::shared_ptr<IRStatement> NormalizeTree(std::shared_ptr<IRStatement> root);
+
+    /// @brief Will generate the IR blocks.
+    /// @param normalized The normalized IR tree.
+    /// @return Pointer to the first block.
+    static std::shared_ptr<IRBlock> GenerateBlocks(std::shared_ptr<IRStatement> normalized);
 
 private:
     // Flattens nested SEQ structures into a list of statements

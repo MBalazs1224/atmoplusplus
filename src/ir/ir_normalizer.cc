@@ -158,7 +158,7 @@ std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
         // Generate moving the params to the correct location
         auto currentParamLocation = call->argumentLocations;
         auto currentArgument = call->args;
-        
+
         while(currentArgument)
         {
             auto move = std::make_shared<IRMove>(
@@ -224,4 +224,11 @@ std::shared_ptr<IRStatement> IRNormalizer::MergeStatements(
         result = std::make_shared<IRSequence>(result, stmts[i]);
     }
     return result;
+}
+
+
+
+std::shared_ptr<IRBlock> IRNormalizer::GenerateBlocks(std::shared_ptr<IRStatement> normalized)
+{
+    
 }
