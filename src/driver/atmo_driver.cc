@@ -31,6 +31,10 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
     {
         printCanonicalIRTree = true;
     }
+    else if (param == "--print-ir-trace")
+    {
+        printIRTraces = true;
+    }
     else
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
@@ -116,7 +120,6 @@ void AtmoDriver::StartCompilation()
         exit(EXIT_FAILURE);
     }
 
-    //TODO: Let the user choose input file, currently defaults to test.txt
 
     Error::Initialize(openedFilePath);
     SymbolTable::Initialize();
@@ -329,6 +332,40 @@ void AtmoDriver::TranslateToIR()
     }
 
     auto blocks = std::make_shared<IRBlock>(canonicalIrRoot);
+
+    auto trace = std::make_shared<IRTraceSchedule>(blocks);
+
+    if(printIRTraces)
+    {
+        // Print DOT Formatinstructions to file
+        std::ofstream dotFile("ir_traces.dot");
+        int nodeCounter = 0;
+
+        dotFile << "digraph IRTraces{\n";
+
+        auto statement = trace->statements;
+        while (statement)
+        {
+            dotFile << statement->head->ToDotFormat(nodeCounter);
+
+            statement = statement->tail;
+        }
+        
+        
+        dotFile << canonicalIrRoot->ToDotFormat(nodeCounter);
+        dotFile << "}\n";
+        dotFile.close();
+
+        // Translate the instructions into png
+
+        system("dot -Tpng ir_traces.dot -o ir_traces.png");
+
+        // Open the png
+
+        system("xdg-open ./ir_traces.png");
+    }
+    
+
 
 }
 

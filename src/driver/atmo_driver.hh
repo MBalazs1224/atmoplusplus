@@ -14,6 +14,7 @@
 #include "../ir/reserved_ir_registers.hh"
 
 #include "../ir/ir_normalizer.hh"
+#include "../ir/traces/ir_trace.hh"
 
 #include "../frame/global_frame.hh"
 
@@ -46,6 +47,9 @@ class AtmoDriver
     bool printIRTree = false;
 
     bool printCanonicalIRTree = false;
+
+    bool printIRTraces = false;
+    
     /// @brief Will initialize the object and process the  arguments.
     /// @param params A vector containing all the received arguments.
     AtmoDriver(std::vector<std::string>& params);
