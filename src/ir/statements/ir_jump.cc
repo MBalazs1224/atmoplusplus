@@ -5,9 +5,11 @@ IRJump::IRJump(std::shared_ptr<IRExpression> e, std::shared_ptr<LabelList> l) : 
 }
 
 
-IRJump::IRJump(std::shared_ptr<IRExpression> e) : IRJump(std::move(e),nullptr)
+IRJump::IRJump(std::shared_ptr<IRName> name) : IRJump(name, std::make_shared<LabelList>(name->label,nullptr))
 {
+
 }
+
 
 std::string IRJump::ToDotFormat(int &nodeCounter)
 {
