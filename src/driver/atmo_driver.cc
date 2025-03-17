@@ -328,6 +328,8 @@ void AtmoDriver::TranslateToIR()
         system("xdg-open ./ir_canonical_tree.png");
     }
 
+    auto blocks = std::make_shared<IRBlock>(canonicalIrRoot);
+
 }
 
 
