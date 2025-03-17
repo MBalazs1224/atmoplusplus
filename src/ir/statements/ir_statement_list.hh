@@ -12,5 +12,7 @@ class IRStatementList : public IRNode
 
         IRStatementList(std::shared_ptr<IRStatement>,std::shared_ptr<IRStatementList>);
 
+        IRStatementList();
+
         std::string ToDotFormat(int&) override;
 };

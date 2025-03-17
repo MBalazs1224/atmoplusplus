@@ -4,6 +4,8 @@
 #include <unordered_map>
 
 #include "statements/all_ir_statements.hh"
+#include "statements/ir_statement_list.hh"
+
 #include "expressions/all_ir_expressions.hh"
 
 #include "../frame/temp.hh"
@@ -15,7 +17,7 @@ class IRNormalizer
 {
 public:
     // Main function to normalize the IR tree
-    static std::shared_ptr<IRStatement> NormalizeTree(std::shared_ptr<IRStatement> root);
+    static std::shared_ptr<IRStatementList> NormalizeTree(std::shared_ptr<IRStatement> root);
 
     /// @brief Will generate the IR blocks.
     /// @param normalized The normalized IR tree.
@@ -36,4 +38,6 @@ private:
 
     // Merges a vector of statements into a single SEQ
     static std::shared_ptr<IRStatement> MergeStatements(const std::vector<std::shared_ptr<IRStatement>> &stmts);
+
+    static std::shared_ptr<IRStatementList> VectorToStatementList(const std::vector<std::shared_ptr<IRStatement>> &stmts);
 };

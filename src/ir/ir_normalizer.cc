@@ -1,6 +1,6 @@
 #include "ir_normalizer.hh"
 
-std::shared_ptr<IRStatement> IRNormalizer::NormalizeTree(std::shared_ptr<IRStatement> root) {
+std::shared_ptr<IRStatementList> IRNormalizer::NormalizeTree(std::shared_ptr<IRStatement> root) {
     std::vector<std::shared_ptr<IRStatement>> flattened = FlattenStatements(root);
     std::vector<std::shared_ptr<IRStatement>> normalized;
     
@@ -12,7 +12,36 @@ std::shared_ptr<IRStatement> IRNormalizer::NormalizeTree(std::shared_ptr<IRState
         }
     }
     
-    return MergeStatements(normalized);
+    return VectorToStatementList(normalized);
+}
+
+std::shared_ptr<IRStatementList> IRNormalizer::VectorToStatementList(const std::vector<std::shared_ptr<IRStatement>> &stmts)
+{
+    if (stmts.empty()) {
+        return nullptr;
+    }
+
+    // Create the head of the list
+    auto head = std::make_shared<IRStatementList>();
+    head->head = stmts[0];
+    head->tail = nullptr;
+
+
+    auto current = head;
+
+    // Iterate through the remaining statements in the vector
+    for (size_t i = 1; i < stmts.size(); ++i) {
+
+        auto newNode = std::make_shared<IRStatementList>();
+        newNode->head = stmts[i];
+        newNode->tail = nullptr;
+
+        current->tail = newNode;
+
+        current = newNode;
+    }
+
+    return head; // Return the head of the linked list
 }
 
 std::vector<std::shared_ptr<IRStatement>> IRNormalizer::FlattenStatements(
@@ -224,100 +253,4 @@ std::shared_ptr<IRStatement> IRNormalizer::MergeStatements(
         result = std::make_shared<IRSequence>(result, stmts[i]);
     }
     return result;
-}
-
-
-
-std::shared_ptr<IRBlock> IRNormalizer::GenerateBlocks(std::shared_ptr<IRStatement> normalized)
-{
-    auto flattenedStatements = FlattenStatements(normalized);
-
-    // Map a given name to a block
-    std::unordered_map<std::string, std::shared_ptr<IRBlock>> labelMap;
-
-    std::vector<std::shared_ptr<IRBlock>> allBlocks;
-
-    auto currentBlock = std::make_shared<IRBlock>("block_0");
-
-    allBlocks.push_back(currentBlock);
-
-    for (auto &&statement : flattenedStatements)
-    {
-        // A block is considered ended if the next instruction is either a label or some kind of jump
-
-        // If a new label is opened, a new block also needs to be started
-        if(auto label = std::dynamic_pointer_cast<IRLabel>(statement))
-        {
-            auto labelName = label->label->ToString();
-
-            if(!currentBlock->statements.empty())
-            {
-                currentBlock = std::make_shared<IRBlock>(labelName);
-            }
-
-            labelMap[labelName] = currentBlock;
-        }
-
-        else if(auto cJump = std::dynamic_pointer_cast<IRCJump>(statement))
-        {
-            // The jump is part of the block as well
-            currentBlock->statements.push_back(statement);
-
-            auto ifTrueName = cJump->iftrue->ToString();
-            auto ifFalseName = cJump->iffalse->ToString();
-
-            // Indicate that both paths can be the next after this block
-
-            if(labelMap.count(ifTrueName))
-            {
-                auto block = labelMap[ifTrueName];
-                currentBlock->nextBlocks.push_back(block);
-            }
-
-            if(labelMap.count(ifFalseName))
-            {
-                auto block = labelMap[ifFalseName];
-                currentBlock->nextBlocks.push_back(block);
-            }
-
-            // Current block ended
-            currentBlock = nullptr;
-
-        }
-        else if (auto jump = std::dynamic_pointer_cast<IRJump>(statement))
-        {
-            // The jump statement itslef must be the part of the block
-            currentBlock->statements.push_back(statement);
-
-            // Get where the flow jumps
-            if(auto name = std::dynamic_pointer_cast<IRName>(jump->exp))
-            {
-                auto labelName = name->label->ToString();
-
-                if(labelMap.count(labelName)) // Will return the number of elements that match, if non-zero it means the map contains the element
-                {
-                    auto block = labelMap[labelName];
-                    // Add the referenced block to indicate that the current block can be followed by it
-                    currentBlock->nextBlocks.push_back(block);
-                }
-            }
-
-            // The current block ended
-            currentBlock = nullptr;
-        }
-        else
-        {
-            if(!currentBlock)
-            {
-                // Generate new block with a new index
-                currentBlock = std::make_shared<IRBlock>("block_" + std::to_string(allBlocks.size()));
-                allBlocks.push_back(currentBlock);
-
-            }
-            // Add this statement to the statements of the current block
-            currentBlock->statements.push_back(statement);
-        }
-    }
-    
-
 }

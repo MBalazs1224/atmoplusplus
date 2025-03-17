@@ -15,7 +15,7 @@ ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evalu
 
 ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o
 
-ir_block_trace := ./build/ir/blocks/ir_block.o ./build/ir/traces/ir_trace.o
+ir_block_trace := ./build/ir/blocks/ir_block.o
 
 ir_normalizer := ./build/ir/ir_normalizer.o
 
@@ -377,11 +377,9 @@ main: $(objects)
 ./build/ir/ir_normalizer.o: ./src/ir/ir_normalizer.cc ./src/ir/ir_normalizer.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/ir/blocks/ir_block.o: ./src/ir/blocks/it_block.cc ./src/ir/blocks/it_block.hh
+./build/ir/blocks/ir_block.o: ./src/ir/blocks/ir_block.cc ./src/ir/blocks/ir_block.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
-./build/ir/traces/ir_trace.o: ./src/ir/traces/ir_trace.cc ./traces/ir_trace.hh
-	g++ $(CXXFLAGS) -c $< -o $@
 
 # IR Expressions
 

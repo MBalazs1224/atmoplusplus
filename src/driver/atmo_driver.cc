@@ -327,7 +327,6 @@ void AtmoDriver::TranslateToIR()
 
         system("xdg-open ./ir_canonical_tree.png");
     }
-    
 
 }
 

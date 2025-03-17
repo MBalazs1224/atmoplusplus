@@ -4,6 +4,8 @@ IRStatementList::IRStatementList(std::shared_ptr<IRStatement> head_in, std::shar
 {
 }
 
+IRStatementList::IRStatementList() : IRStatementList(nullptr, nullptr){}
+
 std::string IRStatementList::ToDotFormat(int &nodeCounter)
 {
     if (!head)
