@@ -4,6 +4,32 @@ IRCJump::IRCJump(RelationalOperator op, std::shared_ptr<IRExpression> l, std::sh
 {
 
 }
+RelationalOperator IRCJump::OppositeOperator(RelationalOperator op)
+{
+    switch (op)
+    {
+    case RelationalOperator::Matches:
+       return RelationalOperator::NotMatches;
+
+    case RelationalOperator::NotMatches:
+       return RelationalOperator::Matches;
+
+    case RelationalOperator::LessThan:
+        return RelationalOperator::GreaterThanOrEqual;
+
+    case RelationalOperator::GreaterThanOrEqual:
+        return RelationalOperator::LessThan;
+
+    case RelationalOperator::GreaterThan:
+        return RelationalOperator::LessThanOrEqual;
+        
+    case RelationalOperator::LessThanOrEqual:
+        return RelationalOperator::GreaterThan;
+
+    default:
+        throw std::logic_error("Bad relop in CJUMP::OppositeOperator!");
+    }
+}
 
 std::string IRCJump::ToDotFormat(int &nodeCounter)
 {

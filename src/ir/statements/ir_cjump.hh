@@ -16,6 +16,8 @@ class IRCJump : public IRStatement
 
         std::shared_ptr<Label> iftrue;
         std::shared_ptr<Label> iffalse;
+
+        RelationalOperator OppositeOperator(RelationalOperator);
        
 
         IRCJump(RelationalOperator,std::shared_ptr<IRExpression>,std::shared_ptr<IRExpression>,std::shared_ptr<Label>,std::shared_ptr<Label>);
