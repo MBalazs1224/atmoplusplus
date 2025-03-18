@@ -25,6 +25,8 @@ translate := ./build/translate/translate_conditional_expression.o ./build/transl
 
 reserved_ir_registers := ./build/ir/reserved_ir_registers.o
 
+assembly := ./build/asm/assembly_label.o ./build/asm/assembly_move.o ./build/asm/assembly_oper.o 
+
 
 helper := ./build/helper/helper.o
 
@@ -45,7 +47,7 @@ ilocation := ./build/location/ilocation.o
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer) $(ir_block_trace)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer) $(ir_block_trace) $(assembly)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
@@ -470,6 +472,19 @@ main: $(objects)
 ./build/translate/translate_no_value_expression.o: ./src/translate/translate_no_value_expression.cc ./src/translate/translate_no_value_expression.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
+# Assembly
+
+./build/asm/assembly_oper.o: ./src/asm/assembly_oper.cc ./src/asm/assembly_oper.hh
+	@mkdir -p ./build/asm
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/asm/assembly_move.o: ./src/asm/assembly_move.cc ./src/asm/assembly_move.hh
+	@mkdir -p ./build/asm
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/asm/assembly_label.o: ./src/asm/assembly_label.cc ./src/asm/assembly_label.hh
+	@mkdir -p ./build/asm
+	g++ $(CXXFLAGS) -c $< -o $@
 
 # Parser
 	
