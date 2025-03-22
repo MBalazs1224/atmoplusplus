@@ -9,4 +9,6 @@ class AssemblyInstructionList
         std::shared_ptr<AssemblyInstructionList> tail;
 
         AssemblyInstructionList(std::shared_ptr<AssemblyInstruction> headIn, std::shared_ptr<AssemblyInstructionList> tailIn) : head(headIn), tail(tailIn) {}
+
+        AssemblyInstructionList() : head(nullptr), tail(nullptr) {}
 };
