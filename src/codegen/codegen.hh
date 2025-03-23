@@ -6,6 +6,7 @@
 #include "../ir/expressions/all_ir_expressions.hh"
 #include "../ir/statements/all_ir_statements.hh"
 #include "../frame/temp.hh"
+#include "../helper/helper.hh"
 class CodeGenerator
 {
     protected:

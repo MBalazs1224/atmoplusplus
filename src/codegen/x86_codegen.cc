@@ -15,7 +15,17 @@ void x86CodeGenerator::MunchLabel(std::shared_ptr<IRLabel> exp)
 
 void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> exp) {}
 
-void x86CodeGenerator::MunchEnter(std::shared_ptr<IREnter> exp) {}
+void x86CodeGenerator::MunchEnter(std::shared_ptr<IREnter> enterExp)
+{
+    // There are no destination or source values for enter
+    auto asmInst = std::make_shared<AssemblyOper>(
+        Helper::FormatString("enter %d, 0", enterExp->neededBytes), // ',0' is needed for syntax
+        nullptr,
+        nullptr
+    );
+
+    EmitInstruction(asmInst);
+}
 
 void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpression> exp) {}
 
