@@ -44,7 +44,7 @@ std::shared_ptr<TempList> x86Frame::GetCallDefs()
     std::shared_ptr<TempList> result = nullptr;
 
     // Iterate thorugh the vector backwards
-    for(auto it = ReservedIrRegisters::callerSavedRegs.rbegin(); it != ReservedIrRegisters::calleeSavedRegs.rend(); ++it)
+    for(auto it = ReservedIrRegisters::callerSavedRegs.rbegin(); it != ReservedIrRegisters::callerSavedRegs.rend(); ++it)
     {
         auto newList = std::make_shared<TempList>(nullptr,nullptr);
         newList->head = *it;
