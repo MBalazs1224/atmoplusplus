@@ -6,6 +6,8 @@
 
 class x86CodeGenerator : public CodeGenerator
 {
+        std::string RelationalOperatorToString(RelationalOperator op) override;
+        
         // Statements
 
         void MunchLabel(std::shared_ptr<IRLabel>) override;

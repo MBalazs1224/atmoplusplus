@@ -12,8 +12,61 @@ void x86CodeGenerator::MunchLabel(std::shared_ptr<IRLabel> exp)
     EmitInstruction(labelAsm);
 }
 
+std::string x86CodeGenerator::RelationalOperatorToString(RelationalOperator op)
+{
+    switch (op)
+    {
+    case RelationalOperator::Matches:
+        return "je";
+    case RelationalOperator::NotMatches:
+        return "jne";
+    case RelationalOperator::GreaterThan:
+        return "jg";
+    case RelationalOperator::GreaterThanOrEqual:
+        return "jge";
+    case RelationalOperator::LessThan:
+        return "jl";
+    case RelationalOperator::LessThanOrEqual:
+        return "jle";
+    default:
+        throw std::logic_error("Invalid Relational operator!");
+    }
+}
 
-void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> exp) {}
+
+void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> cJumpExp)
+{
+    // Location of operands
+
+    auto leftTemp = MunchExpression(cJumpExp->left);
+    auto rightTemp = MunchExpression(cJumpExp->right);
+
+    auto cmpIns = std::make_shared<AssemblyOper>(
+        "cmp s0, s1",
+        nullptr, // No destination
+        AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr))
+    );
+
+    EmitInstruction(cmpIns);
+
+    std::string jumpOp = RelationalOperatorToString(cJumpExp->relop);
+
+    auto jumpTrue = std::make_shared<AssemblyOper>(
+        Helper::FormatString("%s j0", jumpOp.c_str()),
+        nullptr,
+        nullptr,
+        std::make_shared<LabelList>( // Both labels should be in targets
+            cJumpExp->iftrue,
+            std::make_shared<LabelList>(
+                cJumpExp->iffalse,
+                nullptr)
+            )
+    );
+
+    EmitInstruction(jumpTrue);
+
+    // Don't need to jump to false, because the next instruction is the false label, so just let it fall through
+}
 
 void x86CodeGenerator::MunchEnter(std::shared_ptr<IREnter> enterExp)
 {

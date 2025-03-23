@@ -22,6 +22,8 @@ class CodeGenerator
         /// @param stmt The given IR statement.
         void MunchStatement(std::shared_ptr<IRStatement> stmt);
 
+        virtual std::string RelationalOperatorToString(RelationalOperator op) = 0;
+
         /// @brief Creates a new TempList object.
         /// @param head The new head.
         /// @param tail The new tail.

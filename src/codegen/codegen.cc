@@ -112,6 +112,27 @@ void CodeGenerator::MunchStatement(std::shared_ptr<IRStatement> stmt)
     
 }
 
+std::string CodeGenerator::RelationalOperatorToString(RelationalOperator op)
+{
+    switch (op)
+    {
+    case RelationalOperator::Matches:
+        return "je";
+    case RelationalOperator::NotMatches:
+        return "jne";
+    case RelationalOperator::GreaterThan:
+        return "jg";
+    case RelationalOperator::GreaterThanOrEqual:
+        return "jge";
+    case RelationalOperator::LessThan:
+        return "jl";
+    case RelationalOperator::LessThanOrEqual:
+        return "jle";
+    default:
+        throw std::logic_error("Invalid Relational operator!");
+    }
+}
+
 std::shared_ptr<AssemblyInstructionList> CodeGenerator::CodeGen(std::shared_ptr<IRStatementList> list)
 {
     ilist = last = nullptr;
