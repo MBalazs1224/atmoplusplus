@@ -177,6 +177,26 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
         return leftTemp;
     }
+
+    // MULTIPLICATION
+
+    else if (binaryOpExp->binop == BinaryOperator::MULTIPLY)
+    {
+
+        auto leftTemp = MunchExpression(binaryOpExp->left);
+        auto rightTemp = MunchExpression(binaryOpExp->right);
+
+        auto asmInst = std::make_shared<AssemblyOper>(
+            "imul d0, s1",
+            AppendTempList(leftTemp,nullptr),
+            AppendTempList(leftTemp,AppendTempList(rightTemp,nullptr)) // Both registers count as sources
+        );
+
+        EmitInstruction(asmInst);
+
+        return leftTemp;
+    }
+
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchFunctionCall(std::shared_ptr<IRCall> exp)
