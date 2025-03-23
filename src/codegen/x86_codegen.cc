@@ -25,7 +25,19 @@ void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp) {}
 
 void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> exp) {}
 void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> exp) {}
-void x86CodeGenerator::MunchPush(std::shared_ptr<IRPush> exp) {}
+void x86CodeGenerator::MunchPush(std::shared_ptr<IRPush> pushExp)
+{
+    auto source = MunchExpression(pushExp->exp);
+
+    auto asmInst = std::make_shared<AssemblyOper>(
+        "push s0", // Push the first source
+        nullptr, // There are no destination values
+        AppendTempList(source,nullptr) // The source is the inner expression
+    );
+
+    EmitInstruction(asmInst);
+
+}
 void x86CodeGenerator::MunchReturn(std::shared_ptr<IRReturn> exp) {}
 void x86CodeGenerator::MunchSysCall(std::shared_ptr<IRSysCall> exp) {}
 

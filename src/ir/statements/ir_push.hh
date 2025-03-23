@@ -5,9 +5,9 @@
 
 class IRPush : public IRStatement
 {
+    public:
     std::shared_ptr<IRExpression> exp;
 
-    public:
         IRPush(std::shared_ptr<IRExpression>);
 
         std::string ToDotFormat(int&) override;
