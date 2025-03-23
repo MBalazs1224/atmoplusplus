@@ -153,6 +153,30 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         return leftTemp;
 
     }
+
+    // SUBTRACTION (similiar to addition)
+
+    else if (binaryOpExp->binop == BinaryOperator::MINUS)
+    {
+        // The temporaries that hold the value of the two operands
+
+        auto leftTemp = MunchExpression(binaryOpExp->left);
+        auto rightTemp = MunchExpression(binaryOpExp->right);
+
+        // The destination will be the left temporary
+        auto destList = AppendTempList(leftTemp,nullptr);
+
+        // The source list will contain both temporaries
+        auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
+
+        auto asmInst = std::make_shared<AssemblyOper>(
+            "sub d0, s1",
+            destList,
+            srcList
+        );
+
+        return leftTemp;
+    }
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchFunctionCall(std::shared_ptr<IRCall> exp)
