@@ -134,7 +134,9 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchFunctionCall(std::shared_ptr<IRCall> exp)
 {
-    return nullptr;
+    // Function calls can only appear inside Evaluate and Move nodes!
+    
+    throw std::logic_error("Standalone function call encountered in code generation!");
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchConstFloat(std::shared_ptr<IRConstFloat> floatExp)
@@ -188,7 +190,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> nameExp)
 {
     // FIXME: May need to implement MunchName in a way that the label name is not hardcoded into the asm string
-    
+
     auto destTemp = std::make_shared<Temp>();
 
     auto labelName = nameExp->label->ToString();
