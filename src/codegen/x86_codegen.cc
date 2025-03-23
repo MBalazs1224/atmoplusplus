@@ -57,7 +57,16 @@ void x86CodeGenerator::MunchPush(std::shared_ptr<IRPush> pushExp)
     EmitInstruction(asmInst);
 
 }
-void x86CodeGenerator::MunchReturn(std::shared_ptr<IRReturn> exp) {}
+void x86CodeGenerator::MunchReturn(std::shared_ptr<IRReturn> exp)
+{
+    auto asmInst = std::make_shared<AssemblyOper>(
+        "ret",
+        nullptr,
+        nullptr
+    );
+
+    EmitInstruction(asmInst);
+}
 void x86CodeGenerator::MunchSysCall(std::shared_ptr<IRSysCall> exp) {}
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBinaryOperator> exp)
