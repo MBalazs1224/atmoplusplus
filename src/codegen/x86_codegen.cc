@@ -91,9 +91,52 @@ void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp)
     EmitInstruction(asmInst);
 }
 
-void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> exp)
+void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 {
+    // The destination can either be a memory location or a register
+    if(auto regDest = std::dynamic_pointer_cast<IRTemp>(moveExp->destination))
+    {
+        auto destTemp = regDest->temp;
+        auto sourceTemp = MunchExpression(moveExp->source);
 
+        auto asmInst = std::make_shared<AssemblyMove>(
+            "mov d0, s0",
+            destTemp,
+            sourceTemp
+        );
+
+        EmitInstruction(asmInst);
+    }
+    else if(auto memDest = std::dynamic_pointer_cast<IRMem>(moveExp->destination))
+    {
+        auto memoryLocation = MunchExpression(memDest->exp);
+        // Further optimization to move const directly without intermadiate register
+        if(auto constValue = std::dynamic_pointer_cast<IRConst>(moveExp->source))
+        {
+            auto asmInst = std::make_shared<AssemblyMove>(
+                Helper::FormatString("mov qword ptr [d0], %d", constValue->value),
+                memoryLocation,
+                nullptr // No source
+            );
+            EmitInstruction(asmInst);
+
+        }
+
+        else
+        {
+            auto sourceTemp = MunchExpression(moveExp->source);
+
+            auto asmInst = std::make_shared<AssemblyMove>(
+                "mov qword ptr [d0], s0",
+                memoryLocation,
+                sourceTemp
+            );
+
+            EmitInstruction(asmInst);
+        }
+
+        
+    }
 }
 void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
 {
