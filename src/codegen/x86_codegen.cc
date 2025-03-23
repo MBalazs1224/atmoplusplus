@@ -31,7 +31,16 @@ void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpress
 
 void x86CodeGenerator::MunchJump(std::shared_ptr<IRJump> exp) {}
 
-void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp) {}
+void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp)
+{
+    auto asmInst = std::make_shared<AssemblyOper>(
+        "leave",
+        nullptr,
+        nullptr
+    );
+
+    EmitInstruction(asmInst);
+}
 
 void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> exp) {}
 void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> exp) {}
