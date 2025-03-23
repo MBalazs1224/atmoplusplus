@@ -88,9 +88,20 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchFunctionCall(std::shared_ptr<IRCall
     return nullptr;
 }
 
-std::shared_ptr<Temp> x86CodeGenerator::MunchConstFloat(std::shared_ptr<IRConstFloat> exp)
+std::shared_ptr<Temp> x86CodeGenerator::MunchConstFloat(std::shared_ptr<IRConstFloat> floatExp)
 {
-    return nullptr;
+    //TODO: Make sure a float reg is assigned here
+    auto destTemp = std::make_shared<Temp>();
+
+    auto asmInst = std::make_shared<AssemblyMove>(
+        Helper::FormatString("movss d0, %f", floatExp->value),
+        destTemp,
+        nullptr // There is no source here
+    );
+
+    EmitInstruction(asmInst);
+
+    return destTemp;
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRConst> constExp)
@@ -98,8 +109,14 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRCons
     auto destinationTemp = std::make_shared<Temp>();
 
     auto asmInst = std::make_shared<AssemblyMove>(
-        Helper::FormatString("mov d0, %d", exp->)
-    )
+        Helper::FormatString("mov d0, %d", constExp->value),
+        destinationTemp,
+        nullptr // There is no source
+    );
+
+    EmitInstruction(asmInst);
+
+    return destinationTemp;
 }
 std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 {
