@@ -185,9 +185,21 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
     return newLocation;
 }
 
-std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> exp)
+std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> nameExp)
 {
-    return nullptr;
+    // FIXME: May need to implement MunchName in a way that the label name is not hardcoded into the asm string
+    
+    auto destTemp = std::make_shared<Temp>();
+
+    auto labelName = nameExp->label->ToString();
+
+    auto asmInst = std::make_shared<AssemblyMove>(
+        Helper::FormatString("mov d0, %s",labelName.c_str()), // Move the label into the reg
+        destTemp,
+        nullptr
+    );
+
+    return destTemp;
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchTemp(std::shared_ptr<IRTemp> exp)
