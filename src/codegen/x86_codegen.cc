@@ -91,8 +91,43 @@ void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp)
     EmitInstruction(asmInst);
 }
 
-void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> exp) {}
-void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> exp) {}
+void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> exp)
+{
+
+}
+void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
+{
+    // Pop can only be used with Temp or MEM
+
+
+    if (auto irTemp = std::dynamic_pointer_cast<IRTemp>(popExp->exp))
+    {
+        auto destTemp = irTemp->temp;
+
+        auto asmInst = std::make_shared<AssemblyOper>(
+            "pop d0",
+            AppendTempList(destTemp,nullptr),
+            nullptr
+        );
+
+        EmitInstruction(asmInst);
+    }
+
+    else if (auto irMem = std::dynamic_pointer_cast<IRMem>(popExp->exp)) {
+        auto addrTemp = MunchExpression(irMem->exp);
+
+        auto asmInst = std::make_shared<AssemblyOper>(
+            "pop [d0]",  
+            AppendTempList(addrTemp, nullptr),
+            nullptr
+        );
+
+        EmitInstruction(asmInst);
+    }
+    else {
+        throw std::runtime_error("Invalid operand for pop!");
+    } 
+}
 void x86CodeGenerator::MunchPush(std::shared_ptr<IRPush> pushExp)
 {
     auto source = MunchExpression(pushExp->exp);
