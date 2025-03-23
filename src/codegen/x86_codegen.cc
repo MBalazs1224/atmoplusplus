@@ -197,6 +197,59 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         return leftTemp;
     }
 
+
+    // INTEGER DIVISION
+
+    else if (binaryOpExp->binop == BinaryOperator::DIVIDE)
+    {
+        // Need to set rdx to 0 before division
+
+        auto nullRDX = std::make_shared<AssemblyOper>(
+            "xor d0,s0",
+            AppendTempList(ReservedIrRegisters::RDX, nullptr),
+            AppendTempList(ReservedIrRegisters::RDX,nullptr)
+        );
+
+        EmitInstruction(nullRDX);
+
+        auto leftTemp = MunchExpression(binaryOpExp->left);
+        auto rightTemp = MunchExpression(binaryOpExp->right);
+
+        // Move left operand into rax
+
+        auto moveIntoRax = std::make_shared<AssemblyMove>(
+            "mov d0, s0",
+            ReservedIrRegisters::RAX,
+            leftTemp
+        );
+
+        EmitInstruction(moveIntoRax);
+
+        // Sign extend RAX into RDX:RAX
+
+        auto signExtend = std::make_shared<AssemblyOper>(
+            "cqto",
+            AppendTempList(ReservedIrRegisters::RDX,nullptr),
+            AppendTempList(ReservedIrRegisters::RAX,nullptr)
+        );
+
+        EmitInstruction(signExtend);
+
+        // Divide the right operand with RAX
+        auto division = std::make_shared<AssemblyOper>(
+            "idiv s0",
+            AppendTempList(ReservedIrRegisters::RAX,nullptr),
+            AppendTempList(rightTemp,nullptr)
+        );
+
+        EmitInstruction(division);
+
+        // The result will be in RAX
+        return ReservedIrRegisters::RAX;
+
+
+    }
+
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchFunctionCall(std::shared_ptr<IRCall> exp)
