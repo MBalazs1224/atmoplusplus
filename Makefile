@@ -25,7 +25,7 @@ translate := ./build/translate/translate_conditional_expression.o ./build/transl
 
 reserved_ir_registers := ./build/ir/reserved_ir_registers.o
 
-assembly := ./build/asm/assembly_label.o ./build/asm/assembly_move.o ./build/asm/assembly_oper.o 
+assembly := ./build/asm/assembly_label.o ./build/asm/assembly_move.o ./build/asm/assembly_oper.o  ./build/asm/assembly_instruction.o
 
 code_generator := ./build/codegen/codegen.o ./build/codegen/x86_codegen.o
 
@@ -480,11 +480,12 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/asm/assembly_move.o: ./src/asm/assembly_move.cc ./src/asm/assembly_move.hh
-	@mkdir -p ./build/asm
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/asm/assembly_label.o: ./src/asm/assembly_label.cc ./src/asm/assembly_label.hh
-	@mkdir -p ./build/asm
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/asm/assembly_instruction.o: ./src/asm/assembly_instruction.cc ./src/asm/assembly_instruction.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Code Generator

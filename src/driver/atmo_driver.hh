@@ -18,6 +18,10 @@
 
 #include "../frame/global_frame.hh"
 
+#include "../codegen/x86_codegen.hh"
+
+#include "../codegen/default_temp_map.hh"
+
 class AtmoDriver
 {
 

@@ -42,7 +42,7 @@ void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> cJumpExp)
     auto rightTemp = MunchExpression(cJumpExp->right);
 
     auto cmpIns = std::make_shared<AssemblyOper>(
-        "cmp s0, s1",
+        "cmp `s0, `s1",
         nullptr, // No destination
         AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr))
     );
@@ -52,7 +52,7 @@ void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> cJumpExp)
     std::string jumpOp = RelationalOperatorToString(cJumpExp->relop);
 
     auto jumpTrue = std::make_shared<AssemblyOper>(
-        Helper::FormatString("%s j0", jumpOp.c_str()),
+        Helper::FormatString("%s `j0", jumpOp.c_str()),
         nullptr,
         nullptr,
         std::make_shared<LabelList>( // Both labels should be in targets
@@ -93,7 +93,7 @@ void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpress
         auto callDefs = GlobalFrame::globalFrameType->GetCallDefs();
 
         auto asmInst = std::make_shared<AssemblyOper>(
-            "call s0",
+            "call `s0",
             callDefs,
             AppendTempList(newTemp, nullptr)
         );
@@ -122,7 +122,7 @@ void x86CodeGenerator::MunchJump(std::shared_ptr<IRJump> jumpExp)
     );
 
     auto asmIns = std::make_shared<AssemblyOper>(
-        "jmp j0",
+        "jmp `j0",
         nullptr,
         nullptr,
         labelList
@@ -153,7 +153,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         auto sourceTemp = MunchExpression(moveExp->source);
 
         auto asmInst = std::make_shared<AssemblyMove>(
-            "mov d0, s0",
+            "mov `d0, `s0",
             destTemp,
             sourceTemp
         );
@@ -167,7 +167,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         if(auto constValue = std::dynamic_pointer_cast<IRConst>(moveExp->source))
         {
             auto asmInst = std::make_shared<AssemblyMove>(
-                Helper::FormatString("mov qword ptr [d0], %d", constValue->value),
+                Helper::FormatString("mov qword ptr [`d0], %d", constValue->value),
                 memoryLocation,
                 nullptr // No source
             );
@@ -180,7 +180,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             auto sourceTemp = MunchExpression(moveExp->source);
 
             auto asmInst = std::make_shared<AssemblyMove>(
-                "mov qword ptr [d0], s0",
+                "mov qword ptr [`d0], `s0",
                 memoryLocation,
                 sourceTemp
             );
@@ -201,7 +201,7 @@ void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
         auto destTemp = irTemp->temp;
 
         auto asmInst = std::make_shared<AssemblyOper>(
-            "pop d0",
+            "pop `d0",
             AppendTempList(destTemp,nullptr),
             nullptr
         );
@@ -213,7 +213,7 @@ void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
         auto addrTemp = MunchExpression(irMem->exp);
 
         auto asmInst = std::make_shared<AssemblyOper>(
-            "pop [d0]",  
+            "pop [`d0]",  
             AppendTempList(addrTemp, nullptr),
             nullptr
         );
@@ -229,7 +229,7 @@ void x86CodeGenerator::MunchPush(std::shared_ptr<IRPush> pushExp)
     auto source = MunchExpression(pushExp->exp);
 
     auto asmInst = std::make_shared<AssemblyOper>(
-        "push s0", // Push the first source
+        "push `s0", // Push the first source
         nullptr, // There are no destination values
         AppendTempList(source,nullptr) // The source is the inner expression
     );
@@ -276,7 +276,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
 
         auto asmInst = std::make_shared<AssemblyOper>(
-            "add d0, s1",
+            "add `d0, `s1",
             destList,
             srcList
         );
@@ -301,7 +301,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
 
         auto asmInst = std::make_shared<AssemblyOper>(
-            "sub d0, s1",
+            "sub `d0, `s1",
             destList,
             srcList
         );
@@ -318,7 +318,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         auto rightTemp = MunchExpression(binaryOpExp->right);
 
         auto asmInst = std::make_shared<AssemblyOper>(
-            "imul d0, s1",
+            "imul `d0, `s1",
             AppendTempList(leftTemp,nullptr),
             AppendTempList(leftTemp,AppendTempList(rightTemp,nullptr)) // Both registers count as sources
         );
@@ -336,7 +336,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         // Need to set rdx to 0 before division
 
         auto nullRDX = std::make_shared<AssemblyOper>(
-            "xor d0,s0",
+            "xor `d0,`s0",
             AppendTempList(ReservedIrRegisters::RDX, nullptr),
             AppendTempList(ReservedIrRegisters::RDX,nullptr)
         );
@@ -349,7 +349,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         // Move left operand into rax
 
         auto moveIntoRax = std::make_shared<AssemblyMove>(
-            "mov d0, s0",
+            "mov `d0, `s0",
             ReservedIrRegisters::RAX,
             leftTemp
         );
@@ -368,7 +368,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
         // Divide the right operand with RAX
         auto division = std::make_shared<AssemblyOper>(
-            "idiv s0",
+            "idiv `s0",
             AppendTempList(ReservedIrRegisters::RAX,nullptr),
             AppendTempList(rightTemp,nullptr)
         );
@@ -380,6 +380,8 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
 
     }
+
+    throw std::logic_error("Invalid BinaryOperator operator!");
 
 }
 
@@ -396,7 +398,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstFloat(std::shared_ptr<IRConstF
     auto destTemp = std::make_shared<Temp>();
 
     auto asmInst = std::make_shared<AssemblyMove>(
-        Helper::FormatString("movss d0, %f", floatExp->value),
+        Helper::FormatString("movss `d0, %f", floatExp->value),
         destTemp,
         nullptr // There is no source here
     );
@@ -411,7 +413,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRCons
     auto destinationTemp = std::make_shared<Temp>();
 
     auto asmInst = std::make_shared<AssemblyMove>(
-        Helper::FormatString("mov d0, %d", constExp->value),
+        Helper::FormatString("mov `d0, %d", constExp->value),
         destinationTemp,
         nullptr // There is no source
     );
@@ -428,7 +430,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
     auto newLocation = std::make_shared<Temp>();
 
     auto asmInst = std::make_shared<AssemblyMove>(
-        "mov d0, [s0]", // Move the first source into the first destination
+        "mov `d0, [`s0]", // Move the first source into the first destination
         newLocation,
         addressTemp
     );
@@ -447,7 +449,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> nameEx
     auto labelName = nameExp->label->ToString();
 
     auto asmInst = std::make_shared<AssemblyMove>(
-        Helper::FormatString("mov d0, %s",labelName.c_str()), // Move the label into the reg
+        Helper::FormatString("mov `d0, %s",labelName.c_str()), // Move the label into the reg
         destTemp,
         nullptr
     );

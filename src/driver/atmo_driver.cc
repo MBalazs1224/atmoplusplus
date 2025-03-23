@@ -364,6 +364,21 @@ void AtmoDriver::TranslateToIR()
 
         system("xdg-open ./ir_traces.png");
     }
+    // TODO: Implement to be able to generate to other asm type
+    auto codeGen = std::make_shared<x86CodeGenerator>();
+
+
+    auto asmList = codeGen->CodeGen(trace->statements);
+
+    auto current = asmList;
+
+    auto defaultMap = std::make_shared<DefaultTempMap>();
+
+    while (current)
+    {
+        std::cout << current->head->Format(defaultMap) << std::endl;
+        current = current->tail;
+    }
     
 
 
