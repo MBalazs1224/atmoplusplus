@@ -1,7 +1,16 @@
 #include "x86_codegen.hh"
 
 
-void x86CodeGenerator::MunchLabel(std::shared_ptr<IRLabel> exp) {}
+void x86CodeGenerator::MunchLabel(std::shared_ptr<IRLabel> exp)
+{
+    auto innerLabel = exp->label;
+    auto labelAsm = std::make_shared<AssemblyLabel>(
+        innerLabel->ToString() + ":", // In asm the label is followed by a ':' 
+        innerLabel
+    );
+
+    EmitInstruction(labelAsm);
+}
 
 
 void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> exp) {}
