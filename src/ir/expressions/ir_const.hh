@@ -4,8 +4,8 @@
 // Integer constant
 class IRConst : public IRExpression
 {
-        int value;
     public:
+        int value;
         IRConst(int);
 
         std::string ToDotFormat(int&) override;

@@ -93,9 +93,13 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstFloat(std::shared_ptr<IRConstF
     return nullptr;
 }
 
-std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRConst> exp)
+std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRConst> constExp)
 {
-    return nullptr;
+    auto destinationTemp = std::make_shared<Temp>();
+
+    auto asmInst = std::make_shared<AssemblyMove>(
+        Helper::FormatString("mov d0, %d", exp->)
+    )
 }
 std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 {
