@@ -9,9 +9,9 @@ class AssemblyOper : public AssemblyInstruction
 
         std::shared_ptr<Targets> jump;
 
-        AssemblyOper(std::string, std::shared_ptr<TempList>,std::shared_ptr<TempList>, std::shared_ptr<LabelList>);
+        AssemblyOper(std::string, std::shared_ptr<TempList> d,std::shared_ptr<TempList> s, std::shared_ptr<LabelList> j);
 
-        AssemblyOper(std::string, std::shared_ptr<TempList>,std::shared_ptr<TempList>);
+        AssemblyOper(std::string, std::shared_ptr<TempList> d,std::shared_ptr<TempList> s);
 
         std::shared_ptr<TempList> Use() override;
         std::shared_ptr<TempList> Def() override;

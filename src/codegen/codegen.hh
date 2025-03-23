@@ -20,6 +20,11 @@ class CodeGenerator
         /// @param stmt The given IR statement.
         void MunchStatement(std::shared_ptr<IRStatement> stmt);
 
+        /// @brief Creates a new TempList object.
+        /// @param head The new head.
+        /// @param tail The new tail.
+        /// @return The new object.
+        std::shared_ptr<TempList> AppendTempList(std::shared_ptr<Temp> head, std::shared_ptr<TempList> tail);
         // Abstract functions for all statement nodes
         
         virtual void MunchLabel(std::shared_ptr<IRLabel>) = 0;

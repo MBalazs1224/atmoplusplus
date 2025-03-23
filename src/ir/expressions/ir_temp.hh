@@ -6,8 +6,8 @@
 // Similiar to a register, but we have unlimited of this
 class IRTemp : public IRExpression
 {
-        std::shared_ptr<Temp> temp;
     public:
+        std::shared_ptr<Temp> temp;
         IRTemp(std::shared_ptr<Temp>);
 
         std::string ToDotFormat(int&) override;

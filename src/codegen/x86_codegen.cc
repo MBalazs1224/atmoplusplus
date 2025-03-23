@@ -48,10 +48,22 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRCons
 {
     return nullptr;
 }
-
-std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> exp)
+std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 {
-    return nullptr;
+    // Need to move the inner expression into a reg and that move that value into the newLocation of the Mem expression
+    auto addressTemp = MunchExpression(memExp);
+
+    auto newLocation = std::make_shared<Temp>();
+
+    auto asmInst = std::make_shared<AssemblyMove>(
+        "mov d0, [s0]", // Move the first source into the first destination
+        newLocation,
+        addressTemp
+    );
+
+    EmitInstruction(asmInst);
+
+    return newLocation;
 }
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> exp)
@@ -61,5 +73,5 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> exp)
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchTemp(std::shared_ptr<IRTemp> exp)
 {
-    return nullptr;
+    return exp->temp;
 }

@@ -13,6 +13,14 @@ void CodeGenerator::EmitInstruction(std::shared_ptr<AssemblyInstruction> instruc
     
 }
 
+std::shared_ptr<TempList> CodeGenerator::AppendTempList(std::shared_ptr<Temp> head, std::shared_ptr<TempList> tail)
+{
+    return std::make_shared<TempList>(
+        head,
+        tail
+    );
+}
+
 std::shared_ptr<Temp> CodeGenerator::MunchExpression(std::shared_ptr<IRExpression> exp)
 {
     if(auto casted = std::dynamic_pointer_cast<IRBinaryOperator>(exp))

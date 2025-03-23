@@ -7,7 +7,7 @@ class AssemblyMove : public AssemblyInstruction
         std::shared_ptr<Temp> dst;
         std::shared_ptr<Temp> src;
 
-        AssemblyMove(std::string, std::shared_ptr<Temp>, std::shared_ptr<Temp>);
+        AssemblyMove(std::string, std::shared_ptr<Temp> d, std::shared_ptr<Temp> s);
 
         std::shared_ptr<TempList> Use() override;
         std::shared_ptr<TempList> Def() override;
