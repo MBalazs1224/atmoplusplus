@@ -138,7 +138,7 @@ std::shared_ptr<IRStatementList> IRTraceSchedule::GetNext()
 IRTraceSchedule::IRTraceSchedule(std::shared_ptr<IRBlock> block)
 {
     this->block = block;
-    for (std::shared_ptr<IRStatementListList> statement = 0; statement != nullptr; statement = statement->tail)
+    for (std::shared_ptr<IRStatementListList> statement = block->blocks; statement != nullptr; statement = statement->tail)
     {
         auto irLabel = std::dynamic_pointer_cast<IRLabel>( statement->head->head);
 
