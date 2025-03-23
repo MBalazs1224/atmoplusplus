@@ -7,6 +7,7 @@
 #include "../ir/statements/all_ir_statements.hh"
 #include "../frame/temp.hh"
 #include "../helper/helper.hh"
+#include "../frame/global_frame.hh"
 class CodeGenerator
 {
     protected:

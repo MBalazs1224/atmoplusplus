@@ -39,6 +39,23 @@ std::shared_ptr<Temp> x86Frame::StackPointer()
     return ReservedIrRegisters::StackPointer;
 }
 
+std::shared_ptr<TempList> x86Frame::GetCallDefs()
+{
+    std::shared_ptr<TempList> result = nullptr;
+
+    // Iterate thorugh the vector backwards
+    for(auto it = ReservedIrRegisters::callerSavedRegs.rbegin(); it != ReservedIrRegisters::calleeSavedRegs.rend(); ++it)
+    {
+        auto newList = std::make_shared<TempList>(nullptr,nullptr);
+        newList->head = *it;
+        newList->tail = result;
+
+        result = newList;
+    }
+
+    return result;
+}
+
 std::shared_ptr<IRExpression> x86Frame::ReturnLocation()
 {
     // The return value should be in RAX

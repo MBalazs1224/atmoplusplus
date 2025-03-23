@@ -8,6 +8,7 @@
 #include "../ir/reserved_ir_registers.hh"
 #include <memory>
 #include "../symboltable/symbols/symbolvariable.hh"
+#include "templist.hh"
 
 // Represents a frame in the architecture
 class Frame
@@ -38,6 +39,10 @@ class Frame
 
 
         virtual std::shared_ptr<Temp> StackPointer() = 0;
+
+        /// @brief Will return a TempList object, which contain all caller-saved registers plus the return register.
+        /// @return The first element of the list.
+        virtual std::shared_ptr<TempList> GetCallDefs() = 0;
 
         /*
         @brief Returns the frame's return-value location.

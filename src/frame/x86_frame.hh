@@ -28,6 +28,8 @@ class x86Frame : public Frame
 
         std::shared_ptr<IRExpression> ReturnLocation() override;
 
+        std::shared_ptr<TempList> GetCallDefs() override;
+
         /// @brief Alligns the given parameter to 16.
         /// @param size The real size.
         /// @return The size alligned.

@@ -27,9 +27,31 @@ void x86CodeGenerator::MunchEnter(std::shared_ptr<IREnter> enterExp)
     EmitInstruction(asmInst);
 }
 
-void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpression> exp)
+void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpression> evaluateExp)
 {
     // Evaluate expression will mainly be used for void function calls
+
+    if(auto call = std::dynamic_pointer_cast<IRCall>(evaluateExp->exp))
+    {
+        // Now where the func is
+        auto newTemp = MunchExpression(call->func);
+
+        // The value of caller saved registers + return register must be given as destinations, so later parts of the compiler knows that something happens to them here
+        auto callDefs = GlobalFrame::globalFrameType->GetCallDefs();
+
+        auto asmInst = std::make_shared<AssemblyOper>(
+            "call s0",
+            callDefs,
+            AppendTempList(newTemp, nullptr)
+        );
+        EmitInstruction(asmInst);
+    }
+    else
+    {
+        // Throw error to see if I missed something
+        assert(false);
+    }
+    
 }
 
 void x86CodeGenerator::MunchJump(std::shared_ptr<IRJump> jumpExp)
