@@ -27,9 +27,36 @@ void x86CodeGenerator::MunchEnter(std::shared_ptr<IREnter> enterExp)
     EmitInstruction(asmInst);
 }
 
-void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpression> exp) {}
+void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpression> exp)
+{
+    // Evaluate expression will mainly be used for void function calls
+}
 
-void x86CodeGenerator::MunchJump(std::shared_ptr<IRJump> exp) {}
+void x86CodeGenerator::MunchJump(std::shared_ptr<IRJump> jumpExp)
+{
+    // Regular jumps can only go to labels which will be referenced through an IRName object
+    auto name = std::dynamic_pointer_cast<IRName>(jumpExp->exp);
+    if(!name)
+    {
+        throw std::logic_error("IRJump received a non-label expression!");
+    }
+
+    auto labelList = std::make_shared<LabelList>(
+        name->label,
+        nullptr
+    );
+
+    auto asmIns = std::make_shared<AssemblyOper>(
+        "jmp j0",
+        nullptr,
+        nullptr,
+        labelList
+    );
+
+    EmitInstruction(asmIns);
+
+
+}
 
 void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp)
 {
