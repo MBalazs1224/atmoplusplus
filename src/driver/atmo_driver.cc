@@ -374,14 +374,24 @@ void AtmoDriver::TranslateToIR()
 
     auto defaultMap = std::make_shared<DefaultTempMap>();
 
+    // Print the output into an asm files
+
+    std::ofstream asmFile("output.asm");
+
     while (current)
     {
-        std::cout << current->head->Format(defaultMap) << std::endl;
+        // If the instruction is not a label, we should print a \t before it for readability
+        if(!std::dynamic_pointer_cast<AssemblyLabel>(current->head))
+            asmFile << "\t";
+
+
+        asmFile << current->head->Format(defaultMap).c_str() << std::endl;
         current = current->tail;
     }
     
+    asmFile.close();
 
-
+    system("xdg-open ./output.asm");
 }
 
 

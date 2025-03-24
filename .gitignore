@@ -43,3 +43,5 @@ runTests
 
 *.dot
 *.png
+
+*.asm

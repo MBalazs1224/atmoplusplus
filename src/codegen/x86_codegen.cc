@@ -281,6 +281,8 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
             srcList
         );
 
+        EmitInstruction(asmInst);
+
         return leftTemp;
 
     }
@@ -305,6 +307,8 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
             destList,
             srcList
         );
+
+        EmitInstruction(asmInst);
 
         return leftTemp;
     }
@@ -425,7 +429,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRCons
 std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 {
     // Need to move the inner expression into a reg and that move that value into the newLocation of the Mem expression
-    auto addressTemp = MunchExpression(memExp);
+    auto addressTemp = MunchExpression(memExp->exp);
 
     auto newLocation = std::make_shared<Temp>();
 
@@ -453,6 +457,8 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> nameEx
         destTemp,
         nullptr
     );
+
+    EmitInstruction(asmInst);
 
     return destTemp;
 }
