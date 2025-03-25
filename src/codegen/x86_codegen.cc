@@ -224,22 +224,11 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 return;
             }
 
-            // If non eof them matched, just put source into a temporary and move that into the destination
-
-            auto sourceTemp = MunchExpression(srcMem->exp);
-
-            auto asmInst = std::make_shared<AssemblyMove>(
-                "mov `d0, `s0",
-                destReg->temp,
-                sourceTemp
-            );
-
-            EmitInstruction(asmInst);
-            return;
+            
 
         }
         // The source is a label (which is referenced by an IRName obj)
-        else if (auto srcName = std::dynamic_pointer_cast<IRName>(srcMem->exp))
+        else if (auto srcName = std::dynamic_pointer_cast<IRName>(moveExp->source))
         {
             // Destination: REGISTER, Source: LABEL
 
@@ -252,6 +241,20 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             EmitInstruction(asmInst);
             return;
         }
+
+        // If non eof them matched, just put source into a temporary and move that into the destination
+
+        auto sourceTemp = MunchExpression(moveExp->source);
+
+        auto asmInst = std::make_shared<AssemblyMove>(
+            "mov `d0, `s0",
+            destReg->temp,
+            sourceTemp
+        );
+
+        EmitInstruction(asmInst);
+        return;
+
     }
 
     // DESTINATION IS A MEMORY LOCATION
@@ -330,7 +333,19 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             return;
         }
     }
-    
+     // If non eof them matched, just put source into a temporary and move that into the destination
+
+     auto sourceTemp = MunchExpression(moveExp->source);
+     auto destTemp = MunchExpression(moveExp->destination);
+
+     auto asmInst = std::make_shared<AssemblyMove>(
+         "mov `d0, `s0",
+         destTemp,
+         sourceTemp
+     );
+
+     EmitInstruction(asmInst);
+     return;
 }
 void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
 {
