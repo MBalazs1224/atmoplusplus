@@ -438,14 +438,30 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
     if(binaryOpExp->binop == BinaryOperator::PLUS)
     {
-        // The temporaries that hold the value of the two operands
-
         auto leftTemp = MunchExpression(binaryOpExp->left);
-        auto rightTemp = MunchExpression(binaryOpExp->right);
 
         // The destination will be the left temporary
         auto destList = AppendTempList(leftTemp,nullptr);
 
+
+        // If the source is a const we can just use that without an intermediate temp
+        if(auto srcImm = std::dynamic_pointer_cast<IRConst>(binaryOpExp->right))
+        {
+            auto asmIns = std::make_shared<AssemblyOper>(
+                Helper::FormatString("add `d0, %d", srcImm->value),
+                destList,
+                nullptr
+            );
+
+            EmitInstruction(asmIns);
+
+            return leftTemp;
+        }
+        // The temporaries that hold the value of the two operands
+
+        auto rightTemp = MunchExpression(binaryOpExp->right);
+
+        
         // The source list will contain both temporaries
         auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
 
@@ -465,13 +481,27 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
     else if (binaryOpExp->binop == BinaryOperator::MINUS)
     {
+        auto leftTemp = MunchExpression(binaryOpExp->left);
+        auto destList = AppendTempList(leftTemp,nullptr);
+
+        // If the source is a const we can just use that without an intermediate temp
+        if(auto srcImm = std::dynamic_pointer_cast<IRConst>(binaryOpExp->right))
+        {
+            auto asmIns = std::make_shared<AssemblyOper>(
+                Helper::FormatString("sub `d0, %d", srcImm->value),
+                destList,
+                nullptr
+            );
+
+            EmitInstruction(asmIns);
+
+            return leftTemp;
+        }
         // The temporaries that hold the value of the two operands
 
-        auto leftTemp = MunchExpression(binaryOpExp->left);
         auto rightTemp = MunchExpression(binaryOpExp->right);
 
         // The destination will be the left temporary
-        auto destList = AppendTempList(leftTemp,nullptr);
 
         // The source list will contain both temporaries
         auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
@@ -487,12 +517,26 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         return leftTemp;
     }
 
-    // MULTIPLICATION
+    // MULTIPLICATION FIXME: Maybe the result register EDX I think where the upper half is put, should be in the destination list
 
     else if (binaryOpExp->binop == BinaryOperator::MULTIPLY)
     {
-
         auto leftTemp = MunchExpression(binaryOpExp->left);
+
+        // If the source is a const we can just use that without an intermediate temp
+        if(auto srcImm = std::dynamic_pointer_cast<IRConst>(binaryOpExp->right))
+        {
+            auto asmIns = std::make_shared<AssemblyOper>(
+                Helper::FormatString("imul `d0, %d", srcImm->value),
+                AppendTempList(leftTemp,nullptr),
+                AppendTempList(leftTemp,nullptr)
+            );
+
+            EmitInstruction(asmIns);
+
+            return leftTemp;
+        }
+
         auto rightTemp = MunchExpression(binaryOpExp->right);
 
         auto asmInst = std::make_shared<AssemblyOper>(
