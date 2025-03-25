@@ -606,5 +606,24 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchName(std::shared_ptr<IRName> nameEx
 
 std::shared_ptr<Temp> x86CodeGenerator::MunchTemp(std::shared_ptr<IRTemp> exp)
 {
+    // RSP and RBP cannot be used directly ,so whenever they are referenced in an expression (move will deal with them on its own) they need to be copied and the other one referenced
+    auto givenTemp = exp->temp;
+
+    if(givenTemp == ReservedIrRegisters::StackPointer || givenTemp == ReservedIrRegisters::FramePointer)
+    {
+        auto newTemp = std::make_shared<Temp>();
+
+        auto moveSpecial = std::make_shared<AssemblyMove>(
+            "mov `d0, `s0",
+            newTemp,
+            givenTemp
+        );
+
+        EmitInstruction(moveSpecial);
+
+        return newTemp;
+    }
+
+    // If not special, just return as-is
     return exp->temp;
 }
