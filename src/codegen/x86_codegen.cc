@@ -86,18 +86,36 @@ void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpress
 
     if(auto call = std::dynamic_pointer_cast<IRCall>(evaluateExp->exp))
     {
-        // Now where the func is
-        auto newTemp = MunchExpression(call->func);
-
         // The value of caller saved registers + return register must be given as destinations, so later parts of the compiler knows that something happens to them here
         auto callDefs = GlobalFrame::globalFrameType->GetCallDefs();
 
-        auto asmInst = std::make_shared<AssemblyOper>(
-            "call `s0",
-            callDefs,
-            AppendTempList(newTemp, nullptr)
-        );
-        EmitInstruction(asmInst);
+        if(auto name = std::dynamic_pointer_cast<IRName>(call->func))
+        {
+            // If a label is called, just call the label without an intermediate temp
+
+            auto asmIns = std::make_shared<AssemblyOper>(
+                "call `j0",
+                callDefs,
+                nullptr,
+                std::make_shared<LabelList>(name->label, nullptr)
+            );
+            EmitInstruction(asmIns);
+            return;
+        }
+        else
+        {
+            // kNow where the func is
+            auto newTemp = MunchExpression(call->func);
+
+            
+            auto asmInst = std::make_shared<AssemblyOper>(
+                "call `s0",
+                callDefs,
+                AppendTempList(newTemp, nullptr)
+            );
+            EmitInstruction(asmInst);
+        
+        }
     }
     else
     {
