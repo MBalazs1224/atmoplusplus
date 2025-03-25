@@ -146,50 +146,191 @@ void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp)
 
 void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 {
-    // The destination can either be a memory location or a register
-    if(auto regDest = std::dynamic_pointer_cast<IRTemp>(moveExp->destination))
-    {
-        auto destTemp = regDest->temp;
-        auto sourceTemp = MunchExpression(moveExp->source);
+    /*
+        The only valid moves are:
 
-        auto asmInst = std::make_shared<AssemblyMove>(
-            "mov `d0, `s0",
-            destTemp,
-            sourceTemp
-        );
+        Immediate → Register	mov rax, 42 [DONE]
+        Memory → Register	    mov rax, [rsp+8] [DONE]
+        Label → Register	    mov rax, TEST_FUNCTION_LABEL (for virtual functions) [DONE]
 
-        EmitInstruction(asmInst);
-    }
-    else if(auto memDest = std::dynamic_pointer_cast<IRMem>(moveExp->destination))
+        Immediate → Memory	    mov [rsp+8], 42 [DONE]
+        Register → Memory	    mov [rsp+8], rax [DONE]
+        Label → Memory	        mov [rsp+8], rax (for virtual functions) [DONE]
+
+    
+    */
+
+
+    // DESTINATION IS A REGISTER
+
+
+    if (auto destReg = std::dynamic_pointer_cast<IRTemp>(moveExp->destination))
     {
-        auto memoryLocation = MunchExpression(memDest->exp);
-        // Further optimization to move const directly without intermadiate register
-        if(auto constValue = std::dynamic_pointer_cast<IRConst>(moveExp->source))
+        // The source is an immediate value
+        if(auto srcImm = std::dynamic_pointer_cast<IRConst>(moveExp->source))
         {
-            auto asmInst = std::make_shared<AssemblyMove>(
-                Helper::FormatString("mov qword ptr [`d0], %d", constValue->value),
-                memoryLocation,
-                nullptr // No source
-            );
-            EmitInstruction(asmInst);
+            // Destination: REG, Source: IMMEDIATE
 
+            auto asmInst = std::make_shared<AssemblyMove>(
+                Helper::FormatString("mov `d0, %d", srcImm->value),
+                destReg->temp,
+                nullptr // Source is not a temp
+            );
+
+            EmitInstruction(asmInst);
+            return;
         }
 
-        else
+        // The source is a memory location
+        else if (auto srcMem = std::dynamic_pointer_cast<IRMem>(moveExp->source))
         {
-            auto sourceTemp = MunchExpression(moveExp->source);
+            // Destination: REG, SOURCE: MEMORY
+
+            //  memory can be a binop (eg. offset from a register), or a register (the register contains a pointer)
+
+            auto srcBinop = std::dynamic_pointer_cast<IRBinaryOperator>(srcMem->exp);
+            if(srcBinop)
+            {
+                // Only plus and minus are valid
+                std::string op = srcBinop->binop == BinaryOperator::PLUS ? "+" : "-";
+
+                // If it's a binop, then it will be an offset from a reg, so the left will be a register, the right a const value
+
+                auto leftTemp = std::dynamic_pointer_cast<IRTemp>(srcBinop->left);
+                auto rightConst = std::dynamic_pointer_cast<IRConst>(srcBinop->right);
+                assert(leftTemp && rightConst);
+
+                auto asmInst = std::make_shared<AssemblyMove>(
+                    Helper::FormatString("mov `d0, [`s0 %s %d]", op.c_str(), rightConst->value),
+                    destReg->temp,
+                    leftTemp->temp
+                );
+
+                EmitInstruction(asmInst);
+                return;
+            }
+            // It's a pointer inside a register
+            else if(auto srcReg = std::dynamic_pointer_cast<IRTemp>(srcMem->exp))
+            {
+                // The memory is at where the register points 
+
+                auto asmInst = std::make_shared<AssemblyMove>(
+                    "mov `d0, [`s0]",
+                    destReg->temp,
+                    srcReg->temp
+                );
+
+                EmitInstruction(asmInst);
+                return;
+            }
+
+            // If non eof them matched, just put source into a temporary and move that into the destination
+
+            auto sourceTemp = MunchExpression(srcMem->exp);
 
             auto asmInst = std::make_shared<AssemblyMove>(
-                "mov qword ptr [`d0], `s0",
-                memoryLocation,
+                "mov `d0, `s0",
+                destReg->temp,
                 sourceTemp
             );
 
             EmitInstruction(asmInst);
-        }
+            return;
 
-        
+        }
+        // The source is a label (which is referenced by an IRName obj)
+        else if (auto srcName = std::dynamic_pointer_cast<IRName>(srcMem->exp))
+        {
+            // Destination: REGISTER, Source: LABEL
+
+            auto asmInst = std::make_shared<AssemblyMove>(
+                Helper::FormatString("mov `d0, %s", srcName->label->ToString().c_str()),
+                destReg->temp,
+                nullptr
+            );
+
+            EmitInstruction(asmInst);
+            return;
+        }
     }
+
+    // DESTINATION IS A MEMORY LOCATION
+
+    else if (auto destMem = std::dynamic_pointer_cast<IRMem>(moveExp->destination))
+    {
+        auto destBinOp = std::dynamic_pointer_cast<IRBinaryOperator>(destMem->exp);
+
+        // The destination is an offset from a register
+        if(destBinOp)
+        {
+            auto destOp = destBinOp->binop == BinaryOperator::PLUS ? "+" : "-";
+
+            auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
+            auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
+            assert(leftTemp && rightConst);
+
+            auto srcImm = std::dynamic_pointer_cast<IRConst>(moveExp->source);
+            // Source is an immediate
+            if(srcImm)
+            {
+                // Destination: MEMORY, Source: IMMEDIATE
+
+                auto asmInst = std::make_shared<AssemblyMove>(
+                    Helper::FormatString("mov [`d0 %s %d], %d",  destOp, rightConst->value, srcImm->value),
+                    leftTemp->temp,
+                    nullptr
+                );
+
+                EmitInstruction(asmInst);
+                return;
+            }
+
+            // Source is a register
+            else if(auto srcReg = std::dynamic_pointer_cast<IRTemp>(moveExp->source))
+            {
+                // Destination: MEMORY, Source: REGISTER
+
+                auto asmInst = std::make_shared<AssemblyMove>(
+                    Helper::FormatString("mov [`d0 %s %d], `s0",  destOp, rightConst->value),
+                    leftTemp->temp,
+                    srcReg->temp
+                );
+
+                EmitInstruction(asmInst);
+                return;
+
+            }
+            // Source is a label
+            else if (auto srcName = std::dynamic_pointer_cast<IRName>(moveExp->source))
+            {
+                // Destination: MEMORY, Source: IMMEDIATE
+
+                auto asmInst = std::make_shared<AssemblyMove>(
+                    Helper::FormatString("mov [`d0 %s %d], %d",  destOp, rightConst->value, srcName->label->ToString().c_str()),
+                    leftTemp->temp,
+                    nullptr
+                );
+
+                EmitInstruction(asmInst);
+                return;
+            }
+
+            
+            // If non of them matched, just put the source into a temporary and move that to the destination
+
+            auto sourceTemp = MunchExpression(moveExp->source);
+
+            auto asmInst = std::make_shared<AssemblyMove>(
+                Helper::FormatString("mov [`d0 %s %d], `s0",destOp, rightConst->value),
+                leftTemp->temp,
+                sourceTemp
+            );
+
+            EmitInstruction(asmInst);
+            return;
+        }
+    }
+    
 }
 void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
 {
