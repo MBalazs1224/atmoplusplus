@@ -368,7 +368,7 @@ void AtmoDriver::TranslateToIR()
     auto codeGen = std::make_shared<x86CodeGenerator>();
 
 
-    auto asmList = codeGen->CodeGen(canonicalIrRoot);
+    auto asmList = codeGen->CodeGen(trace->statements);
 
     auto current = asmList;
 
