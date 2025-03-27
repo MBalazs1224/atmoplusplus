@@ -25,7 +25,7 @@ void IRTraceSchedule::Trace(std::shared_ptr<IRStatementList> list)
 
         if(auto jump = std::dynamic_pointer_cast<IRJump>(statement))
         {
-            auto target = table[jump->targets->head];
+            auto target = GetElementFromMap(jump->targets->head);
 
             if(!jump->targets->tail && target)
             {
@@ -41,8 +41,8 @@ void IRTraceSchedule::Trace(std::shared_ptr<IRStatementList> list)
         }
         else if (auto cJump = std::dynamic_pointer_cast<IRCJump>(statement))
         {
-            auto truePath = table[cJump->iftrue]; 
-            auto falsePath = table[cJump->iffalse];
+            auto truePath = GetElementFromMap(cJump->iftrue);
+            auto falsePath = GetElementFromMap(cJump->iffalse);
             
             if(falsePath)
             {
@@ -121,8 +121,8 @@ std::shared_ptr<IRStatementList> IRTraceSchedule::GetNext()
     auto statement = block->blocks->head;
     auto irLabel = std::dynamic_pointer_cast<IRLabel>(statement->head);
 
-    auto tableContains = table.find(irLabel->label) != table.end();
-    if(tableContains)
+    auto element = GetElementFromMap(irLabel->label);
+    if(element)
     {
         Trace(statement);
         return statement;
@@ -135,6 +135,16 @@ std::shared_ptr<IRStatementList> IRTraceSchedule::GetNext()
     
 }
 
+std::shared_ptr<IRStatementList> IRTraceSchedule::GetElementFromMap(std::shared_ptr<Label> key)
+{
+    // Return nullptr if the key doesn't exists
+    auto contains = table.find(key) != table.end();
+    if(!contains)
+        return nullptr;
+
+    return table.at(key);
+}
+
 IRTraceSchedule::IRTraceSchedule(std::shared_ptr<IRBlock> block)
 {
     this->block = block;
@@ -144,10 +154,10 @@ IRTraceSchedule::IRTraceSchedule(std::shared_ptr<IRBlock> block)
 
         auto label = irLabel->label;
 
-        table[label] = statement->head; 
+        table.insert({label,statement->head});
     }
 
     statements = GetNext();
 
-    
+
 }

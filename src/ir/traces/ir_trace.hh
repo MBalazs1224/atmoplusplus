@@ -14,6 +14,11 @@ class IRTraceSchedule
         std::shared_ptr<IRStatementList> GetLast(std::shared_ptr<IRStatementList>);
         void Trace(std::shared_ptr<IRStatementList>);
 
+        /// @brief If the key exists returns it's value, otherwise nullptr. (Default behaviour will throw exception)
+        /// @param key The wanted key.
+        /// @return The key or nullptr.
+        std::shared_ptr<IRStatementList> GetElementFromMap(std::shared_ptr<Label> key);
+
     public:
         std::shared_ptr<IRStatementList> statements;
 
