@@ -79,6 +79,18 @@ class AtmoDriver
     void SemanticAnalyze();
 
     void TranslateToIR();
+
+    std::shared_ptr<IRStatementList> BuildIRList(const std::vector<std::shared_ptr<Node>>& nodes);
+
+    /// @param nodes The vector of all nodes.
+    /// @return A vector only containing definition nodes.
+    std::vector<std::shared_ptr<Node>> GetDefinitionNodes(std::vector<std::shared_ptr<Node>>& nodes);
+
+    /// @brief 
+    /// @param nodes The vector of all nodes.
+    /// @return A vector only containing statement nodes.
+    std::vector<std::shared_ptr<Node>> GetStatementNodes(std::vector<std::shared_ptr<Node>>& nodes);
+    void TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes);
     
     // Will return tru if the given node can be used as a statement
     bool StatementValid(const std::shared_ptr<Node>);

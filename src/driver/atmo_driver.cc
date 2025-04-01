@@ -218,6 +218,108 @@ std::shared_ptr<IRStatement> AtmoDriver::ConvertStatementListToSequence(std::sha
     );
 }
 
+std::vector<std::shared_ptr<Node>> AtmoDriver::GetDefinitionNodes(std::vector<std::shared_ptr<Node>>& nodes)
+{
+    std::vector<std::shared_ptr<Node>> definitions;
+
+    for (auto &&node : nodes)
+    {
+        // If the node is a function or class definitions, push it to the def vector
+        if(std::dynamic_pointer_cast<FunctionDefinitionNode>(node) || std::dynamic_pointer_cast<ClassDefinitionNode>(node))
+        {
+            definitions.push_back(node);
+        }
+        
+    }
+
+    return definitions;
+    
+}
+
+std::vector<std::shared_ptr<Node>> AtmoDriver::GetStatementNodes(std::vector<std::shared_ptr<Node>>& nodes)
+{
+    std::vector<std::shared_ptr<Node>> statements;
+
+    for (auto &&node : nodes)
+    {
+        // If the node is not a function or class definitions, push it to the stmt vector
+        if(!std::dynamic_pointer_cast<FunctionDefinitionNode>(node) && !std::dynamic_pointer_cast<ClassDefinitionNode>(node))
+        {
+            statements.push_back(node);
+        }
+        
+    }
+
+    return statements;
+    
+}
+
+std::shared_ptr<IRStatementList> AtmoDriver::BuildIRList(const std::vector<std::shared_ptr<Node>>& nodes)
+{
+    std::shared_ptr<IRStatementList> root = nullptr;
+    std::shared_ptr<IRStatementList> tail = nullptr;
+
+    for (const auto& node : nodes)
+    {
+        if (auto ir = node->TranslateToIR())
+        {
+            auto ir_list = std::make_shared<IRStatementList>(ir, nullptr);
+            if (!root)
+            {
+                root = tail = ir_list;
+            }
+            else
+            {
+                tail->tail = ir_list;
+                tail = ir_list;
+            }
+        }
+    }
+    return root;
+}
+
+void AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
+{
+
+    std::vector<std::shared_ptr<Node>> definitions = GetDefinitionNodes(nodes);
+    std::vector<std::shared_ptr<Node>> statements = GetStatementNodes(nodes);
+
+
+    auto definitionIR = BuildIRList(definitions);
+    auto statementsIR = BuildIRList(statements);
+
+    // Create a label for the main entry point, which is followed by the statements
+    auto mainLabel = std::make_shared<IRStatementList>(
+        std::make_shared<IRLabel>(
+            std::make_shared<Label>("main")
+        ),
+        statementsIR
+    );
+
+    // Connect definitions to mainLabel if definitions exist
+    if (definitionIR != nullptr)
+    {
+        // Find the end
+        auto defTail = definitionIR;
+        while (defTail->tail != nullptr)
+        {
+            defTail = defTail->tail;
+        }
+        defTail->tail = mainLabel;
+        
+    }
+    else
+    {
+        // If no definitions, the whole thing starts with mainLabel
+        ir_root = mainLabel;
+    }
+
+    // Set the root correctly
+
+    ir_root = definitionIR;
+}
+
+
 void AtmoDriver::TranslateToIR()
 {
 
@@ -241,7 +343,6 @@ void AtmoDriver::TranslateToIR()
     // Set the variable's access to the access allocated by the frame object
     
 
-    // FIXME: Variable's access gets allocated backwards (the second variables is offset 0, first is -8)
     
     auto accessInsideFrame = globalFrame->formals;
 
@@ -260,32 +361,7 @@ void AtmoDriver::TranslateToIR()
     
     
 
-
-    std::shared_ptr<IRStatementList> temp = nullptr;
-
-    for (auto &&node : nodes)
-    {
-        auto ir = node->TranslateToIR();
-
-        // FIXME: This is only needed until all IR translation is implemented
-        if(ir == nullptr)
-        {
-            continue;
-        }
-
-        auto ir_list = std::make_shared<IRStatementList>(ir, nullptr);
-        if(ir_root == nullptr)
-        {
-            ir_root = ir_list;
-            temp = ir_root;
-        }
-        else
-        {
-            temp->tail = ir_list;
-            temp = ir_list;
-        }
-    }
-
+    TranslateToIRTree(nodes);
 
     if(printIRTree)
     {

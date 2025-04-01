@@ -2,3 +2,7 @@ create void function testVoid
 	create integer a
 
 call testVoid with no arguments
+
+
+create void function asd
+	create integer a
