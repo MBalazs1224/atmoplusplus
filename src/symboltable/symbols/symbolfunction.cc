@@ -294,6 +294,12 @@ std::shared_ptr<IRStatement> FunctionSymbol::TranslateToIR()
             retIns
         );
 
+        if(containingClass)
+         {
+              // Reset RDI offset even if the body is empty!
+              containingClass->VariablesShouldUseRDI(false);
+         }
+
         return seq;
         
     }

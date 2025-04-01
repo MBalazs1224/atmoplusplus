@@ -1,5 +1,7 @@
 create class testClass
 	create public integer testInt
+	create public integer testInt2
+	create public integer testInt3
 
 	create constructor with integer testParam
 		testInt equals testParam
@@ -7,4 +9,4 @@ create class testClass
 
 create testClass testObj with 5
 
-testInt inside testObj equals 10
+testInt3 inside testObj equals 10

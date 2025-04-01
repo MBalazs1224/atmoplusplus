@@ -73,7 +73,7 @@ std::shared_ptr<TranslateExpression> AssignmentExpression::TranslateExpressionTo
 
     if(std::dynamic_pointer_cast<MemberAccessExpression>(left))
     {
-        leftExp = left->TranslateExpressionToIrNoDereference()->ToValueExpression();
+        leftExp = left->TranslateExpressionToIr()->ToValueExpression();
     }
     else
     {
