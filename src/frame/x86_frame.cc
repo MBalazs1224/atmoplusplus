@@ -20,7 +20,7 @@ std::shared_ptr<Access> x86Frame::allocLocal(bool escapes, int size)
     // TODO: Implement that not all variables are the same size
     if (escapes)
     {
-        auto ret = std::make_shared<InFrame>(allocated);
+        auto ret = std::make_shared<InFrame>(-allocated);
 
         // Allocate bytes for the next variable
         allocated -= size;

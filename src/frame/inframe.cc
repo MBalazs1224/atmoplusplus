@@ -15,7 +15,7 @@ std::shared_ptr<IRExpression> InFrame::AsExpression(std::shared_ptr<IRExpression
 
     return std::make_shared<IRMem>(
         std::make_shared<IRBinaryOperator>(
-            BinaryOperator::PLUS,
+            BinaryOperator::MINUS,
             framePointer,
             std::make_shared<IRConst>(offset)
         ));
