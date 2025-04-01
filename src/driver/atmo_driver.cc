@@ -306,6 +306,7 @@ void AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
             defTail = defTail->tail;
         }
         defTail->tail = mainLabel;
+        ir_root = definitionIR;
         
     }
     else
@@ -313,10 +314,6 @@ void AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
         // If no definitions, the whole thing starts with mainLabel
         ir_root = mainLabel;
     }
-
-    // Set the root correctly
-
-    ir_root = definitionIR;
 }
 
 
