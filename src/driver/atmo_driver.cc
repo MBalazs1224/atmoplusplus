@@ -35,6 +35,10 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
     {
         printIRTraces = true;
     }
+    else if (param == "--print-asm")
+    {
+        printASM = true;
+    }
     else
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
@@ -143,6 +147,8 @@ void AtmoDriver::StartCompilation()
     }
 
     TranslateToIR();
+
+    GenerateAssembly();
 
 }
 
@@ -278,11 +284,13 @@ std::shared_ptr<IRStatementList> AtmoDriver::BuildIRList(const std::vector<std::
     return root;
 }
 
-void AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
+std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
 {
 
     std::vector<std::shared_ptr<Node>> definitions = GetDefinitionNodes(nodes);
     std::vector<std::shared_ptr<Node>> statements = GetStatementNodes(nodes);
+
+    std::shared_ptr<IRStatementList> irRoot = nullptr;
 
 
     auto definitionIR = BuildIRList(definitions);
@@ -306,16 +314,56 @@ void AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
             defTail = defTail->tail;
         }
         defTail->tail = mainLabel;
-        ir_root = definitionIR;
+        irRoot = definitionIR;
         
     }
     else
     {
         // If no definitions, the whole thing starts with mainLabel
-        ir_root = mainLabel;
+        irRoot = mainLabel;
     }
+
+    return irRoot;
+
 }
 
+
+void AtmoDriver::GenerateAssembly()
+{
+    // TODO: Implement to be able to generate to other asm type
+    auto codeGen = std::make_shared<x86CodeGenerator>();
+
+
+    auto asmList = codeGen->CodeGen(irTrace->statements);
+
+    auto current = asmList;
+
+    auto defaultMap = std::make_shared<DefaultTempMap>();
+
+
+
+    // Print the output into an asm files
+
+    std::ofstream asmFile("output.asm");
+
+    while (current)
+    {
+        // If the instruction is not a label, we should print a \t before it for readability
+        if(!std::dynamic_pointer_cast<AssemblyLabel>(current->head))
+            asmFile << "\t";
+
+
+        asmFile << current->head->Format(defaultMap).c_str() << std::endl;
+        current = current->tail;
+    }
+    
+    asmFile.close();
+
+    if(printASM)
+    {
+        system("xdg-open ./output.asm");
+    }
+}
 
 void AtmoDriver::TranslateToIR()
 {
@@ -358,7 +406,7 @@ void AtmoDriver::TranslateToIR()
     
     
 
-    TranslateToIRTree(nodes);
+    auto irRoot = TranslateToIRTree(nodes);
 
     if(printIRTree)
     {
@@ -367,7 +415,7 @@ void AtmoDriver::TranslateToIR()
         int nodeCounter = 0;
 
         dotFile << "digraph IRTree {\n";
-        dotFile << ir_root->ToDotFormat(nodeCounter);
+        dotFile << irRoot->ToDotFormat(nodeCounter);
         dotFile << "}\n";
         dotFile.close();
 
@@ -380,7 +428,7 @@ void AtmoDriver::TranslateToIR()
         system("xdg-open ./ir_tree.png");
     }
 
-    auto irSeq = ConvertStatementListToSequence(ir_root);
+    auto irSeq = ConvertStatementListToSequence(irRoot);
     auto canonicalIrRoot = IRNormalizer::NormalizeTree(irSeq);
 
 
@@ -406,7 +454,7 @@ void AtmoDriver::TranslateToIR()
 
     auto blocks = std::make_shared<IRBlock>(canonicalIrRoot);
 
-    auto trace = std::make_shared<IRTraceSchedule>(blocks);
+    irTrace = std::make_shared<IRTraceSchedule>(blocks);
 
     if(printIRTraces)
     {
@@ -416,7 +464,7 @@ void AtmoDriver::TranslateToIR()
 
         dotFile << "digraph IRTraces{\n";
 
-        auto statement = trace->statements;
+        auto statement = irTrace->statements;
         while (statement)
         {
             dotFile << statement->head->ToDotFormat(nodeCounter);
@@ -437,34 +485,8 @@ void AtmoDriver::TranslateToIR()
 
         system("xdg-open ./ir_traces.png");
     }
-    // TODO: Implement to be able to generate to other asm type
-    auto codeGen = std::make_shared<x86CodeGenerator>();
-
-
-    auto asmList = codeGen->CodeGen(trace->statements);
-
-    auto current = asmList;
-
-    auto defaultMap = std::make_shared<DefaultTempMap>();
-
-    // Print the output into an asm files
-
-    std::ofstream asmFile("output.asm");
-
-    while (current)
-    {
-        // If the instruction is not a label, we should print a \t before it for readability
-        if(!std::dynamic_pointer_cast<AssemblyLabel>(current->head))
-            asmFile << "\t";
-
-
-        asmFile << current->head->Format(defaultMap).c_str() << std::endl;
-        current = current->tail;
-    }
     
-    asmFile.close();
 
-    system("xdg-open ./output.asm");
 }
 
 

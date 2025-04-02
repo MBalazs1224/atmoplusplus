@@ -483,6 +483,7 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/asm/assembly_label.o: ./src/asm/assembly_label.cc ./src/asm/assembly_label.hh
+	@mkdir -p ./build/asm
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/asm/assembly_instruction.o: ./src/asm/assembly_instruction.cc ./src/asm/assembly_instruction.hh

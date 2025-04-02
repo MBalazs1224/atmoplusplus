@@ -53,6 +53,8 @@ class AtmoDriver
     bool printCanonicalIRTree = false;
 
     bool printIRTraces = false;
+
+    bool printASM = false;
     
     /// @brief Will initialize the object and process the  arguments.
     /// @param params A vector containing all the received arguments.
@@ -74,11 +76,13 @@ class AtmoDriver
 
     private:
 
-    std::shared_ptr<IRStatementList> ir_root;
+    std::shared_ptr<IRTraceSchedule> irTrace;
 
     void SemanticAnalyze();
 
     void TranslateToIR();
+
+    void GenerateAssembly();
 
     std::shared_ptr<IRStatementList> BuildIRList(const std::vector<std::shared_ptr<Node>>& nodes);
 
@@ -90,7 +94,7 @@ class AtmoDriver
     /// @param nodes The vector of all nodes.
     /// @return A vector only containing statement nodes.
     std::vector<std::shared_ptr<Node>> GetStatementNodes(std::vector<std::shared_ptr<Node>>& nodes);
-    void TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes);
+    std::shared_ptr<IRStatementList> TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes);
     
     // Will return tru if the given node can be used as a statement
     bool StatementValid(const std::shared_ptr<Node>);
