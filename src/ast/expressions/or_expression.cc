@@ -50,7 +50,7 @@ std::shared_ptr<TranslateExpression> OrExpression::TranslateExpressionToIr()
 
     // Create the register that will be used to store the final value
 
-    auto reg = std::make_shared<Temp>();
+    auto reg = std::make_shared<Temp>(DataSize::DWord);
 
     // Statement to move 1 into the register
     

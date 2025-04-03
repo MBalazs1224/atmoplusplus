@@ -61,6 +61,7 @@ void ReservedIrRegisters::Initialize()
     XMM6  = std::make_shared<Temp>();
     XMM7 = std::make_shared<Temp>();
 
+    // FIXME: They need to be set that the are only 4 bytes!!!!!
     incomingIntegerParameterLocations = {RDI, RSI, RDX, RCX, R8, R9};
     incomingFloatParameterLocations = {XMM0, XMM1,XMM2,XMM3,XMM4,XMM5,XMM6,XMM7};
 

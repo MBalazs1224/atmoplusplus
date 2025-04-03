@@ -142,8 +142,10 @@ std::shared_ptr<IRExpression> IRNormalizer::NormalizeExpression(
     }
     else if (auto call = std::dynamic_pointer_cast<IRCall>(exp)) {
 
+        // TODO: Might need to specify the correct size of the new register, now defaults to 64 bit
+
         // Handle function calls by storing result in temporary
-        auto temp = std::make_shared<IRTemp>(std::make_shared<Temp>());
+        auto temp = std::make_shared<IRTemp>(std::make_shared<Temp>(DataSize::QWord));
         
         // Normalize call arguments
         std::vector<std::shared_ptr<IRExpression>> normalizedArgs;

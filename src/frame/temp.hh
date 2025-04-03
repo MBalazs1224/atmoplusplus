@@ -8,7 +8,9 @@ class Temp
         static int count;
         int num;
     public:
+        int sizeNeeded;
         Temp();
+        Temp(int);
         ~Temp() = default;
         std::string ToString();
 };

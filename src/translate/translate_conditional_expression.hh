@@ -1,5 +1,6 @@
 #pragma once
 #include "translate_expression.hh"
+#include "../frame/datasize.hh"
 
 class TranslateConditionalExpression : TranslateExpression
 {

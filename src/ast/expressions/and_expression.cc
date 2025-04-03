@@ -33,7 +33,7 @@ std::shared_ptr<TranslateExpression> AndExpression::TranslateExpressionToIr()
 
     // Need to put the end value inside a register
 
-    auto reg = std::make_shared<Temp>();
+    auto reg = std::make_shared<Temp>(DataSize::DWord); // WIll be integers
 
     // The true, false and joining labels
 

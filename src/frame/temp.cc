@@ -2,7 +2,12 @@
 
 int Temp::count = 0;
 
-Temp::Temp()
+Temp::Temp() : Temp(8) // Default to 64 bit
+{
+    
+}
+
+Temp::Temp(int size) : sizeNeeded(size)
 {
     num = count++;
 }

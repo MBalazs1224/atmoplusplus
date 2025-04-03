@@ -38,7 +38,7 @@ std::shared_ptr<TranslateExpression> NotExpression::TranslateExpressionToIr()
 
     // Create a register for the final value
 
-    auto reg = std::make_shared<Temp>();
+    auto reg = std::make_shared<Temp>(DataSize::DWord);
 
     // Subtract the value from 1
 

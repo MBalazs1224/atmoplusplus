@@ -40,7 +40,7 @@ std::shared_ptr<TranslateExpression> MatchesExpression::TranslateExpressionToIr(
 
     // Create the register that will be used to store the final value
 
-    auto reg = std::make_shared<Temp>();
+    auto reg = std::make_shared<Temp>(DataSize::DWord);
 
     // Translate the left and right expressions into IR value expression, because their values will be compared
 

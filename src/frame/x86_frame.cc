@@ -27,7 +27,7 @@ std::shared_ptr<Access> x86Frame::allocLocal(bool escapes, int size)
     }
     else
     {
-        return std::make_shared<InReg>();
+        return std::make_shared<InReg>(size);
     }
 }
 

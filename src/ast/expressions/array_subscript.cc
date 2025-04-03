@@ -208,7 +208,9 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
 
     // To prevetnt multiple evaluations of the index, first move the index value into a reg and then do the needed calcualtions on that reg (without this functions would be called at boundary check and actual indexing as well)
 
-    auto tempForindex = std::make_shared<Temp>();
+    int neededBytes = this->GetType()->GetSize();
+
+    auto tempForindex = std::make_shared<Temp>(neededBytes);
 
     auto boundaryCheckExpression = TranslateBoundaryCheckIntoIR(indexLabel,tempForindex);
 

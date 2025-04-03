@@ -1,8 +1,8 @@
 #include "inreg.hh"
 #include "../ir/expressions/ir_temp.hh"
-InReg::InReg()
+InReg::InReg(int space)
 {
-    temp = std::make_shared<Temp>();
+    temp = std::make_shared<Temp>(space);
 }
 
 InReg::InReg(std::shared_ptr<Temp> incomingTemp)

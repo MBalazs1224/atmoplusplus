@@ -7,7 +7,7 @@ TranslateConditionalExpression::TranslateConditionalExpression(std::shared_ptr<I
 std::shared_ptr<IRExpression> TranslateConditionalExpression::ToValueExpression()
 {
     // The reg that will hold the result of the expression
-    auto reg = std::make_shared<Temp>(); 
+    auto reg = std::make_shared<Temp>(DataSize::DWord); 
 
     // The true and false labels
     auto trueLabel = std::make_shared<Label>();
