@@ -1,8 +1,3 @@
-create void function testVoid
-	create integer a
+create boolean b equals true
 
-call testVoid with no arguments
-
-
-create void function asd
-	create integer a
+b equals false

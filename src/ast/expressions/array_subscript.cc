@@ -86,7 +86,8 @@ std::shared_ptr<IRExpression> ArraySubscriptExpression::TranslateIndexingIntoIR(
     );
 
     auto memExpression = std::make_shared<IRMem>(
-        offsetIntoArray
+        offsetIntoArray,
+        sizeOfElementsInTheArray
     );
 
     return memExpression;

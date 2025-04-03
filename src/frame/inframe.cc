@@ -1,6 +1,6 @@
 #include "inframe.hh"
 
-InFrame::InFrame(int offset_in) : offset(offset_in)
+InFrame::InFrame(int offset_in, int sizeIn) : offset(offset_in), size(sizeIn)
 {
 }
 
@@ -18,7 +18,10 @@ std::shared_ptr<IRExpression> InFrame::AsExpression(std::shared_ptr<IRExpression
             BinaryOperator::MINUS,
             framePointer,
             std::make_shared<IRConst>(offset)
-        ));
+        ),
+        this->size
+    
+    );
 }
 
 std::shared_ptr<IRExpression> InFrame::AsExpressionNoDereference(std::shared_ptr<IRExpression> framePointer)

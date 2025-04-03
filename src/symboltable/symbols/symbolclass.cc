@@ -203,7 +203,7 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         this->size_in_bytes += DataSize::QWord;
 
         // Set that the function can be called from the pointer
-        auto accessObj = std::make_shared<OffsetFromObject>(variableOffset);
+        auto accessObj = std::make_shared<OffsetFromObject>(variableOffset, DataSize::QWord);
 
 
         function->access = accessObj;
@@ -216,7 +216,8 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         auto RDIDereferencePlusOffset = std::make_shared<IRBinaryOperator>(
             BinaryOperator::PLUS,
             std::make_shared<IRMem>(
-                std::make_shared<IRTemp>(ReservedIrRegisters::RDI) 
+                std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
+                DataSize::QWord // The function pointer is 64 bit
             ),
             std::make_shared<IRConst>(variableOffset)
         );
@@ -271,7 +272,8 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         auto RDIDereferencePlusOffset = std::make_shared<IRBinaryOperator>(
             BinaryOperator::PLUS,
             std::make_shared<IRMem>(
-                std::make_shared<IRTemp>(ReservedIrRegisters::RDI) 
+                std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
+                DataSize::QWord // A function pointer is 64 bit
             ),
             std::make_shared<IRConst>(offset)
         );
@@ -375,7 +377,7 @@ bool ClassSymbol::InsertVariable(const std::shared_ptr<VariableDefinitionNode> &
     variables[variable->name] = variable;
 
     // Set that the variable is at the next available offset position
-    variable->access = std::make_shared<OffsetFromObject>(variableOffset);
+    variable->access = std::make_shared<OffsetFromObject>(variableOffset, variable->GetSize());
 
     int variableSize = variable->GetSize();
     

@@ -10,6 +10,8 @@ class OffsetFromObject : public Access
         int offset;
 
         bool shouldUseRDI;
+
+        int size;
         /*
         * @param objectLocation The expression that yields the location of the object in memory.
         * @returns The expression that correctly offsets from that object.
@@ -18,5 +20,5 @@ class OffsetFromObject : public Access
 
         std::shared_ptr<IRExpression> AsExpressionNoDereference(std::shared_ptr<IRExpression> objectLocation) override;
 
-        OffsetFromObject(int);
+        OffsetFromObject(int, int);
 };

@@ -22,6 +22,11 @@ class x86CodeGenerator : public CodeGenerator
         void MunchReturn(std::shared_ptr<IRReturn>) override;
         void MunchSysCall(std::shared_ptr<IRSysCall>) override;
 
+        /// @brief Converts the numerical size into assembly size instruction.
+        /// @param size The size in bytes.
+        /// @return The assembly size instruction.
+        std::string SizeToString(int size);
+
         // Expressions
 
         std::shared_ptr<Temp> MunchBinaryOperator(std::shared_ptr<IRBinaryOperator>) override;

@@ -1,6 +1,6 @@
 #include "offset_from_object.hh"
 
-OffsetFromObject::OffsetFromObject(int offsetIn) : offset(offsetIn)
+OffsetFromObject::OffsetFromObject(int offsetIn, int sizeIn) : offset(offsetIn), size(sizeIn)
 {}
 
 
@@ -21,7 +21,8 @@ std::shared_ptr<IRExpression> OffsetFromObject::AsExpression(std::shared_ptr<IRE
             BinaryOperator::PLUS,
             correctOffset,
             std::make_shared<IRConst>(offset)
-        )
+        ),
+        this->size
     );
 
 }

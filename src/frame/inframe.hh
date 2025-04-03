@@ -9,7 +9,9 @@ class InFrame : public Access
         // The offset from the frame pointer
         int offset;
 
-        InFrame(int);
+        int size;
+
+        InFrame(int, int);
 
         ~InFrame() = default;
         

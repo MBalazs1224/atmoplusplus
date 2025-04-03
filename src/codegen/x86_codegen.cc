@@ -162,6 +162,27 @@ void x86CodeGenerator::MunchLeave(std::shared_ptr<IRLeave> exp)
     EmitInstruction(asmInst);
 }
 
+std::string x86CodeGenerator::SizeToString(int size)
+{
+    switch (size)
+    {
+    case 1:
+        return "byte";
+    
+    case 2:
+        return "word";
+
+    case 4:
+        return "dword";
+    
+    case 8:
+        return ""; // 8 byte size is the default, so no additional size instruction is needed
+
+    default:
+        throw std::logic_error("Invalid size in SizeToString!");
+    }
+}
+
 void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 {
     /*
@@ -281,6 +302,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
     {
         auto destBinOp = std::dynamic_pointer_cast<IRBinaryOperator>(destMem->exp);
 
+        auto destSizeString = SizeToString(destMem->bytesNeeded);
+
         // The destination is an offset from something
         if(destBinOp)
         {
@@ -299,7 +322,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 {
 
                     auto asmInst = std::make_shared<AssemblyMove>(
-                        Helper::FormatString("mov [`d0], `s0"),
+                        Helper::FormatString("mov %s [`d0], `s0", destSizeString.c_str()),
                         MunchExpression(destBinOp),
                         MunchExpression(moveExp->source)
                     );
@@ -322,7 +345,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
                 auto asmInst = std::make_shared<AssemblyMove>(
-                    Helper::FormatString("mov [`d0 %s %d], %d",  destOp, rightConst->value, srcImm->value),
+                    Helper::FormatString("mov %s [`d0 %s %d], %d", destSizeString.c_str() ,destOp, rightConst->value, srcImm->value),
                     leftTemp->temp,
                     nullptr
                 );
@@ -338,7 +361,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
                 auto asmInst = std::make_shared<AssemblyMove>(
-                    Helper::FormatString("mov [`d0 %s %d], `s0",  destOp, rightConst->value),
+                    Helper::FormatString("mov %s [`d0 %s %d], `s0", destSizeString.c_str(), destOp, rightConst->value),
                     leftTemp->temp,
                     srcReg->temp
                 );
@@ -354,7 +377,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
                 auto asmInst = std::make_shared<AssemblyMove>(
-                    Helper::FormatString("mov [`d0 %s %d], %d",  destOp, rightConst->value, srcName->label->ToString().c_str()),
+                    Helper::FormatString("mov %s [`d0 %s %d], %d", destSizeString.c_str(),destOp, rightConst->value, srcName->label->ToString().c_str()),
                     leftTemp->temp,
                     nullptr
                 );
@@ -370,7 +393,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
             auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
             auto asmInst = std::make_shared<AssemblyMove>(
-                Helper::FormatString("mov [`d0 %s %d], `s0",destOp, rightConst->value),
+                Helper::FormatString("mov %s [`d0 %s %d], `s0", destSizeString.c_str(), destOp, rightConst->value),
                 leftTemp->temp,
                 sourceTemp
             );
