@@ -20,16 +20,18 @@ std::string AssemblyInstruction::Format(std::shared_ptr<TempMap> map)
                 case 's': {  // Source temp
                     i++;  // Move past 's'
                     int n = assemblyInstruction[i] - '0';  // Extract index
-                    result << map->Map(NthTemp(src, n));  // Replace with mapped temp
+                    auto tempNeeded = NthTemp(src, n);
+                    result << map->Map(tempNeeded, tempNeeded->sizeNeeded);  // Replace with mapped temp
                     break;
                 }
                 case 'd': {  // Destination temp
                     i++;  // Move past 'd'
                     int n = assemblyInstruction[i] - '0';  // Extract index
-                    result << map->Map(NthTemp(dst, n));  // Replace with mapped temp
+                    auto tempNeeded = NthTemp(dst, n);
+                    result << map->Map(tempNeeded, tempNeeded->sizeNeeded);  // Replace with mapped temp
                     break;
                 }
-                case 'j': {  // Jump label
+                case 'j': {  // Jump labelq
                     i++;  // Move past 'j'
                     int n = assemblyInstruction[i] - '0';  // Extract index
                     result << NthLabel(jump, n)->ToString();  // Replace with label

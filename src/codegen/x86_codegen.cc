@@ -200,6 +200,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
     */
 
 
+    //FIXME: When moving to RAX for example as a return value it will always move into a 64 bit register, when less could be enough
+
     // DESTINATION IS A REGISTER
 
 

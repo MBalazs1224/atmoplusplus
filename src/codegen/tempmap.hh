@@ -5,5 +5,5 @@
 class TempMap
 {
     public:
-        virtual std::string Map(std::shared_ptr<Temp>) = 0;
+        virtual std::string Map(std::shared_ptr<Temp>, int size) = 0;
 };
