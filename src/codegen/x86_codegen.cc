@@ -239,8 +239,10 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(srcBinop->right);
                 assert(leftTemp && rightConst);
 
+                auto sizeString = SizeToString(srcMem->bytesNeeded);
+
                 auto asmInst = std::make_shared<AssemblyMove>(
-                    Helper::FormatString("mov `d0, [`s0 %s %d]", op.c_str(), rightConst->value),
+                    Helper::FormatString("mov `d0, %s [`s0 %s %d]",sizeString.c_str(), op.c_str(), rightConst->value),
                     destReg->temp,
                     leftTemp->temp
                 );
@@ -439,8 +441,10 @@ void x86CodeGenerator::MunchPop(std::shared_ptr<IRPop> popExp)
     else if (auto irMem = std::dynamic_pointer_cast<IRMem>(popExp->exp)) {
         auto addrTemp = MunchExpression(irMem->exp);
 
+        auto sizeString = SizeToString(irMem->bytesNeeded);
+
         auto asmInst = std::make_shared<AssemblyOper>(
-            "pop [`d0]",  
+            Helper::FormatString("pop %s [`d0]", sizeString.c_str()),  
             AppendTempList(addrTemp, nullptr),
             nullptr
         );
@@ -704,8 +708,10 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 
     auto newLocation = std::make_shared<Temp>();
 
+    auto sizeString = SizeToString(memExp->bytesNeeded);
+
     auto asmInst = std::make_shared<AssemblyMove>(
-        "mov `d0, [`s0]", // Move the first source into the first destination
+        Helper::FormatString("mov `d0, %s [`s0]", sizeString.c_str()), // Move the first source into the first destination
         newLocation,
         addressTemp
     );
