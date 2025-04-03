@@ -212,6 +212,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         {
             // Destination: REG, Source: IMMEDIATE
 
+            destReg->temp->sizeNeeded = DataSize::DWord; // Because it's an integer
+
             auto asmInst = std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov `d0, %d", srcImm->value),
                 destReg->temp,
@@ -225,6 +227,9 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         // The source is a memory location
         else if (auto srcMem = std::dynamic_pointer_cast<IRMem>(moveExp->source))
         {
+
+            destReg->temp->sizeNeeded = srcMem->bytesNeeded;
+
             // Destination: REG, SOURCE: MEMORY
 
             //  memory can be a binop (eg. offset from a register), or a register (the register contains a pointer)
@@ -255,6 +260,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             // It's a pointer inside a register
             else if(auto srcReg = std::dynamic_pointer_cast<IRTemp>(srcMem->exp))
             {
+                destReg->temp->sizeNeeded = srcReg->temp->sizeNeeded;
                 // The memory is at where the register points 
 
                 auto asmInst = std::make_shared<AssemblyMove>(
@@ -273,6 +279,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         // The source is a label (which is referenced by an IRName obj)
         else if (auto srcName = std::dynamic_pointer_cast<IRName>(moveExp->source))
         {
+            destReg->temp->sizeNeeded = DataSize::QWord; // Will be a pointer
             // Destination: REGISTER, Source: LABEL
 
             auto asmInst = std::make_shared<AssemblyMove>(
@@ -288,6 +295,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         // If non eof them matched, just put source into a temporary and move that into the destination
 
         auto sourceTemp = MunchExpression(moveExp->source);
+
+        destReg->temp->sizeNeeded = sourceTemp->sizeNeeded;
 
         auto asmInst = std::make_shared<AssemblyMove>(
             "mov `d0, `s0",
@@ -324,11 +333,15 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             {
 				if(auto binOp = std::dynamic_pointer_cast<IRBinaryOperator>(innerMem->exp))
                 {
+                    auto dest = MunchExpression(destBinOp);
+                    auto src = MunchExpression(moveExp->source);
+
+                    // Don't need to change the size of the temps, because it will be a pointer temporary which size should be 64 bit
 
                     auto asmInst = std::make_shared<AssemblyMove>(
                         Helper::FormatString("mov %s [`d0], `s0", destSizeString.c_str()),
-                        MunchExpression(destBinOp),
-                        MunchExpression(moveExp->source)
+                        dest,
+                        src
                     );
 
                     EmitInstruction(asmInst);
@@ -348,6 +361,9 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 // Destination: MEMORY, Source: IMMEDIATE
                 auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
+
+                // Don't need to change the size of the temps, because it will be a pointer temporary which size should be 64 bit
+
                 auto asmInst = std::make_shared<AssemblyMove>(
                     Helper::FormatString("mov %s [`d0 %s %d], %d", destSizeString.c_str() ,destOp, rightConst->value, srcImm->value),
                     leftTemp->temp,
@@ -364,6 +380,10 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 // Destination: MEMORY, Source: REGISTER
                 auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
+
+                // Don't need to change the size of the temps, because it will be a pointer temporary which size should be 64 bit
+
+
                 auto asmInst = std::make_shared<AssemblyMove>(
                     Helper::FormatString("mov %s [`d0 %s %d], `s0", destSizeString.c_str(), destOp, rightConst->value),
                     leftTemp->temp,
@@ -380,6 +400,9 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 // Destination: MEMORY, Source: IMMEDIATE
                 auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
                 auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
+
+                leftTemp->temp->sizeNeeded = DataSize::QWord; // Pointer
+
                 auto asmInst = std::make_shared<AssemblyMove>(
                     Helper::FormatString("mov %s [`d0 %s %d], %d", destSizeString.c_str(),destOp, rightConst->value, srcName->label->ToString().c_str()),
                     leftTemp->temp,
@@ -396,6 +419,9 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             auto sourceTemp = MunchExpression(moveExp->source);
             auto leftTemp = std::dynamic_pointer_cast<IRTemp>(destBinOp->left);
             auto rightConst = std::dynamic_pointer_cast<IRConst>(destBinOp->right);
+
+            // Don't need to change the size of the temps, because it will be a pointer temporary which size should be 64 bit
+
             auto asmInst = std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov %s [`d0 %s %d], `s0", destSizeString.c_str(), destOp, rightConst->value),
                 leftTemp->temp,
@@ -412,6 +438,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 
      auto sourceTemp = MunchExpression(moveExp->source);
      auto destTemp = MunchExpression(moveExp->destination);
+
+     destTemp->sizeNeeded = sourceTemp->sizeNeeded;
 
      auto asmInst = std::make_shared<AssemblyMove>(
          "mov `d0, `s0",
