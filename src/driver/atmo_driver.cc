@@ -284,7 +284,7 @@ std::shared_ptr<IRStatementList> AtmoDriver::BuildIRList(const std::vector<std::
     return root;
 }
 
-std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes)
+std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes, std::vector<std::shared_ptr<VariableSymbol>>& globalVars)
 {
 
     std::vector<std::shared_ptr<Node>> definitions = GetDefinitionNodes(nodes);
@@ -296,12 +296,26 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
     auto definitionIR = BuildIRList(definitions);
     auto statementsIR = BuildIRList(statements);
 
-    // Create a label for the main entry point, which is followed by the statements
+    int sizeOfGlobalVariables = 0;
+
+    for (auto &&var : globalVars)
+    {
+        sizeOfGlobalVariables += var->GetSize();
+    }
+    
+    // Enter instruction, followed by the rest of the statements
+
+    auto enterIns = std::make_shared<IRStatementList>(
+        std::make_shared<IREnter>(sizeOfGlobalVariables),
+        statementsIR
+    );
+
+    // Create a label for the main entry point, which is followed by the enter instruction
     auto mainLabel = std::make_shared<IRStatementList>(
         std::make_shared<IRLabel>(
             std::make_shared<Label>("main")
         ),
-        statementsIR
+        enterIns
     );
 
     // Connect definitions to mainLabel if definitions exist
@@ -406,7 +420,7 @@ void AtmoDriver::TranslateToIR()
     
     
 
-    auto irRoot = TranslateToIRTree(nodes);
+    auto irRoot = TranslateToIRTree(nodes, global_variables);
 
     if(printIRTree)
     {

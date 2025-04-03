@@ -1,2 +1,5 @@
 create integer a equals 5
-create integer b equals a
+create integer b equals a + 10
+
+
+return a plus b

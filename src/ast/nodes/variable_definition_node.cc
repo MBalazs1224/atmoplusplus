@@ -285,7 +285,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
         auto moveSpaceToLocation = std::make_shared<IRMove>(
-            variable->access->AsExpressionNoDereference(sp), // The varaible location shouldn't be dereferenced
+            variable->access->AsExpression(sp), // The varaible location shouldn't be dereferenced
             externalFunctionCall
         );
 

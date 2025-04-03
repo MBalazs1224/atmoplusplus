@@ -94,7 +94,7 @@ class AtmoDriver
     /// @param nodes The vector of all nodes.
     /// @return A vector only containing statement nodes.
     std::vector<std::shared_ptr<Node>> GetStatementNodes(std::vector<std::shared_ptr<Node>>& nodes);
-    std::shared_ptr<IRStatementList> TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes);
+    std::shared_ptr<IRStatementList> TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes, std::vector<std::shared_ptr<VariableSymbol>>& globalVars);
     
     // Will return tru if the given node can be used as a statement
     bool StatementValid(const std::shared_ptr<Node>);
