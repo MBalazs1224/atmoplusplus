@@ -26,6 +26,8 @@ std::shared_ptr<Temp> ReservedIrRegisters::XMM5;
 std::shared_ptr<Temp> ReservedIrRegisters::XMM6;
 std::shared_ptr<Temp> ReservedIrRegisters::XMM7;
 
+std::unordered_map<std::shared_ptr<Temp>, std::string> ReservedIrRegisters::ReservedTempToReg;
+
 
 std::vector<std::shared_ptr<Temp>> ReservedIrRegisters::incomingIntegerParameterLocations;
 std::vector<std::shared_ptr<Temp>> ReservedIrRegisters::incomingFloatParameterLocations;
@@ -67,4 +69,34 @@ void ReservedIrRegisters::Initialize()
 
     calleeSavedRegs = {RBX,FramePointer,R12,R13,R14,R15};
     callerSavedRegs = {RAX,RCX,RDX,RSI,RDI,R8,R9,R10,R11};
+
+
+    ReservedTempToReg[StackPointer] = "rsp";
+    ReservedTempToReg[FramePointer] = "rbp";
+
+    ReservedTempToReg[RAX] = "rax";
+    ReservedTempToReg[RBX] = "rbx";
+    ReservedTempToReg[RDI] = "rdi";
+    ReservedTempToReg[RSI] = "rsi";
+    ReservedTempToReg[RDX] = "rdx";
+    ReservedTempToReg[RCX] = "rcx";
+    ReservedTempToReg[R8] = "r8";
+    ReservedTempToReg[R9] = "r9";
+    ReservedTempToReg[R10] = "r10";
+    ReservedTempToReg[R11] = "r11";
+    ReservedTempToReg[R12] = "r12";
+    ReservedTempToReg[R13] = "r13";
+    ReservedTempToReg[R14] = "r14";
+    ReservedTempToReg[R15] = "r15";
+
+    ReservedTempToReg[XMM0] = "xmm0";
+    ReservedTempToReg[XMM1] = "xmm1";
+    ReservedTempToReg[XMM2] = "xmm2";
+    ReservedTempToReg[XMM3] = "xmm3";
+    ReservedTempToReg[XMM4] = "xmm4";
+    ReservedTempToReg[XMM5] = "xmm5";
+    ReservedTempToReg[XMM6] = "xmm6";
+    ReservedTempToReg[XMM7] = "xmm7";
+
+
 }

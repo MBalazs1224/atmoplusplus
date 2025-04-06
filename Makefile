@@ -29,6 +29,8 @@ assembly := ./build/asm/assembly_label.o ./build/asm/assembly_move.o ./build/asm
 
 code_generator := ./build/codegen/codegen.o ./build/codegen/x86_codegen.o
 
+reg_allocator := ./build/codegen/linear_scan.o
+
 helper := ./build/helper/helper.o
 
 lexer := ./build/lexer/atmolexer.o ./build/lexer/lex.yy.o
@@ -48,7 +50,7 @@ ilocation := ./build/location/ilocation.o
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer) $(ir_block_trace) $(assembly) $(code_generator)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer) $(ir_block_trace) $(assembly) $(code_generator) $(reg_allocator)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
@@ -496,6 +498,10 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/codegen/x86_codegen.o: ./src/codegen/x86_codegen.cc ./src/codegen/x86_codegen.hh
+	@mkdir -p ./build/codegen
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/codegen/linear_scan.o: ./src/codegen/reg_allocator/linear_scan.cc ./src/codegen/reg_allocator/linear_scan.hh
 	@mkdir -p ./build/codegen
 	g++ $(CXXFLAGS) -c $< -o $@
 	

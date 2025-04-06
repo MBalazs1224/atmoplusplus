@@ -22,6 +22,8 @@
 
 #include "../codegen/default_temp_map.hh"
 
+#include "../codegen/reg_allocator/linear_scan.hh"
+
 class AtmoDriver
 {
 

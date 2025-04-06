@@ -350,15 +350,16 @@ void AtmoDriver::GenerateAssembly()
 
     auto asmList = codeGen->CodeGen(irTrace->statements);
 
-    auto current = asmList;
-
-    auto defaultMap = std::make_shared<DefaultTempMap>();
-
-
-
+    
+    auto linearMap = std::make_shared<LinearScanMap>(asmList);
+    
+    
+    
     // Print the output into an asm files
-
+    
     std::ofstream asmFile("output.asm");
+    
+    auto current = asmList;
 
     while (current)
     {
@@ -367,7 +368,7 @@ void AtmoDriver::GenerateAssembly()
             asmFile << "\t";
 
 
-        asmFile << current->head->Format(defaultMap).c_str() << std::endl;
+        asmFile << current->head->Format(linearMap).c_str() << std::endl;
         current = current->tail;
     }
     
