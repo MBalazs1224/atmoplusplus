@@ -38,6 +38,8 @@ class LinearScanMap : public TempMap
         /// @param start The start interval.
         void ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals,int start);
 
+        bool IsRegisterReserved(std::shared_ptr<Temp>);
+
 
     public:
         std::string Map(std::shared_ptr<Temp>, int size) override;

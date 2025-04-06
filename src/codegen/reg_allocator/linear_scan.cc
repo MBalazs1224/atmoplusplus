@@ -10,6 +10,11 @@ void LinearScanMap::ExpireOldIntervals(std::vector<LiveInterval>& activeInterval
     );
 }
 
+bool LinearScanMap::IsRegisterReserved(std::shared_ptr<Temp> temp)
+{
+    return ReservedIrRegisters::ReservedTempToReg.count(temp) > 0;
+}
+
 std::vector<AllocatedReg> LinearScanMap::RegisterAllocation(std::vector<LiveInterval>& intervals,const std::vector<std::string>& regPool) 
 {
     std::vector<LiveInterval> active;
@@ -20,6 +25,10 @@ std::vector<AllocatedReg> LinearScanMap::RegisterAllocation(std::vector<LiveInte
     {
         // Remove expired intervals
         ExpireOldIntervals(active, interval.start);
+
+        // If the register is already reserved, just skip it
+        if(IsRegisterReserved(interval.temp))
+            continue;
 
         if(active.size() == regPool.size())
         {
@@ -83,7 +92,24 @@ std::vector<LiveInterval> LinearScanMap::ComputeLiveIntervals(std::shared_ptr<As
             // Set the start or end of the liveness based on if the current index is lower then the one already set
 
             intervalMap[temp].first = std::min(intervalMap[temp].first,instructionIndex);
-            intervalMap[temp].second = std::min(intervalMap[temp].second,instructionIndex);
+            intervalMap[temp].second = std::max(intervalMap[temp].second,instructionIndex);
+
+        }
+
+        for(auto tempList = defs; tempList != nullptr; tempList = tempList->tail)
+        {
+            auto temp = tempList->head;
+
+            // If the map doesn't contain a interval for this temp, add it to it with the current index as it's start and end
+
+            if(intervalMap.count(temp) == 0)
+            {
+                intervalMap[temp] = {instructionIndex,instructionIndex};
+            }
+
+            // Set the start or end of the liveness based on if the current index is lower then the one already set
+
+            intervalMap[temp].second = std::max(intervalMap[temp].second,instructionIndex);
 
         }
         
