@@ -358,6 +358,8 @@ void AtmoDriver::GenerateAssembly()
     // Print the output into an asm files
     
     std::ofstream asmFile("output.asm");
+
+    asmFile << "section .text\n\nglobal main\n\n";
     
     auto current = asmList;
 
