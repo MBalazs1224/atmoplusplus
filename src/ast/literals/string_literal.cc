@@ -13,11 +13,7 @@ bool StringLiteral::Check()
 
 std::shared_ptr<TranslateExpression> StringLiteral::TranslateExpressionToIr()
 {
-    // Create a new label that will point to the string
-    auto label = std::make_shared<Label>();
-
-
-    GlobalStrings::stringToLabel[value] = label;
+    auto label = GlobalStrings::AddToPool(this->value);
 
     // Create an IRName that points to the created label
     auto exp = std::make_shared<IRName>(label);
