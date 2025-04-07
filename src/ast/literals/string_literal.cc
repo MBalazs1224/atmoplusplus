@@ -16,9 +16,8 @@ std::shared_ptr<TranslateExpression> StringLiteral::TranslateExpressionToIr()
     // Create a new label that will point to the string
     auto label = std::make_shared<Label>();
 
-    auto pair_ = std::make_pair(label,value);
 
-   // TODO: Strings need to be added to a list of all global strings, so that they can be emitted by the code generator into the data section of the assembly file
+    GlobalStrings::stringToLabel[value] = label;
 
     // Create an IRName that points to the created label
     auto exp = std::make_shared<IRName>(label);

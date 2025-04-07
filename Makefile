@@ -27,7 +27,7 @@ reserved_ir_registers := ./build/ir/reserved_ir_registers.o
 
 assembly := ./build/asm/assembly_label.o ./build/asm/assembly_move.o ./build/asm/assembly_oper.o  ./build/asm/assembly_instruction.o
 
-code_generator := ./build/codegen/codegen.o ./build/codegen/x86_codegen.o
+code_generator := ./build/codegen/codegen.o ./build/codegen/x86_codegen.o ./build/codegen/global_strings.o
 
 reg_allocator := ./build/codegen/linear_scan.o
 
@@ -498,6 +498,10 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/codegen/x86_codegen.o: ./src/codegen/x86_codegen.cc ./src/codegen/x86_codegen.hh
+	@mkdir -p ./build/codegen
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/codegen/global_strings.o: ./src/codegen/global_strings.cc ./src/codegen/global_strings.hh
 	@mkdir -p ./build/codegen
 	g++ $(CXXFLAGS) -c $< -o $@
 

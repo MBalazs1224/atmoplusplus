@@ -1,5 +1,6 @@
 #pragma once
 #include "literal.hh"
+#include "../../codegen/global_strings.hh"
 #include <string>
 #include <utility>
 

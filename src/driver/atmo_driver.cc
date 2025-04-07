@@ -359,11 +359,22 @@ void AtmoDriver::GenerateAssembly()
     
     std::ofstream asmFile("output.asm");
 
+    // Generate strings
+
+    asmFile << ".section .rodata\n\n"; // Print read only data indicator
+
+    // Print the data in this form: L0: .string "asd"
+    for (auto &&pair : GlobalStrings::stringToLabel)
+    {
+        asmFile << pair.second->ToString().c_str() << ": " << ".string \"" << pair.first.c_str() <<  "\"\n";
+    }
+    
+
     asmFile << "section .text\n\nglobal main\n\n";
     
     auto current = asmList;
 
-    while (current)
+    while (current) 
     {
         // If the instruction is not a label, we should print a \t before it for readability
         if(!std::dynamic_pointer_cast<AssemblyLabel>(current->head))

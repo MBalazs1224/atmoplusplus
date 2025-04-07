@@ -404,7 +404,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 leftTemp->temp->sizeNeeded = DataSize::QWord; // Pointer
 
                 auto asmInst = std::make_shared<AssemblyMove>(
-                    Helper::FormatString("mov %s [`d0 %s %d], %d", destSizeString.c_str(),destOp, rightConst->value, srcName->label->ToString().c_str()),
+                    Helper::FormatString("mov %s [`d0 %s %d], %s", destSizeString.c_str(),destOp, rightConst->value, srcName->label->ToString().c_str()),
                     leftTemp->temp,
                     nullptr
                 );
