@@ -39,6 +39,10 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
     {
         printASM = true;
     }
+    else if (param == "--use-default-map")
+    {
+        useDefaultTempMap = true;
+    }
     else
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
@@ -351,7 +355,7 @@ void AtmoDriver::GenerateAssembly()
     auto asmList = codeGen->CodeGen(irTrace->statements);
 
     
-    auto linearMap = std::make_shared<LinearScanMap>(asmList);
+    
     
     
     
@@ -374,6 +378,19 @@ void AtmoDriver::GenerateAssembly()
     
     auto current = asmList;
 
+    std::shared_ptr<TempMap> tempMap = nullptr;
+
+    if (useDefaultTempMap)
+    {
+        tempMap = std::make_shared<DefaultTempMap>();
+    }
+    else
+    {
+        tempMap = std::make_shared<LinearScanMap>(asmList);
+    }
+    
+    
+
     while (current) 
     {
         // If the instruction is not a label, we should print a \t before it for readability
@@ -381,7 +398,7 @@ void AtmoDriver::GenerateAssembly()
             asmFile << "\t";
 
 
-        asmFile << current->head->Format(linearMap).c_str() << std::endl;
+        asmFile << current->head->Format(tempMap).c_str() << std::endl;
         current = current->tail;
     }
     

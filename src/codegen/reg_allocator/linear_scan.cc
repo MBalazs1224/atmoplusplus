@@ -96,7 +96,7 @@ std::vector<LiveInterval> LinearScanMap::ComputeLiveIntervals(std::shared_ptr<As
 
         }
 
-        for(auto tempList = defs; tempList != nullptr; tempList = tempList->tail)
+        for(auto tempList = uses; tempList != nullptr; tempList = tempList->tail)
         {
             auto temp = tempList->head;
 
@@ -108,7 +108,7 @@ std::vector<LiveInterval> LinearScanMap::ComputeLiveIntervals(std::shared_ptr<As
             }
 
             // Set the start or end of the liveness based on if the current index is lower then the one already set
-
+            intervalMap[temp].first = std::min(intervalMap[temp].first,instructionIndex);
             intervalMap[temp].second = std::max(intervalMap[temp].second,instructionIndex);
 
         }

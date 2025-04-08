@@ -59,6 +59,8 @@ class AtmoDriver
     bool printIRTraces = false;
 
     bool printASM = false;
+
+    bool useDefaultTempMap = false;
     
     /// @brief Will initialize the object and process the  arguments.
     /// @param params A vector containing all the received arguments.
