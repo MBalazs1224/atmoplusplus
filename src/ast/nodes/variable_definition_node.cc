@@ -292,7 +292,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         // Move the size of the array into the first element
 
         auto moveSizeIntoFirstElement = std::make_shared<IRMove>(
-            varLocation,
+            std::make_shared<IRMem>(varLocation, DataSize::DWord), // An integer will be moved there
             numberOfElementsExpression
         );
 
