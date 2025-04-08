@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "../tempmap.hh"
 #include "allocated_reg.hh"
@@ -34,9 +35,7 @@ class LinearScanMap : public TempMap
         std::vector<AllocatedReg> RegisterAllocation(std::vector<LiveInterval>& intervals, const std::vector<std::string>& regPool);
 
         /// @brief Removes expired intervals.
-        /// @param activeIntervals A vector containing all active intervals..
-        /// @param start The start interval.
-        void ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals,int start);
+        void ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals,int start,std::unordered_set<std::string>& freeRegs, const std::unordered_map<std::shared_ptr<Temp>, std::string>& tempToReg);
 
         bool IsRegisterReserved(std::shared_ptr<Temp>);
 

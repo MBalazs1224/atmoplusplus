@@ -1,10 +1,15 @@
 #include "linear_scan.hh"
 
-void LinearScanMap::ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals, int currentStart)
+void LinearScanMap::ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals, int currentStart, std::unordered_set<std::string>& freeRegs, const std::unordered_map<std::shared_ptr<Temp>, std::string>& tempToReg)
 {
     activeIntervals.erase(
         std::remove_if(activeIntervals.begin(),activeIntervals.end(),[&](const LiveInterval& interval){
-            return interval.end < currentStart; // Remove the interval if it's already ended
+            if (interval.end < currentStart)
+            {
+                freeRegs.insert(tempToReg.at(interval.temp)); // Insert the expired temp to the free regs list, so it can be reused
+                return true;
+            }
+            return false;
         }),
         activeIntervals.end()
     );
@@ -18,45 +23,36 @@ bool LinearScanMap::IsRegisterReserved(std::shared_ptr<Temp> temp)
 std::vector<AllocatedReg> LinearScanMap::RegisterAllocation(std::vector<LiveInterval>& intervals,const std::vector<std::string>& regPool) 
 {
     std::vector<LiveInterval> active;
-
     std::unordered_map<std::shared_ptr<Temp>, std::string> tempToReg;
+    std::unordered_set<std::string> freeRegs(regPool.begin(), regPool.end());
 
-    for (const auto& interval : intervals)
-    {
-        // Remove expired intervals
-        ExpireOldIntervals(active, interval.start);
+    for (const auto& interval : intervals) {
+        ExpireOldIntervals(active, interval.start, freeRegs, tempToReg);
 
-        // If the register is already reserved, just skip it
-        if(IsRegisterReserved(interval.temp))
+        if (IsRegisterReserved(interval.temp))
             continue;
 
-        if(active.size() == regPool.size())
-        {
-            // There are no more registers available, spillingis required
+        if (freeRegs.empty()) {
             throw std::logic_error("Register spilling is not implemented yet!");
-        }
-        else
-        {
-            int indexForReg = active.size();
-            tempToReg[interval.temp] = regPool[indexForReg];
+        } else {
+            // Assign the first available free register
+            auto reg = *freeRegs.begin();
+            tempToReg[interval.temp] = reg;
+            freeRegs.erase(reg);
             active.push_back(interval);
         }
-        
+    }
+
+    // Restore freed registers when intervals expire
+
+    for (const auto& interval : active) {
+        freeRegs.insert(tempToReg[interval.temp]);
     }
 
     std::vector<AllocatedReg> allocations;
-
-    for (auto &&interval : intervals)
-    {
-        auto temp = interval.temp;
-        auto allocatedRegister = tempToReg[temp];
-
-
-        allocations.push_back(
-            AllocatedReg(temp,allocatedRegister)
-        );
+    for (auto&& interval : intervals) {
+        allocations.emplace_back(interval.temp, tempToReg[interval.temp]);
     }
-    
     return allocations;
     
 }
@@ -75,12 +71,17 @@ std::vector<LiveInterval> LinearScanMap::ComputeLiveIntervals(std::shared_ptr<As
     {
         auto currentInstruction = temp->head;
 
+
         auto defs = currentInstruction->Def();
         auto uses = currentInstruction->Use();
+
+
 
         for(auto tempList = defs; tempList != nullptr; tempList = tempList->tail)
         {
             auto temp = tempList->head;
+            if(!temp) // It can happen that it doesn't have a source or destination (at immediate values etc.)
+              	continue;
 
             // If the map doesn't contain a interval for this temp, add it to it with the current index as it's start and end
 
@@ -99,6 +100,9 @@ std::vector<LiveInterval> LinearScanMap::ComputeLiveIntervals(std::shared_ptr<As
         for(auto tempList = uses; tempList != nullptr; tempList = tempList->tail)
         {
             auto temp = tempList->head;
+            if(!temp) // It can happen that it doesn't have a source or destination (at immediate values etc.)
+              	continue;
+
 
             // If the map doesn't contain a interval for this temp, add it to it with the current index as it's start and end
 
