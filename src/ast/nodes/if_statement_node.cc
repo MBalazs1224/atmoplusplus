@@ -160,6 +160,12 @@ std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
     if (else_)
     {
         statements.push_back(else_->body->TranslateToIR());
+        // Jump out of the if statement to the next statement
+        statements.push_back(std::make_shared<IRJump>(
+            std::make_shared<IRName>(
+                if_end
+            )
+        ));
     }
 
     // Print joining label
