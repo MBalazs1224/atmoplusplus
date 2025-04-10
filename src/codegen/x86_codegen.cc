@@ -261,6 +261,24 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
     // Memory destinations
     if (auto destMem = std::dynamic_pointer_cast<IRMem>(moveExp->destination)) 
     {
+        // mov [REG + CONST], source
+        if(auto binOp = std::dynamic_pointer_cast<IRBinaryOperator>(destMem->exp))
+            if(auto rightConst = std::dynamic_pointer_cast<IRConst>(binOp->right))
+                if(auto leftTemp = std::dynamic_pointer_cast<IRTemp>(binOp->left))
+                {
+                    auto source = MunchExpression(moveExp->source);
+                    // It could only be plus or minus
+                    auto op = binOp->binop == BinaryOperator::PLUS ? "+" : "-";
+                    auto asmInst = std::make_shared<AssemblyMove>(
+                        Helper::FormatString("mov [`d0 %s %d], `s0", op, rightConst->value),
+                        leftTemp->temp,
+                        source
+                    );
+
+                    EmitInstruction(asmInst);
+                    return;
+                }
+
         const auto destSize = SizeToString(destMem->bytesNeeded);
 
         // Memory to memory through a temporary register
