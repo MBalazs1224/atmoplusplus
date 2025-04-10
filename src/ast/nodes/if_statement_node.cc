@@ -124,7 +124,7 @@ std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
     statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(if_end)));
 
     // Print label for false path
-    statements.push_back(std::make_shared<IRLabel>(if_false));
+    //statements.push_back(std::make_shared<IRLabel>(if_false));
 
     // -------- Translate the `else if` blocks
 
