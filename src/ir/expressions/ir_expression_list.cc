@@ -24,6 +24,12 @@ std::string IRExpressionList::ToDotFormat(int& nodeCounter)
     return dot;
 }
 
+IRExpressionList::IRExpressionList(std::shared_ptr<IRExpression> head, std::shared_ptr<IRExpressionList> nextIn)
+{
+    this->expression = head;
+    this->next = nextIn;
+}
+
 std::shared_ptr<IRExpressionList> IRExpressionList::CreateFromVector(std::vector<std::shared_ptr<IRExpression>>& expressions)
 {
     // If the vector is empty, return nullptr

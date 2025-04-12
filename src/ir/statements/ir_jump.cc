@@ -22,3 +22,19 @@ std::string IRJump::ToDotFormat(int &nodeCounter)
 
     return dot;
 }
+
+std::shared_ptr<IRStatement> IRJump::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return std::make_shared<IRJump>(
+        kids->expression,
+        this->targets
+    );
+}
+
+std::shared_ptr<IRExpressionList> IRJump::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        exp,
+        nullptr
+    );
+}

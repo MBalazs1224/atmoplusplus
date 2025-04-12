@@ -4,6 +4,7 @@
 #include "../expressions/ir_expression.hh"
 #include <vector>
 #include <assert.h>
+#include <stdexcept>
 // left followed by right immediately
 class IRSequence : public IRStatement
 {
@@ -19,4 +20,8 @@ class IRSequence : public IRStatement
         ~IRSequence() override = default;    
 
         std::string ToDotFormat(int&) override;
+
+                                                                        
+        std::shared_ptr<IRStatement> Build (std::shared_ptr<IRExpressionList> kids) override;
+        std::shared_ptr<IRExpressionList> Kids () override;
 };

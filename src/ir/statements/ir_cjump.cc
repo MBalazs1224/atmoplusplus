@@ -4,6 +4,29 @@ IRCJump::IRCJump(RelationalOperator op, std::shared_ptr<IRExpression> l, std::sh
 {
 
 }
+
+std::shared_ptr<IRStatement> IRCJump::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return std::make_shared<IRCJump>(
+        relop,
+        kids->expression,
+        kids->next->expression,
+        iftrue,
+        iffalse
+    );
+}
+
+std::shared_ptr<IRExpressionList> IRCJump::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        left,
+        std::make_shared<IRExpressionList>(
+            right,
+            nullptr
+        )
+    );
+}
+
 RelationalOperator IRCJump::OppositeOperator(RelationalOperator op)
 {
     switch (op)

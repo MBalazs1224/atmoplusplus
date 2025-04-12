@@ -16,3 +16,18 @@ std::string IREvaluateExpression::ToDotFormat(int &nodeCounter)
 
     return dot;
 }
+
+std::shared_ptr<IRStatement> IREvaluateExpression::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return std::make_shared<IREvaluateExpression>(
+        kids->expression
+    );
+}
+
+std::shared_ptr<IRExpressionList> IREvaluateExpression::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        exp,
+        nullptr
+    );
+}

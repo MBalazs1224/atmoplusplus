@@ -47,3 +47,15 @@ std::string IRSequence::ToDotFormat(int &nodeCounter)
 
     return dot;
 }
+
+
+std::shared_ptr<IRStatement> IRSequence::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    throw std::logic_error("Build() not applicable to IRSequence");
+        
+}
+
+std::shared_ptr<IRExpressionList> IRSequence::Kids()
+{
+    throw std::logic_error("Kids() not applicable to IRSequence");
+}

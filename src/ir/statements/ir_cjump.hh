@@ -27,4 +27,9 @@ class IRCJump : public IRStatement
         std::string ToDotFormat(int&) override;
 
         std::string OperatorToString();
+
+        std::shared_ptr<IRStatement> Build (std::shared_ptr<IRExpressionList> kids) override;
+        std::shared_ptr<IRExpressionList> Kids () override;
+
+
 };

@@ -10,3 +10,13 @@ IREnter::IREnter(int neededBytes)
 {
     this->neededBytes = neededBytes;
 }
+
+std::shared_ptr<IRStatement> IREnter::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return shared_from_this();
+}
+
+std::shared_ptr<IRExpressionList> IREnter::Kids()
+{
+    return nullptr;
+}

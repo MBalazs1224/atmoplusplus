@@ -13,6 +13,8 @@ class IRExpressionList : public IRNode
 
         std::string ToDotFormat(int&) override;
 
+        IRExpressionList(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>);
+
         /*
             Will turn the given vector into a linked list.
          */

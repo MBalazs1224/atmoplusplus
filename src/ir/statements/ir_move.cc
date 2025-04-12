@@ -21,3 +21,42 @@ std::string IRMove::ToDotFormat(int& nodeCounter)
 
     return dot;
 }
+
+std::shared_ptr<IRStatement> IRMove::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    if (auto destMem = std::dynamic_pointer_cast<IRMem>(this->destination))
+    {
+        return std::make_shared<IRMove>(
+            std::make_shared<IRMem>(
+                kids->expression,
+                DataSize::QWord // FIXME: Default to 64 bit
+            ),
+            kids->next->expression
+        );
+    }
+
+    return std::make_shared<IRMove>(
+        this->destination,
+        kids->expression
+    );
+        
+}
+
+std::shared_ptr<IRExpressionList> IRMove::Kids()
+{
+    if (auto destMem = std::dynamic_pointer_cast<IRMem>(this->destination))
+    {
+        return std::make_shared<IRExpressionList>(
+            destMem->exp,
+            std::make_shared<IRExpressionList>(
+                this->source,
+                nullptr
+            )
+        );
+    }
+
+    return std::make_shared<IRExpressionList>(
+        this->source,
+        nullptr
+    );
+}

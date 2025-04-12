@@ -16,3 +16,17 @@ std::string IRPop::ToDotFormat(int& nodeCounter)
 
     return dot;
 }
+
+std::shared_ptr<IRStatement> IRPop::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return shared_from_this();
+        
+}
+
+std::shared_ptr<IRExpressionList> IRPop::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        this->exp,
+        nullptr
+    );
+}

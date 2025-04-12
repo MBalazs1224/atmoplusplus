@@ -12,4 +12,7 @@ class IREvaluateExpression : public IRStatement
         IREvaluateExpression(std::shared_ptr<IRExpression>);
 
         std::string ToDotFormat(int&) override;
+        
+        std::shared_ptr<IRStatement> Build (std::shared_ptr<IRExpressionList> kids) override;
+        std::shared_ptr<IRExpressionList> Kids () override;
 };
