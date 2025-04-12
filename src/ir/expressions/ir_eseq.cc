@@ -15,3 +15,14 @@ std::string IREseq::ToDotFormat(int& nodeCounter)
     dot += exp->ToDotFormat(nodeCounter);
     return dot;
 }
+
+std::shared_ptr<IRExpression> IREseq::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    throw std::logic_error("Build() not applicable to IREseq");
+        
+}
+
+std::shared_ptr<IRExpressionList> IREseq::Kids()
+{
+    throw std::logic_error("Kids() not applicable to IREseq");
+}

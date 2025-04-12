@@ -1,6 +1,7 @@
 #pragma once
 #include "ir_expression.hh"
 #include "binary_operators.hh"
+#include "ir_expression_list.hh"
 #include <memory>
 #include <stdexcept>
 
@@ -19,4 +20,7 @@ class IRBinaryOperator : public IRExpression
         std::string ToDotFormat(int&) override;
 
         std::string OperatorToString();
+
+        std::shared_ptr<IRExpression> Build (std::shared_ptr<IRExpressionList> kids)override;
+        std::shared_ptr<IRExpressionList> Kids() override;
 };

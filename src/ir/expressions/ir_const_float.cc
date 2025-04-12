@@ -10,3 +10,13 @@ std::string IRConstFloat::ToDotFormat(int& nodeCounter)
     
     return "node" + std::to_string(myId) + " [label=\"CONST_FLOAT: " + std::to_string(value) + "\"];\n";
 }
+
+std::shared_ptr<IRExpression> IRConstFloat::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return shared_from_this();
+}
+
+std::shared_ptr<IRExpressionList> IRConstFloat::Kids()
+{
+    return nullptr;
+}

@@ -5,6 +5,26 @@ IRBinaryOperator::IRBinaryOperator(BinaryOperator o, std::shared_ptr<IRExpressio
 
 }
 
+std::shared_ptr<IRExpression> IRBinaryOperator::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return std::make_shared<IRBinaryOperator>(
+        binop,
+        kids->expression,
+        kids->next->expression
+    );
+}
+
+std::shared_ptr<IRExpressionList> IRBinaryOperator::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        left,
+        std::make_shared<IRExpressionList>(
+            right,
+            nullptr
+        )
+    );
+}
+
 std::string IRBinaryOperator::ToDotFormat(int &nodeCounter)
     {
         int myId = nodeCounter++;

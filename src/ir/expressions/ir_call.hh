@@ -20,4 +20,7 @@ class IRCall : public IRExpression
         IRCall(std::shared_ptr<IRExpression>, std::shared_ptr<IRExpressionList>, std::shared_ptr<IRExpressionList>, bool);
 
         std::string ToDotFormat(int&) override;
+
+        std::shared_ptr<IRExpression> Build (std::shared_ptr<IRExpressionList> kids)override;
+        std::shared_ptr<IRExpressionList> Kids() override;
 };

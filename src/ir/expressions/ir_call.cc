@@ -26,3 +26,20 @@ std::string IRCall::ToDotFormat(int& nodeCounter)
 
    return dot;
 }
+
+std::shared_ptr<IRExpression> IRCall::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return std::make_shared<IRCall>(
+        kids->expression,
+        kids->next,
+        this->argumentLocations
+    );
+}
+
+std::shared_ptr<IRExpressionList> IRCall::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        this->func,
+        this->args
+    );
+}

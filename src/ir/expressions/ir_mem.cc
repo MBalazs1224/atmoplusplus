@@ -13,3 +13,19 @@ std::string IRMem::ToDotFormat(int &nodeCounter)
     dot += exp->ToDotFormat(nodeCounter);
     return dot;
 }
+
+std::shared_ptr<IRExpression> IRMem::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return std::make_shared<IRMem>(
+        kids->expression,
+        DataSize::QWord // FIXME: Default to 64 bit
+    );
+}
+
+std::shared_ptr<IRExpressionList> IRMem::Kids()
+{
+    return std::make_shared<IRExpressionList>(
+        this->exp,
+        nullptr
+    );
+}

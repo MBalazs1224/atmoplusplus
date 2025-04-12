@@ -11,3 +11,13 @@ std::string IRTemp::ToDotFormat(int& nodeCounter)
     
     return "node" + std::to_string(myId) + " [label=\"TEMP: " + temp->ToString() + "\"];\n";
 };
+
+std::shared_ptr<IRExpression> IRTemp::Build(std::shared_ptr<IRExpressionList> kids)
+{
+    return shared_from_this();
+}
+
+std::shared_ptr<IRExpressionList> IRTemp::Kids()
+{
+    return nullptr;
+}
