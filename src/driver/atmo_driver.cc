@@ -474,7 +474,7 @@ void AtmoDriver::TranslateToIR()
     }
 
     auto irSeq = ConvertStatementListToSequence(irRoot);
-    auto canonicalIrRoot = IRNormalizer::NormalizeTree(irSeq);
+    auto canonicalIrRoot = IRCanonical::Linearize(irSeq);
 
 
     if(printCanonicalIRTree)

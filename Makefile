@@ -23,6 +23,8 @@ frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/infram
 
 translate := ./build/translate/translate_conditional_expression.o ./build/translate/translate_value_expression.o ./build/translate/translate_no_value_expression.o
 
+canonical :=  ./build/ir/canonical/move_call.o ./build/ir/canonical/exp_call.o ./build/ir/canonical/ir_canonical.o
+
 reserved_ir_registers := ./build/ir/reserved_ir_registers.o
 
 assembly := ./build/asm/assembly_label.o ./build/asm/assembly_move.o ./build/asm/assembly_oper.o  ./build/asm/assembly_instruction.o
@@ -50,7 +52,7 @@ ilocation := ./build/location/ilocation.o
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(ir_normalizer) $(ir_block_trace) $(assembly) $(code_generator) $(reg_allocator)
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(canonical) $(ir_normalizer) $(ir_block_trace) $(assembly) $(code_generator) $(reg_allocator)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
@@ -473,6 +475,19 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/translate/translate_no_value_expression.o: ./src/translate/translate_no_value_expression.cc ./src/translate/translate_no_value_expression.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+
+# Canonical
+
+./build/ir/canonical/move_call.o: ./src/ir/canonical/move_call.cc ./src/ir/canonical/move_call.hh
+	@mkdir -p ./build/ir/canonical
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/canonical/exp_call.o: ./src/ir/canonical/exp_call.cc ./src/ir/canonical/exp_call.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/ir/canonical/ir_canonical.o: ./src/ir/canonical/ir_canonical.cc ./src/ir/canonical/ir_canonical.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Assembly

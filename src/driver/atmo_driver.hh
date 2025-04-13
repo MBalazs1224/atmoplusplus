@@ -26,6 +26,8 @@
 
 #include "../codegen/global_strings.hh"
 
+#include "../ir/canonical/ir_canonical.hh"
+
 class AtmoDriver
 {
 
