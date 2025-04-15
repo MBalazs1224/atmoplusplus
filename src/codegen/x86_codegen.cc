@@ -82,6 +82,9 @@ void x86CodeGenerator::MunchEnter(std::shared_ptr<IREnter> enterExp)
 
 void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpression> evaluateExp)
 {
+
+
+    
     // Evaluate expression will mainly be used for void function calls
 
     if(auto call = std::dynamic_pointer_cast<IRCall>(evaluateExp->exp))
@@ -185,6 +188,64 @@ std::string x86CodeGenerator::SizeToString(int size)
 
 void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp) 
 {
+    // If the source is a function call, we need to first move the return value to the correct place
+    if (auto call = std::dynamic_pointer_cast<IRCall>(moveExp->source))
+    {
+        // CALL THE FUNCTION
+
+        auto callDefs = GlobalFrame::globalFrameType->GetCallDefs();
+
+        // If it's a label then we just call the function regularly
+        if(auto name = std::dynamic_pointer_cast<IRName>(call->func))
+        {
+            auto asmInst = std::make_shared<AssemblyOper>(
+                "call `j0",
+                callDefs,
+                nullptr,
+                std::make_shared<LabelList>(
+                    name->label,
+                    nullptr
+                )
+            );
+
+            EmitInstruction(asmInst);
+        }
+        else
+        {
+            auto funcLocation = MunchExpression(call->func);
+
+            auto asmInst = std::make_shared<AssemblyOper>(
+                "call `s0",
+                callDefs,
+                std::make_shared<TempList>(
+                    funcLocation,
+                    nullptr
+                ),
+                nullptr
+            );
+
+            EmitInstruction(asmInst);
+        }
+
+        // MOVE RETURN REGISTER TO CORRECT LOCATION
+
+        auto returnTemp = ReservedIrRegisters::RAX; // FIXME: Needs to be mroe flexible for different architectures
+
+        auto destinationTemp = MunchExpression(moveExp->destination);
+
+        auto asmInst = std::make_shared<AssemblyMove>(
+            "mov `d0, `s0",
+            destinationTemp,
+            returnTemp
+        );
+
+        EmitInstruction(asmInst);
+
+        return;
+
+    }
+
+
     // Register destination
     if (auto destReg = std::dynamic_pointer_cast<IRTemp>(moveExp->destination)) 
     {
