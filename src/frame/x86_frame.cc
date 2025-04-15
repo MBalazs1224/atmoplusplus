@@ -115,8 +115,8 @@ std::shared_ptr<IRStatement> x86Frame::ProcessFunctionEntryAndExit1(std::shared_
         );
         statements.push_back(push);
     }
-
-    statements.push_back(body);
+    if(body) // There can be empty bodies (that only have variable definitons), we don't need to add them to the statements
+        statements.push_back(body);
 
     return std::make_shared<IRSequence>(statements);
     

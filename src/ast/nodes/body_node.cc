@@ -103,10 +103,21 @@ std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
     for (auto &&statement : statements)
     {
         auto ir = statement->TranslateToIR();
-
-        ir_statements.push_back(ir);
+        if(ir) // There are some nodes that don't need translation to ir, like variable definitions
+            ir_statements.push_back(ir);
 
     }
+
+    if(ir_statements.empty())
+    {
+        return nullptr; // FIXME: Returning nullptr for empty vector will result in a segfault!
+    }
+
+    if (ir_statements.size() == 1)
+    {
+        return ir_statements[0];
+    }
+    
     
     return std::make_shared<IRSequence>(ir_statements);
 }
