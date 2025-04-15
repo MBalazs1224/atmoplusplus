@@ -36,16 +36,12 @@ void IRBlock::DoStatements(std::shared_ptr<IRStatementList> statement)
     // The statement is a label
     else if(auto printedLabel =std::dynamic_pointer_cast<IRLabel>(statement->head))
     {
-        DoStatements(
-            std::make_shared<IRStatementList>(
-                std::make_shared<IRJump>(
-                    std::make_shared<IRName>(
-                        printedLabel->label
-                    )
-                ),
-                statement
-            )
-        );
+        // Terminate the current block with a jump to the label.
+        AddStatement(std::make_shared<IRJump>(
+            std::make_shared<IRName>(printedLabel->label)
+        ));
+        // Now start a new block at this label.
+        MakeBlocks(statement);
     }
     else
     {
