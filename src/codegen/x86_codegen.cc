@@ -330,10 +330,12 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 if(auto leftTemp = std::dynamic_pointer_cast<IRTemp>(binOp->left))
                 {
                     auto source = MunchExpression(moveExp->source);
+
+                    auto sizeString = SizeToString(source->sizeNeeded);
                     // It could only be plus or minus
                     auto op = binOp->binop == BinaryOperator::PLUS ? "+" : "-";
                     auto asmInst = std::make_shared<AssemblyMove>(
-                        Helper::FormatString("mov [`d0 %s %d], `s0", op, rightConst->value),
+                        Helper::FormatString("mov %s [`d0 %s %d], `s0",sizeString.c_str(), op, rightConst->value),
                         leftTemp->temp,
                         source
                     );
