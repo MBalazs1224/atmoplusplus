@@ -41,6 +41,8 @@ void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> cJumpExp)
     auto leftTemp = MunchExpression(cJumpExp->left);
     auto rightTemp = MunchExpression(cJumpExp->right);
 
+    leftTemp->sizeNeeded = rightTemp->sizeNeeded;
+
     auto cmpIns = std::make_shared<AssemblyOper>(
         "cmp `s0, `s1",
         nullptr, // No destination
