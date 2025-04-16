@@ -294,11 +294,43 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
     std::vector<std::shared_ptr<Node>> definitions = GetDefinitionNodes(nodes);
     std::vector<std::shared_ptr<Node>> statements = GetStatementNodes(nodes);
 
+    
+
+
     std::shared_ptr<IRStatementList> irRoot = nullptr;
 
 
     auto definitionIR = BuildIRList(definitions);
     auto statementsIR = BuildIRList(statements);
+
+    // Automatically return 0 when reaching the end of the statemets
+
+    
+    auto endOfStatements = statementsIR;
+
+    while (endOfStatements->tail)
+    {
+        endOfStatements = endOfStatements->tail;
+    }
+
+    auto move0IntoRax = std::make_shared<IRMove>(
+        GlobalFrame::globalFrameType->ReturnLocation(),
+        std::make_shared<IRConst>(0)
+    );
+
+    auto ret = std::make_shared<IRReturn>();
+
+    
+    auto ret0List = std::make_shared<IRStatementList>(
+        move0IntoRax,
+        std::make_shared<IRStatementList>(
+            ret,
+            nullptr
+        )
+    );
+
+    endOfStatements->tail = ret0List;
+
 
     int sizeOfGlobalVariables = 0;
 
@@ -341,6 +373,8 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
         irRoot = mainLabel;
     }
 
+    
+
     return irRoot;
 
 }
@@ -365,7 +399,7 @@ void AtmoDriver::GenerateAssembly()
 
     // Generate strings
 
-    asmFile << ".section .rodata\n\n"; // Print read only data indicator
+    asmFile << "section .rodata\n\n"; // Print read only data indicator
 
     // Print the data in this form: L0: .string "asd"
     for (auto &&pair : GlobalStrings::stringToLabel)
