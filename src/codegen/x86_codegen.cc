@@ -91,8 +91,38 @@ void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpress
 
     if(auto call = std::dynamic_pointer_cast<IRCall>(evaluateExp->exp))
     {
+
+        // MOVE THE ARGUMENTS TO THE CORRECT LOCATION
+
+
+        auto argument = call->args;
+        auto paramLocation = call->argumentLocations;
+
+        while (argument)
+        {
+            // Argument and param locations must match at this point
+
+            auto srcTemp = MunchExpression(argument->expression);
+            auto destTemp = MunchExpression(paramLocation->expression);
+
+            destTemp->sizeNeeded = srcTemp->sizeNeeded;
+
+            auto asmInst =std::make_shared<AssemblyMove>(
+                "mov `d0, `s0",
+                destTemp,
+                srcTemp
+            );
+            EmitInstruction(asmInst);
+
+            argument = argument->next;
+            paramLocation = paramLocation->next;
+        }
+
         // The value of caller saved registers + return register must be given as destinations, so later parts of the compiler knows that something happens to them here
         auto callDefs = GlobalFrame::globalFrameType->GetCallDefs();
+
+        
+        
 
         if(auto name = std::dynamic_pointer_cast<IRName>(call->func))
         {
@@ -193,6 +223,34 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
     // If the source is a function call, we need to first move the return value to the correct place
     if (auto call = std::dynamic_pointer_cast<IRCall>(moveExp->source))
     {
+
+        // MOVE THE ARGUMENTS TO THE CORRECT LOCATION
+
+
+        auto argument = call->args;
+        auto paramLocation = call->argumentLocations;
+
+        while (argument)
+        {
+            // Argument and param locations must match at this point
+
+            auto srcTemp = MunchExpression(argument->expression);
+            auto destTemp = MunchExpression(paramLocation->expression);
+
+            destTemp->sizeNeeded = srcTemp->sizeNeeded;
+
+            auto asmInst =std::make_shared<AssemblyMove>(
+                "mov `d0, `s0",
+                destTemp,
+                srcTemp
+            );
+            EmitInstruction(asmInst);
+
+            argument = argument->next;
+            paramLocation = paramLocation->next;
+        }
+
+
         // CALL THE FUNCTION
 
         auto callDefs = GlobalFrame::globalFrameType->GetCallDefs();
@@ -234,6 +292,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         auto returnTemp = ReservedIrRegisters::RAX; // FIXME: Needs to be mroe flexible for different architectures
 
         auto destinationTemp = MunchExpression(moveExp->destination);
+
+        returnTemp->sizeNeeded = destinationTemp->sizeNeeded;
 
         auto asmInst = std::make_shared<AssemblyMove>(
             "mov `d0, `s0",

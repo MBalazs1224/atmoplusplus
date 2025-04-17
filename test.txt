@@ -8,6 +8,6 @@ create integer function testParamFunc with integer asd
 
 create integer testVar equals call testFunc with no arguments
 
-testVar equals testVar plus call testParamFunc with 10 as arguments
+create integer testVar2 equals call testParamFunc with 5 as argument
 
-return testVar
+return testVar plus testVar2
