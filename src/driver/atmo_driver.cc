@@ -318,14 +318,19 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
         std::make_shared<IRConst>(0)
     );
 
+    auto leave = std::make_shared<IRLeave>();
+
     auto ret = std::make_shared<IRReturn>();
 
     
     auto ret0List = std::make_shared<IRStatementList>(
         move0IntoRax,
         std::make_shared<IRStatementList>(
-            ret,
-            nullptr
+            leave,
+            std::make_shared<IRStatementList>(
+                ret,
+                nullptr
+            )
         )
     );
 

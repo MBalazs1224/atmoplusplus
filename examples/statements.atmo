@@ -5,7 +5,6 @@ if testInt greater than 5
 else
 	testInt equals 10
 
-testInt equals 100
+testInt equals 69
 
-
-testInt equals 500
+return testInt
