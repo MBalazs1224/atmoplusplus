@@ -20,6 +20,8 @@ std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
     // The return value needs to be moved into RAX then a leave and a ret instruction needs to be generated
 
     auto expressionAsIR = expression->TranslateExpressionToIr()->ToValueExpression();
+    
+    
 
     // Use the global frame object to determine where the return value should be moved
     auto returnLocation = GlobalFrame::globalFrameType->ReturnLocation();
@@ -42,6 +44,30 @@ std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
         moveExpIntoRAX,
         leaveThenReturn
     );
+
+    if(shouldPopRegisters)
+    {
+        std::vector<std::shared_ptr<IRStatement>> popStatements;
+
+        for (int i = ReservedIrRegisters::calleeSavedRegs.size() - 1; i >= 0; i--)
+        {
+            auto popTemp = std::make_shared<IRPop>(
+                std::make_shared<IRTemp>(
+                    ReservedIrRegisters::calleeSavedRegs[i]
+                )
+            );
+
+            popStatements.push_back(popTemp);
+        }
+
+        auto popSequence = std::make_shared<IRSequence>(popStatements);
+        
+        return std::make_shared<IRSequence>(
+            popSequence,
+            seq
+        );
+
+    }
 
 
 

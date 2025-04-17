@@ -122,6 +122,16 @@ bool FunctionSymbol::Check() {
         this->nameInAssembly = this->name;
     }
 
+    auto returnNodes = this->body->GetReturnNodes();
+
+    for (auto &&returnNode : returnNodes)
+    {
+        // Set that the return nodes should also pop the callee-saved registers before returning
+        returnNode->shouldPopRegisters = true;
+    }
+    
+    
+
     return true;
 }
 

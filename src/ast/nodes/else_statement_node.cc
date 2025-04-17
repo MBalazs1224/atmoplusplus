@@ -15,6 +15,11 @@ bool ElseStatementNode::Check()
     return body->Check();
 }
 
+std::vector<std::shared_ptr<ReturnStatementNode>> ElseStatementNode::GetReturnNodes()
+{
+    return body->GetReturnNodes();
+}
+
 std::vector<std::shared_ptr<VariableSymbol>> ElseStatementNode::GetVariables()
 {
     // Get the variables from the body

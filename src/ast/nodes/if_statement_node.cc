@@ -67,6 +67,25 @@ bool IfStatementNode::Check()
     return true;
 }
 
+std::vector<std::shared_ptr<ReturnStatementNode>> IfStatementNode::GetReturnNodes()
+{
+    auto returnNodes = body->GetReturnNodes();
+
+    for (auto& else_if : else_ifs)
+    {
+        auto elseIfReturns = else_if->GetReturnNodes();
+        returnNodes.insert(returnNodes.end(), elseIfReturns.begin(), elseIfReturns.end());
+    }
+
+    if (else_)
+    {
+        auto elseReturns = else_->GetReturnNodes();
+        returnNodes.insert(returnNodes.end(), elseReturns.begin(), elseReturns.end());
+    }
+
+    return returnNodes;
+}
+
 std::vector<std::shared_ptr<VariableSymbol>> IfStatementNode::GetVariables()
 {
     // Get the variables from the body

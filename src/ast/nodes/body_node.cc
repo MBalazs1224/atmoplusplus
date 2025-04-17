@@ -83,9 +83,31 @@ std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetVariables()
 
         // If the statement is not a variable but can contain variables (if stmts, loops etc.), get the veriables from it recursively and add it to the vector
 
-        else if (auto variable_container = std::dynamic_pointer_cast<VariableContainer>(statement))
+        else if (auto variable_container = std::dynamic_pointer_cast<BodyContainer>(statement))
         {
             auto vars = variable_container->GetVariables();
+            variables.insert(variables.end(), vars.begin(), vars.end());
+        }
+    }
+    return variables;
+}
+
+std::vector<std::shared_ptr<ReturnStatementNode>> BodyNode::GetReturnNodes()
+{
+    std::vector<std::shared_ptr<ReturnStatementNode>> variables;
+    for (auto &statement : statements)
+    {
+        // If the statement is a variable definition, add tje variable defined by it to the list of variables
+        if(auto returnNode = std::dynamic_pointer_cast<ReturnStatementNode>(statement))
+        {
+            variables.push_back(returnNode);
+        }
+
+        // If the statement is not a variable but can contain variables (if stmts, loops etc.), get the veriables from it recursively and add it to the vector
+
+        else if (auto variable_container = std::dynamic_pointer_cast<BodyContainer>(statement))
+        {
+            auto vars = variable_container->GetReturnNodes();
             variables.insert(variables.end(), vars.begin(), vars.end());
         }
     }

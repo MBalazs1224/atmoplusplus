@@ -209,7 +209,7 @@ std::vector<std::shared_ptr<VariableSymbol>> AtmoDriver::GetGlobalVariables(std:
             globalVariables.push_back(varDef->GetVariable());
         }
         // If the variable was defined inside a nested scope
-        else if(auto varContainer = std::dynamic_pointer_cast<VariableContainer>(node))
+        else if(auto varContainer = std::dynamic_pointer_cast<BodyContainer>(node))
         {
             auto variables = varContainer->GetVariables();
 

@@ -10,7 +10,7 @@
 #include "../../translate/all_translate_expressions.hh"
 #include "../../frame/label.hh"
 #include <memory>
-class IfStatementNode : public  Node, public VariableContainer
+class IfStatementNode : public  Node, public BodyContainer
 {
     
     public:
@@ -24,6 +24,9 @@ class IfStatementNode : public  Node, public VariableContainer
         bool Check() override;
 
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
+
+        std::vector<std::shared_ptr<ReturnStatementNode>> GetReturnNodes() override;
+
 
         std::shared_ptr<IRStatement> TranslateToIR() override;
 };

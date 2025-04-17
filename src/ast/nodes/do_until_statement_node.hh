@@ -10,7 +10,7 @@
 #include <memory>
 #include <iostream>
 
-class DoUntilStatementNode : public Node, public VariableContainer
+class DoUntilStatementNode : public Node, public BodyContainer
 {
 
     public:
@@ -23,6 +23,8 @@ class DoUntilStatementNode : public Node, public VariableContainer
 
         bool Check() override;
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
+        std::vector<std::shared_ptr<ReturnStatementNode>> GetReturnNodes() override;
+
 
         std::shared_ptr<IRStatement> TranslateToIR() override;
 };

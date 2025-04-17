@@ -7,6 +7,11 @@ UntilStatementNode::UntilStatementNode(std::shared_ptr<IExpressionable> expressi
 
 UntilStatementNode::~UntilStatementNode() = default;
 
+std::vector<std::shared_ptr<ReturnStatementNode>> UntilStatementNode::GetReturnNodes()
+{
+    return body->GetReturnNodes();
+}
+
 bool UntilStatementNode::Check()
 {
     if (!expression->Check())

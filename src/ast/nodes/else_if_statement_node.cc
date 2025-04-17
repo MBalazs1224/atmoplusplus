@@ -35,6 +35,12 @@ bool ElseIfStatementNode::Check()
     return body->Check();
 }
 
+std::vector<std::shared_ptr<ReturnStatementNode>> ElseIfStatementNode::GetReturnNodes()
+{
+    return body->GetReturnNodes();
+}
+
+
 std::vector<std::shared_ptr<VariableSymbol>> ElseIfStatementNode::GetVariables()
 {
     // Get the variables from the body

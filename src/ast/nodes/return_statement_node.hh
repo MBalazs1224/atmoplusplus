@@ -8,6 +8,9 @@ class ReturnStatementNode : public  Node
 {
     std::shared_ptr<IExpressionable> expression;
     public:
+
+        bool shouldPopRegisters = false;
+        
         ReturnStatementNode(std::shared_ptr<IExpressionable> exp_in, yy::location loc);
         ~ReturnStatementNode() override;
         bool Check() override;

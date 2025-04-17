@@ -11,7 +11,7 @@
 
 class ConstructorDefinitionNode;
 
-class BodyNode : public Node, public VariableContainer
+class BodyNode : public Node, public BodyContainer
 {
     std::vector<std::shared_ptr<Node>> statements;
     
@@ -35,6 +35,7 @@ class BodyNode : public Node, public VariableContainer
         // Will return true if the given statement can be used inside a body
         bool StatementIsValid(const std::shared_ptr<Node> statement);
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
+        std::vector<std::shared_ptr<ReturnStatementNode>> GetReturnNodes() override;
 
         std::shared_ptr<IRStatement> TranslateToIR() override;
 

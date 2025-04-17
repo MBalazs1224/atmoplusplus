@@ -4,7 +4,7 @@
 #include "variable_container.hh"
 #include "body_node.hh"
 #include <memory>
-class ElseIfStatementNode : public  Node, public VariableContainer
+class ElseIfStatementNode : public  Node, public BodyContainer
 {
 
 
@@ -15,6 +15,9 @@ class ElseIfStatementNode : public  Node, public VariableContainer
         ~ElseIfStatementNode() override;
         bool Check() override;
         std::vector<std::shared_ptr<VariableSymbol>> GetVariables() override;
+
+        std::vector<std::shared_ptr<ReturnStatementNode>> GetReturnNodes() override;
+
 
         std::shared_ptr<IRStatement> TranslateToIR() override;
 };

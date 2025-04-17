@@ -44,6 +44,11 @@ bool DoUntilStatementNode::Check()
     return body->Check();
 }
 
+std::vector<std::shared_ptr<ReturnStatementNode>> DoUntilStatementNode::GetReturnNodes()
+{
+    return body->GetReturnNodes();
+}
+
 std::vector<std::shared_ptr<VariableSymbol>> DoUntilStatementNode::GetVariables()
 {
     // Get the variables from the body
