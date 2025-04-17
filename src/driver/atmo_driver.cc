@@ -43,6 +43,14 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
     {
         useDefaultTempMap = true;
     }
+    else if (param == "--asm")
+    {
+        stopAtASM = true;
+    }
+    else if (param == "--object")
+    {
+        shouldLink = false;
+    }
     else
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
@@ -153,6 +161,21 @@ void AtmoDriver::StartCompilation()
     TranslateToIR();
 
     GenerateAssembly();
+
+    if (stopAtASM)
+    {
+        exit(0);
+    }
+
+    system(Helper::FormatString("nasm -f elf64 -g -F dwarf %s.asm", outputPath.c_str()).c_str());
+
+    if(!shouldLink)
+    {
+        exit(0);
+    }
+
+    system(Helper::FormatString("gcc -o %s %s.o", outputPath.c_str(),outputPath.c_str()).c_str());
+    
 
 }
 
@@ -400,7 +423,7 @@ void AtmoDriver::GenerateAssembly()
     
     // Print the output into an asm files
     
-    std::ofstream asmFile("output.asm");
+    std::ofstream asmFile(Helper::FormatString("%s.asm", outputPath.c_str()));
 
     // Generate strings
 
@@ -445,7 +468,7 @@ void AtmoDriver::GenerateAssembly()
 
     if(printASM)
     {
-        system("xdg-open ./output.asm");
+        system(Helper::FormatString("xdg-open ./%s.asm", outputPath.c_str()).c_str());
     }
 }
 

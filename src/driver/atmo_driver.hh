@@ -54,6 +54,8 @@ class AtmoDriver
     /// @brief Will point to the type of the frame during this compilation.
     static std::unique_ptr<Frame> globalFrameType;
 
+    std::string outputPath = "atmo_output";
+
     bool printIRTree = false;
 
     bool printCanonicalIRTree = false;
@@ -63,6 +65,11 @@ class AtmoDriver
     bool printASM = false;
 
     bool useDefaultTempMap = false;
+
+    bool stopAtASM = false;
+
+
+    bool shouldLink = true;
     
     /// @brief Will initialize the object and process the  arguments.
     /// @param params A vector containing all the received arguments.
