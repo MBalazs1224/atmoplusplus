@@ -1,1 +1,13 @@
-create string asd equals "teststring"
+create integer function testFunc
+	return 5
+
+
+create integer function testParamFunc with integer asd
+	return asd plus 10
+
+
+create integer testVar equals call testFunc with no arguments
+
+testVar equals testVar plus call testParamFunc with 10 as arguments
+
+return testVar

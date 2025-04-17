@@ -491,6 +491,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         // If the source is a const we can just use that without an intermediate temp
         if(auto srcImm = std::dynamic_pointer_cast<IRConst>(binaryOpExp->right))
         {
+            leftTemp->sizeNeeded = DataSize::DWord; // integer is 4 bytes
             auto asmIns = std::make_shared<AssemblyOper>(
                 Helper::FormatString("add `d0, %d", srcImm->value),
                 destList,
@@ -505,7 +506,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
 
         auto rightTemp = MunchExpression(binaryOpExp->right);
 
-        
+        leftTemp->sizeNeeded = rightTemp->sizeNeeded;
         // The source list will contain both temporaries
         auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
 
