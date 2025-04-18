@@ -10,7 +10,7 @@ class InReg : public Access
         std::shared_ptr<Temp> temp;
     public:
         /// @brief Will generate a new temporary with the given size.
-        InReg(int space);
+        InReg(DataSize space);
         ~InReg() = default;
         
         /// @brief Will used the given temporary as the location.

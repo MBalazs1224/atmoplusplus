@@ -293,12 +293,12 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 
         auto destinationTemp = MunchExpression(moveExp->destination);
 
-        returnTemp->sizeNeeded = destinationTemp->sizeNeeded;
+        auto newReturn = returnTemp->Clone(destinationTemp->sizeNeeded);
 
         auto asmInst = std::make_shared<AssemblyMove>(
             "mov `d0, `s0",
             destinationTemp,
-            returnTemp
+            newReturn
         );
 
         EmitInstruction(asmInst);
@@ -326,7 +326,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         // Memory to register
         if (auto srcMem = std::dynamic_pointer_cast<IRMem>(moveExp->source)) 
         {
-            destReg->temp->sizeNeeded = srcMem->bytesNeeded;
+            auto newDestReg = destReg->temp->Clone((DataSize)srcMem->bytesNeeded);
             
             if (auto srcBinop = std::dynamic_pointer_cast<IRBinaryOperator>(srcMem->exp)) 
             {
@@ -340,7 +340,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                             SizeToString(srcMem->bytesNeeded).c_str(), 
                             op, 
                             rightConst->value),
-                        destReg->temp,
+                        newDestReg,
                         leftTemp->temp
                     ));
                     return;
@@ -754,7 +754,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
     // Need to move the inner expression into a reg and that move that value into the newLocation of the Mem expression
     auto addressTemp = MunchExpression(memExp->exp);
 
-    auto newLocation = std::make_shared<Temp>(memExp->bytesNeeded);
+    auto newLocation = std::make_shared<Temp>((DataSize)memExp->bytesNeeded);
 
     auto sizeString = SizeToString(memExp->bytesNeeded);
 

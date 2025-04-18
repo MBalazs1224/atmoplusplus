@@ -1,6 +1,6 @@
 #include "inreg.hh"
 #include "../ir/expressions/ir_temp.hh"
-InReg::InReg(int space)
+InReg::InReg(DataSize space)
 {
     temp = std::make_shared<Temp>(space);
 }

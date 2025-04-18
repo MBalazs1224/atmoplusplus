@@ -63,7 +63,7 @@ std::shared_ptr<IRExpression> ArraySubscriptExpression::TranslateIndexingIntoIR(
     auto leftAsArray = std::dynamic_pointer_cast<Array>(left->GetType());
 
 
-    int sizeOfElementsInTheArray = leftAsArray->inner_type->GetSize();
+    DataSize sizeOfElementsInTheArray = leftAsArray->inner_type->GetSize();
 
     // (data_size * index)
     auto multipliedIndexValue = std::make_shared<IRBinaryOperator>(
@@ -208,7 +208,7 @@ std::shared_ptr<TranslateExpression> ArraySubscriptExpression::TranslateExpressi
 
     // To prevetnt multiple evaluations of the index, first move the index value into a reg and then do the needed calcualtions on that reg (without this functions would be called at boundary check and actual indexing as well)
 
-    int neededBytes = this->GetType()->GetSize();
+    DataSize neededBytes = this->GetType()->GetSize();
 
     auto tempForindex = std::make_shared<Temp>(neededBytes);
 
