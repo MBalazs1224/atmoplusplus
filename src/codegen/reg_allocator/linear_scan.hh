@@ -10,12 +10,17 @@
 #include "live_interval.hh"
 #include "../../asm/assembly_instruction_list.hh"
 #include "../../ir/reserved_ir_registers.hh"
+
+
+#include "temp_ptr_equal.hh"
+#include "temp_ptr_hash.hh"
+
 class LinearScanMap : public TempMap
 {
     private:
 
 
-        std::unordered_map<std::shared_ptr<Temp>, std::string> tempToPhysical;
+        std::unordered_map<std::shared_ptr<Temp>, std::string, TempPtrHash, TempPtrEqual> tempToPhysical;
 
         /// @brief Will truncate the register to the correct size if needed.
         /// @param reg The register's name.
@@ -35,7 +40,7 @@ class LinearScanMap : public TempMap
         std::vector<AllocatedReg> RegisterAllocation(std::vector<LiveInterval>& intervals, const std::vector<std::string>& regPool);
 
         /// @brief Removes expired intervals.
-        void ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals,int start,std::unordered_set<std::string>& freeRegs, const std::unordered_map<std::shared_ptr<Temp>, std::string>& tempToReg);
+        void ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals,int start,std::unordered_set<std::string>& freeRegs, const std::unordered_map<std::shared_ptr<Temp>, std::string,TempPtrHash, TempPtrEqual>& tempToReg);
 
         bool IsRegisterReserved(std::shared_ptr<Temp>);
 

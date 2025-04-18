@@ -7,11 +7,10 @@ class Temp
 {
     private:
         static int count;
-        int num;
-    private:
         // Creates an exact copy of the temp with the givven size.
         Temp(int, DataSize);
     public:
+        int num;
         DataSize sizeNeeded;
         Temp();
         Temp(DataSize);

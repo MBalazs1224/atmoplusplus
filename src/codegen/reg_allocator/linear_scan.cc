@@ -1,6 +1,6 @@
 #include "linear_scan.hh"
 
-void LinearScanMap::ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals, int currentStart, std::unordered_set<std::string>& freeRegs, const std::unordered_map<std::shared_ptr<Temp>, std::string>& tempToReg)
+void LinearScanMap::ExpireOldIntervals(std::vector<LiveInterval>& activeIntervals, int currentStart, std::unordered_set<std::string>& freeRegs, const std::unordered_map<std::shared_ptr<Temp>, std::string, TempPtrHash, TempPtrEqual>& tempToReg)
 {
     activeIntervals.erase(
         std::remove_if(activeIntervals.begin(),activeIntervals.end(),[&](const LiveInterval& interval){
@@ -23,7 +23,7 @@ bool LinearScanMap::IsRegisterReserved(std::shared_ptr<Temp> temp)
 std::vector<AllocatedReg> LinearScanMap::RegisterAllocation(std::vector<LiveInterval>& intervals,const std::vector<std::string>& regPool) 
 {
     std::vector<LiveInterval> active;
-    std::unordered_map<std::shared_ptr<Temp>, std::string> tempToReg;
+    std::unordered_map<std::shared_ptr<Temp>, std::string, TempPtrHash, TempPtrEqual> tempToReg;
     std::unordered_set<std::string> freeRegs(regPool.begin(), regPool.end());
 
     for (const auto& interval : intervals) {
@@ -60,7 +60,7 @@ std::vector<AllocatedReg> LinearScanMap::RegisterAllocation(std::vector<LiveInte
 std::vector<LiveInterval> LinearScanMap::ComputeLiveIntervals(std::shared_ptr<AssemblyInstructionList> instructions)
 {
 
-    std::unordered_map<std::shared_ptr<Temp>, std::pair<int, int>> intervalMap;
+    std::unordered_map<std::shared_ptr<Temp>, std::pair<int, int>, TempPtrHash, TempPtrEqual> intervalMap;
 
 
     // Used for giving an physical index number to instructions, so we know at witch instruction this temp goes out of scope (is not used again)
