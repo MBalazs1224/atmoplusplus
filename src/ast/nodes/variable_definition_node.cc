@@ -178,7 +178,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             ),
             expressionListForClassInit,
             argumentLocation,
-            true // The return value is needed
+            true, // The return value is needed
+            DataSize::QWord // pointer
         );
 
         // Move the return value of the function to this variable's location
@@ -276,7 +277,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             std::make_shared<IRName>(labelForInitArray),
             expressionListForFunctionCall,
             argumentLocation,
-            true // Return value is needed
+            true, // Return value is needed
+            DataSize::QWord // Pointer
         );
 
         

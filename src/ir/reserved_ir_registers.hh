@@ -3,6 +3,10 @@
 #include <vector>
 #include <unordered_map>
 #include "../frame/temp.hh"
+#include "../codegen/reg_allocator/temp_ptr_equal.hh"
+#include "../codegen/reg_allocator/temp_ptr_hash.hh"
+
+
 // Will contain the reserved Temp object for rsp and rbp
 class ReservedIrRegisters
 {
@@ -51,7 +55,7 @@ class ReservedIrRegisters
         static std::vector<std::shared_ptr<Temp>> callerSavedRegs;
 
 
-        static std::unordered_map<std::shared_ptr<Temp>, std::string> ReservedTempToReg;
+        static std::unordered_map<std::shared_ptr<Temp>, std::string, TempPtrHash, TempPtrEqual> ReservedTempToReg;
 
         static void Initialize();
 };

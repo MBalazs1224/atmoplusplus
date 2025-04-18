@@ -41,12 +41,12 @@ void x86CodeGenerator::MunchCjump(std::shared_ptr<IRCJump> cJumpExp)
     auto leftTemp = MunchExpression(cJumpExp->left);
     auto rightTemp = MunchExpression(cJumpExp->right);
 
-    leftTemp->sizeNeeded = rightTemp->sizeNeeded;
+    auto newLeftTemp = leftTemp->Clone(rightTemp->sizeNeeded);
 
     auto cmpIns = std::make_shared<AssemblyOper>(
         "cmp `s0, `s1",
         nullptr, // No destination
-        AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr))
+        AppendTempList(newLeftTemp, AppendTempList(rightTemp,nullptr))
     );
 
     EmitInstruction(cmpIns);
@@ -105,12 +105,15 @@ void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpress
             auto srcTemp = MunchExpression(argument->expression);
             auto destTemp = MunchExpression(paramLocation->expression);
 
-            destTemp->sizeNeeded = srcTemp->sizeNeeded;
+
+            auto newDestTemp = destTemp->Clone(srcTemp->sizeNeeded);
+
+            auto newSrcTemp = srcTemp->Clone(newDestTemp->sizeNeeded);
 
             auto asmInst =std::make_shared<AssemblyMove>(
                 "mov `d0, `s0",
-                destTemp,
-                srcTemp
+                newDestTemp,
+                newSrcTemp
             );
             EmitInstruction(asmInst);
 
@@ -237,12 +240,14 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             auto srcTemp = MunchExpression(argument->expression);
             auto destTemp = MunchExpression(paramLocation->expression);
 
-            destTemp->sizeNeeded = srcTemp->sizeNeeded;
+
+            auto newDestTemp = destTemp->Clone(srcTemp->sizeNeeded);
+            auto newSrcTemp = srcTemp->Clone(newDestTemp->sizeNeeded);
 
             auto asmInst =std::make_shared<AssemblyMove>(
                 "mov `d0, `s0",
-                destTemp,
-                srcTemp
+                newDestTemp,
+                newSrcTemp
             );
             EmitInstruction(asmInst);
 
@@ -293,11 +298,14 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 
         auto destinationTemp = MunchExpression(moveExp->destination);
 
-        auto newReturn = returnTemp->Clone(destinationTemp->sizeNeeded);
+
+        auto newReturn = returnTemp->Clone(call->returnSize);
+
+        auto newDestTemp = destinationTemp->Clone(newReturn->sizeNeeded);
 
         auto asmInst = std::make_shared<AssemblyMove>(
             "mov `d0, `s0",
-            destinationTemp,
+            newDestTemp,
             newReturn
         );
 
@@ -314,11 +322,13 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         // Immediate to register
         if (auto srcImm = std::dynamic_pointer_cast<IRConst>(moveExp->source)) 
         {
-            destReg->temp->sizeNeeded = DataSize::DWord;
+
+            auto destTemp = destReg->temp->Clone(DataSize::DWord);
+
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov `d0, %d", srcImm->value),
                 destReg->temp,
-                nullptr
+                destTemp
             ));
             return;
         }
@@ -361,10 +371,11 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         // Label to register
         if (auto srcName = std::dynamic_pointer_cast<IRName>(moveExp->source)) 
         {
-            destReg->temp->sizeNeeded = DataSize::QWord;
+
+            auto destTemp = destReg->temp->Clone(DataSize::QWord);
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov `d0, %s", srcName->label->ToString().c_str()),
-                destReg->temp,
+                destTemp,
                 nullptr
             ));
             return;
@@ -372,10 +383,12 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 
         // General
         auto sourceTemp = MunchExpression(moveExp->source);
-        destReg->temp->sizeNeeded = sourceTemp->sizeNeeded;
+
+        auto destTemp = destReg->temp->Clone(sourceTemp->sizeNeeded);
+
         EmitInstruction(std::make_shared<AssemblyMove>(
             "mov `d0, `s0",
-            destReg->temp,
+            destTemp,
             sourceTemp
         ));
         return;
@@ -411,6 +424,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         {
             auto temp = MunchExpression(srcMem);
             auto addr = MunchExpression(destMem->exp);
+
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov %s [`d0], `s0", destSize.c_str()),
                 addr,
@@ -460,10 +474,12 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
     // General fallback
     auto source = MunchExpression(moveExp->source);
     auto dest = MunchExpression(moveExp->destination);
-    dest->sizeNeeded = source->sizeNeeded;
+    
+    auto newDest = dest->Clone(source->sizeNeeded);
+
     EmitInstruction(std::make_shared<AssemblyMove>(
         "mov `d0, `s0",
-        dest,
+        newDest,
         source
     ));
 }
@@ -545,40 +561,44 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchBinaryOperator(std::shared_ptr<IRBi
         auto leftTemp = MunchExpression(binaryOpExp->left);
 
         // The destination will be the left temporary
-        auto destList = AppendTempList(leftTemp,nullptr);
 
 
         // If the source is a const we can just use that without an intermediate temp
         if(auto srcImm = std::dynamic_pointer_cast<IRConst>(binaryOpExp->right))
         {
-            leftTemp->sizeNeeded = DataSize::DWord; // integer is 4 bytes
+            auto newLeftTemp = leftTemp->Clone(DataSize::DWord);
+
+            auto newDestList = AppendTempList(newLeftTemp,nullptr);
+
             auto asmIns = std::make_shared<AssemblyOper>(
                 Helper::FormatString("add `d0, %d", srcImm->value),
-                destList,
+                newDestList,
                 nullptr
             );
 
             EmitInstruction(asmIns);
 
-            return leftTemp;
+            return newLeftTemp;
         }
         // The temporaries that hold the value of the two operands
 
         auto rightTemp = MunchExpression(binaryOpExp->right);
 
-        leftTemp->sizeNeeded = rightTemp->sizeNeeded;
-        // The source list will contain both temporaries
-        auto srcList = AppendTempList(leftTemp, AppendTempList(rightTemp,nullptr));
 
+        auto newLeftTemp = leftTemp->Clone(rightTemp->sizeNeeded);
+        auto newDestList = AppendTempList(newLeftTemp, nullptr);
+
+        // The source list will contain both temporaries
+        auto srcList = AppendTempList(newLeftTemp, AppendTempList(rightTemp,nullptr));
         auto asmInst = std::make_shared<AssemblyOper>(
             "add `d0, `s1",
-            destList,
+            newDestList,
             srcList
         );
 
         EmitInstruction(asmInst);
 
-        return leftTemp;
+        return newLeftTemp;
 
     }
 

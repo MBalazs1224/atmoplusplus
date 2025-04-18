@@ -26,7 +26,7 @@ std::shared_ptr<Temp> ReservedIrRegisters::XMM5;
 std::shared_ptr<Temp> ReservedIrRegisters::XMM6;
 std::shared_ptr<Temp> ReservedIrRegisters::XMM7;
 
-std::unordered_map<std::shared_ptr<Temp>, std::string> ReservedIrRegisters::ReservedTempToReg;
+std::unordered_map<std::shared_ptr<Temp>, std::string, TempPtrHash, TempPtrEqual> ReservedIrRegisters::ReservedTempToReg;
 
 
 std::vector<std::shared_ptr<Temp>> ReservedIrRegisters::incomingIntegerParameterLocations;

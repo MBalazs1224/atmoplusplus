@@ -162,60 +162,44 @@ LinearScanMap::LinearScanMap(std::shared_ptr<AssemblyInstructionList> instructio
 
 std::string LinearScanMap::TruncateRegToSize(std::string reg, int size)
 {
-    // If it's a 64 bit register, the register is already in the correct form
-    if(size == 8)
+    if (size == 8)
         return reg;
 
-    if (reg == "r10")
-    {
-        switch(size) {
-            case 1: return "r10b";
-            case 2: return "r10w";
-            case 4: return "r10d";
-        }
-    }
-    else if (reg == "r11")
-    {
-        switch(size) {
-            case 1: return "r11b";
-            case 2: return "r11w";
-            case 4: return "r11d";
-        }
-    }
-    else if (reg == "r12")
-    {
-        switch(size) {
-            case 1: return "r12b";
-            case 2: return "r12w";
-            case 4: return "r12d";
-        }
-    }
-    else if (reg == "r13")
-    {
-        switch(size) {
-            case 1: return "r13b";
-            case 2: return "r13w";
-            case 4: return "r13d";
-        }
-    }
-    else if (reg == "r14")
-    {
-        switch(size) {
-            case 1: return "r14b";
-            case 2: return "r14w";
-            case 4: return "r14d";
-        }
-    }
-    else if (reg == "r15")
-    {
-        switch(size) {
-            case 1: return "r15b";
-            case 2: return "r15w";
-            case 4: return "r15d";
-        }
+    if (reg == "rax") {
+        switch(size) { case 1: return "al"; case 2: return "ax"; case 4: return "eax"; }
+    } else if (reg == "rbx") {
+        switch(size) { case 1: return "bl"; case 2: return "bx"; case 4: return "ebx"; }
+    } else if (reg == "rcx") {
+        switch(size) { case 1: return "cl"; case 2: return "cx"; case 4: return "ecx"; }
+    } else if (reg == "rdx") {
+        switch(size) { case 1: return "dl"; case 2: return "dx"; case 4: return "edx"; }
+    } else if (reg == "rsi") {
+        switch(size) { case 1: return "sil"; case 2: return "si"; case 4: return "esi"; }
+    } else if (reg == "rdi") {
+        switch(size) { case 1: return "dil"; case 2: return "di"; case 4: return "edi"; }
+    } else if (reg == "rbp") {
+        switch(size) { case 1: return "bpl"; case 2: return "bp"; case 4: return "ebp"; }
+    } else if (reg == "rsp") {
+        switch(size) { case 1: return "spl"; case 2: return "sp"; case 4: return "esp"; }
+    } else if (reg == "r8") {
+        switch(size) { case 1: return "r8b"; case 2: return "r8w"; case 4: return "r8d"; }
+    } else if (reg == "r9") {
+        switch(size) { case 1: return "r9b"; case 2: return "r9w"; case 4: return "r9d"; }
+    } else if (reg == "r10") {
+        switch(size) { case 1: return "r10b"; case 2: return "r10w"; case 4: return "r10d"; }
+    } else if (reg == "r11") {
+        switch(size) { case 1: return "r11b"; case 2: return "r11w"; case 4: return "r11d"; }
+    } else if (reg == "r12") {
+        switch(size) { case 1: return "r12b"; case 2: return "r12w"; case 4: return "r12d"; }
+    } else if (reg == "r13") {
+        switch(size) { case 1: return "r13b"; case 2: return "r13w"; case 4: return "r13d"; }
+    } else if (reg == "r14") {
+        switch(size) { case 1: return "r14b"; case 2: return "r14w"; case 4: return "r14d"; }
+    } else if (reg == "r15") {
+        switch(size) { case 1: return "r15b"; case 2: return "r15w"; case 4: return "r15d"; }
     }
 
-    // If not of it matched, just return the reg as it is
+    // Default fallback (in case of unknown register or size)
     return reg;
 }
 
@@ -225,7 +209,8 @@ std::string LinearScanMap::Map(std::shared_ptr<Temp> temp, int sizeNeeded)
     // If the register is a reserved registers, just return it's pre calculated name
     if(ReservedIrRegisters::ReservedTempToReg.find(temp) != ReservedIrRegisters::ReservedTempToReg.end())
     {
-        return ReservedIrRegisters::ReservedTempToReg[temp];
+        auto correctReg = ReservedIrRegisters::ReservedTempToReg[temp];
+        return TruncateRegToSize(correctReg, sizeNeeded);
     }
 
 

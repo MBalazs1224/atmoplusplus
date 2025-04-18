@@ -1,6 +1,6 @@
 #include "ir_call.hh"
 
-IRCall::IRCall(std::shared_ptr<IRExpression> f, std::shared_ptr<IRExpressionList> a, std::shared_ptr<IRExpressionList> argLocations, bool valueNeeded = true) : func(std::move(f)), args(std::move(a)), returnValueNeeded(valueNeeded), argumentLocations(argLocations)
+IRCall::IRCall(std::shared_ptr<IRExpression> f, std::shared_ptr<IRExpressionList> a, std::shared_ptr<IRExpressionList> argLocations, bool valueNeeded, DataSize retSize) : func(std::move(f)), args(std::move(a)), argumentLocations(argLocations), returnValueNeeded(valueNeeded), returnSize(retSize)
 {
 
 }
@@ -32,7 +32,9 @@ std::shared_ptr<IRExpression> IRCall::Build(std::shared_ptr<IRExpressionList> ki
     return std::make_shared<IRCall>(
         kids->expression,
         kids->next,
-        this->argumentLocations
+        this->argumentLocations,
+        false,
+        DataSize::DWord // FIXME: Default to 64 bit
     );
 }
 

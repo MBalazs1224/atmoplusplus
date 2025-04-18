@@ -87,7 +87,8 @@ void ConstructorDefinitionNode::TranslateToIRWithGivenParemeter(std::shared_ptr<
         functionLocation,
         fullParameterList,
         this->function->ConvertParameterLocationToList(),
-        false // The return value is not needed
+        false, // The return value is not needed,
+        DataSize::QWord // Will be a pointer
     );
 
     auto evaulateThisConstructor = std::make_shared<IREvaluateExpression>(

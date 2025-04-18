@@ -29,7 +29,7 @@ std::shared_ptr<IRStatement> IRMove::Build(std::shared_ptr<IRExpressionList> kid
         return std::make_shared<IRMove>(
             std::make_shared<IRMem>(
                 kids->expression,
-                DataSize::QWord // FIXME: Default to 64 bit
+                destMem->bytesNeeded
             ),
             kids->next->expression
         );

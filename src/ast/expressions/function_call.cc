@@ -177,11 +177,13 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 
     bool returnValueNeeded = this->GetType()->NotCompatible(Helper::VoidType);
 
+
     auto functionCall = std::make_shared<IRCall>(
         funcLocation, 
         argumentsList,
         function->ConvertParameterLocationToList(),
-        returnValueNeeded
+        returnValueNeeded,
+        this->function->GetType()->GetSize()
     );
 
 
@@ -231,7 +233,8 @@ std::shared_ptr<IRStatement> FunctionCall::TranslateToIR()
         functionLocation, 
         argumentsList,
         function->ConvertParameterLocationToList(),
-        returnValueNeeded
+        returnValueNeeded,
+        this->function->GetType()->GetSize()
     );
 
 
