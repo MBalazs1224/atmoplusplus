@@ -1,10 +1,13 @@
-create integer testInt equals 0
+create integer testInt equals 2
 
-if testInt greater than 5
+if testInt matches 5
 	return 5
+else if testInt < 3
+	testInt equals 1
+else if testInt < 5
+	testInt equals 2
 else
-	testInt equals 10
+	testInt equals 3
 
-testInt equals 69
 
 return testInt

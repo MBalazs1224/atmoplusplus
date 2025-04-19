@@ -404,13 +404,15 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                 {
                     auto source = MunchExpression(moveExp->source);
 
+                    auto newSource = source->Clone((DataSize)destMem->bytesNeeded);
+
                     auto sizeString = SizeToString(source->sizeNeeded);
                     // It could only be plus or minus
                     auto op = binOp->binop == BinaryOperator::PLUS ? "+" : "-";
                     auto asmInst = std::make_shared<AssemblyMove>(
                         Helper::FormatString("mov %s [`d0 %s %d], `s0",sizeString.c_str(), op, rightConst->value),
                         leftTemp->temp,
-                        source
+                        newSource
                     );
 
                     EmitInstruction(asmInst);
@@ -425,10 +427,13 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             auto temp = MunchExpression(srcMem);
             auto addr = MunchExpression(destMem->exp);
 
+            auto newTemp = temp->Clone((DataSize)srcMem->bytesNeeded);
+
+
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov %s [`d0], `s0", destSize.c_str()),
                 addr,
-                temp
+                newTemp
             ));
             return;
         }
@@ -438,10 +443,13 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         {
             auto addr = MunchExpression(destBinOp);
             auto src = MunchExpression(moveExp->source);
+
+            auto newSrc = src->Clone(addr->sizeNeeded);
+
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov %s [`d0], `s0", destSize.c_str()),
                 addr,
-                src
+                newSrc
             ));
             return;
         }
@@ -462,10 +470,13 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         if (auto srcReg = std::dynamic_pointer_cast<IRTemp>(moveExp->source)) 
         {
             auto addr = MunchExpression(destMem->exp);
+
+            auto newSrc = srcReg->temp->Clone((DataSize)destMem->bytesNeeded);
+
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov %s [`d0], `s0", destSize.c_str()),
                 addr,
-                srcReg->temp
+                newSrc
             ));
             return;
         }
