@@ -782,12 +782,31 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchConstInteger(std::shared_ptr<IRCons
 }
 std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
 {
-    // Need to move the inner expression into a reg and that move that value into the newLocation of the Mem expression
-    auto addressTemp = MunchExpression(memExp->exp);
+    
 
     auto newLocation = std::make_shared<Temp>((DataSize)memExp->bytesNeeded);
 
     auto sizeString = SizeToString(memExp->bytesNeeded);
+
+     // mov reg , [reg + const]
+    if(auto binOp = std::dynamic_pointer_cast<IRBinaryOperator>(memExp->exp))
+        if(auto leftReg = std::dynamic_pointer_cast<IRTemp>(binOp->left))
+            if(auto rightConst = std::dynamic_pointer_cast<IRConst>(binOp->right))
+            {
+                auto binop = binOp->binop == BinaryOperator::PLUS ? "+" : "-";
+                auto asmInst = std::make_shared<AssemblyMove>(
+                    Helper::FormatString("mov `d0, %s [`s0 %s %d]", sizeString.c_str(), binop, rightConst->value),
+                    newLocation,
+                    leftReg->temp
+                );
+
+                EmitInstruction(asmInst);
+
+                return newLocation;
+            }
+
+    // Need to move the inner expression into a reg and that move that value into the newLocation of the Mem expression
+    auto addressTemp = MunchExpression(memExp->exp);
 
     auto asmInst = std::make_shared<AssemblyMove>(
         Helper::FormatString("mov `d0, %s [`s0]", sizeString.c_str()), // Move the first source into the first destination
