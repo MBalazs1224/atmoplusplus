@@ -12,99 +12,69 @@ std::shared_ptr<IRStatementList> IRTraceSchedule::GetLast(std::shared_ptr<IRStat
     
 }
 
-void IRTraceSchedule::Trace(std::shared_ptr<IRStatementList> list)
-{
-    while (true)
-    {
-        auto irLabel = std::dynamic_pointer_cast<IRLabel>(list->head);
+void IRTraceSchedule::Trace(std::shared_ptr<IRStatementList> list) {
+    while (true) {
+        // Remove label from scheduling table
+        auto curLabel = std::dynamic_pointer_cast<IRLabel>(list->head);
+        table.erase(curLabel->label);
 
-        table.erase(irLabel->label);
+        auto lastNode = GetLast(list);
+        auto stmt = lastNode->tail->head;
 
-        auto last = GetLast(list);
-        auto statement = last->tail->head;
+        if (auto uj = std::dynamic_pointer_cast<IRJump>(stmt)) {
+            // Handle unconditional jumps
+            if (uj->targets->tail) {
+                // Multiple targets - end trace
+                lastNode->tail->tail = GetNext();
+                return;
+            }
 
-        if(auto jump = std::dynamic_pointer_cast<IRJump>(statement))
-        {
-            auto target = GetElementFromMap(jump->targets->head);
-
-            if(!jump->targets->tail && target)
-            {
-                last->tail = target;
+            auto target = GetElementFromMap(uj->targets->head);
+            if (target) {
+                // Single unscheduled target - append directly
+                lastNode->tail = target;
                 list = target;
-            }
-            else
-            {
-                last->tail->tail = GetNext();
+            } else {
+                // Target already scheduled - end trace
+                lastNode->tail->tail = GetNext();
                 return;
             }
-            
         }
-        else if (auto cJump = std::dynamic_pointer_cast<IRCJump>(statement))
-        {
-            auto truePath = GetElementFromMap(cJump->iftrue);
-            auto falsePath = GetElementFromMap(cJump->iffalse);
-            
-            if(falsePath)
-            {
-                last->tail->tail = falsePath;
-                list = falsePath;
+        else if (auto cj = std::dynamic_pointer_cast<IRCJump>(stmt)) {
+            auto falseBlk = GetElementFromMap(cj->iffalse);
+            auto trueBlk  = GetElementFromMap(cj->iftrue);
+
+            if (trueBlk && !falseBlk) {
+                // True path available; make true fall-through
+                lastNode->tail->head = std::make_shared<IRCJump>(
+                    cj->OppositeOperator(cj->relop), // flip condition
+                    cj->left,
+                    cj->right,
+                    cj->iffalse,  // now taken if inverted condition is true
+                    cj->iftrue    // fall-through
+                );
+                lastNode->tail->tail = trueBlk;
+                list = trueBlk;
             }
-            else if(truePath)
-            {
-                // Switch  operator and labels
-                last->tail->head = std::make_shared<IRCJump>(
-                    cJump->OppositeOperator(cJump->relop),
-                    cJump->left,
-                    cJump->right,
-                    cJump->iffalse,
-                    cJump->iftrue
-                );
-
-                last->tail->tail = truePath;
-                list = truePath;
+            else if (falseBlk) {
+                // False path is fall-through
+                lastNode->tail->head = cj;
+                lastNode->tail->tail = falseBlk;
+                list = falseBlk;
             }
-            else
-            {
-                auto newLabel = std::make_shared<Label>();
-
-                last->tail->head = std::make_shared<IRCJump>(
-                    cJump->relop,
-                    cJump->left,
-                    cJump->right,
-                    cJump->iftrue,
-                    newLabel
-                );
-
-                last->tail->tail = std::make_shared<IRStatementList>(
-                    std::make_shared<IRLabel>(
-                        newLabel
-                    ),
-                    std::make_shared<IRStatementList>(
-                        std::make_shared<IRJump>(
-                            std::make_shared<IRName>(
-                            cJump->iffalse
-                                
-                            )
-                        ),
-                        GetNext()
-                    )
-                );
-
+            else {
+                // Both paths already scheduled or unavailable
+                lastNode->tail->tail = GetNext();
                 return;
             }
-            
-            
         }
-
-        else
-        {
-            throw std::logic_error("Bad basic block in TraceSchedule");
+        else {
+            throw std::logic_error("TraceSchedule saw non-jump at block end!");
         }
-        
-        
     }
-    
 }
+
+
 
 std::shared_ptr<IRStatementList> IRTraceSchedule::GetNext()
 {

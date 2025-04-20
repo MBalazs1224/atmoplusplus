@@ -1,4 +1,4 @@
-create integer testInt equals 2
+create integer testInt equals 6
 
 if testInt matches 5
 	return 5

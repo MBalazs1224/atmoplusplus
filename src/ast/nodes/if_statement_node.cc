@@ -111,84 +111,67 @@ std::vector<std::shared_ptr<VariableSymbol>> IfStatementNode::GetVariables()
 
 std::shared_ptr<IRStatement> IfStatementNode::TranslateToIR()
 {
-    // The label for true path
-    std::shared_ptr<Label> if_true = std::make_shared<Label>();
+    std::shared_ptr<Label> endLabel = std::make_shared<Label>();
 
-    // The label for false path (else-if or else)
-    std::shared_ptr<Label> if_false = std::make_shared<Label>();
+    std::shared_ptr<Label> ifTrueLabel = std::make_shared<Label>();
 
-    // Label for joining all paths together
-    std::shared_ptr<Label> if_end = std::make_shared<Label>();
+    std::shared_ptr<Label> firstFalseLabel = std::make_shared<Label>();
 
-    // Generate IR for the condition expression
-    std::shared_ptr<TranslateExpression> conditionExpression = expression->TranslateExpressionToIr();
-
-    std::shared_ptr<IRStatement> conditionStatement = conditionExpression->ToConditionExpression(if_true, if_false);
-
-    // Will contain all the IR statements for this if-statement
     std::vector<std::shared_ptr<IRStatement>> statements;
 
-    // Push the condition statement to the statements
-    statements.push_back(conditionStatement);
+    std::shared_ptr<TranslateExpression> condExpr = expression->TranslateExpressionToIr();
+    std::shared_ptr<IRStatement> condStmt = condExpr->ToConditionExpression(ifTrueLabel, firstFalseLabel);
+    statements.push_back(condStmt);
 
-    // -------- Translate the main `if` block
-
-    // Print label for the true path
-    statements.push_back(std::make_shared<IRLabel>(if_true));
-
-    // Translate the body of the if path
+    // True path for main if
+    statements.push_back(std::make_shared<IRLabel>(ifTrueLabel));
     statements.push_back(body->TranslateToIR());
+    statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(endLabel)));
 
-    // Jump to the end label
-    statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(if_end)));
+    // ------------- else-if chain -------------
+    std::shared_ptr<Label> currentFalseLabel = firstFalseLabel;
 
-    // Print label for false path
-    //statements.push_back(std::make_shared<IRLabel>(if_false));
+    for (size_t i = 0; i < else_ifs.size(); ++i) {
+        std::shared_ptr<Label> elseIfTrueLabel = std::make_shared<Label>();
 
-    // -------- Translate the `else if` blocks
+        // Label to jump to if condition is false
+        std::shared_ptr<Label> nextFalseLabel = (i + 1 < else_ifs.size() || else_) 
+                                                ? std::make_shared<Label>() 
+                                                : endLabel;
 
-    for (size_t i = 0; i < else_ifs.size(); i++)
-    {
-        // Create a new label for the true path of this else_if
-        if_true = std::make_shared<Label>();
+        // Condition
+        auto elseIfCondExpr = else_ifs[i]->expression->TranslateExpressionToIr();
+        auto elseIfCondStmt = elseIfCondExpr->ToConditionExpression(elseIfTrueLabel, nextFalseLabel);
 
-        // If there is still a next else_if then we need to jump to that otherwise jump to else path
-        std::shared_ptr<Label> next_false = i + 1 < else_ifs.size() ? std::make_shared<Label>() : if_false;
+        // False label:
+        statements.push_back(std::make_shared<IRLabel>(currentFalseLabel));
+        statements.push_back(elseIfCondStmt);
 
-        // Translate the else-if condition
-        std::shared_ptr<TranslateExpression> elseIfConditionalExpression = else_ifs[i]->expression->TranslateExpressionToIr();
-        std::shared_ptr<IRStatement> elseIfConditionalStatement = elseIfConditionalExpression->ToConditionExpression(if_true, next_false);
-
-        // Add condition check
-        statements.push_back(elseIfConditionalStatement);
-
-        // Label for true path and body
-        statements.push_back(std::make_shared<IRLabel>(if_true));
+        // True path of this else-if
+        statements.push_back(std::make_shared<IRLabel>(elseIfTrueLabel));
         statements.push_back(else_ifs[i]->body->TranslateToIR());
+        statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(endLabel)));
 
-        // Jump to the final join label
-        statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(if_end)));
-
-        // Update `if_false` for the next else_if
-        if_false = next_false;
+        currentFalseLabel = nextFalseLabel;
     }
 
-    // -------- Translate else
-
-    statements.push_back(std::make_shared<IRLabel>(if_false)); 
-    if (else_)
-    {
+    // ------------- else block -------------
+    if (else_) {
+        statements.push_back(std::make_shared<IRLabel>(currentFalseLabel));
         statements.push_back(else_->body->TranslateToIR());
-        // Jump out of the if statement to the next statement
-        statements.push_back(std::make_shared<IRJump>(
-            std::make_shared<IRName>(
-                if_end
-            )
-        ));
+        statements.push_back(std::make_shared<IRJump>(std::make_shared<IRName>(endLabel)));
+    } else if (currentFalseLabel != endLabel) {
+        statements.push_back(std::make_shared<IRLabel>(currentFalseLabel));
+        // fall through to end
     }
 
-    // Print joining label
-    statements.push_back(std::make_shared<IRLabel>(if_end));
+    // Final label
+    statements.push_back(std::make_shared<IRLabel>(endLabel));
+
+    // std::shared_ptr<IRStatement> result = statements[0];
+    // for (size_t i = 1; i < statements.size(); ++i) {
+    //     result = std::make_shared<IRSequence>(result, statements[i]);
+    // }
 
     return std::make_shared<IRSequence>(statements);
 }
