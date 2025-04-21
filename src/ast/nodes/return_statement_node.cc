@@ -10,7 +10,7 @@ ReturnStatementNode::~ReturnStatementNode() = default;
 bool ReturnStatementNode::Check()
 {
     // TODO: Implement return node checking logic as needed
-    return true;
+    return expression->Check();
 }
 
 
