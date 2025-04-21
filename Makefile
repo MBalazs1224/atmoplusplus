@@ -68,7 +68,7 @@ main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
 	@echo ""
 	@echo "Assembling the garbage collector!"
-	@gcc -c $(garbage_collector) -o atmo_gc.o
+	@gcc -c -g $(garbage_collector) -o atmo_gc.o
 	@echo "" 
 	@echo "Building successful, you can run the program by typing ./main"
 
