@@ -168,7 +168,8 @@ void AtmoDriver::StartCompilation()
         exit(0);
     }
 
-    system(Helper::FormatString("gcc -o %s %s.o atmo_gc.o -z noexecstack", outputPath.c_str(), outputPath.c_str()).c_str());
+    //FIXME: No PIE executable is set, which is a security risk for modern systems
+    system(Helper::FormatString("gcc -no-pie -o %s %s.o atmo_gc.o -z noexecstack", outputPath.c_str(), outputPath.c_str()).c_str());
 }
 
 std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
@@ -424,7 +425,7 @@ void AtmoDriver::GenerateAssembly()
 
     // Generate strings
 
-    asmFile << "section .rodata\n\n"; // Print read only data indicator
+    asmFile << "section .data\n\n"; // Print read only data indicator
 
     // Print the data in this form: L0: .string "asd"
     for (auto &&pair : GlobalStrings::stringToLabel)
