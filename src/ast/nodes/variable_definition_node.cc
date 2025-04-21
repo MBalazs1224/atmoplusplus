@@ -143,26 +143,16 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         // initClass function will be an external fucntion which will return a pointer to the heap-allocated space (but wont't initialize the spaces to 0)
 
         auto labelForClassInit = std::make_shared<Label>(
-            "initClass"
+            "heapAlloc"
         );
         
-        // We need to pass the required space as an argument to the function
+        // We need to pass the type descriptor as an argument to the function
 
         auto expressionListForClassInit = std::make_shared<IRExpressionList>();
 
-        expressionListForClassInit->expression = std::make_shared<IRConst>(
-            classType->size_in_bytes
+        expressionListForClassInit->expression = std::make_shared<IRName>(
+            classType->typeDescriptorLabel
         );
-
-        //FIXME: Pass the parameter to the function, moving the argument might need to be done by the code emitter
-        auto moveSizeIntoRDI = std::make_shared<IRMove>(
-            std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
-            std::make_shared<IRConst>(
-                classType->size_in_bytes
-            )
-        );
-
-        statements.push_back(moveSizeIntoRDI);
 
         auto argumentLocation = std::make_shared<IRExpressionList>();
 

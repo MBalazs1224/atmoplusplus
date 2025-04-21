@@ -584,6 +584,29 @@ bool ClassSymbol::CheckConstructorsAndDestructor()
     return true;
 }
 
+std::string ClassSymbol::GetTypeDescriptorString()
+{
+    std::stringstream buffer;
+    for (auto &&variable : variables)
+    {
+        auto varType = variable.second->GetType();
+
+        // If the variable is a class type, it will be a pointer so the type descritpor character should be a 'p', othetwise a 'n' indicating a non-pointer type (4 bytes at this current stage)
+
+        if(std::dynamic_pointer_cast<ClassSymbol>(varType))
+        {
+            buffer << "p";
+        }
+        else
+        {
+            buffer << "n";
+        }
+    }
+
+    return buffer.str();
+    
+}
+
 bool ClassSymbol::Check()
 {
     if (alreadyChecked)
@@ -612,6 +635,12 @@ bool ClassSymbol::Check()
         checkedResult = false;
         return false;
     }
+
+    // Generate the type descriptor string needed for the garbage collector
+    
+    auto typeDescString = GetTypeDescriptorString();
+
+    this->typeDescriptorLabel = GlobalStrings::AddToPool(typeDescString);
 
     checkedResult = true;
     return true;

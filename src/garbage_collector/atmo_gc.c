@@ -40,7 +40,7 @@ size_t calculateDataSize(const char* descriptor) {
     for (; *descriptor; ++descriptor) {
         switch (*descriptor) {
             case 'p': size += sizeof(void*); break; // The field is a pointer, 8 bytes
-            case 'i': size += sizeof(int); break; // The fiels is non-pointer, 4 bytes
+            case 'n': size += sizeof(int); break; // The fiels is non-pointer, 4 bytes
             default: 
                 fprintf(stderr, "Unknown descriptor '%c'\n", *descriptor);
                 exit(1);
@@ -160,8 +160,8 @@ void mark(Header* header) {
         } else {
             // Advance past non-pointer fields
             switch (*desc) {
-                case 'i': data += sizeof(int); break;
-                // Handle other types similarly...
+                case 'p' : data += sizeof(void*); break;
+                case 'n': data += sizeof(int); break;
             }
         }
     }
