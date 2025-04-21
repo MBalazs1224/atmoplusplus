@@ -1,11 +1,10 @@
 #include "atmo_driver.hh"
 
-
 std::unique_ptr<Frame> AtmoDriver::globalFrameType;
 
-AtmoDriver::AtmoDriver(std::vector<std::string>& params)
+AtmoDriver::AtmoDriver(std::vector<std::string> &params)
 {
-    if(params.empty())
+    if (params.empty())
     {
         Error::ShowCompilerError("No parameters received!");
     }
@@ -13,13 +12,13 @@ AtmoDriver::AtmoDriver(std::vector<std::string>& params)
     ProcessArguments(params);
 }
 
-void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
+void AtmoDriver::ProcessBehaviouralFlag(const std::string &param)
 {
     if (param == "--debug-lexer")
     {
         set_lexer_debug_level(1);
     }
-    else if(param == "--debug-parser")
+    else if (param == "--debug-parser")
     {
         set_parser_debug_level(1);
     }
@@ -55,19 +54,18 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string& param)
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
     }
-        
 }
 
-void AtmoDriver::OpenFile(const std::string& fileName)
+void AtmoDriver::OpenFile(const std::string &fileName)
 {
-    if(!openedFilePath.empty())
+    if (!openedFilePath.empty())
     {
         Error::ShowCompilerError("Input file specified multiple times!");
     }
 
     inputFile.open(fileName);
 
-    if(!inputFile.is_open())
+    if (!inputFile.is_open())
     {
         Error::ShowCompilerError(Helper::FormatString("Couldn't open file '%s'!", fileName.c_str()));
     }
@@ -75,12 +73,12 @@ void AtmoDriver::OpenFile(const std::string& fileName)
     openedFilePath = fileName;
 }
 
-void AtmoDriver::ProcessArguments(std::vector<std::string>& params)
+void AtmoDriver::ProcessArguments(std::vector<std::string> &params)
 {
-    for(auto param : params)
+    for (auto param : params)
     {
         // All behavoural flags will start with "--"
-        if(param.rfind("--",0) == 0)
+        if (param.rfind("--", 0) == 0)
         {
             ProcessBehaviouralFlag(param);
         }
@@ -100,16 +98,15 @@ void AtmoDriver::SetFrameType()
 
     // osInfo.machine will contain the cpu architecture
 
-    if(strcmp(osInfo.machine, "x86_64") == 0)
+    if (strcmp(osInfo.machine, "x86_64") == 0)
     {
         GlobalFrame::globalFrameType = std::make_unique<x86Frame>();
     }
     else
     {
-        Error::ShowCompilerError(Helper::FormatString("The current architecture (%s) is not supported!",osInfo.machine));
+        Error::ShowCompilerError(Helper::FormatString("The current architecture (%s) is not supported!", osInfo.machine));
         exit(EXIT_FAILURE);
     }
-    
 }
 
 void AtmoDriver::StartCompilation()
@@ -123,19 +120,16 @@ void AtmoDriver::StartCompilation()
 
     lexer = CreateLexer(inputFile);
 
-
     try
-    { 
+    {
         parser = std::make_unique<yy::parser>(*lexer, *this);
         parser->set_debug_level(parser_debug_level);
     }
-    catch(const std::bad_alloc& ba)
+    catch (const std::bad_alloc &ba)
     {
-        std::cerr << "Failed to allocate parser: (" <<
-         ba.what() << ")" << std::endl;
+        std::cerr << "Failed to allocate parser: (" << ba.what() << ")" << std::endl;
         exit(EXIT_FAILURE);
     }
-
 
     Error::Initialize(openedFilePath);
     SymbolTable::Initialize();
@@ -147,13 +141,13 @@ void AtmoDriver::StartCompilation()
     }
 
     // ClassSymbol's Check funtion might need these pointers (becaues of polphormic function being offseted from RDI), so we need to initialize them here
-    
-    //Initialize the IR register pointers
+
+    // Initialize the IR register pointers
     ReservedIrRegisters::Initialize();
 
     SemanticAnalyze();
 
-    if(!Error::CanContinue())
+    if (!Error::CanContinue())
     {
         return;
     }
@@ -169,14 +163,12 @@ void AtmoDriver::StartCompilation()
 
     system(Helper::FormatString("nasm -f elf64 -g -F dwarf %s.asm", outputPath.c_str()).c_str());
 
-    if(!shouldLink)
+    if (!shouldLink)
     {
         exit(0);
     }
 
-    system(Helper::FormatString("gcc -o %s %s.o atmo_gc.o -z noexecstack", outputPath.c_str(),outputPath.c_str()).c_str());
-    
-
+    system(Helper::FormatString("gcc -o %s %s.o atmo_gc.o -z noexecstack", outputPath.c_str(), outputPath.c_str()).c_str());
 }
 
 std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
@@ -187,42 +179,76 @@ std::unique_ptr<AtmoLexer> AtmoDriver::CreateLexer(std::istream &stream)
         lex->set_debug(lexer_debug_level);
         return lex;
     }
-    catch(const std::bad_alloc& ba)
+    catch (const std::bad_alloc &ba)
     {
-        std::cerr << "Failed to allocate scanner: (" <<
-         ba.what() << ")" << std::endl;
+        std::cerr << "Failed to allocate scanner: (" << ba.what() << ")" << std::endl;
         exit(EXIT_FAILURE);
     }
-    return  nullptr;    
-    
+    return nullptr;
 }
 
-std::vector<std::shared_ptr<VariableSymbol>> AtmoDriver::GetGlobalVariables(std::vector<std::shared_ptr<Node>>& nodes)
+std::string AtmoDriver::StringToFullNasmLiteral(std::string labelName, std::string stringLiteral)
+{
+    std::stringstream output;
+    output << labelName << ": db ";
+
+    for (size_t i = 0; i < stringLiteral.length(); ++i) {
+        unsigned char c = stringLiteral[i];
+
+        if (c == '\\') {
+            ++i;
+            if (i >= stringLiteral.length()) break;
+
+            switch (stringLiteral[i]) {
+                case 'n': output << "10, "; break;
+                case 't': output << "9, "; break;
+                case 'r': output << "13, "; break;
+                case '0': output << "0, "; break;
+                case '\\': output << "92, "; break;
+                case '\'': output << "39, "; break;
+                case '\"': output << "34, "; break;
+                default:
+                    output << static_cast<int>(stringLiteral[i]) << ", ";
+                    break;
+            }
+        } else if (isprint(c) && c != '"') {
+            output << "'" << c << "', ";
+        } else if (c == '"') {
+            output << "34, ";
+        } else {
+            output << static_cast<int>(c) << ", ";
+        }
+    }
+
+    output << "0"; // null terminator
+    return output.str();
+}
+
+std::vector<std::shared_ptr<VariableSymbol>> AtmoDriver::GetGlobalVariables(std::vector<std::shared_ptr<Node>> &nodes)
 {
     std::vector<std::shared_ptr<VariableSymbol>> globalVariables;
 
     for (auto &&node : nodes)
     {
         // If the variable was defined globally
-        if(auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(node))
+        if (auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(node))
         {
             globalVariables.push_back(varDef->GetVariable());
         }
         // If the variable was defined inside a nested scope
-        else if(auto varContainer = std::dynamic_pointer_cast<BodyContainer>(node))
+        else if (auto varContainer = std::dynamic_pointer_cast<BodyContainer>(node))
         {
             auto variables = varContainer->GetVariables();
 
             // Insert the variables into the end of the global vars
             globalVariables.insert(globalVariables.end(), variables.begin(), variables.end());
         }
-        
     }
-    
+
     return globalVariables;
 }
 
-std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>>& variables)
+std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>> &variables)
 {
     // Global variables should be in the frame, so true will indicate that
 
@@ -235,64 +261,60 @@ std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector
     }
 
     return boolList;
-    
 }
 
 std::shared_ptr<IRStatement> AtmoDriver::ConvertStatementListToSequence(std::shared_ptr<IRStatementList> list)
 {
     // If there are no statements return null
-    if(!list) return nullptr;
+    if (!list)
+        return nullptr;
     // If only one statement,return that one
-    if(!list->tail) return list->head;
+    if (!list->tail)
+        return list->head;
 
     return std::make_shared<IRSequence>(
         list->head,
-        ConvertStatementListToSequence(list->tail)
-    );
+        ConvertStatementListToSequence(list->tail));
 }
 
-std::vector<std::shared_ptr<Node>> AtmoDriver::GetDefinitionNodes(std::vector<std::shared_ptr<Node>>& nodes)
+std::vector<std::shared_ptr<Node>> AtmoDriver::GetDefinitionNodes(std::vector<std::shared_ptr<Node>> &nodes)
 {
     std::vector<std::shared_ptr<Node>> definitions;
 
     for (auto &&node : nodes)
     {
         // If the node is a function or class definitions, push it to the def vector
-        if(std::dynamic_pointer_cast<FunctionDefinitionNode>(node) || std::dynamic_pointer_cast<ClassDefinitionNode>(node))
+        if (std::dynamic_pointer_cast<FunctionDefinitionNode>(node) || std::dynamic_pointer_cast<ClassDefinitionNode>(node))
         {
             definitions.push_back(node);
         }
-        
     }
 
     return definitions;
-    
 }
 
-std::vector<std::shared_ptr<Node>> AtmoDriver::GetStatementNodes(std::vector<std::shared_ptr<Node>>& nodes)
+std::vector<std::shared_ptr<Node>> AtmoDriver::GetStatementNodes(std::vector<std::shared_ptr<Node>> &nodes)
 {
     std::vector<std::shared_ptr<Node>> statements;
 
     for (auto &&node : nodes)
     {
         // If the node is not a function or class definitions, push it to the stmt vector
-        if(!std::dynamic_pointer_cast<FunctionDefinitionNode>(node) && !std::dynamic_pointer_cast<ClassDefinitionNode>(node))
+        if (!std::dynamic_pointer_cast<FunctionDefinitionNode>(node) && !std::dynamic_pointer_cast<ClassDefinitionNode>(node))
         {
             statements.push_back(node);
         }
-        
     }
 
     return statements;
-    
 }
 
-std::shared_ptr<IRStatementList> AtmoDriver::BuildIRList(const std::vector<std::shared_ptr<Node>>& nodes)
+std::shared_ptr<IRStatementList> AtmoDriver::BuildIRList(const std::vector<std::shared_ptr<Node>> &nodes)
 {
     std::shared_ptr<IRStatementList> root = nullptr;
     std::shared_ptr<IRStatementList> tail = nullptr;
 
-    for (const auto& node : nodes)
+    for (const auto &node : nodes)
     {
         if (auto ir = node->TranslateToIR())
         {
@@ -311,24 +333,19 @@ std::shared_ptr<IRStatementList> AtmoDriver::BuildIRList(const std::vector<std::
     return root;
 }
 
-std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>>& nodes, std::vector<std::shared_ptr<VariableSymbol>>& globalVars)
+std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::shared_ptr<Node>> &nodes, std::vector<std::shared_ptr<VariableSymbol>> &globalVars)
 {
 
     std::vector<std::shared_ptr<Node>> definitions = GetDefinitionNodes(nodes);
     std::vector<std::shared_ptr<Node>> statements = GetStatementNodes(nodes);
 
-    
-
-
     std::shared_ptr<IRStatementList> irRoot = nullptr;
-
 
     auto definitionIR = BuildIRList(definitions);
     auto statementsIR = BuildIRList(statements);
 
     // Automatically return 0 when reaching the end of the statemets
 
-    
     auto endOfStatements = statementsIR;
 
     while (endOfStatements->tail)
@@ -338,27 +355,21 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
 
     auto move0IntoRax = std::make_shared<IRMove>(
         GlobalFrame::globalFrameType->ReturnLocation(),
-        std::make_shared<IRConst>(0)
-    );
+        std::make_shared<IRConst>(0));
 
     auto leave = std::make_shared<IRLeave>();
 
     auto ret = std::make_shared<IRReturn>();
 
-    
     auto ret0List = std::make_shared<IRStatementList>(
         move0IntoRax,
         std::make_shared<IRStatementList>(
             leave,
             std::make_shared<IRStatementList>(
                 ret,
-                nullptr
-            )
-        )
-    );
+                nullptr)));
 
     endOfStatements->tail = ret0List;
-
 
     int sizeOfGlobalVariables = 0;
 
@@ -366,21 +377,18 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
     {
         sizeOfGlobalVariables += var->GetSize();
     }
-    
+
     // Enter instruction, followed by the rest of the statements
 
     auto enterIns = std::make_shared<IRStatementList>(
         std::make_shared<IREnter>(sizeOfGlobalVariables),
-        statementsIR
-    );
+        statementsIR);
 
     // Create a label for the main entry point, which is followed by the enter instruction
     auto mainLabel = std::make_shared<IRStatementList>(
         std::make_shared<IRLabel>(
-            std::make_shared<Label>("main")
-        ),
-        enterIns
-    );
+            std::make_shared<Label>("main")),
+        enterIns);
 
     // Connect definitions to mainLabel if definitions exist
     if (definitionIR != nullptr)
@@ -393,7 +401,6 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
         }
         defTail->tail = mainLabel;
         irRoot = definitionIR;
-        
     }
     else
     {
@@ -401,28 +408,18 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
         irRoot = mainLabel;
     }
 
-    
-
     return irRoot;
-
 }
-
 
 void AtmoDriver::GenerateAssembly()
 {
     // TODO: Implement to be able to generate to other asm type
     auto codeGen = std::make_shared<x86CodeGenerator>();
 
-
     auto asmList = codeGen->CodeGen(irTrace->statements);
 
-    
-    
-    
-    
-    
     // Print the output into an asm files
-    
+
     std::ofstream asmFile(Helper::FormatString("%s.asm", outputPath.c_str()));
 
     // Generate strings
@@ -432,12 +429,14 @@ void AtmoDriver::GenerateAssembly()
     // Print the data in this form: L0: .string "asd"
     for (auto &&pair : GlobalStrings::stringToLabel)
     {
-        asmFile << pair.second->ToString().c_str() << ": " << ".string \"" << pair.first.c_str() <<  "\"\n";
+        auto stringLiteral = pair.first;
+        auto labelName = pair.second->ToString();
+        
+        asmFile << StringToFullNasmLiteral(labelName,stringLiteral) << "\n";
     }
-    
 
     asmFile << "section .text\n\nglobal main\nglobal heapAlloc\n\n";
-    
+
     auto current = asmList;
 
     std::shared_ptr<TempMap> tempMap = nullptr;
@@ -450,23 +449,20 @@ void AtmoDriver::GenerateAssembly()
     {
         tempMap = std::make_shared<LinearScanMap>(asmList);
     }
-    
-    
 
-    while (current) 
+    while (current)
     {
         // If the instruction is not a label, we should print a \t before it for readability
-        if(!std::dynamic_pointer_cast<AssemblyLabel>(current->head))
+        if (!std::dynamic_pointer_cast<AssemblyLabel>(current->head))
             asmFile << "\t";
-
 
         asmFile << current->head->Format(tempMap).c_str() << std::endl;
         current = current->tail;
     }
-    
+
     asmFile.close();
 
-    if(printASM)
+    if (printASM)
     {
         system(Helper::FormatString("xdg-open ./%s.asm", outputPath.c_str()).c_str());
     }
@@ -475,47 +471,40 @@ void AtmoDriver::GenerateAssembly()
 void AtmoDriver::TranslateToIR()
 {
 
-
-
     auto nodes = ast_root->GetStatementsRef();
 
     auto global_variables = GetGlobalVariables(nodes);
 
     x86Frame frame;
 
-    //Create label for main
+    // Create label for main
 
     auto mainLabel = Label("main");
 
     auto globalFrame = frame.newFrame(
         mainLabel,
-        GetWetherGlobalVariablesEscape(global_variables)
-    );
+        GetWetherGlobalVariablesEscape(global_variables));
 
     // Set the variable's access to the access allocated by the frame object
-    
 
-    
     auto accessInsideFrame = globalFrame->formals;
 
     int varCounter = 0;
-    
+
     while (accessInsideFrame != nullptr)
     {
         // The received accessList will be backwards, so I have to iterate the global variables from backwards
 
         size_t currentIndexFromBackwards = global_variables.size() - 1 - varCounter++;
-        
+
         global_variables[currentIndexFromBackwards]->access = accessInsideFrame->head;
 
         accessInsideFrame = accessInsideFrame->tail;
     }
-    
-    
 
     auto irRoot = TranslateToIRTree(nodes, global_variables);
 
-    if(printIRTree)
+    if (printIRTree)
     {
         // Print DOT Formatinstructions to file
         std::ofstream dotFile("ir_tree.dot");
@@ -538,8 +527,7 @@ void AtmoDriver::TranslateToIR()
     auto irSeq = ConvertStatementListToSequence(irRoot);
     auto canonicalIrRoot = IRCanonical::Linearize(irSeq);
 
-
-    if(printCanonicalIRTree)
+    if (printCanonicalIRTree)
     {
         // Print DOT Formatinstructions to file
         std::ofstream dotFile("ir_canonical_tree.dot");
@@ -563,7 +551,7 @@ void AtmoDriver::TranslateToIR()
 
     irTrace = std::make_shared<IRTraceSchedule>(blocks);
 
-    if(printIRTraces)
+    if (printIRTraces)
     {
         // Print DOT Formatinstructions to file
         std::ofstream dotFile("ir_traces.dot");
@@ -578,8 +566,7 @@ void AtmoDriver::TranslateToIR()
 
             statement = statement->tail;
         }
-        
-        
+
         dotFile << canonicalIrRoot->ToDotFormat(nodeCounter);
         dotFile << "}\n";
         dotFile.close();
@@ -592,10 +579,7 @@ void AtmoDriver::TranslateToIR()
 
         system("xdg-open ./ir_traces.png");
     }
-    
-
 }
-
 
 std::unique_ptr<yy::parser> AtmoDriver::CreateParser(const std::unique_ptr<AtmoLexer> &lexer)
 {
@@ -605,17 +589,15 @@ std::unique_ptr<yy::parser> AtmoDriver::CreateParser(const std::unique_ptr<AtmoL
         parser->set_debug_level(parser_debug_level);
         return parser;
     }
-    catch(const std::bad_alloc& ba)
+    catch (const std::bad_alloc &ba)
     {
-        std::cerr << "Failed to allocate parser: (" <<
-         ba.what() << ")" << std::endl;
+        std::cerr << "Failed to allocate parser: (" << ba.what() << ")" << std::endl;
         exit(EXIT_FAILURE);
     }
-    return  nullptr;    
-    
+    return nullptr;
 }
 
-void AtmoDriver::parse_only(std::istream& stream)
+void AtmoDriver::parse_only(std::istream &stream)
 {
     auto lexer = CreateLexer(stream);
     auto parser = CreateParser(std::move(lexer));
@@ -628,21 +610,20 @@ void AtmoDriver::SemanticAnalyze()
 {
     for (auto statement : ast_root->GetStatementsRef())
     {
-        if(!StatementValid(statement))
+        if (!StatementValid(statement))
         {
-            Error::ShowError("Invalid statement!",statement->location);
+            Error::ShowError("Invalid statement!", statement->location);
             continue;
         }
         statement->Check();
     }
-    
 }
 
 bool AtmoDriver::StatementValid(const std::shared_ptr<Node> node)
 {
-    if(auto expression = std::dynamic_pointer_cast<IExpressionable>(node))
+    if (auto expression = std::dynamic_pointer_cast<IExpressionable>(node))
     {
-        // Only assignment expressions and function calls can be used as a statement 
+        // Only assignment expressions and function calls can be used as a statement
 
         return std::dynamic_pointer_cast<AssignmentExpression>(expression) != nullptr || std::dynamic_pointer_cast<FunctionCall>(expression) != nullptr;
     }

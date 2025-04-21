@@ -46,6 +46,12 @@ class AtmoDriver
     void ProcessBehaviouralFlag(const std::string&);
     void OpenFile(const std::string&);
 
+    /// @brief Converts a string into a full NASM literal.
+    /// @param labelName The name of the label.
+    /// @param stringLiteral The string literal.
+    /// @return A full NASM literal. ("LABELNAME: db CONVERTED_STRING_LITERAL")
+    std::string StringToFullNasmLiteral(std::string labelName, std::string stringLiteral);
+
     std::shared_ptr<IRStatement> ConvertStatementListToSequence(std::shared_ptr<IRStatementList> list);
 
     void SetFrameType();
