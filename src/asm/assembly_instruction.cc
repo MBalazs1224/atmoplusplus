@@ -51,7 +51,9 @@ std::string AssemblyInstruction::Format(std::shared_ptr<TempMap> map)
         }
     }
 
-    return result.str();    
+    auto res = result.str();
+
+    return res;
 
 }
 

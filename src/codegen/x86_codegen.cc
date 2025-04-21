@@ -4,8 +4,9 @@
 void x86CodeGenerator::MunchLabel(std::shared_ptr<IRLabel> exp)
 {
     auto innerLabel = exp->label;
+    auto labelName = innerLabel->ToString();
     auto labelAsm = std::make_shared<AssemblyLabel>(
-        innerLabel->ToString() + ":", // In asm the label is followed by a ':' 
+        Helper::FormatString("%s:", labelName.c_str()), // In asm the label is followed by a ':'
         innerLabel
     );
 

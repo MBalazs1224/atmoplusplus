@@ -435,7 +435,7 @@ void AtmoDriver::GenerateAssembly()
         asmFile << StringToFullNasmLiteral(labelName,stringLiteral) << "\n";
     }
 
-    asmFile << "section .text\n\nglobal main\nglobal heapAlloc\n\n";
+    asmFile << "section .text\n\nglobal main\nextern heapAlloc\n\n";
 
     auto current = asmList;
 
@@ -456,7 +456,8 @@ void AtmoDriver::GenerateAssembly()
         if (!std::dynamic_pointer_cast<AssemblyLabel>(current->head))
             asmFile << "\t";
 
-        asmFile << current->head->Format(tempMap).c_str() << std::endl;
+        std::string ins = current->head->Format(tempMap);
+        asmFile << ins << "\n";
         current = current->tail;
     }
 
