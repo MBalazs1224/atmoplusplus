@@ -174,7 +174,7 @@ void AtmoDriver::StartCompilation()
         exit(0);
     }
 
-    system(Helper::FormatString("gcc -o %s %s.o", outputPath.c_str(),outputPath.c_str()).c_str());
+    system(Helper::FormatString("gcc -o %s %s.o atmo_gc.o -z noexecstack", outputPath.c_str(),outputPath.c_str()).c_str());
     
 
 }
@@ -436,7 +436,7 @@ void AtmoDriver::GenerateAssembly()
     }
     
 
-    asmFile << "section .text\n\nglobal main\n\n";
+    asmFile << "section .text\n\nglobal main\nglobal heapAlloc\n\n";
     
     auto current = asmList;
 

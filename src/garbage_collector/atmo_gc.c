@@ -49,6 +49,8 @@ size_t calculateDataSize(const char* descriptor) {
     return size;
 }
 
+void gcCollect();
+
 void* heapAlloc(const char* descriptor) {
     if (heap_start == NULL) initialize_heap(); // If the heap is not allocated yet
 

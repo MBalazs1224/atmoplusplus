@@ -33,6 +33,8 @@ code_generator := ./build/codegen/codegen.o ./build/codegen/x86_codegen.o ./buil
 
 reg_allocator := ./build/codegen/linear_scan.o
 
+garbage_collector := ./src/garbage_collector/atmo_gc.c
+
 helper := ./build/helper/helper.o
 
 lexer := ./build/lexer/atmolexer.o ./build/lexer/lex.yy.o
@@ -64,7 +66,9 @@ CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template
 
 main: $(objects)
 	g++ $(CXXFLAGS) $^ -o $@
-# Echo new line
+	@echo ""
+	@echo "Assembling the garbage collector!"
+	@gcc -c $(garbage_collector) -o atmo_gc.o
 	@echo "" 
 	@echo "Building successful, you can run the program by typing ./main"
 
