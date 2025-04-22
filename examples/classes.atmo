@@ -11,4 +11,4 @@ create testClass testObj with 5
 
 testInt3 inside testObj equals 10
 
-return testInt3 inside testObj
+return testInt3 inside testObj plus testInt inside testObj

@@ -1,7 +1,7 @@
 create class testParent
 	create integer testInt
 	create constructor with integer testParam
-		testInt equals 5
+		testInt equals testParam
 
 create class testChild derives from testParent
 	create integer testLocal
@@ -10,4 +10,4 @@ create class testChild derives from testParent
 
 create testChild testObj
 
-testInt inside testObj equals 0
+return testInt inside testObj plus testLocal inside testObj

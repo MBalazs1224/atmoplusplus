@@ -152,15 +152,16 @@
 %token NO_ARGUMENTS
 
 
+%left COMMA
 %left EQUALS
-%right CALL INSIDE AT
-%left NOT
-%left WITH COMMA
-%left OPEN_BRACKET CLOSE_BRACKET
-%left OR AND
-%left LESS_THAN GREATER_THAN LESS_THAN_OR_EQUAL GREATER_THAN_OR_EQUAL MATCHES NOT_MATCHES
+%left OR
+%left AND
+%nonassoc LESS_THAN GREATER_THAN LESS_THAN_OR_EQUAL GREATER_THAN_OR_EQUAL MATCHES NOT_MATCHES
 %left PLUS MINUS
+%right NOT
 %left MULTIPLY DIVIDE
+%right INSIDE AT
+%right CALL
 %right ARRAY_OF
 
 %nonassoc UMINUS // For assigning minus numbers e.g -4 etc.
@@ -186,7 +187,6 @@
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> function_call_arguments
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> optional_arguments
 %nterm<std::vector<std::shared_ptr<IExpressionable>>> constructor_parameters
-%nterm<std::vector<std::shared_ptr<IExpressionable>>> more_arguments
 %nterm<std::vector<std::shared_ptr<Identifier>>> base_classes
 %nterm<std::unique_ptr<ElseIfStatementNode>> else_if_statement
 %nterm<std::vector<std::unique_ptr<ElseIfStatementNode>>> else_if_statements
