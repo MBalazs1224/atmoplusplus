@@ -21,3 +21,8 @@ std::shared_ptr<IRExpressionList> IRConst::Kids()
 {
     return nullptr;
 }
+
+DataSize IRConst::Size()
+{
+    return DataSize::DWord; // 4 bytes
+}

@@ -2,9 +2,11 @@ create class testClass
 	create integer testLocal
 	create public integer function testFunc with integer a
 		testLocal equals a
-		return 3
+		return 3 plus testLocal
 
 
 create testClass testObj
 
 create integer testInt equals call testFunc inside testObj with 5 as argument
+
+return testInt

@@ -18,7 +18,7 @@ std::shared_ptr<IRExpression> IRMem::Build(std::shared_ptr<IRExpressionList> kid
 {
     return std::make_shared<IRMem>(
         kids->expression,
-        DataSize::QWord // FIXME: Default to 64 bit
+        kids->expression->Size()
     );
 }
 
@@ -28,4 +28,9 @@ std::shared_ptr<IRExpressionList> IRMem::Kids()
         this->exp,
         nullptr
     );
+}
+
+DataSize IRMem::Size()
+{
+    return (DataSize)this->bytesNeeded;
 }

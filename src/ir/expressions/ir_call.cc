@@ -34,7 +34,7 @@ std::shared_ptr<IRExpression> IRCall::Build(std::shared_ptr<IRExpressionList> ki
         kids->next,
         this->argumentLocations,
         false,
-        DataSize::DWord // FIXME: Default to 64 bit
+        kids->expression->Size()
     );
 }
 
@@ -44,4 +44,9 @@ std::shared_ptr<IRExpressionList> IRCall::Kids()
         this->func,
         this->args
     );
+}
+
+DataSize IRCall::Size()
+{
+    return this->returnSize;
 }

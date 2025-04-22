@@ -20,3 +20,9 @@ std::shared_ptr<IRExpressionList> IRName::Kids()
 {
     return nullptr;
 }
+
+
+DataSize IRName::Size()
+{
+    return DataSize::QWord; // Pointer
+}

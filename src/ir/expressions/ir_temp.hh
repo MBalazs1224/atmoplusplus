@@ -15,4 +15,7 @@ class IRTemp : public IRExpression, public std::enable_shared_from_this<IRTemp>
 
         std::shared_ptr<IRExpression> Build (std::shared_ptr<IRExpressionList> kids) override;
         std::shared_ptr<IRExpressionList> Kids() override;
+
+        virtual DataSize Size() override;
+
 };

@@ -21,3 +21,8 @@ std::shared_ptr<IRExpressionList> IRTemp::Kids()
 {
     return nullptr;
 }
+
+DataSize IRTemp::Size()
+{
+    return this->temp->sizeNeeded;
+}

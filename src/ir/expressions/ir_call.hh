@@ -28,4 +28,7 @@ class IRCall : public IRExpression
 
         std::shared_ptr<IRExpression> Build (std::shared_ptr<IRExpressionList> kids)override;
         std::shared_ptr<IRExpressionList> Kids() override;
+
+        virtual DataSize Size() override;
+
 };

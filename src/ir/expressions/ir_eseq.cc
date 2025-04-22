@@ -26,3 +26,8 @@ std::shared_ptr<IRExpressionList> IREseq::Kids()
 {
     throw std::logic_error("Kids() not applicable to IREseq");
 }
+
+DataSize IREseq::Size()
+{
+    return this->exp->Size();
+}

@@ -60,3 +60,8 @@ std::string IRBinaryOperator::OperatorToString()
             throw std::logic_error("Unknown BinaryOperator value!");
     }
 }
+
+DataSize IRBinaryOperator::Size()
+{
+    return DataSize::DWord; // Integer and float arithmetic only
+}
