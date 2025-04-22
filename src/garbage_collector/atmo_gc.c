@@ -51,6 +51,82 @@ size_t calculateDataSize(const char* descriptor) {
 
 void gcCollect();
 
+void* initArray(int data_size)
+{
+    size_t total_size = sizeof(Header) + data_size;
+
+    // Find a good free block
+    Header **prev = &free_list, *curr = free_list;
+    while (curr) {
+        if (curr->size >= total_size) {
+            // Split the block if possible
+            if (curr->size > total_size + sizeof(Header)) {
+                Header* new_block = (Header*)((char*)curr + total_size);
+                new_block->size = curr->size - total_size;
+                new_block->is_free = 1;
+                new_block->next = curr->next;
+                new_block->marked = 0;
+                new_block->descriptor = NULL;
+                *prev = new_block;
+                curr->size = total_size;
+            } else {
+                *prev = curr->next;
+            }
+            curr->is_free = 0;
+            curr->marked = 0;
+            curr->descriptor = "array"; // FIXME: Arrays should have their own descriptors
+            curr->next = NULL;
+            return (void*)(curr + 1);
+        }
+        prev = &curr->next;
+        curr = curr->next;
+    }
+
+    // No block found, trigger GC then retry
+    gcCollect();
+    curr = free_list;
+    while (curr) {
+        if (curr->size >= total_size) {
+             // Split the block if possible
+             if (curr->size > total_size + sizeof(Header)) {
+                Header* new_block = (Header*)((char*)curr + total_size);
+                new_block->size = curr->size - total_size;
+                new_block->is_free = 1;
+                new_block->next = curr->next;
+                new_block->marked = 0;
+                new_block->descriptor = NULL;
+                *prev = new_block;
+                curr->size = total_size;
+            } else {
+                *prev = curr->next;
+            }
+            curr->is_free = 0;
+            curr->marked = 0;
+            curr->descriptor = "array"; // FIXME: Arrays should have their own descriptors
+            curr->next = NULL;
+            return (void*)(curr + 1);
+        }
+        curr = curr->next;
+    }
+
+    // Still no memory, request more from OS
+    void* mem = malloc(HEAP_CHUNK_SIZE);
+    if (mem == (void*)-1)
+    {
+        return NULL; // Out of memory
+    }
+    heap_end = malloc(0);
+    Header* new_block = (Header*)mem;
+    new_block->size = HEAP_CHUNK_SIZE;
+    new_block->is_free = 1;
+    new_block->next = free_list;
+    new_block->marked = 0;
+    new_block->descriptor = NULL;
+    free_list = new_block;
+
+    return initArray(data_size); // Try to allocate again
+}
+
 void* heapAlloc(const char* descriptor) {
     if (heap_start == NULL) initialize_heap(); // If the heap is not allocated yet
 

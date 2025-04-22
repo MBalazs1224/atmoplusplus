@@ -1,13 +1,6 @@
-create integer function testFunc
-	return 5
+create integer testInt equals 0
 
+until testInt matches 10
+	testInt equals testInt plus 1
 
-create integer function testParamFunc with integer asd
-	return asd plus 10
-
-
-create integer testVar equals call testFunc with no arguments
-
-create integer testVar2 equals call testParamFunc with 5 as argument
-
-return testVar plus testVar2
+return testInt

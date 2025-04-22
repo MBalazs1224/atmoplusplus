@@ -1,6 +1,18 @@
 create array of 5 integers testArr
 
-testArr at 0 equals 100
+create integer counter equals 0
+
+until counter matches 4
+	testArr at counter equals counter
+	counter equals counter plus 1
 
 
-return testArr at 0
+create integer sum equals 0
+
+counter equals 0
+
+until counter matches 4
+	sum equals sum plus testArr at counter
+	counter equals counter plus 1
+
+return sum

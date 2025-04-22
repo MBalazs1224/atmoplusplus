@@ -436,7 +436,7 @@ void AtmoDriver::GenerateAssembly()
         asmFile << StringToFullNasmLiteral(labelName,stringLiteral) << "\n";
     }
 
-    asmFile << "section .text\n\nglobal main\nextern heapAlloc\n\n";
+    asmFile << "section .text\n\nglobal main\nextern heapAlloc\n\nextern initArray\n\n";
 
     auto current = asmList;
 
