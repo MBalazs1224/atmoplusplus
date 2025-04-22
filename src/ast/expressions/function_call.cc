@@ -135,13 +135,6 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
             memberAccess->GetRight()
         );
 
-        // If the function is inside a class, the first argument must be the this pointer (which shouldn't be dereferenced, that why it needs it's special case)
-        statements.push_back(
-            std::make_shared<IRMove>(
-                functionParams[0]->TranslateExpressionToIr()->ToValueExpression(), // The param's location
-                arguments[0]->TranslateExpressionToIrNoDereference()->ToValueExpression() // The argument's value
-            )
-        );
     }
 
     std::shared_ptr<IRExpressionList> argumentsList = TranslateArgumentsToIR();
@@ -159,11 +152,9 @@ std::shared_ptr<TranslateExpression> FunctionCall::TranslateExpressionToIr()
 
     assert(functionParams.size() == arguments.size());
 
-    // If the function is inside a class, the first argument move is already generated, so we need to start from the second
-    size_t startIndex = memberAccess ? 1 : 0;
 
 
-    for (; startIndex < this->arguments.size(); startIndex++)
+    for (size_t startIndex; startIndex < this->arguments.size(); startIndex++)
     {
         auto move = std::make_shared<IRMove>(
             functionParams[startIndex]->TranslateExpressionToIr()->ToValueExpression(), // The param's location
