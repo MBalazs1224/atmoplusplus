@@ -199,7 +199,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
 
             constructor->TranslateToIRWithGivenParemeter(
-                variable->access->AsExpressionNoDereference(sp), // The variable should be offseted from RSP, but shouldn't be dereferenced
+                variable->access->AsExpression(sp), // The variable should be offseted from RSP, but shouldn't be dereferenced
                 argumentsForConstructor,
                 statements
             );
