@@ -2,7 +2,7 @@ create array of 5 integers testArr
 
 create integer counter equals 0
 
-until counter matches 4
+until counter matches 5
 	testArr at counter equals counter
 	counter equals counter plus 1
 
@@ -11,7 +11,7 @@ create integer sum equals 0
 
 counter equals 0
 
-until counter matches 4
+until counter matches 5
 	sum equals sum plus testArr at counter
 	counter equals counter plus 1
 

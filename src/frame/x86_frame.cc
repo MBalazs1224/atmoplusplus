@@ -5,13 +5,18 @@ std::shared_ptr<Frame> x86Frame::newFrame(Label name_in, std::shared_ptr<BoolLis
     auto frame = std::make_shared<x86Frame>();
     frame->name = name_in;
 
-    // Iterate through the formals and allocate a new local for each one, the allocated list will be backwards (the last allocated will be the first pointer)
+    std::shared_ptr<AccessList> head = nullptr;
+    std::shared_ptr<AccessList>* tail = &head;
+
     for (auto it = formals_in; it != nullptr; it = it->tail)
     {
         auto access = frame->allocLocal(it->head, it->sizeOfVariable);
-        frame->formals = std::make_shared<AccessList>(access, frame->formals);
+        auto node = std::make_shared<AccessList>(access, nullptr);
+        *tail = node;
+        tail = &((*tail)->tail);
     }
 
+    frame->formals = head;
     return frame;
 }
 
@@ -20,7 +25,7 @@ std::shared_ptr<Access> x86Frame::allocLocal(bool escapes, int size)
     if (escapes)
     {
         // Allocate bytes
-        
+
         allocated -= size;
 
         auto ret = std::make_shared<InFrame>(-allocated, size);

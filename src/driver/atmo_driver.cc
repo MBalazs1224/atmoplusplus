@@ -252,16 +252,18 @@ std::vector<std::shared_ptr<VariableSymbol>> AtmoDriver::GetGlobalVariables(std:
 std::shared_ptr<BoolList> AtmoDriver::GetWetherGlobalVariablesEscape(std::vector<std::shared_ptr<VariableSymbol>> &variables)
 {
     // Global variables should be in the frame, so true will indicate that
+    std::shared_ptr<BoolList> head = nullptr;
+    std::shared_ptr<BoolList>* tail = &head;
 
-    std::shared_ptr<BoolList> boolList = nullptr;
-
-    for (size_t i = 0; i < variables.size(); i++)
+    for (const auto& var : variables)
     {
-        boolList = std::make_shared<BoolList>(true, boolList);
-        boolList->sizeOfVariable = variables[i]->GetSize();
+        auto node = std::make_shared<BoolList>(true, nullptr);
+        node->sizeOfVariable = var->GetSize();
+        *tail = node;
+        tail = &((*tail)->tail);
     }
 
-    return boolList;
+    return head;
 }
 
 std::shared_ptr<IRStatement> AtmoDriver::ConvertStatementListToSequence(std::shared_ptr<IRStatementList> list)
@@ -495,12 +497,9 @@ void AtmoDriver::TranslateToIR()
 
     while (accessInsideFrame != nullptr)
     {
-        // The received accessList will be backwards, so I have to iterate the global variables from backwards
+        global_variables[varCounter]->access = accessInsideFrame->head;
 
-        size_t currentIndexFromBackwards = global_variables.size() - 1 - varCounter++;
-
-        global_variables[currentIndexFromBackwards]->access = accessInsideFrame->head;
-
+        varCounter++;
         accessInsideFrame = accessInsideFrame->tail;
     }
 
