@@ -3,7 +3,7 @@
 #include "ir_expression.hh"
 #include "ir_expression_list.hh"
 #include "../../frame/datasize.hh"
-
+#include "../../helper/helper.hh"
 // Represents wordSize bytes of memory starting at exp location
 class IRMem : public IRExpression
 {

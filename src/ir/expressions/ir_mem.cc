@@ -8,7 +8,7 @@ IRMem::IRMem(std::shared_ptr<IRExpression> e, int bytes) : exp(std::move(e)), by
 std::string IRMem::ToDotFormat(int &nodeCounter)
 {
     int myId = nodeCounter++;
-    std::string dot = "node" + std::to_string(myId) + " [label=\"MEM\"];\n";
+    std::string dot = "node" + std::to_string(myId) + Helper::FormatString(" [label=\"MEM (%d bytes)\"];\n", this->bytesNeeded);
     dot += "node" + std::to_string(myId) + " -> node" + std::to_string(nodeCounter) + ";\n";
     dot += exp->ToDotFormat(nodeCounter);
     return dot;
