@@ -7,7 +7,7 @@ create class testClass
 		testInt equals testParam
 
 
-create testClass testObj with 5
+create testClass testObj with 10
 
 testInt3 inside testObj equals 10
 

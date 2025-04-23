@@ -72,7 +72,7 @@ std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
 {
     // Use the access object to retrieve this variable's location
 
-    auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
+    auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::FramePointer);
     auto access_exp = access->AsExpression(fp_exp);
     
     return std::make_shared<TranslateValueExpression>(access_exp);
@@ -81,7 +81,7 @@ std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIr()
 std::shared_ptr<TranslateExpression> VariableSymbol::TranslateExpressionToIrNoDereference()
 {
 
-    auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
+    auto fp_exp = std::make_shared<IRTemp>(ReservedIrRegisters::FramePointer);
 
     // Use the no dereference function
     auto access_exp = access->AsExpressionNoDereference(fp_exp);

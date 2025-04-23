@@ -196,7 +196,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             auto argumentsForConstructor = TranslateArgumentsToConstructorToIR();
 
 
-            auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
+            auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::FramePointer);
 
             constructor->TranslateToIRWithGivenParemeter(
                 variable->access->AsExpression(sp), // The variable should be offseted from RSP, but shouldn't be dereferenced
@@ -275,7 +275,7 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         // Call the external function and move it's return value into this variable's location
 
-        auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::StackPointer);
+        auto sp = std::make_shared<IRTemp>(ReservedIrRegisters::FramePointer);
         auto moveSpaceToLocation = std::make_shared<IRMove>(
             variable->access->AsExpression(sp), // The varaible location shouldn't be dereferenced
             externalFunctionCall

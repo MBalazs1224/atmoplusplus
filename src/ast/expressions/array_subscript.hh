@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "two_operand_expression.hh"
+#include "../../ir/expressions/ir_mem.hh"
 #include "../../ir/reserved_ir_registers.hh"
 class ArraySubscriptExpression : public TwoOperandExpression
 {

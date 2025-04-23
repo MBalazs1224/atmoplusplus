@@ -1,17 +1,8 @@
-create integer function testIntFunc
-	create integer a
-	create float b equals 10.0
-	return a / 2 * b
+create integer function testFunc with integer receivedParam
+	return receivedParam * 2
 
-create float function testParamFunc with float a
-	return a * 2
+create integer testInt equals 5
 
+create integer secondInt equals call testFunc with testInt as arguments
 
-create void function testVoidFunc
-	create integer a
-
-
-create integer testIntVar equals call testIntFunc with no arguments
-create float testFloatVar equals call testParamFunc with .5 as argument
-
-call testVoidFunc with no arguments
+return testInt plus secondInt

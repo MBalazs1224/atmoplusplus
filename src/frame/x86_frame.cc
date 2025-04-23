@@ -19,10 +19,12 @@ std::shared_ptr<Access> x86Frame::allocLocal(bool escapes, int size)
 {
     if (escapes)
     {
+        // Allocate bytes
+        
+        allocated -= size;
+
         auto ret = std::make_shared<InFrame>(-allocated, size);
 
-        // Allocate bytes for the next variable
-        allocated -= size;
         return ret;
     }
     else

@@ -165,7 +165,10 @@ std::shared_ptr<IRStatement> ArraySubscriptExpression::TranslateBoundaryCheckInt
     auto indexLessThanSizeOfArray = std::make_shared<IRCJump>(
         RelationalOperator::LessThan,
         std::make_shared<IRTemp>(tempForIndex),
-        numberOfElements,
+        std::make_shared<IRMem>(
+            numberOfElements,    // Double dereference,
+            DataSize::DWord // Integer
+        ),
         labelForIndexing, // If true
         labelForAutoExit // If false
 

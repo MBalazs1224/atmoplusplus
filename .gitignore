@@ -45,3 +45,7 @@ runTests
 *.png
 
 *.asm
+
+atmo_output
+
+test*
