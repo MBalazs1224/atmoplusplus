@@ -40,14 +40,15 @@ std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
         ret
     );
 
-    auto seq = std::make_shared<IRSequence>(
-        moveExpIntoRAX,
-        leaveThenReturn
-    );
+    
 
     if(shouldPopRegisters)
     {
-        std::vector<std::shared_ptr<IRStatement>> popStatements;
+        std::vector<std::shared_ptr<IRStatement>> statements;
+
+        // The expression must be moved into the return register before the pops
+
+        statements.push_back(moveExpIntoRAX);
 
         for (int i = ReservedIrRegisters::calleeSavedRegs.size() - 1; i >= 0; i--)
         {
@@ -57,19 +58,22 @@ std::shared_ptr<IRStatement> ReturnStatementNode::TranslateToIR()
                 )
             );
 
-            popStatements.push_back(popTemp);
+            statements.push_back(popTemp);
         }
 
-        auto popSequence = std::make_shared<IRSequence>(popStatements);
+        auto movePlusPops = std::make_shared<IRSequence>(statements);
         
         return std::make_shared<IRSequence>(
-            popSequence,
-            seq
+            movePlusPops,
+            leaveThenReturn
         );
 
     }
 
-
+    auto seq = std::make_shared<IRSequence>(
+        moveExpIntoRAX,
+        leaveThenReturn
+    );
 
     return seq;
 }
