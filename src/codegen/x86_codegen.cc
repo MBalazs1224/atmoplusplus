@@ -403,13 +403,30 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             if(auto rightConst = std::dynamic_pointer_cast<IRConst>(binOp->right))
                 if(auto leftTemp = std::dynamic_pointer_cast<IRTemp>(binOp->left))
                 {
+                    // It could only be plus or minus
+                    auto op = binOp->binop == BinaryOperator::PLUS ? "+" : "-";
+
+                    // source is immediate
+                    if(auto srcImm = std::dynamic_pointer_cast<IRConst>(moveExp->source))
+                    {
+                        auto newLeftTemp = leftTemp->temp->Clone(DataSize::QWord); // Has to be a 64 bit register for a memory address
+
+                        auto asmInst = std::make_shared<AssemblyMove>(
+                            Helper::FormatString("mov dword [`d0 %s %d], %d", op, rightConst->value, srcImm->value),
+                            newLeftTemp,
+                            nullptr
+                        );
+
+                        EmitInstruction(asmInst);
+                        return;
+                    }
+
                     auto source = MunchExpression(moveExp->source);
 
                     auto newSource = source->Clone((DataSize)destMem->bytesNeeded);
 
                     auto sizeString = SizeToString(source->sizeNeeded);
-                    // It could only be plus or minus
-                    auto op = binOp->binop == BinaryOperator::PLUS ? "+" : "-";
+                    
                     auto asmInst = std::make_shared<AssemblyMove>(
                         Helper::FormatString("mov %s [`d0 %s %d], `s0",sizeString.c_str(), op, rightConst->value),
                         leftTemp->temp,
