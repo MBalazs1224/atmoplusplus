@@ -18,7 +18,7 @@ std::shared_ptr<IRExpression> IRMem::Build(std::shared_ptr<IRExpressionList> kid
 {
     return std::make_shared<IRMem>(
         kids->expression,
-        kids->expression->Size()
+        this->bytesNeeded
     );
 }
 
