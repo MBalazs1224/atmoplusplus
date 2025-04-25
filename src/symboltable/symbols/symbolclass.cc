@@ -222,11 +222,16 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
             std::make_shared<IRConst>(variableOffset)
         );
 
+        auto plusDereference = std::make_shared<IRMem>(
+            RDIDereferencePlusOffset,
+            DataSize::QWord // Pointer
+        );
+
         // We need all constructors to move the function's location into the correct pointer for polymorphism
         statementsForConstructors.push_back(
             std::make_shared<IRMove>(
-                std::make_shared<IRName>(labelForFunction),
-                RDIDereferencePlusOffset
+                plusDereference,
+                std::make_shared<IRName>(labelForFunction)
             )
         );
 

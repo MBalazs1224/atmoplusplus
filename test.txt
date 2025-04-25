@@ -1,6 +1,8 @@
-create integer testInt equals 0
+create array of 5 integers testArr
 
-until testInt matches 10
-	testInt equals testInt plus 1
+create integer counter equals 3
 
-return testInt
+testArr at counter equals 69
+
+
+return testArr at counter

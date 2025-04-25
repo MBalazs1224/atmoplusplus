@@ -146,11 +146,12 @@ void x86CodeGenerator::MunchEvaluateExpression(std::shared_ptr<IREvaluateExpress
             // kNow where the func is
             auto newTemp = MunchExpression(call->func);
 
+            auto finalTemp = newTemp->Clone(DataSize::QWord); // 64 bit address
             
             auto asmInst = std::make_shared<AssemblyOper>(
                 "call `s0",
                 callDefs,
-                AppendTempList(newTemp, nullptr)
+                AppendTempList(finalTemp, nullptr)
             );
             EmitInstruction(asmInst);
         
@@ -280,11 +281,13 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         {
             auto funcLocation = MunchExpression(call->func);
 
+            auto newLocation = funcLocation->Clone(DataSize::QWord); // 64 bit adddress
+
             auto asmInst = std::make_shared<AssemblyOper>(
                 "call `s0",
                 callDefs,
                 std::make_shared<TempList>(
-                    funcLocation,
+                    newLocation,
                     nullptr
                 ),
                 nullptr
@@ -362,10 +365,12 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 
             if (auto srcReg = std::dynamic_pointer_cast<IRTemp>(srcMem->exp)) 
             {
+                auto newSource = srcReg->temp->Clone(DataSize::QWord);
+
                 EmitInstruction(std::make_shared<AssemblyMove>(
                     "mov `d0, [`s0]",
                     destReg->temp,
-                    srcReg->temp
+                    newSource
                 ));
                 return;
             }
@@ -433,7 +438,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
                     
                     auto asmInst = std::make_shared<AssemblyMove>(
                         Helper::FormatString("mov %s [`d0 %s %d], `s0",sizeString.c_str(), op, rightConst->value),
-                        leftTemp->temp,
+                        newDest,
                         newSource
                     );
 
@@ -474,7 +479,7 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
 
             EmitInstruction(std::make_shared<AssemblyMove>(
                 Helper::FormatString("mov %s [`d0], `s0", destSize.c_str()),
-                addr,
+                newAddr,
                 newSrc
             ));
             return;
@@ -497,6 +502,8 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
         {
             auto addr = MunchExpression(destMem->exp);
 
+            auto newAddr = addr->Clone(DataSize::QWord); // Holds a 64 bit address
+
             auto newSrc = srcReg->temp->Clone((DataSize)destMem->bytesNeeded);
 
             EmitInstruction(std::make_shared<AssemblyMove>(
@@ -506,6 +513,25 @@ void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp)
             ));
             return;
         }
+
+        // General fallback for memory
+
+        auto address = MunchExpression(destMem->exp);
+
+        auto newAddress = address->Clone(DataSize::QWord); // Holds 64 bit address
+
+        auto source = MunchExpression(moveExp->source);
+
+        auto sizeString = SizeToString(source->sizeNeeded);
+
+        auto asmInst = std::make_shared<AssemblyMove>(
+            Helper::FormatString("mov %s [`d0], `s0", sizeString.c_str()),
+            newAddress,
+            source
+        );
+
+        EmitInstruction(asmInst);
+        return;
     }
 
     // General fallback
@@ -839,7 +865,7 @@ std::shared_ptr<Temp> x86CodeGenerator::MunchMem(std::shared_ptr<IRMem> memExp)
     auto asmInst = std::make_shared<AssemblyMove>(
         Helper::FormatString("mov `d0, %s [`s0]", sizeString.c_str()), // Move the first source into the first destination
         newLocation,
-        addressTemp
+        newAddr
     );
 
     EmitInstruction(asmInst);

@@ -11,3 +11,6 @@ create testParent testObj
 
 
 create integer testInt equals call testVirtual inside testObj with no arguments
+
+
+return testInt
