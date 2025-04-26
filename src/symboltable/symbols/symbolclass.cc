@@ -227,6 +227,9 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
             DataSize::QWord // Pointer
         );
 
+        // Set that the vtable needs a pointer for this function
+        this->vtable->functionPointers.push_back(function->nameInAssembly);
+
         // We need all constructors to move the function's location into the correct pointer for polymorphism
         statementsForConstructors.push_back(
             std::make_shared<IRMove>(
@@ -623,6 +626,8 @@ bool ClassSymbol::Check()
 
     // FIXME: Saving the result in a bool looks a bit overcomplicated
 
+    this->vtable = std::make_shared<VtableInfo>(Helper::FormatString("%s_vtable", this->name.c_str()));
+
     if (!CheckParents())
     {
         checkedResult = false;
@@ -646,6 +651,13 @@ bool ClassSymbol::Check()
     auto typeDescString = GetTypeDescriptorString();
 
     this->typeDescriptorLabel = GlobalStrings::AddToPool(typeDescString);
+
+    // If the vtable is not empty, give it to the driver so it can print it to the final assembly
+    if (!this->vtable->IsEmpty())
+    {
+        GlobalVtables::vtables.push_back(vtable);
+    }
+    
 
     checkedResult = true;
     return true;

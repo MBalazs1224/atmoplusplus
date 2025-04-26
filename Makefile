@@ -53,8 +53,10 @@ ilocation := ./build/location/ilocation.o
 
 symboltable := ./build/symboltable/symboltable.o ./build/symboltable/symboltableelement.o
 
+vtables := ./build/driver/global_vtables.o
 
-objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(canonical) $(ir_normalizer) $(ir_block_trace) $(assembly) $(code_generator) $(reg_allocator)
+
+objects :=  $(main)   $(parser) $(scope) $(error) $(ilocation) $(lexer) $(driver) $(symboltable) $(nodes) $(literals) $(expressions) $(attributes) $(helper) $(symbols) $(types) $(ir_statements) $(ir_expressions) $(reserved_ir_registers) $(frame) $(translate) $(canonical) $(ir_normalizer) $(ir_block_trace) $(assembly) $(code_generator) $(reg_allocator) $(vtables)
 
 #CXXFLAGS = -g -Wpedantic -Wextra -Wall -fsanitize=address
 CXXFLAGS = -g3 -Wno-deprecated -pipe -fno-elide-type -fdiagnostics-show-template-tree -Wall -Werror -Wextra -Wpedantic -Wvla -Wextra-semi -Wnull-dereference -fvar-tracking-assignments -Wduplicated-cond -Wduplicated-branches -rdynamic -Wsuggest-override -O0 -Wno-overloaded-virtual -Wno-unused-parameter
@@ -95,6 +97,11 @@ main: $(objects)
 
 ./build/driver/atmo_driver.o: ./src/driver/atmo_driver.cc ./src/driver/atmo_driver.hh
 	@mkdir -p ./build/driver
+	g++ $(CXXFLAGS) -c $< -o $@
+
+# Vtables
+
+./build/driver/global_vtables.o: ./src/driver/global_vtables.cc ./src/driver/global_vtables.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 # Location

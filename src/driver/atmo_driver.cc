@@ -414,6 +414,38 @@ std::shared_ptr<IRStatementList> AtmoDriver::TranslateToIRTree(std::vector<std::
     return irRoot;
 }
 
+void AtmoDriver::PrintGlobalVtables(std::ofstream& asmFile)
+{
+    // Loop through all the vtable infos
+    for (auto &&vtableInfo : GlobalVtables::vtables)
+    {
+        // Print the class's name
+        asmFile << vtableInfo->className << ":" << "\n";
+
+        // Print the pointer variables
+        for (auto &&pointerName : vtableInfo->functionPointers)
+        {
+            // dq -> 64 bit pointer
+            asmFile << "\t" << "dq " << pointerName << "\n\n";
+        }
+        
+    }
+    
+}
+
+void AtmoDriver::PrintGlobalStrings(std::ofstream& asmFile)
+{
+    // Print the data in this form: L0: .string "asd"
+    for (auto &&pair : GlobalStrings::stringToLabel)
+    {
+        auto stringLiteral = pair.first;
+        auto labelName = pair.second->ToString();
+        
+        asmFile << StringToFullNasmLiteral(labelName,stringLiteral) << "\n\n";
+    }
+}
+
+
 void AtmoDriver::GenerateAssembly()
 {
     // TODO: Implement to be able to generate to other asm type
@@ -429,13 +461,12 @@ void AtmoDriver::GenerateAssembly()
 
     asmFile << "section .data\n\n"; // Print read only data indicator
 
-    // Print the data in this form: L0: .string "asd"
-    for (auto &&pair : GlobalStrings::stringToLabel)
+    PrintGlobalStrings(asmFile);
+
+
+    if(!GlobalVtables::IsEmpty())
     {
-        auto stringLiteral = pair.first;
-        auto labelName = pair.second->ToString();
-        
-        asmFile << StringToFullNasmLiteral(labelName,stringLiteral) << "\n";
+        PrintGlobalVtables(asmFile);
     }
 
     asmFile << "section .text\n\nglobal main\nextern heapAlloc\n\nextern initArray\n\n";

@@ -13,7 +13,10 @@
 #include "../../ast/expressions/identifier.hh"
 #include "../../frame/offset_from_object.hh"
 #include "../../codegen/global_strings.hh"
+#include "../../driver/vtable_info.hh"
 #include <unordered_map>
+
+#include "../../driver/global_vtables.hh"
 
 
 
@@ -38,6 +41,8 @@ class ClassSymbol : public SymbolTableElement, public Type, /*std::enable_shared
 
         //The result of the first check so we can return it again if the class symbol is used later
         bool checkedResult;
+
+        std::shared_ptr<VtableInfo> vtable;
 
 
         std::vector<std::shared_ptr<Identifier>> parents;

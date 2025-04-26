@@ -28,6 +28,9 @@
 
 #include "../ir/canonical/ir_canonical.hh"
 
+
+#include "vtable_info.hh"
+
 class AtmoDriver
 {
 
@@ -92,9 +95,13 @@ class AtmoDriver
     // Will only build the AST based on the given stream (used during testing)
     void parse_only(std::istream&);
 
+
     private:
 
     std::shared_ptr<IRTraceSchedule> irTrace;
+
+    void PrintGlobalVtables(std::ofstream&);
+    void PrintGlobalStrings(std::ofstream&);
 
     void SemanticAnalyze();
 
