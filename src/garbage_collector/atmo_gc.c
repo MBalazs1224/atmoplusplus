@@ -19,13 +19,13 @@ static void* heap_start = NULL;
 static void* heap_end = NULL;
 
 void initialize_heap() {
-    heap_start = malloc(0);
     void* mem = malloc(HEAP_CHUNK_SIZE);
     if (mem == (void*)-1) {
         perror("malloc");
         exit(1);
     }
-    heap_end = malloc(0);
+    heap_start = mem;
+    heap_end = (char *)mem + HEAP_CHUNK_SIZE;
     Header* header = (Header*)mem;
     header->size = HEAP_CHUNK_SIZE;
     header->marked = 0;
@@ -163,6 +163,8 @@ void* heapAlloc(const char* descriptor) {
     // No block found, trigger GC then retry
     gcCollect();
     curr = free_list;
+    prev = &free_list;
+
     while (curr) {
         if (curr->size >= total_size) {
              // Split the block if possible

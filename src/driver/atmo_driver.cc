@@ -469,7 +469,7 @@ void AtmoDriver::GenerateAssembly()
         PrintGlobalVtables(asmFile);
     }
 
-    asmFile << "section .text\n\nglobal main\nextern heapAlloc\n\nextern initArray\n\n";
+    asmFile << "section .text\n\nglobal main\nextern heapAlloc\n\nextern initArray\n\nextern GCRegisterRoot\n\n";
 
     auto current = asmList;
 

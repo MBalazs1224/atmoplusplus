@@ -172,6 +172,8 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
             DataSize::QWord // pointer
         );
 
+
+
         // Move the return value of the function to this variable's location
 
         auto evaluateAndGetRAX = std::make_shared<IREseq>(
@@ -185,6 +187,30 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
         );
 
         statements.push_back(moveToLocation);
+
+                // Register as root for the garbage collector
+
+        // Give the object's location as the argument
+        auto regsiterRootArgument = std::make_shared<IRExpressionList>(
+            varLocation,
+            nullptr
+        );
+
+        auto callRegisterRoot = std::make_shared<IRCall>(
+            std::make_shared<IRName>(
+                std::make_shared<Label>("GCRegisterRoot")
+            ),
+            regsiterRootArgument,
+            argumentLocation, // RDI
+            false, // Return value not needed
+            DataSize::QWord
+        );
+
+        auto evaluateRegisterRoot = std::make_shared<IREvaluateExpression>(
+            callRegisterRoot
+        );
+
+        statements.push_back(evaluateRegisterRoot);
 
         // We need to call the wanted constructor (which was saved by the semantic analyzer, if needed) with the allcoated space
 

@@ -1,8 +1,9 @@
-create array of 5 integers testArr
-
-create integer counter equals 3
-
-testArr at counter equals 69
+create class testClass
+	create integer testInt 
 
 
-return testArr at counter
+create integer counter equals 0
+
+until counter matches 100000
+	create testClass testObj
+return 5

@@ -569,6 +569,7 @@ clean:
 	rm -f ./src/parser/parser.tab.cc
 	rm -f ./src/parser/parser.tab.hh
 	rm -f main
+	rm -f atmo_gc.o
 
 .PHONY: tests
 tests: 
