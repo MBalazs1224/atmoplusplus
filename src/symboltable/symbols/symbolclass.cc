@@ -202,41 +202,18 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
         this->size_in_bytes += DataSize::QWord;
 
-        // Set that the function can be called from the pointer
-        auto accessObj = std::make_shared<OffsetFromObject>(variableOffset, DataSize::QWord);
+        // Set that the function can be called from the vtable pointer
+
+        auto vtableOffset = this->vtable->functionPointers.size() * 8; // All the previous pointers
+
+        auto accessObj = std::make_shared<OffsetFromVtable>(vtableOffset);
 
 
         function->access = accessObj;
 
 
-        auto labelForFunction = std::make_shared<Label>(function->nameInAssembly);
-
-        // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register (after dereferencing the pointer)
-
-        auto RDIDereferencePlusOffset = std::make_shared<IRBinaryOperator>(
-            BinaryOperator::PLUS,
-            std::make_shared<IRMem>(
-                std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
-                DataSize::QWord // The function pointer is 64 bit
-            ),
-            std::make_shared<IRConst>(variableOffset)
-        );
-
-        auto plusDereference = std::make_shared<IRMem>(
-            RDIDereferencePlusOffset,
-            DataSize::QWord // Pointer
-        );
-
         // Set that the vtable needs a pointer for this function
         this->vtable->functionPointers.push_back(function->nameInAssembly);
-
-        // We need all constructors to move the function's location into the correct pointer for polymorphism
-        statementsForConstructors.push_back(
-            std::make_shared<IRMove>(
-                plusDereference,
-                std::make_shared<IRName>(labelForFunction)
-            )
-        );
 
         // Update the next available position
         variableOffset += DataSize::QWord;
@@ -268,31 +245,10 @@ bool ClassSymbol::InsertFunction(const std::shared_ptr<FunctionDefinitionNode> &
         // Set that the function can be called from the same pointer
         function->access = baseFunction->access;
 
-        // Because the overriding function is correct at this point, it's location must be an offset from the object, so we can safely extract the offset from the object
-        int offset = std::dynamic_pointer_cast<OffsetFromObject>(function->access)->offset;
-
         function->nameInAssembly = Helper::FormatString("$_%s_%s",this->name.c_str(), function->name.c_str());
 
-        auto labelForFunction = std::make_shared<Label>(function->nameInAssembly);
-
-        // The first parameter will be the pointer to the class object, which will be passed in RDI (specified by the AMD ABI), so it needs to be ofsetted from that register (after dereferencing the pointer)
-
-        auto RDIDereferencePlusOffset = std::make_shared<IRBinaryOperator>(
-            BinaryOperator::PLUS,
-            std::make_shared<IRMem>(
-                std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
-                DataSize::QWord // A function pointer is 64 bit
-            ),
-            std::make_shared<IRConst>(offset)
-        );
-
-        // We need all constructors to move the function's location into the correct pointer for polymorphism
-        statementsForConstructors.push_back(
-            std::make_shared<IRMove>(
-                std::make_shared<IRName>(labelForFunction),
-                RDIDereferencePlusOffset
-            )
-        );
+        // Set that the vtable needs a pointer for this function
+        this->vtable->functionPointers.push_back(function->nameInAssembly);
 
     }
     else
@@ -626,7 +582,9 @@ bool ClassSymbol::Check()
 
     // FIXME: Saving the result in a bool looks a bit overcomplicated
 
-    this->vtable = std::make_shared<VtableInfo>(Helper::FormatString("%s_vtable", this->name.c_str()));
+    auto vtableName = Helper::FormatString("%s_vtable", this->name.c_str());
+
+    this->vtable = std::make_shared<VtableInfo>(vtableName);
 
     if (!CheckParents())
     {
@@ -638,6 +596,26 @@ bool ClassSymbol::Check()
     {
         checkedResult = false;
         return false;
+    }
+
+    // If the vtable is not empty, give it to the driver so it can print it to the final assembly
+    if (!this->vtable->IsEmpty())
+    {
+        GlobalVtables::vtables.push_back(vtable);
+
+        // Every constructor must move the vtable pointer into the first 8 bytes of the object
+
+        statementsForConstructors.push_back(
+            std::make_shared<IRMove>(
+                std::make_shared<IRMem>(
+                    std::make_shared<IRTemp>(ReservedIrRegisters::RDI),
+                    DataSize::QWord // Pointer
+                ),
+                std::make_shared<IRName>(
+                    std::make_shared<Label>(vtableName)
+                )
+            )
+        );
     }
 
     if (!CheckConstructorsAndDestructor())
@@ -652,11 +630,7 @@ bool ClassSymbol::Check()
 
     this->typeDescriptorLabel = GlobalStrings::AddToPool(typeDescString);
 
-    // If the vtable is not empty, give it to the driver so it can print it to the final assembly
-    if (!this->vtable->IsEmpty())
-    {
-        GlobalVtables::vtables.push_back(vtable);
-    }
+    
     
 
     checkedResult = true;

@@ -19,7 +19,7 @@ ir_block_trace := ./build/ir/blocks/ir_block.o ./build/ir/traces/ir_trace.o
 
 ir_normalizer := ./build/ir/ir_normalizer.o
 
-frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o ./build/frame/printedlabel.o ./build/frame/access.o ./build/frame/global_frame.o
+frame := ./build/frame/x86_frame.o ./build/frame/boollist.o ./build/frame/inframe.o ./build/frame/inreg.o ./build/frame/label.o ./build/frame/temp.o ./build/frame/accesslist.o ./build/frame/offset_from_object.o ./build/frame/offset_from_vtable.o ./build/frame/printedlabel.o ./build/frame/access.o ./build/frame/global_frame.o
 
 translate := ./build/translate/translate_conditional_expression.o ./build/translate/translate_value_expression.o ./build/translate/translate_no_value_expression.o
 
@@ -465,6 +465,9 @@ main: $(objects)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/frame/offset_from_object.o: ./src/frame/offset_from_object.cc ./src/frame/offset_from_object.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+
+./build/frame/offset_from_vtable.o: ./src/frame/offset_from_vtable.cc ./src/frame/offset_from_vtable.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
 ./build/frame/printedlabel.o: ./src/frame/printedlabel.cc ./src/frame/printedlabel.hh

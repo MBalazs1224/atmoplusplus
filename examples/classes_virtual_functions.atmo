@@ -4,7 +4,7 @@ create class testParent
 
 create class testChild derives from testParent
 	create public overriding integer function testVirtual
-		return 3
+		return 5
 
 
 create testParent testObj
@@ -12,5 +12,10 @@ create testParent testObj
 
 create integer testInt equals call testVirtual inside testObj with no arguments
 
+create testChild testObj2
 
-return testInt
+testObj equals testObj2
+
+create integer testInt2 equals call testVirtual inside testObj with no arguments
+
+return testInt plus testInt2
