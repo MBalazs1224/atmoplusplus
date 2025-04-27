@@ -114,6 +114,30 @@ std::vector<std::shared_ptr<ReturnStatementNode>> BodyNode::GetReturnNodes()
     return variables;
 }
 
+std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetClassTypeVariables()
+{
+    std::vector<std::shared_ptr<VariableSymbol>> variables;
+
+    for (auto &&statement : this->statements)
+    {
+        // The statement is a variable definition
+        if(auto varDef = std::dynamic_pointer_cast<VariableDefinitionNode>(statement))
+        {
+            auto var = varDef->GetVariable();
+
+            auto varType = var->GetType();
+
+            
+            // If the variable is a class type push it to the vector
+            if(std::dynamic_pointer_cast<ClassSymbol>(varType))
+                variables.push_back(var);
+        }
+    }
+
+    return variables;
+    
+}
+
 std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
 {
     std::vector<std::shared_ptr<IRStatement>> ir_statements;
@@ -130,6 +154,49 @@ std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
 
     }
 
+    // At the end of the body, we need to unregister every class type object
+
+    auto classTypeVariables = GetClassTypeVariables();
+
+    // Unregister the class type variables
+
+    auto irNameForUnreg = std::make_shared<IRName>(
+        std::make_shared<Label>("GCUnregisterRoot")
+    );
+
+    auto rdiLocation = std::make_shared<IRTemp>(ReservedIrRegisters::RDI);
+
+    auto argumentLocationList = std::make_shared<IRExpressionList>(
+        rdiLocation,
+        nullptr
+    );
+
+    auto rbpTemp = std::make_shared<IRTemp>(ReservedIrRegisters::FramePointer);
+
+    for (auto &&var : classTypeVariables)
+    {
+        auto argumentForUnreg = var->access->AsExpression(rbpTemp);
+
+        auto argumentList = std::make_shared<IRExpressionList>(
+            argumentForUnreg,
+            nullptr
+        );
+
+        auto unregStatement = std::make_shared<IRCall>(
+            irNameForUnreg,
+            argumentList,
+            argumentLocationList,
+            false, // Return value not needed
+            DataSize::QWord
+        );
+
+        auto evalUnreg = std::make_shared<IREvaluateExpression>(
+            unregStatement
+        );
+
+        ir_statements.push_back(evalUnreg);
+    }
+
     if(ir_statements.empty())
     {
         return nullptr; // FIXME: Returning nullptr for empty vector will result in a segfault!
@@ -139,7 +206,7 @@ std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
     {
         return ir_statements[0];
     }
-    
+
     
     return std::make_shared<IRSequence>(ir_statements);
 }

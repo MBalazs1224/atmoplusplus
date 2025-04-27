@@ -224,6 +224,19 @@ void GCRegisterRoot(void** root) {
     roots = r;
 }
 
+void GCUnregisterRoot(void** root) {
+    Root **pp = &roots;
+    while (*pp) {
+        if ((*pp)->root == root) {
+            Root* dead = *pp;
+            *pp = dead->next;
+            free(dead);
+            return;
+        }
+        pp = &(*pp)->next;
+    }
+}
+
 void mark(Header* header) {
     if (header->marked || header->is_free) return;
     header->marked = 1;

@@ -49,3 +49,5 @@ runTests
 atmo_output
 
 test*
+
+massif.out*

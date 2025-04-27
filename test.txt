@@ -6,4 +6,5 @@ create integer counter equals 0
 
 until counter matches 100000
 	create testClass testObj
+	counter equals counter plus 1
 return 5
