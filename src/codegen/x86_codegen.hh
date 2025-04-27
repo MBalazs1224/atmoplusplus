@@ -36,4 +36,5 @@ class x86CodeGenerator : public CodeGenerator
         std::shared_ptr<Temp> MunchMem(std::shared_ptr<IRMem>) override;
         std::shared_ptr<Temp> MunchName(std::shared_ptr<IRName>) override;
         std::shared_ptr<Temp> MunchTemp(std::shared_ptr<IRTemp>) override;
+        std::shared_ptr<Temp> MunchLoadEffectiveAddress(std::shared_ptr<IRLoadEffectiveAddress>) override;
 };

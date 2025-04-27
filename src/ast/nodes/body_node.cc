@@ -175,7 +175,10 @@ std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
 
     for (auto &&var : classTypeVariables)
     {
-        auto argumentForUnreg = var->access->AsExpression(rbpTemp);
+        // Load the effective address of the variable
+        auto argumentForUnreg = std::make_shared<IRLoadEffectiveAddress>(
+            var->access->AsExpression(rbpTemp)
+        );
 
         auto argumentList = std::make_shared<IRExpressionList>(
             argumentForUnreg,

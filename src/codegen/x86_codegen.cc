@@ -223,6 +223,39 @@ std::string x86CodeGenerator::SizeToString(int size)
     }
 }
 
+std::shared_ptr<Temp> x86CodeGenerator::MunchLoadEffectiveAddress(std::shared_ptr<IRLoadEffectiveAddress> lea)
+{
+    // It can only load memory address to register
+
+    auto destTemp = std::make_shared<Temp>(DataSize::QWord); // Holds 64 bit address
+    
+    if(auto srcMem = std::dynamic_pointer_cast<IRMem>(lea->source))
+        {
+            if (auto srcBinop = std::dynamic_pointer_cast<IRBinaryOperator>(srcMem->exp)) 
+            {
+                auto leftTemp = std::dynamic_pointer_cast<IRTemp>(srcBinop->left);
+                auto rightConst = std::dynamic_pointer_cast<IRConst>(srcBinop->right);
+                if (leftTemp && rightConst) 
+                {
+                    auto newSource = leftTemp->temp->Clone(DataSize::QWord); // Holds a 64 bit address
+
+                    const char* op = srcBinop->binop == BinaryOperator::PLUS ? "+" : "-";
+
+                    EmitInstruction(std::make_shared<AssemblyMove>(
+                        Helper::FormatString("lea `d0, [`s0 %s %d]", 
+                            op, 
+                            rightConst->value),
+                        destTemp,
+                        newSource
+                    ));
+                    return destTemp;
+                }
+            }
+        }
+    
+    throw std::logic_error("Invalid expressions inside MunchLoadEffectiveAddress!");
+}
+
 void x86CodeGenerator::MunchMove(std::shared_ptr<IRMove> moveExp) 
 {
     // If the source is a function call, we need to first move the return value to the correct place

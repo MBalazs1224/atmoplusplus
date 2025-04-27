@@ -9,3 +9,4 @@
 #include "ir_mem.hh"
 #include "ir_name.hh"
 #include "ir_temp.hh"
+#include "load_effective_address.hh"

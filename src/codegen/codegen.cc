@@ -55,6 +55,10 @@ std::shared_ptr<Temp> CodeGenerator::MunchExpression(std::shared_ptr<IRExpressio
     {
         return MunchTemp(casted);
     }
+    else if (auto casted = std::dynamic_pointer_cast<IRLoadEffectiveAddress>(exp))
+    {
+        return MunchLoadEffectiveAddress(casted);
+    }
 
     throw std::logic_error("Invalid experssion node during code generation!");
 }

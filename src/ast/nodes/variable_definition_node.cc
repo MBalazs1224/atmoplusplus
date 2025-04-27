@@ -192,7 +192,9 @@ std::shared_ptr<IRStatement> VariableDefinitionNode::TranslateToIR()
 
         // Give the object's location as the argument
         auto regsiterRootArgument = std::make_shared<IRExpressionList>(
-            varLocation,
+            std::make_shared<IRLoadEffectiveAddress>(
+                varLocation
+            ),
             nullptr
         );
 

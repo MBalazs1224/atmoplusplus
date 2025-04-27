@@ -59,6 +59,8 @@ class CodeGenerator
         virtual std::shared_ptr<Temp> MunchMem(std::shared_ptr<IRMem>) = 0;
         virtual std::shared_ptr<Temp> MunchName(std::shared_ptr<IRName>) = 0;
         virtual std::shared_ptr<Temp> MunchTemp(std::shared_ptr<IRTemp>) = 0;
+        virtual std::shared_ptr<Temp> MunchLoadEffectiveAddress(std::shared_ptr<IRLoadEffectiveAddress>) = 0;
+
         
     public:
 

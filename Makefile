@@ -13,7 +13,7 @@ types := ./build/types/typearray.o ./build/types/type.o  ./build/types/typeboole
 
 ir_statements := ./build/ir/statements/ir_cjump.o ./build/ir/statements/ir_evaluate_expression.o ./build/ir/statements/ir_jump.o ./build/ir/statements/ir_label.o ./build/ir/statements/ir_move.o ./build/ir/statements/ir_sequence.o ./build/ir/statements/ir_statement_list.o ./build/ir/statements/ir_statement.o ./build/ir/statements/ir_return.o ./build/ir/statements/ir_pop.o ./build/ir/statements/ir_push.o ./build/ir/statements/ir_syscall.o ./build/ir/statements/ir_leave.o ./build/ir/statements/ir_enter.o
 
-ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o
+ir_expressions := ./build/ir/expressions/ir_binary_operator.o ./build/ir/expressions/ir_call.o ./build/ir/expressions/ir_const.o ./build/ir/expressions/ir_const_float.o ./build/ir/expressions/ir_eseq.o ./build/ir/expressions/ir_mem.o ./build/ir/expressions/ir_name.o ./build/ir/expressions/ir_temp.o ./build/ir/expressions/ir_expression.o ./build/ir/expressions/ir_expression_list.o ./build/ir/expressions/load_effective_address.o
 
 ir_block_trace := ./build/ir/blocks/ir_block.o ./build/ir/traces/ir_trace.o
 
@@ -403,6 +403,10 @@ main: $(objects)
 	@mkdir -p ./build/ir/traces
 	g++ $(CXXFLAGS) -c $< -o $@
 
+./build/ir/traces/ir_trace.o: ./src/ir/traces/ir_trace.cc ./src/ir/traces/ir_trace.hh
+	@mkdir -p ./build/ir/traces
+	g++ $(CXXFLAGS) -c $< -o $@
+
 
 # IR Expressions
 
@@ -437,8 +441,14 @@ main: $(objects)
 ./build/ir/expressions/ir_expression_list.o: ./src/ir/expressions/ir_expression_list.cc ./src/ir/expressions/ir_expression_list.hh
 	g++ $(CXXFLAGS) -c $< -o $@
 
+./build/ir/expressions/load_effective_address.o: ./src/ir/expressions/load_effective_address.cc ./src/ir/expressions/load_effective_address.hh
+	g++ $(CXXFLAGS) -c $< -o $@
+	
+
 ./build/ir/reserved_ir_registers.o: ./src/ir/reserved_ir_registers.cc ./src/ir/reserved_ir_registers.hh
 	g++ $(CXXFLAGS) -c $< -o $@
+
+
 
 # Frame
 
