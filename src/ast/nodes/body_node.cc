@@ -114,7 +114,7 @@ std::vector<std::shared_ptr<ReturnStatementNode>> BodyNode::GetReturnNodes()
     return variables;
 }
 
-std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetClassTypeVariables()
+std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetReferenceTypeVariables()
 {
     std::vector<std::shared_ptr<VariableSymbol>> variables;
 
@@ -128,8 +128,8 @@ std::vector<std::shared_ptr<VariableSymbol>> BodyNode::GetClassTypeVariables()
             auto varType = var->GetType();
 
             
-            // If the variable is a class type push it to the vector
-            if(std::dynamic_pointer_cast<ClassSymbol>(varType))
+            // If the variable is a class or array type push it to the vector
+            if(std::dynamic_pointer_cast<ClassSymbol>(varType) || std::dynamic_pointer_cast<Array>(varType))
                 variables.push_back(var);
         }
     }
@@ -156,7 +156,7 @@ std::shared_ptr<IRStatement> BodyNode::TranslateToIR()
 
     // At the end of the body, we need to unregister every class type object
 
-    auto classTypeVariables = GetClassTypeVariables();
+    auto classTypeVariables = GetReferenceTypeVariables();
 
     // Unregister the class type variables
 

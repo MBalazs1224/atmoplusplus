@@ -21,7 +21,7 @@ class BodyNode : public Node, public BodyContainer
     BodyNode(std::vector<std::shared_ptr<Node>>);
     BodyNode() = default;
 
-    std::vector<std::shared_ptr<VariableSymbol>> GetClassTypeVariables();
+    std::vector<std::shared_ptr<VariableSymbol>> GetReferenceTypeVariables();
 
     BodyNode(BodyNode&& other);
     public:
