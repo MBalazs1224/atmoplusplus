@@ -12,7 +12,7 @@ AtmoDriver::AtmoDriver(std::vector<std::string> &params)
     ProcessArguments(params);
 }
 
-void AtmoDriver::ProcessBehaviouralFlag(const std::string &param)
+void AtmoDriver::ProcessBehaviouralFlag(const std::string &param, const int index)
 {
     if (param == "--debug-lexer")
     {
@@ -50,6 +50,41 @@ void AtmoDriver::ProcessBehaviouralFlag(const std::string &param)
     {
         shouldLink = false;
     }
+    // The param starts with "--output-path"
+    else if (param.rfind("--output-path", 0) == 0)
+    {
+        size_t pos = param.find('=');
+
+        if (pos != std::string::npos)
+        {
+            std::string opath = param.substr(pos + 1);
+
+            // Create the directory structure if needed
+
+            std::filesystem::path filePath(opath);
+            std::filesystem::path parentDir = filePath.parent_path();
+
+        // Only create directories if there's a parent path (e.g., test/ in test/output.txt)
+        if (!parentDir.empty()) {
+            std::error_code ec;
+            if (!std::filesystem::exists(parentDir)) {
+                if (!std::filesystem::create_directories(parentDir, ec)) {
+                    std::cerr << "Error creating directories: " << ec.message() << std::endl;
+                    return;
+                }
+            } else if (!std::filesystem::is_directory(parentDir)) {
+                std::cerr << "Parent path exists but is not a directory." << std::endl;
+                return;
+            }
+        }
+
+            this->outputPath = opath;
+        }
+        else
+        {
+            Error::ShowCompilerError("No '=' found in the '--output-path' parameter.");
+        }
+    }
     else
     {
         Error::ShowCompilerError(Helper::FormatString("Unknown flag '%s'!", param.c_str()));
@@ -75,18 +110,21 @@ void AtmoDriver::OpenFile(const std::string &fileName)
 
 void AtmoDriver::ProcessArguments(std::vector<std::string> &params)
 {
-    for (auto param : params)
+    for (size_t i = 0; i < params.size(); i++)
     {
-        // All behavoural flags will start with "--"
-        if (param.rfind("--", 0) == 0)
-        {
-            ProcessBehaviouralFlag(param);
-        }
-        // If the flag didn't start with "--", it must be an input file name
-        else
-        {
-            OpenFile(param);
-        }
+        auto param = params[i];
+
+       // All behavoural flags will start with "--"
+       if (param.rfind("--", 0) == 0)
+       {
+            // Pass the current index as well
+           ProcessBehaviouralFlag(param, i);
+       }
+       // If the flag didn't start with "--", it must be an input file name
+       else
+       {
+           OpenFile(param);
+       }
     }
 }
 

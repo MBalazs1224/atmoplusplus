@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include <string.h>
+#include <filesystem>
 
 // Needed for CPU architecture detection
 #include <sys/utsname.h>
@@ -46,7 +47,7 @@ class AtmoDriver
 
     void ProcessArguments(std::vector<std::string>&);
 
-    void ProcessBehaviouralFlag(const std::string&);
+    void ProcessBehaviouralFlag(const std::string&, const int);
     void OpenFile(const std::string&);
 
     /// @brief Converts a string into a full NASM literal.
